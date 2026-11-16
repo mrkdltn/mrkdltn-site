@@ -124,7 +124,7 @@
 })();
 
 (function () {
-  const {GC, BANDC, num, f1, fs, P, motion} = window.OE; const OE = window.OE;
+  const {GC, GORDER, BANDC, num, f1, fs, P, motion} = window.OE; const OE = window.OE;
   const AREAS = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16'],['g_sg','Safeguarding']];
   const GTIP = {'Exceptional': 'Highest of the five grades.', 'Strong standard': 'Second highest of the five grades.', 'Expected standard': 'The middle grade: the standard Ofsted expects.', 'Needs attention': 'Second lowest of the five grades.', 'Urgent improvement': 'Lowest of the five grades.', 'Met': 'Safeguarding is graded Met or Not met.', 'Not met': 'Safeguarding is graded Met or Not met.'};
   const dash_ = (el) => { el.textContent = '—'; };
