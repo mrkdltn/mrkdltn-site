@@ -52,7 +52,9 @@ def main():
         u = (g.get('URN') or '').strip()
         if u in want:
             out.append({'urn': u, 'la': g.get('LA (name)', ''), 'region': g.get('GOR (name)', ''),
-                        'mat': g.get('Trusts (name)', ''), 'town': g.get('Town', ''),
+                        # only multi-academy trusts, as in Ofsted's MI; maintained schools can name a foundation trust
+                        'mat': g.get('Trusts (name)', '') if 'multi-academy' in (g.get('TrustSchoolFlag (name)') or '').lower() else '',
+                        'town': g.get('Town', ''),
                         'postcode': g.get('Postcode', ''), 'status': g.get('EstablishmentStatus (name)', '')})
     out.sort(key=lambda r: int(r['urn']))
     with open(os.path.join(RAW, 'gias_slim.csv'), 'w', newline='', encoding='utf-8') as f:

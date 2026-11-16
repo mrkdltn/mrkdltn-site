@@ -104,11 +104,13 @@ def main():
     # Get Information about Schools: fill gaps for new schools; town and postcode for search
     gias_path = os.path.join(RAW, 'gias_slim.csv')
     gias = {g['urn']: g for g in load(gias_path)} if os.path.exists(gias_path) else {}
+    in_mi = {r['urn'] for r in load(rc_path)}
     for r in rc:
         g = gias.get(r['urn'], {})
-        for c in ('la', 'region', 'mat'):
-            if not r.get(c) and g.get(c):
-                r[c] = g[c]
+        if r['urn'] not in in_mi:  # MI is the record; GIAS only fills gaps for schools not in it yet
+            for c in ('la', 'region', 'mat'):
+                if not r.get(c) and g.get(c):
+                    r[c] = g[c]
         r['town'], r['postcode'] = g.get('town', ''), g.get('postcode', '')
     if os.path.exists(daily_path):
         # carry newer grades onto the KS4 rows too
