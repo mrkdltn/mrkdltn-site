@@ -113,15 +113,16 @@ html.loaded .oe-loading{display:none}
   <div class="oe-hero-in oe">
     <div><div class="oe-pills"><span class="oe-pill c">FREE TOOL</span><span class="oe-pill g">3,298 SECONDARY SCHOOLS</span></div>
     <h1>Ofsted Explorer</h1>
-    <p class="lede">Look up any secondary school in England. See its report card beside its GCSE results, read against the national average, its 50 most similar schools and a contextual model.</p></div>
+    <p class="lede">Look up any secondary school in England. See its report card beside its GCSE results, read against the national average, its 50 most similar schools and a contextual model.</p>
+    <p class="lede-short">Any secondary school in England, read four ways.</p></div>
     <div class="oe-row" id="pick">
       <div class="oe-search">
         <input class="oe-input" id="oe-q" type="search" role="combobox" aria-expanded="false" aria-controls="oe-results" aria-autocomplete="list" autocomplete="off" aria-label="Search for a secondary school" placeholder="Search by school, town, local authority, trust, postcode or URN">
         <div class="oe-pop" id="oe-pop" hidden><ul id="oe-results" role="listbox" data-draw="results" data-source="ks4"></ul></div>
       </div>
-      <button class="oe-btn" id="oe-random" type="button">Show me another school</button>
+      <button class="oe-btn" id="oe-random" type="button" aria-label="Show me another school"><span class="oe-long">Show me another school</span><span class="oe-short" aria-hidden="true">Another</span></button>
     </div>
-    <p class="oe-hint">Opens on a school chosen at random. <span class="oe-loading">Loading schools…</span></p>
+    <p class="oe-hint">Opens on a school chosen at random. <span class="oe-fresh" hidden></span> <span class="oe-loading">Loading schools…</span></p>
   </div>
 </div>
 <nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#national">National picture</a><a href="#method">Method</a></div></nav>
@@ -129,7 +130,7 @@ html.loaded .oe-loading{display:none}
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
   <div class="oe-schoolhead"><div><p class="oe-school" data-draw="sname">—</p><p class="oe-meta" data-draw="smeta">—</p></div>
-    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-copy">Copy link to this school</button></div></div>
+    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-copy">Copy link</button></div></div>
   <div class="oe-kpis" data-draw="kpis"></div>
   <div class="oe-story" data-draw="story" data-source="school neigh stats"></div>
   <h2>Report card <span class="i" tabindex="0" data-tip="Ofsted's renewed framework (from November 2025) grades each evaluation area on five points: Exceptional, Strong standard, Expected standard, Needs attention and Urgent improvement. Safeguarding is Met or Not met. There is no overall grade.">i</span></h2>
@@ -175,6 +176,8 @@ html.loaded .oe-loading{display:none}
     <aside class="oe-geo" data-draw="geo" data-source="school neigh"></aside>
   </div>
 </section>
+<details id="oe-more" class="oe-more noprint">
+<summary><span class="t">The national picture</span><span class="s">Your official similar-schools list, every secondary on one chart, report card grades by deprivation, and how the replica checks out</span></summary>
 <section id="official" class="oe-card noprint">
   <h2>Compare with the official IDSR list <span class="i" tabindex="0" data-tip="Schools can see their official 50 similar schools in the IDSR and on the DfE schools platform. Paste their URNs here and the page averages their 2025/26 Attainment 8. Nothing you paste is saved or sent anywhere beyond this page's link.">i</span></h2>
   <p class="sub">Paste the URNs of your official similar schools, separated in any way.</p>
@@ -219,6 +222,7 @@ html.loaded .oe-loading{display:none}
     <tbody data-draw="valid"></tbody>
   </table></div>
 </section>
+</details>
 <section id="how" class="oe-card">
   <h2>How to read this</h2>
   <div class="oe-how">
@@ -233,7 +237,7 @@ html.loaded .oe-loading{display:none}
   <p><b>Similar schools, open replica.</b> Following the DfE and Ofsted technical note (16 July 2026): each factor is standardised against the national mean and standard deviation; schools are matched by weighted squared Euclidean distance; each school's 50 nearest neighbours form its group, and the comparator is their average Attainment 8. Published weights: prior attainment 0.46, FSM6 0.14, POLAR4 0.11, SEN support 0.09, pupil stability 0.06, IDACI 0.06, EHC plans 0.04, EAL 0.03, pupil numbers 0.02. Public proxies used: prior attainment profile of the 2023/24 GCSE cohort (carried from a predecessor school where the URN changed; estimated for 34 schools); disadvantaged and non-mobile shares of the 2025/26 GCSE cohort; Ofsted's pupil-based IDACI quintile; January 2026 census pupil numbers and EAL; January 2026 SEN support and EHC plans. POLAR4 is left out and the other weights rescaled. A gap counts as significant when it exceeds 1.96 standard errors (pupil-level spread 14.2 points, estimated from 2023/24 Progress 8 confidence intervals, plus the group's spread); "well above" or "well below" also needs a gap larger than one standard deviation of the group.</p>
   <p><b>Contextual model.</b> One regression of Attainment 8 on the same factors across all schools, in the spirit of the DfE's contextual value added measure of 2006 to 2010. It explains about three quarters of the variation between schools. A gap within 2 points is read as in line.</p>
   <p><b>Progress 8.</b> The last published figure, for 2023/24, carried from a predecessor school where the URN changed. The DfE did not publish it for 2024/25 or 2025/26.</p>
-  <p><b>Sources.</b> DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final. DfE, Schools, pupils and their characteristics, January 2026. DfE, Special educational needs in England, January 2026. Ofsted, management information, latest inspections as at 31 October 2026. DfE and Ofsted, Similar schools model for attainment: technical note. Ofsted, Considering the context of schools in challenging circumstances (2025/26).</p>
+  <p><b>Sources.</b> DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final. DfE, Schools, pupils and their characteristics, January 2026. DfE, Special educational needs in England, January 2026. Ofsted, management information, latest inspections as at 31 October 2026, with report cards published since then read from Ofsted's reports site each morning<span class="oe-fresh-src"></span>. DfE and Ofsted, Similar schools model for attainment: technical note. Ofsted, Considering the context of schools in challenging circumstances (2025/26).</p>
   <p><b>Limits.</b> Provisional results are revised in February 2027. None of these measures is a judgement on a school, and none should be read as one.</p>
 </details>
 <p class="oe-note noprint" style="margin-top:8px">Read the analysis behind this tool: <a href="/writing/ofsted-report-cards/">I checked every Ofsted report card. Results alone don't explain the gap.</a></p>

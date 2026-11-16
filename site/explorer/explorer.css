@@ -26,3 +26,70 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 /* search results sit above the sticky section menu (16 Nov 2026) */
 .oe-hero{z-index:30}
 .oe-pop{z-index:40}
+/* national sections fold (16 November 2026): open on wide screens, closed on phones */
+.oe-more{margin:0 0 14px}
+.oe-more>summary{list-style:none;cursor:pointer;background:#fff;padding:24px 36px;display:flex;flex-direction:column;gap:4px;position:relative}
+.oe-more>summary::-webkit-details-marker{display:none}
+.oe-more>summary .t{font-family:var(--display);font-size:30px;line-height:1.1;color:#0B1A2E}
+.oe-more>summary .s{font-size:15px;color:#55627A;max-width:70ch;padding-right:90px}
+.oe-more>summary::after{content:"Show";position:absolute;right:36px;top:28px;font-size:14px;color:#0B1A2E;border:1px solid #55627A;padding:8px 14px;border-radius:2px}
+.oe-more[open]>summary::after{content:"Hide"}
+.oe-more[open]>summary{margin-bottom:14px}
+.oe-more>summary:focus-visible{outline:2px solid #C9A24B;outline-offset:-2px}
+.oe-short,.lede-short{display:none}
+/* phone layout (16 November 2026): the school, its four numbers and the verdict come first */
+@media screen and (max-width:640px){
+  body.explorer .oe-hero-in{padding:14px 16px 16px;gap:10px}
+  body.explorer .oe-hero .oe-pills,body.explorer .oe-hero .lede,body.explorer .oe-hero .oe-hint{display:none}
+  body.explorer .oe-hero .lede-short{display:block;margin:0;font-size:15px;line-height:1.4;color:#DCE2EB}
+  body.explorer .oe-hero h1{font-size:28px;margin:0}
+  .oe-hero #pick{flex-wrap:nowrap;gap:8px;align-items:stretch}
+  .oe-hero .oe-search{flex:1 1 auto;min-width:0}
+  body.explorer .oe-hero .oe-input{padding:11px 12px;font-size:16px;min-height:46px}
+  body.explorer .oe-hero .oe-btn{padding:0 14px;min-height:46px;font-size:15px}
+  .oe-long{display:none}.oe-short{display:inline}
+  body.explorer .oe-main{padding-top:10px}
+  body.explorer .oe-card,body.explorer .oe-main .oe-card:first-of-type{padding:20px 16px 24px;margin:0 0 10px}
+  body.explorer .oe details#method{padding:20px 16px}
+  body.explorer .oe h2{font-size:24px}
+  body.explorer .oe-school{font-size:28px}
+  body.explorer .oe-meta{font-size:13px;line-height:1.5}
+  .oe-schoolhead{gap:12px;margin-bottom:14px}
+  .oe-actions{gap:8px}
+  body.explorer .oe-actions .oe-btn{flex:1 1 0;min-height:44px;padding:8px 10px;font-size:14px}
+  .oe-kpis{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  body.explorer .oe-kpi{padding:10px 12px}
+  body.explorer .oe-kpi b{font-size:28px}
+  .oe-kpi small{font-size:12px}
+  body.explorer .oe-verdict{padding:16px}
+  body.explorer .oe-verdict h3{font-size:22px}
+  .oe-verdict p{font-size:16px}
+  .oe-points{grid-template-columns:1fr}
+  /* the 50 similar schools: rank, school, A8, gap to its own group, achievement grade */
+  #oe-ntable th:nth-child(3),#oe-ntable td:nth-child(3),#oe-ntable th:nth-child(4),#oe-ntable td:nth-child(4),
+  #oe-ntable th:nth-child(6),#oe-ntable td:nth-child(6),#oe-ntable th:nth-child(7),#oe-ntable td:nth-child(7),
+  #oe-ntable th:nth-child(9),#oe-ntable td:nth-child(9){display:none}
+  #oe-ntable td{padding:11px 5px}
+  #oe-ntable th{padding:8px 5px}
+  #oe-ntable .oe-band{font-size:11px;padding:2px 6px}
+  .chip{min-height:42px}
+  body.explorer .oe-input.sm{min-height:44px;font-size:16px;max-width:none}
+  body.explorer .oe-btn.sq{width:44px;height:44px}
+  .oe-nav a{padding:13px 10px 11px;font-size:14px}
+  .oe-more>summary{padding:20px 16px}
+  .oe-more>summary .t{font-size:24px}
+  .oe-more>summary .s{padding-right:0;font-size:14px}
+  .oe-more>summary::after{position:static;align-self:flex-start;margin-top:10px;min-height:20px}
+}
+/* phones: name, then the verdict, then the four numbers, then the detail */
+@media screen and (max-width:640px){
+  #school{display:flex;flex-direction:column}
+  #school>.oe-schoolhead{order:0}
+  #school>.oe-story{display:contents}
+  #school>.oe-story>.oe-verdict{order:1}
+  #school>.oe-kpis{order:2;margin-top:12px}
+  #school>.oe-story>.oe-points{order:3;margin-top:0}
+  #school>.oe-story>.oe-caveat{order:4;margin-bottom:22px}
+  #school>*:not(.oe-schoolhead):not(.oe-story):not(.oe-kpis){order:5}
+  body.explorer .oe-meta{font-size:12.5px}
+}
