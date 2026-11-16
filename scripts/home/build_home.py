@@ -120,6 +120,16 @@ THUMBS = {'p8': '/assets/writing/progress-8.webp', 'car': '/assets/writing/curri
 
 e = html.escape
 
+# How far each stop's thread has turned from midnight towards brass (0 = #0B1A2E, 1 = #C9A24B).
+WARM = {'00-facade': 0, '01-corridor': 0, '02-classroom': 0, '03-book': 0, '05-canteen': 0.08,
+        '04-office': 0.25, '06-playground': 0.62, '07-street': 1}
+
+
+def thread_colour(key):
+    t = WARM[key]
+    a, b = (0x0B, 0x1A, 0x2E), (0xC9, 0xA2, 0x4B)
+    return '#%02X%02X%02X' % tuple(round(x + (y - x) * t) for x, y in zip(a, b))
+
 
 def badges(spec):
     out = []
@@ -188,7 +198,7 @@ def card(st):
 
 
 def hero(st):
-    return ('<section class="stop hero" data-ground="%s">%s'
+    return ('<section class="stop hero" data-ground="%s" style="--th:%s">%s'
             '<div class="hero-copy"><h1><span>Leading schools.</span> <span>Challenging assumptions.</span> <span>Building what comes next.</span></h1></div>'
             '</div>'
             '<div class="hero-cards">'
@@ -201,12 +211,12 @@ def hero(st):
             '<figcaption>Achievement grades, 756 secondary report cards</figcaption></figure></div>'
             '<p class="acts"><a class="btn" href="/explorer/">Open the Explorer</a><span class="n">3,298 secondary schools</span></p></div>'
             '</div><svg class="seam" aria-hidden="true"><path class="th"/><circle class="tip" r="4.5"/></svg></section>') % (
-        st['ground'], plate(st, 0), LINKEDIN, LI_SVG, ACH)
+        st['ground'], thread_colour(st['key']), plate(st, 0), LINKEDIN, LI_SVG, ACH)
 
 
 def stop(st, i):
-    return ('<section class="stop" data-ground="%s">%s%s</div><svg class="seam" aria-hidden="true"><path class="th"/><circle class="tip" r="4.5"/></svg></section>') % (
-        st['ground'], plate(st, i), card(st))
+    return ('<section class="stop" data-ground="%s" style="--th:%s">%s%s</div><svg class="seam" aria-hidden="true"><path class="th"/><circle class="tip" r="4.5"/></svg></section>') % (
+        st['ground'], thread_colour(st['key']), plate(st, i), card(st))
 
 
 NATIONAL = '''<section class="national" data-ground="#0B1A2E">

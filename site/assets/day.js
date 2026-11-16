@@ -110,6 +110,14 @@
       if (narrow && h > 80) d = 'M' + x1 + ',0 V14 H' + gut + ' V' + (H - 14) + ' H' + x2 + ' V' + H;
       else { var m = Math.round(H / 2); d = 'M' + x1 + ',0 V' + m + ' H' + x2 + ' V' + H; }
       it.path.setAttribute('d', d);
+      // the seam carries the colour of the light from one plate to the next
+      var ca = getComputedStyle(st).getPropertyValue('--th').trim() || '#C9A24B';
+      var cb = to ? (getComputedStyle(to.st).getPropertyValue('--th').trim() || ca) : '#C9A24B';
+      var gid = 'sg' + it.i, defs = it.svg.querySelector('defs');
+      if (!defs) { defs = document.createElementNS(NS, 'defs'); it.svg.insertBefore(defs, it.svg.firstChild); }
+      defs.innerHTML = '<linearGradient id="' + gid + '" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="' + H + '"><stop offset="0" stop-color="' + ca + '"/><stop offset="1" stop-color="' + cb + '"/></linearGradient>';
+      it.path.style.stroke = 'url(#' + gid + ')';
+      it.tip.style.fill = cb;
       it.path.style.strokeWidth = 2.4;
       it.smp = sample(it.path, 80);
       it.path.style.strokeDasharray = it.smp.L + ' ' + it.smp.L;
