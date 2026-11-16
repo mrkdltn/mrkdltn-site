@@ -92,9 +92,9 @@ def search_day(day):
     d = day.strftime('%d-%m-%Y')
     found, start = [], 0
     while True:
-        html = get(f'{BASE}/search?level_1_types=1&latest_report_date_start={d}&latest_report_date_end={d}'
+        page = get(f'{BASE}/search?level_1_types=1&latest_report_date_start={d}&latest_report_date_end={d}'
                    f'&status%5B0%5D=1&start={start}&rows=100&sort=date&order=desc')
-        items = re.findall(r'<li class="search-result">(.*?)</li>\s*(?=<li class="search-result">|</ul>)', html, re.S)
+        items = re.findall(r'<li class="search-result">(.*?)</li>\s*(?=<li class="search-result">|</ul>)', page, re.S)
         for it in items:
             href = re.search(r'href="(/provider/\d+/(\d+))"', it)
             name = re.search(r'<a href="[^"]+">([^<]+)</a>', it)
