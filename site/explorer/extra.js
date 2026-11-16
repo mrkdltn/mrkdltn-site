@@ -178,3 +178,14 @@
   const links = [...document.querySelectorAll('.oe-nav a')]; if ('IntersectionObserver' in window && links.length) { const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); }); }, {rootMargin: '-30% 0px -60% 0px'}); links.forEach((a) => { const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) io.observe(t); }); }
 })();
 document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) t.scrollIntoView({behavior: 'smooth', block: 'start'}); }));
+
+// Phone layout (16 November 2026): the national sections sit in a fold, open on wide screens and closed on
+// phones. Charts drawn while the fold is closed have no width, so redraw them when it opens; a section-menu
+// link into the fold opens it first.
+(function () {
+  const more = document.getElementById('oe-more'); if (!more) return;
+  if (window.matchMedia('(min-width: 641px)').matches) more.open = true;
+  more.addEventListener('toggle', () => { if (more.open) ['scatter', 'idaci', 'valid', 'offnote'].forEach((n) => dash.draw(n)); });
+  document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click', () => {
+    const t = document.getElementById(a.getAttribute('href').slice(1)); if (t && more.contains(t) && !more.open) more.open = true; }, true));
+})();
