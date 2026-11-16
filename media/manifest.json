@@ -1,0 +1,101 @@
+{
+ "about": "Media fetched and encoded by .github/workflows/fetch-media.yml. Add an entry and push; existing outputs are skipped.",
+ "items": [
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215208_ae265538-e748-4eab-95a3-e698d7e20adb.mp4",
+   "out": "site/assets/video/00-facade.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215240_be6b33a1-c7b7-4b17-b41c-ae18128ce9a9.mp4",
+   "out": "site/assets/video/01-corridor.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215252_3eb228ef-9476-4c72-accc-851cdc69e222.mp4",
+   "out": "site/assets/video/02-classroom.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215308_7b826456-7615-4dfd-856d-e5703aa80944.mp4",
+   "out": "site/assets/video/03-book.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215320_34aef756-13c4-4ffd-9836-fb21ecc92354.mp4",
+   "out": "site/assets/video/04-office.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215334_81cd0ee3-d77b-420d-98c7-d0e8c8c74693.mp4",
+   "out": "site/assets/video/05-canteen.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215347_bc856364-5a4b-4ef2-a097-07fcbd8a4e94.mp4",
+   "out": "site/assets/video/06-playground.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215401_5c83002b-f57a-4b8b-a3e0-6852a6c42005.mp4",
+   "out": "site/assets/video/07-street.mp4",
+   "scale": "1280:720",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_214732_52d3d5f7-ed3e-4dc8-b630-8ecdf948b857.mp4",
+   "out": "site/assets/video/00-facade-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215415_2a7202ec-68f2-42dc-8a9d-e42c15ef1331.mp4",
+   "out": "site/assets/video/01-corridor-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215429_0958de23-6c81-4aa8-95c0-286facc96595.mp4",
+   "out": "site/assets/video/02-classroom-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215443_9bd4e96c-18c9-43a3-9a27-6a8aaf99fce0.mp4",
+   "out": "site/assets/video/03-book-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215456_da3b84b5-c2d8-4067-bdb1-53eb76943154.mp4",
+   "out": "site/assets/video/04-office-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215510_9afcf19f-01eb-4d28-bf14-d07f79128184.mp4",
+   "out": "site/assets/video/05-canteen-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215524_ae02fdc7-1ee1-4fd8-bc8c-2340738e1504.mp4",
+   "out": "site/assets/video/06-playground-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  },
+  {
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3LpmYlV8KNg69ThYgu2CRly0XPz/hf_20261116_215538_d8742e5f-ce23-4989-af53-b346ea9e54d5.mp4",
+   "out": "site/assets/video/07-street-v.mp4",
+   "scale": "720:960",
+   "note": "Higgsfield Seedance 2.0, 5 s, image-to-video from the plate, 16 November 2026"
+  }
+ ]
+}
