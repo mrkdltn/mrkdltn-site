@@ -81,3 +81,15 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
   .oe-more>summary .s{padding-right:0;font-size:14px}
   .oe-more>summary::after{position:static;align-self:flex-start;margin-top:10px;min-height:20px}
 }
+/* phones: name, then the verdict, then the four numbers, then the detail */
+@media screen and (max-width:640px){
+  #school{display:flex;flex-direction:column}
+  #school>.oe-schoolhead{order:0}
+  #school>.oe-story{display:contents}
+  #school>.oe-story>.oe-verdict{order:1}
+  #school>.oe-kpis{order:2;margin-top:12px}
+  #school>.oe-story>.oe-points{order:3;margin-top:0}
+  #school>.oe-story>.oe-caveat{order:4;margin-bottom:22px}
+  #school>*:not(.oe-schoolhead):not(.oe-story):not(.oe-kpis){order:5}
+  body.explorer .oe-meta{font-size:12.5px}
+}

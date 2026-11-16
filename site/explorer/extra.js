@@ -173,7 +173,7 @@
 
   // ---------- actions ----------
   const pr = document.getElementById('oe-print'); if (pr) pr.addEventListener('click', () => { const s = S(); const d = document.getElementById('oe-printdate'); if (d) d.textContent = (s ? s.name + ' · ' : '') + 'generated ' + d3.timeFormat('%-d %B %Y')(new Date()) + ' · mrkdltn.com/explorer/#urn=' + (s ? s.urn : ''); const t = document.title; if (s) document.title = 'Ofsted Explorer - ' + s.name; window.print(); document.title = t; });
-  const cp = document.getElementById('oe-copy'); if (cp) cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); cp.textContent = 'Link copied'; } catch (e) { cp.textContent = location.href; } setTimeout(() => { cp.textContent = 'Copy link to this school'; }, 1800); });
+  const cp = document.getElementById('oe-copy'); if (cp) cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); cp.textContent = 'Link copied'; } catch (e) { cp.textContent = location.href; } setTimeout(() => { cp.textContent = 'Copy link'; }, 1800); });
   // section nav highlight
   const links = [...document.querySelectorAll('.oe-nav a')]; if ('IntersectionObserver' in window && links.length) { const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); }); }, {rootMargin: '-30% 0px -60% 0px'}); links.forEach((a) => { const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) io.observe(t); }); }
 })();
