@@ -331,7 +331,7 @@
         const nn = document.createElement('span'); nn.className = 'gc'; top.append(t, nn); g.append(top);
         const foot = document.createElement('p'); foot.className = 'gn';
         if (!dist || dist.n < 10) { const e = document.createElement('div'); e.className = 'bar empty'; g.append(e);
-          foot.textContent = why || (dist ? (dist.n ? 'Only ' + dist.n + ' with this area graded: too few to show' : 'None with this area graded') : ''); g.append(foot); gs.append(g); return; }
+          foot.textContent = why || (dist ? (dist.n ? 'Only ' + dist.n + (dist.n === 1 ? ' school' : ' schools') + ': too few to show' : 'No schools with this area graded') : ''); g.append(foot); gs.append(g); return; }
         nn.textContent = cnt(dist.n) + ' schools';
         const wrap = document.createElement('div'); wrap.className = 'barw';
         const bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('role', 'img');
