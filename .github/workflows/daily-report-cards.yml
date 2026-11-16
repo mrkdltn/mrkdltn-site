@@ -1,0 +1,55 @@
+name: Daily report cards
+
+# Reads report cards Ofsted has published in the last few days and commits any new ones.
+# Cloudflare Pages rebuilds the Explorer's data (scripts/build_data.py) on every push to main.
+on:
+  schedule:
+    - cron: '17 6 * * *'   # 06:17 UTC daily (06:17 GMT, 07:17 BST)
+  workflow_dispatch:
+    inputs:
+      since:
+        description: 'First publication date to read (YYYY-MM-DD). Blank = three days ago.'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-report-cards
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install parser
+        run: pip install pypdf==5.*
+
+      - name: Read newly published report cards
+        run: |
+          SINCE="${{ github.event.inputs.since }}"
+          if [ -z "$SINCE" ]; then SINCE=$(date -u -d '3 days ago' +%F); fi
+          python3 scripts/fetch_reports.py --since "$SINCE"
+
+      - name: Check the data still builds
+        run: |
+          python3 scripts/build_data.py
+          npm install --no-save --silent d3-dsv@3
+          node scripts/test_loader.mjs
+
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet -- data/raw/reports_daily.csv && ! git ls-files --others --exclude-standard -- data/raw | grep -q .; then
+            echo "No new report cards."; exit 0; fi
+          git config user.name "mrkdltn data bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/reports_daily.csv
+          git commit -m "Report cards published to $(date -u +%F)"
+          git push

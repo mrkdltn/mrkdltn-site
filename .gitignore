@@ -1,0 +1,7 @@
+# built by scripts/build_data.py on every Cloudflare build
+site/explorer/data/ks4.json
+site/explorer/data/rc.json
+site/explorer/data/nn/
+site/explorer/data/build.json
+node_modules/
+__pycache__/
