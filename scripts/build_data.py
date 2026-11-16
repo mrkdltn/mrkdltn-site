@@ -101,6 +101,16 @@ def main():
                 by[d['urn']] = merged
                 daily_added += 1
         rc = list(by.values())
+    # Get Information about Schools: fill gaps for new schools; town and postcode for search
+    gias_path = os.path.join(RAW, 'gias_slim.csv')
+    gias = {g['urn']: g for g in load(gias_path)} if os.path.exists(gias_path) else {}
+    for r in rc:
+        g = gias.get(r['urn'], {})
+        for c in ('la', 'region', 'mat'):
+            if not r.get(c) and g.get(c):
+                r[c] = g[c]
+        r['town'], r['postcode'] = g.get('town', ''), g.get('postcode', '')
+    if os.path.exists(daily_path):
         # carry newer grades onto the KS4 rows too
         k_by = {r['urn']: r for r in ks4}
         for r in rc:
@@ -125,7 +135,7 @@ def main():
     ks4_out = {'cols': cols, 'codes': codes, 'rows': encode(ks4, cols, codes, None, numeric)}
 
     # --- report cards, all phases ---
-    rcols = ['urn', 'name', 'phase', 'region', 'la', 'mat', 'idaci_q', 'pupils', 'insp_date'] + \
+    rcols = ['urn', 'name', 'phase', 'region', 'la', 'mat', 'town', 'postcode', 'idaci_q', 'pupils', 'insp_date'] + \
             [c for c in GRADE_COLS if c in rc[0]]
     rcodes = {c: GRADES for c in rcols if c in GRADE_COLS}
     rcodes['phase'] = sorted({r['phase'] for r in rc})
@@ -163,7 +173,7 @@ def main():
         'secondaries': len(ks4), 'report_cards': len(rc), 'daily_reports_merged': daily_added,
         'latest_inspection': rc_dates[-1] if rc_dates else None,
         'latest_published': latest_published,
-        'sources': {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path) if os.path.exists(p)},
+        'sources': {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path) if os.path.exists(p)},
     }
     with open(os.path.join(OUT, 'build.json'), 'w') as f:
         json.dump(meta, f, indent=1)
@@ -173,7 +183,7 @@ def main():
 
     # a page and share image per school
     import build_pages
-    build_pages.main(ks4)
+    build_pages.main(ks4, rc)
 
 
 if __name__ == '__main__':

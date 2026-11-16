@@ -111,13 +111,13 @@ html.loaded .oe-loading{display:none}
 </style>
 <div class="oe-hero noprint"><div class="oe-hero-art" data-draw="heroart" data-source="ks4" aria-hidden="true"></div>
   <div class="oe-hero-in oe">
-    <div><div class="oe-pills"><span class="oe-pill c">FREE TOOL</span><span class="oe-pill g">3,298 SECONDARY SCHOOLS</span></div>
+    <div><div class="oe-pills"><span class="oe-pill c">FREE TOOL</span><span class="oe-pill g">EVERY SCHOOL WITH A REPORT CARD</span></div>
     <h1>Ofsted Explorer</h1>
-    <p class="lede">Look up any secondary school in England. See its report card beside its GCSE results, read against the national average, its 50 most similar schools and a contextual model.</p>
-    <p class="lede-short">Any secondary school in England, read four ways.</p></div>
+    <p class="lede">Look up any school in England with an Ofsted report card, and any secondary school. See each area of the report card beside comparable schools and, for secondaries, GCSE results read against the national average, the 50 most similar schools and a contextual model.</p>
+    <p class="lede-short">Report cards in context, and every secondary read four ways.</p></div>
     <div class="oe-row" id="pick">
       <div class="oe-search">
-        <input class="oe-input" id="oe-q" type="search" role="combobox" aria-expanded="false" aria-controls="oe-results" aria-autocomplete="list" autocomplete="off" aria-label="Search for a secondary school" placeholder="Search by school, town, local authority, trust, postcode or URN">
+        <input class="oe-input" id="oe-q" type="search" role="combobox" aria-expanded="false" aria-controls="oe-results" aria-autocomplete="list" autocomplete="off" aria-label="Search for a school" placeholder="Search by school, town, local authority, trust, postcode or URN">
         <div class="oe-pop" id="oe-pop" hidden><ul id="oe-results" role="listbox" data-draw="results" data-source="ks4"></ul></div>
       </div>
       <button class="oe-btn" id="oe-random" type="button" aria-label="Show me another school"><span class="oe-long">Show me another school</span><span class="oe-short" aria-hidden="true">Another</span></button>
@@ -125,7 +125,7 @@ html.loaded .oe-loading{display:none}
     <p class="oe-hint">Opens on a school chosen at random. <span class="oe-fresh" hidden></span> <span class="oe-loading">Loading schools…</span></p>
   </div>
 </div>
-<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#national">National picture</a><a href="#method">Method</a></div></nav>
+<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#national">National picture</a><a href="#method">Method</a></div></nav>
 <main class="oe-main"><div class="oe">
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
@@ -135,8 +135,14 @@ html.loaded .oe-loading{display:none}
   <div class="oe-story" data-draw="story" data-source="school neigh stats"></div>
   <h2>Report card <span class="i" tabindex="0" data-tip="Ofsted's renewed framework (from November 2025) grades each evaluation area on five points: Exceptional, Strong standard, Expected standard, Needs attention and Urgent improvement. Safeguarding is Met or Not met. There is no overall grade.">i</span></h2>
   <div class="oe-grades" data-draw="sgrades"></div>
-  <h2 style="margin-top:var(--cds-gap-lg)">Intake and context <span class="i" tabindex="0" data-tip="The public stand-ins for the factors in the DfE and Ofsted model. Prior attainment carries almost half the weight (0.46), then disadvantage (0.14). Hover over each for its weight and source.">i</span></h2>
+  <h2 class="oe-ks4h" style="margin-top:var(--cds-gap-lg)">Intake and context <span class="i" tabindex="0" data-tip="The public stand-ins for the factors in the DfE and Ofsted model. Prior attainment carries almost half the weight (0.46), then disadvantage (0.14). Hover over each for its weight and source.">i</span></h2>
   <div class="oe-ctx" data-draw="sctx"></div>
+</section>
+<section id="areas" class="oe-card" data-source="areas">
+  <h2>Each area beside comparable schools <span class="i" tabindex="0" data-tip="How schools of the same phase are graded in each area of the report card: across England, among schools whose pupils come from similarly deprived areas and, for secondaries, among the 50 similar schools. It describes where the grade sits; it does not say whether it is right.">i</span></h2>
+  <p class="sub" data-draw="areasub" data-source="school"></p>
+  <div class="oe-areas" data-draw="areas" data-source="areas"></div>
+  <div class="oe-legend"><span><i style="background:#CE1E02"></i>Urgent improvement</span><span><i style="background:#FF8341"></i>Needs attention</span><span><i style="background:#5CD168"></i>Expected standard</span><span><i style="background:#33903C"></i>Strong standard</span><span><i style="background:#0176E0"></i>Exceptional</span></div>
 </section>
 <section id="lenses" class="oe-card">
   <h2>One set of results, read four ways <span class="i" tabindex="0" data-tip="The same Attainment 8 score looks very different depending on what it is compared with. Hover over each row to see what that comparison controls for.">i</span></h2>

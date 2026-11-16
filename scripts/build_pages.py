@@ -24,7 +24,7 @@ ORIGIN = 'https://mrkdltn.com'
 
 AREAS = [('g_ach', 'Achievement'), ('g_ct', 'Curriculum and teaching'), ('g_ab', 'Attendance and behaviour'),
          ('g_pd', 'Personal development'), ('g_inc', 'Inclusion'), ('g_lg', 'Leadership and governance'),
-         ('g_p16', 'Post-16 provision')]
+         ('g_ey', 'Early years'), ('g_p16', 'Post-16 provision')]
 GRADE_COLOUR = {'Exceptional': '#0176E0', 'Strong standard': '#33903C', 'Expected standard': '#5CD168',
                 'Needs attention': '#FF8341', 'Urgent improvement': '#CE1E02'}
 GROUND, PANEL, INK, MUTED, LINE, BRASS = '#0B1A2E', '#13263F', '#F5F1E8', '#A8B5C8', '#2B3C55', '#C9A24B'
@@ -45,8 +45,15 @@ def long_date(iso):
     return f'{d.day} {d.strftime("%B %Y")}'
 
 
+PHASE_PLURAL = {'Primary': 'primary schools', 'Secondary': 'secondary schools', 'Special': 'special schools',
+                'Alternative provision': 'alternative provision schools', 'Nursery': 'nursery schools'}
+
+
 def describe(r):
-    where = r['la'] or 'England'
+    where = r.get('la') or 'England'
+    if r.get('rc_only'):
+        return (f"{r['name']} ({where}): its Ofsted report card, each area set beside other "
+                f"{PHASE_PLURAL.get(r.get('phase'), 'schools')} in England and those with similarly deprived intakes. Built from public data.")
     return (f"{r['name']} ({where}): its Ofsted report card beside its GCSE results, read against "
             f"its 50 most similar schools, the national average and a contextual model. Built from public data.")
 
@@ -70,7 +77,7 @@ def page(template, r, has_card):
         (r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{e(desc)}">'),
         (r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{img}">'
          '\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">'
-         f'\n<meta property="og:image:alt" content="{e("Ofsted report card and Attainment 8 for " + name)}">'
+         f'\n<meta property="og:image:alt" content="{e(("Ofsted report card for " if r.get("rc_only") else "Ofsted report card and Attainment 8 for ") + name)}">'
          f'\n<meta property="og:url" content="{url}">'),
     ]
     for pat, rep in subs:
@@ -119,7 +126,7 @@ def card(r, nat_mean, fonts):
     lines = lines[:2]
     for ln in lines:
         d.text((M, y), ln, font=f, fill=INK); y += int(size * 1.12)
-    sub = ' · '.join(x for x in (r['la'], 'Secondary') if x)
+    sub = ' · '.join(x for x in (r.get('la'), r.get('phase') or 'Secondary') if x)
     d.text((M, y + 8), sub, font=sans(24, 450), fill=MUTED)
     top = y + 64
     d.line([(M, top), (M + 72, top)], fill=BRASS, width=2)
@@ -147,8 +154,22 @@ def card(r, nat_mean, fonts):
         d.text((M, y + 38), 'Not yet inspected under', font=sans(24, 450), fill=INK)
         d.text((M, y + 70), 'the report card framework.', font=sans(24, 450), fill=INK)
 
-    # Attainment 8, right column
     x = 720
+    if r.get('rc_only'):
+        yy = top + 22
+        d.text((x, yy), 'Phase', font=sans(20, 600), fill=MUTED)
+        d.text((x, yy + 26), r.get('phase') or '', font=disp(60 if len(r.get('phase') or '') < 12 else 44), fill=INK)
+        q = str(r.get('idaci_q') or '').split('.')[0]
+        if q in ('1', '2', '3', '4', '5'):
+            d.text((x, yy + 120), "Pupils' deprivation fifth", font=sans(21, 450), fill=MUTED)
+            d.text((x + 260, yy + 120), f'{q} of 5', font=sans(21, 650), fill=INK)
+            d.text((x, yy + 153), '1 is least deprived', font=sans(17, 450), fill=MUTED)
+        d.line([(M, H - 64), (W - M, H - 64)], fill=LINE, width=1)
+        d.text((M, H - 46), 'Built from public Ofsted data. A reading of the data, not a judgement on the school.',
+               font=sans(17, 450), fill=MUTED)
+        return im.quantize(colors=96, method=2, dither=0)
+
+    # Attainment 8, right column
     a8, ss = fnum(r.get('a8')), fnum(r.get('ss_mean'))
     yy = top + 22
     d.text((x, yy), 'Attainment 8, 2025/26', font=sans(20, 600), fill=MUTED)
@@ -200,7 +221,22 @@ def load_fonts():
 
 # ---------- build ----------
 
-def main(rows, only=None):
+_FONTS = None
+
+
+def _draw(job):
+    global _FONTS
+    r, nat_mean, path = job
+    if _FONTS is None:
+        _FONTS = load_fonts()
+    card(r, nat_mean, _FONTS).save(path, optimize=True)
+    return 1
+
+
+def main(rows, rc_rows=(), only=None):
+    have = {r['urn'] for r in rows}
+    extra = [dict(r, rc_only='yes') for r in rc_rows if r['urn'] not in have]
+    rows = list(rows) + sorted(extra, key=lambda r: int(r['urn']))
     with open(os.path.join(EXPLORER, 'index.html'), encoding='utf-8') as f:
         template = f.read()
     try:
@@ -208,22 +244,29 @@ def main(rows, only=None):
     except Exception as ex:  # Pillow missing: pages still build
         print('school pages: no share images (', ex, ')')
         fonts = None
-    diffs = [(fnum(r.get('a8')), fnum(r.get('nat_diff'))) for r in rows]
+    diffs = [(fnum(r.get('a8')), fnum(r.get('nat_diff'))) for r in rows if not r.get('rc_only')]
     nats = [a - n for a, n in diffs if a is not None and n is not None]
     nat_mean = round(sum(nats) / len(nats), 2) if nats else None
 
+    sample = int(os.environ.get('OE_PAGES_SAMPLE') or 0)
+    if sample and not only:
+        only = {r['urn'] for r in rows[:sample]}
     out = os.path.join(EXPLORER, 'school')
-    n_img = 0
+    jobs, n_pages = [], 0
     for r in rows:
         if only and r['urn'] not in only:
             continue
         d = os.path.join(out, r['urn']); os.makedirs(d, exist_ok=True)
-        has_card = False
         if fonts:
-            card(r, nat_mean, fonts).save(os.path.join(d, 'card.png'), optimize=True)
-            has_card, n_img = True, n_img + 1
+            jobs.append((r, nat_mean, os.path.join(d, 'card.png')))
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f:
-            f.write(page(template, r, has_card))
+            f.write(page(template, r, bool(fonts)))
+        n_pages += 1
+    n_img = 0
+    if jobs:
+        from concurrent.futures import ProcessPoolExecutor
+        with ProcessPoolExecutor(max_workers=os.cpu_count() or 2) as ex:
+            n_img = sum(ex.map(_draw, jobs, chunksize=64))
 
     today = datetime.date.today().isoformat()
     urls = [ORIGIN + p for p in STATIC_PAGES] + [f'{ORIGIN}/explorer/school/{r["urn"]}/' for r in rows]
@@ -232,11 +275,12 @@ def main(rows, only=None):
         for u in urls:
             f.write(f'<url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n')
         f.write('</urlset>\n')
-    print(f'school pages: {len(rows) if not only else len(only)} pages, {n_img} share images, England A8 mean {nat_mean}')
+    print(f'school pages: {n_pages} pages ({len(extra)} without results), {n_img} share images, England A8 mean {nat_mean}')
 
 
 if __name__ == '__main__':
     import sys, csv
     sys.path.insert(0, HERE)
     rows = list(csv.DictReader(open(os.path.join(HERE, '..', 'data', 'raw', 'ks4_model_v3.csv'), encoding='utf-8')))
-    main(rows, only=set(sys.argv[1:]) or None)
+    rc = list(csv.DictReader(open(os.path.join(HERE, '..', 'data', 'raw', 'ofsted_rc.csv'), encoding='utf-8')))
+    main(rows, rc, only=set(sys.argv[1:]) or None)
