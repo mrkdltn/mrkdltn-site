@@ -20,7 +20,7 @@
     const pc = nq.replace(/ /g, '');
     const out = [];
     for (const r of rows) {
-      const name = norm(r.name), hay = name + ' | ' + norm(r.la) + ' | ' + norm(r.district) + ' | ' + norm(r.pcon) + ' | ' + norm(r.region) + ' | ' + norm(r.mat) + ' | ' + norm(r.postcode) + ' | ' + r.urn;
+      const name = norm(r.name), hay = name + ' | ' + norm(r.la) + ' | ' + norm(r.town) + ' | ' + norm(r.district) + ' | ' + norm(r.pcon) + ' | ' + norm(r.region) + ' | ' + norm(r.mat) + ' | ' + norm(r.postcode) + ' | ' + r.urn;
       let score = 0;
       if (r.urn === nq) score = 1000;
       else if (pc.length >= 3 && norm(r.postcode).replace(/ /g, '').startsWith(pc)) score = 600;
@@ -37,13 +37,21 @@
     out.sort((a, b) => b[0] - a[0] || a[1].name.localeCompare(b[1].name));
     return out.slice(0, 12).map((x) => x[1]);
   };
+  // every searchable school: secondaries with results, plus every other school with a report card
+  OE.pool = () => { const k = dash.data('ks4'), o = dash.data('ofsted'); if (k.status !== 'ok') return null;
+    const od = o.status === 'ok' ? o.data : null; if (OE._pool && OE._pool.k === k.data && OE._pool.o === od) return OE._pool.rows;
+    const have = new Set(k.data.map((r) => r.urn));
+    const extra = od ? od.filter((r) => !have.has(r.urn)).map((r) => Object.assign({rc_only: 'yes'}, r)) : [];
+    const rows = k.data.concat(extra); OE._pool = {k: k.data, o: od, rows}; return rows; };
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
 
   // ---------- calcs ----------
   dash.calc('national', {inputs: ['ks4'], title: 'National average Attainment 8', description: 'Pupil-weighted mean Attainment 8, mainstream state-funded secondaries, 2025/26 provisional.',
     fn: (ks4) => { let s = 0, n = 0; ks4.forEach((r) => { const a = +r.a8, p = +r.pupils; if (a >= 0 && p > 0) { s += a * p; n += p; } }); return n ? Math.round(s / n * 10) / 10 : null; }});
-  dash.calc('school', {inputs: ['ks4'], title: 'Selected school', description: 'The row for the school chosen in the search.',
-    fn: (ks4) => { const u = String(dash.params().urn || ''); return u ? ks4.filter((r) => r.urn === u) : []; }});
+  dash.calc('school', {inputs: ['ks4', 'ofsted'], title: 'Selected school', description: 'The row for the school chosen in the search: its results row for a secondary, otherwise its report card row.',
+    fn: (ks4, ofsted) => { const u = String(dash.params().urn || ''); if (!u) return [];
+      const k = ks4.find((r) => r.urn === u); if (k) return [Object.assign({phase: 'Secondary'}, k)];
+      const o = ofsted.find((r) => r.urn === u); return o ? [Object.assign({rc_only: 'yes'}, o)] : []; }});
   dash.calc('neigh', {inputs: ['ks4'], title: 'The 50 similar schools (replica)', description: 'Neighbours of the selected school in the open replica, sorted by Attainment 8.',
     fn: (ks4) => { const u = String(dash.params().urn || ''); const me = ks4.find((r) => r.urn === u); if (!me) return []; const ids = new Set(String(me.nn).split(' ')); return ks4.filter((r) => ids.has(r.urn)).sort((a, b) => +b.a8 - +a.a8); }});
   dash.calc('official', {inputs: ['ks4'], title: 'Official IDSR list comparison', description: 'Average 2025/26 Attainment 8 of the URNs pasted from the IDSR.',
@@ -75,6 +83,17 @@
       return [1, 2, 3, 4, 5].map((q) => { const rows = ofsted.filter((r) => r.phase === ph && String(r.idaci_q) === String(q) && r[ar] && r[ar] !== 'Not applicable'); const o = {quintile: String(q), n: rows.length};
         GORDER.forEach((g) => { o[g] = rows.filter((r) => r[ar] === g).length; }); return o; }); }});
 
+  // each area of the school's report card beside comparable schools
+  const AREAS_ALL = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16 provision']];
+  OE.AREAS_ALL = AREAS_ALL;
+  dash.calc('areas', {inputs: ['ofsted', 'school', 'neigh'], title: 'Report card areas beside comparable schools', description: 'For each graded area, how schools of the same phase are graded in England, in the same IDACI quintile of pupils and, for secondaries, among the 50 similar schools.',
+    fn: (ofsted, school, neigh) => { const r = school && school[0]; if (!r) return [];
+      const ph = r.phase || 'Secondary', q = String(r.idaci_q || '');
+      const same = ofsted.filter((x) => x.phase === ph), fifth = q ? same.filter((x) => String(x.idaci_q) === q) : null;
+      const sim = r.rc_only ? null : neigh;
+      const dist = (rows, k) => { if (!rows) return null; const g = rows.filter((x) => GC[x[k]]); const o = {n: g.length}; GORDER.forEach((G) => { o[G] = g.filter((x) => x[k] === G).length; }); return o; };
+      return AREAS_ALL.filter(([k]) => GC[r[k]]).map(([k, lab]) => ({area: lab, key: k, grade: r[k], phase: ph, quintile: q, england: dist(same, k), fifth: dist(fifth, k), similar: dist(sim, k)})); }});
+
   // ---------- controls (listen; set params, value, hidden, aria only) ----------
   const q = document.getElementById('oe-q'), pop = document.getElementById('oe-pop');
   const open = (on) => { if (pop) pop.hidden = !on; if (q) q.setAttribute('aria-expanded', on ? 'true' : 'false'); };
@@ -105,8 +124,8 @@
 })();
 
 (function () {
-  const {GC, BANDC, num, f1, fs, P, motion} = window.OE; const OE = window.OE;
-  const AREAS = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_p16','Post-16'],['g_sg','Safeguarding']];
+  const {GC, GORDER, BANDC, num, f1, fs, P, motion} = window.OE; const OE = window.OE;
+  const AREAS = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16 provision'],['g_sg','Safeguarding']];
   const GTIP = {'Exceptional': 'Highest of the five grades.', 'Strong standard': 'Second highest of the five grades.', 'Expected standard': 'The middle grade: the standard Ofsted expects.', 'Needs attention': 'Second lowest of the five grades.', 'Urgent improvement': 'Lowest of the five grades.', 'Met': 'Safeguarding is graded Met or Not met.', 'Not met': 'Safeguarding is graded Met or Not met.'};
   const dash_ = (el) => { el.textContent = '—'; };
   const mark = (el, src, field) => { el.setAttribute('data-source', src); el.setAttribute('data-field', field); el.setAttribute('data-row', '0'); };
@@ -117,24 +136,30 @@
 
   // search results
   dash.draw('results', (ul) => {
-    const d = dash.data('ks4'); const p = P(); ul.replaceChildren();
+    const pool = OE.pool(); const d = {status: pool ? 'ok' : 'loading', data: pool}; const p = P(); ul.replaceChildren();
     if (d.status !== 'ok') { const li = document.createElement('div'); li.className = 'empty'; li.textContent = 'Loading schools…'; ul.append(li); return; }
     const m = OE.search(d.data, p.q); OE.matches = m; if (OE.active >= m.length) OE.active = 0;
-    if (!m.length) { const li = document.createElement('div'); li.className = 'empty'; li.textContent = p.q ? 'No secondary school matches "' + p.q + '". Try a town, a local authority, a postcode or a URN.' : 'Start typing to search.'; ul.append(li); return; }
+    if (!m.length) { const li = document.createElement('div'); li.className = 'empty'; li.textContent = p.q ? 'No school matches "' + p.q + '". Try a town, a local authority, a postcode or a URN.' : 'Start typing to search.'; ul.append(li); return; }
     const toks = String(p.q).toLowerCase().split(/\s+/).filter(Boolean);
     const hl = (parent, text) => { const low = text.toLowerCase(); let i = 0; while (i < text.length) { let hit = null; for (const tk of toks) { if (low.startsWith(tk, i)) { hit = tk; break; } } if (hit) { const mk = document.createElement('mark'); mk.textContent = text.slice(i, i + hit.length); parent.append(mk); i += hit.length; } else { parent.append(text[i]); i++; } } };
     m.forEach((r, i) => { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.setAttribute('aria-selected', i === OE.active ? 'true' : 'false');
       const n = document.createElement('span'); n.className = 'n'; hl(n, r.name);
-      const a = document.createElement('span'); a.className = 'a'; a.textContent = 'A8 ' + (isNaN(num(r.a8)) ? '—' : f1(+r.a8));
-      const mt = document.createElement('span'); mt.className = 'm'; mt.textContent = [r.district && r.district !== r.la ? r.district + ', ' + r.la : r.la, r.postcode, r.g_ach ? 'Achievement: ' + r.g_ach : 'No report card yet'].filter(Boolean).join(' · ');
+      const a = document.createElement('span'); a.className = 'a'; a.textContent = r.rc_only ? r.phase : 'A8 ' + (isNaN(num(r.a8)) ? '—' : f1(+r.a8));
+      const place = r.rc_only ? (r.town && r.town !== r.la && r.town !== 'London' ? r.town + ', ' + r.la : r.la) : (r.district && r.district !== r.la ? r.district + ', ' + r.la : r.la);
+      const mt = document.createElement('span'); mt.className = 'm'; mt.textContent = [place, r.postcode, r.g_ach ? 'Achievement: ' + r.g_ach : 'No report card yet'].filter(Boolean).join(' · ');
       li.append(n, a, mt); li.addEventListener('pointerdown', (e) => { e.preventDefault(); OE.choose(r.urn); }); ul.append(li); });
   });
 
-  dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
+  dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only);
+    // secondary-results sections only make sense for secondaries; other phases keep the phase-specific deprivation chart
+    const nonsec = (r.phase || 'Secondary') !== 'Secondary'; document.documentElement.classList.toggle('oe-nonsec', nonsec);
+    const ms = document.getElementById('oe-more-s'); if (ms) ms.textContent = nonsec ? 'How ' + (PHL[r.phase] || 'schools') + ' across England are graded in each area, by pupils\' deprivation' : 'Your official similar-schools list, every secondary on one chart, report card grades by deprivation, and how the replica checks out';
+    if (OE._phaseFor !== r.urn) { OE._phaseFor = r.urn; const ph = r.phase || 'Secondary'; if (P().phase !== ph) setTimeout(() => dash.setParams({phase: ph}), 0); } if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
   dash.draw('smeta', (el) => { const r = S(); if (!r) return dash_(el);
-    el.textContent = [r.la, r.region, r.postcode, r.mat ? r.mat : 'Not in a multi-academy trust', r.type, r.selective, 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : 'No report card inspection yet'].filter(Boolean).join(' · '); });
+    if (r.rc_only) { el.textContent = [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '', 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : ''].filter(Boolean).join(' · '); return; }
+    el.textContent = ['Secondary', r.la, r.region, r.postcode, r.mat ? r.mat : 'Not in a multi-academy trust', r.type, r.selective, 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : 'No report card inspection yet'].filter(Boolean).join(' · '); });
 
-  dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r) return;
+  dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
     const nat = dash.data('national').data;
     const tiles = [
       ['Attainment 8, 2025/26', +r.a8, f1, 'a8', isNaN(num(r.a8_25)) ? '' : '2024/25: ' + f1(+r.a8_25), 'Provisional 2025/26 result. The smaller figure is last year\'s final result for comparison.'],
@@ -153,7 +178,7 @@
       const s = document.createElement('span'); s.textContent = lab; const b = document.createElement('b'); b.textContent = v; mark(b, 'school', k); d.append(s, b); el.append(d); });
     if (!el.children.length) { const p = document.createElement('p'); p.className = 'oe-note'; p.textContent = 'This school has not yet had a report card inspection under the renewed framework.'; el.append(p); } });
 
-  dash.draw('sctx', (el) => { const r = S(); el.replaceChildren(); if (!r) return;
+  dash.draw('sctx', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
     const items = [
       ['pa_index', 'Prior attainment index', fs, 'Weight 0.46. Share of the 2023/24 GCSE cohort with high KS2 results minus the share with low results' + (r.pred ? ', from the predecessor school' : '') + '. National middle is around zero.'],
       ['dis_pct', 'Disadvantaged (cohort) %', f1, 'Weight 0.14. Disadvantaged share of the 2025/26 GCSE cohort, the closest public stand-in for whole-school FSM6.'],
@@ -261,7 +286,7 @@
     v.data.forEach((r) => { const tr = document.createElement('tr'); tr.setAttribute('data-key', encodeURIComponent(r.grade)); [r.grade, r.n, r.above, r.close, r.below, r.ofsted].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; if (i >= 1 && i <= 4) td.className = 'n'; tr.append(td); }); tb.append(tr); }); });
 
   dash.draw('idaci', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip); return {tip}; },
-    update: (el, m) => { const d = dash.data('idaci'); el.querySelectorAll('svg').forEach((s) => s.remove()); if (d.status !== 'ok' || !d.data) return;
+    update: (el, m) => { const d = dash.data('idaci'); el.querySelectorAll('svg').forEach((s) => s.remove()); const ps = document.getElementById('oe-phase'); if (ps && ps.value !== P().phase) ps.value = P().phase; if (d.status !== 'ok' || !d.data) return;
       const G = ['Urgent improvement','Needs attention','Expected standard','Strong standard','Exceptional'];
       const W = el.clientWidth || 600, rowH = 36, M = {l: 96, r: 12, t: 6, b: 24}, H = M.t + M.b + rowH * 5;
       const x = d3.scaleLinear().domain([0, 100]).range([M.l, W - M.r]);
@@ -279,4 +304,53 @@
           else rect.attr('x', x(x0)).attr('width', Math.max(0, x(acc) - x(x0) - 1));
           if (w >= 7) svg.append('text').attr('x', x(x0) + 4).attr('y', yy + rowH / 2 + 4).style('font-size', '11px').style('pointer-events', 'none').style('fill', g === 'Expected standard' ? '#0B1A2E' : '#fff').text(Math.round(w) + '%'); }); });
     }});
+
+  // each area beside comparable schools
+  const PHL = {'Primary': 'primary schools', 'Secondary': 'secondary schools', 'Special': 'special schools', 'Alternative provision': 'alternative provision schools', 'Nursery': 'nursery schools'};
+  OE.PHL = PHL;
+  dash.draw('areasub', (el) => { const r = S(); if (!r) { el.textContent = ''; return; } const ph = PHL[r.phase] || 'schools';
+    el.textContent = 'Each bar shows how ' + ph + ' are graded in that area, from Urgent improvement on the left to Exceptional on the right. The marker shows this school\'s grade. Deprivation fifths are Ofsted\'s IDACI quintiles, based on pupils\' home postcodes' + (r.rc_only ? '' : '; the 50 similar schools are those in the open replica that have a report card') + '. Groups of fewer than 10 schools are not shown.'; });
+  const DARK_TEXT = new Set(['Expected standard', 'Needs attention']);
+  dash.draw('areas', (box) => { const d = dash.data('areas'); box.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
+    const has = d.data.length > 0; const sec = document.getElementById('areas'); if (sec) sec.hidden = !has;
+    document.documentElement.classList.toggle('oe-noareas', !has); if (!has) return;
+    const pc = d3.format('.0f'), cnt = d3.format(',');
+    const PH = (ph) => (PHL[ph] ? PHL[ph][0].toUpperCase() + PHL[ph].slice(1) : 'Schools');
+    const QL = (q) => 'Same deprivation fifth: ' + (q === '1' ? 'least deprived' : q === '5' ? 'most deprived' : q + ' of 5');
+    d.data.forEach((a) => {
+      const row = document.createElement('div'); row.className = 'oe-ar rise';
+      const h = document.createElement('div'); h.className = 'h';
+      const lab = document.createElement('span'); lab.className = 'lab'; lab.textContent = a.area;
+      const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; if (DARK_TEXT.has(a.grade)) chip.style.color = '#0B1A2E';
+      h.append(lab, chip); row.append(h);
+      const gs = document.createElement('div'); gs.className = 'gs';
+      const groups = [[PH(a.phase) + ' in England', a.england, '']];
+      groups.push([a.quintile ? QL(a.quintile) : 'Same deprivation fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
+      if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
+      groups.forEach(([gl, dist, why]) => {
+        const g = document.createElement('div'); g.className = 'g';
+        const top = document.createElement('div'); top.className = 'gt';
+        const t = document.createElement('span'); t.className = 'gl'; t.textContent = gl;
+        const nn = document.createElement('span'); nn.className = 'gc'; top.append(t, nn); g.append(top);
+        const foot = document.createElement('p'); foot.className = 'gn';
+        if (!dist || dist.n < 10) { const e = document.createElement('div'); e.className = 'bar empty'; g.append(e);
+          foot.textContent = why || (dist ? (dist.n ? 'Only ' + dist.n + (dist.n === 1 ? ' school' : ' schools') + ': too few to show' : 'No schools with this area graded') : ''); g.append(foot); gs.append(g); return; }
+        nn.textContent = cnt(dist.n) + ' schools';
+        const wrap = document.createElement('div'); wrap.className = 'barw';
+        const bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('role', 'img');
+        const parts = []; let acc = 0, mk = null;
+        GORDER.forEach((G) => { const v = dist[G]; if (!v) return; const w = 100 * v / dist.n;
+          const seg = document.createElement('i'); seg.style.width = w + '%'; seg.style.background = GC[G]; seg.style.color = DARK_TEXT.has(G) ? '#0B1A2E' : '#fff';
+          if (w >= 9) seg.textContent = pc(w) + '%';
+          if (G === a.grade) { seg.classList.add('own'); mk = acc + w / 2; }
+          seg.setAttribute('data-tip', gl + ': ' + G + ', ' + cnt(v) + ' of ' + cnt(dist.n) + ' schools (' + pc(w) + '%)');
+          bar.append(seg); parts.push(G + ' ' + pc(w) + '%'); acc += w; });
+        bar.setAttribute('aria-label', gl + ', ' + cnt(dist.n) + ' schools: ' + parts.join(', ') + '. This school: ' + a.grade + '.');
+        wrap.append(bar);
+        if (mk !== null) { const m = document.createElement('b'); m.className = 'mk'; m.style.left = mk + '%'; m.setAttribute('aria-hidden', 'true'); wrap.append(m); }
+        const below = 100 * ((dist['Needs attention'] || 0) + (dist['Urgent improvement'] || 0)) / dist.n;
+        const bb = document.createElement('b'); bb.textContent = pc(below) + '%'; foot.append(bb, ' below Expected standard');
+        g.append(wrap, foot); gs.append(g); });
+      row.append(gs); box.append(row); });
+  });
 })();

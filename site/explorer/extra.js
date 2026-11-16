@@ -21,7 +21,13 @@
 
   // ---------- the data picture (v3 wording, 15 November 2026) ----------
   dash.draw('story', (box) => {
-    const r = S(), st = ST(), nb = N(); box.replaceChildren(); if (!r || !st || !ok(r.a8)) return;
+    const r = S(), st = ST(), nb = N(); box.replaceChildren();
+    if (r && r.rc_only) { const ph = (OE.PHL && OE.PHL[r.phase]) || 'schools'; const lead = el('div', 'oe-verdict');
+      lead.append(el('h3', '', 'The report card, beside comparable schools.'));
+      const why = r.phase === 'Secondary' ? 'No 2025/26 GCSE results are published for this school, so this profile shows its report card on its own.' : 'The Explorer reads results for secondary schools only so far, so this profile shows the report card on its own.';
+      lead.append(rich(el('p'), why + ' Below, each graded area is set beside other ' + ph + ' in England' + (r.idaci_q ? ' and those whose pupils come from similarly deprived areas' : '') + '.'));
+      box.append(lead); return; }
+    if (!r || !st || !ok(r.a8)) return;
     const nat = +r.nat_diff, ssd = +r.ss_diff, cva = +r.cva_res, band = String(r.ss_band || '');
     const up = /above/i.test(band), down = /below/i.test(band);
     const natLow = nat <= -2, natHigh = nat >= 2;
@@ -70,11 +76,11 @@
         if (ok(nDis) && nDis < 30) t += ' The group is small (about ' + nDis + ' pupils), so read this loosely.';
         add('Disadvantaged pupils', t); } }
     // inspection
-    if (r.g_ach) { const areas = ['g_ach', 'g_ct', 'g_inc', 'g_ab', 'g_pd', 'g_lg', 'g_p16'].filter((k) => r[k] && r[k] !== 'Not applicable'); const low = areas.filter((k) => BELOW.has(r[k])).length, high = areas.filter((k) => r[k] === 'Strong standard' || r[k] === 'Exceptional').length;
+    if (r.g_ach) { const areas = ['g_ach', 'g_ct', 'g_inc', 'g_ab', 'g_pd', 'g_lg', 'g_ey', 'g_p16'].filter((k) => r[k] && r[k] !== 'Not applicable'); const low = areas.filter((k) => BELOW.has(r[k])).length, high = areas.filter((k) => r[k] === 'Strong standard' || r[k] === 'Exceptional').length;
       const insp = nb.filter((x) => x.g_ach), nbLow = insp.filter((x) => BELOW.has(x.g_ach)).length;
-      let t = 'Inspected in ' + d3.utcFormat('%B %Y')(new Date(r.insp_date)) + ': achievement was graded **' + r.g_ach + '**, with ' + (high === areas.length ? 'all ' + high + ' areas at Strong or above' : (low ? low + ' of ' + areas.length + ' areas below Expected' : 'no area below Expected') + (high ? ' and ' + high + ' at Strong or above' : '')) + '.';
+      let t = 'Inspected in ' + d3.utcFormat('%B %Y')(new Date(r.insp_date)) + ': achievement was graded **' + r.g_ach + '**, with ' + (high === areas.length ? 'all ' + high + ' areas at Strong standard or above' : (low ? low + ' of ' + areas.length + ' areas below Expected standard' : 'no area below Expected standard') + (high ? ' and ' + high + ' at Strong standard or above' : '')) + '.';
       if (r.ss_band_25) t += ' On the 2024/25 results inspectors had in front of them, the replica placed the school **' + String(r.ss_band_25).toLowerCase() + '** its similar schools.';
-      if (insp.length >= 5) t += ' Of its ' + insp.length + ' similar schools inspected so far, ' + (nbLow ? nbLow : 'none') + ' ' + (nbLow === 1 ? 'was' : 'were') + ' graded below Expected for achievement.';
+      if (insp.length >= 10) t += ' Of its ' + insp.length + ' similar schools inspected so far, ' + (nbLow ? nbLow : 'none') + ' ' + (nbLow === 1 ? 'was' : 'were') + ' graded below Expected standard for achievement.';
       add('Inspection', t); }
     else add('Inspection', 'Not yet inspected under the renewed framework, so there is no report card to set beside these results.');
     box.append(el('p', 'oe-caveat', 'Generated from the published figures by fixed rules. One year of provisional results is noisy; this is a reading of the data, not a judgement on the school.'));
