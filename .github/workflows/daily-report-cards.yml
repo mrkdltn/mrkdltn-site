@@ -33,6 +33,7 @@ jobs:
         run: pip install pypdf==5.*
 
       - name: Read newly published report cards
+        id: read
         continue-on-error: true   # keep whatever was read if Ofsted's site has a bad moment
         run: |
           SINCE="${{ github.event.inputs.since }}"
@@ -54,3 +55,9 @@ jobs:
           git add data/raw/reports_daily.csv
           git commit -m "Report cards published to $(date -u +%F)"
           git push
+
+      - name: Fail the run if reading failed (after saving what was read)
+        if: steps.read.outcome == 'failure'
+        run: |
+          echo "::error::Reading report cards failed; anything read before the failure was committed. See the 'Read newly published report cards' step."
+          exit 1
