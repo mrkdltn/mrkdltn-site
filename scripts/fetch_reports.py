@@ -163,6 +163,8 @@ def main():
             if cur is None or row['insp_date'] >= cur.get('insp_date', ''):
                 rows[s['urn']] = row
                 added += 1
+        save(rows)  # after every day, so a long backfill that is cut short keeps what it has read
+        print(f'{day}: {added} read so far, {skipped} skipped', flush=True)
         day += dt.timedelta(days=1)
     save(rows)
     print(f'{since}..{until}: {added} report cards read, {skipped} skipped (no report card), {len(rows)} held')
