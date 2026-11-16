@@ -24,7 +24,8 @@
     const r = S(), st = ST(), nb = N(); box.replaceChildren();
     if (r && r.rc_only) { const ph = (OE.PHL && OE.PHL[r.phase]) || 'schools'; const lead = el('div', 'oe-verdict');
       lead.append(el('h3', '', 'The report card, beside comparable schools.'));
-      lead.append(rich(el('p'), 'The Explorer reads results for secondary schools only so far, so this profile shows the report card on its own. Below, each graded area is set beside other ' + ph + ' in England' + (r.idaci_q ? ' and those whose pupils come from similarly deprived areas' : '') + '.'));
+      const why = r.phase === 'Secondary' ? 'No 2025/26 GCSE results are published for this school, so this profile shows its report card on its own.' : 'The Explorer reads results for secondary schools only so far, so this profile shows the report card on its own.';
+      lead.append(rich(el('p'), why + ' Below, each graded area is set beside other ' + ph + ' in England' + (r.idaci_q ? ' and those whose pupils come from similarly deprived areas' : '') + '.'));
       box.append(lead); return; }
     if (!r || !st || !ok(r.a8)) return;
     const nat = +r.nat_diff, ssd = +r.ss_diff, cva = +r.cva_res, band = String(r.ss_band || '');

@@ -84,7 +84,7 @@
         GORDER.forEach((g) => { o[g] = rows.filter((r) => r[ar] === g).length; }); return o; }); }});
 
   // each area of the school's report card beside comparable schools
-  const AREAS_ALL = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16']];
+  const AREAS_ALL = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16 provision']];
   OE.AREAS_ALL = AREAS_ALL;
   dash.calc('areas', {inputs: ['ofsted', 'school', 'neigh'], title: 'Report card areas beside comparable schools', description: 'For each graded area, how schools of the same phase are graded in England, in the same IDACI quintile of pupils and, for secondaries, among the 50 similar schools.',
     fn: (ofsted, school, neigh) => { const r = school && school[0]; if (!r) return [];
@@ -125,7 +125,7 @@
 
 (function () {
   const {GC, GORDER, BANDC, num, f1, fs, P, motion} = window.OE; const OE = window.OE;
-  const AREAS = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16'],['g_sg','Safeguarding']];
+  const AREAS = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16 provision'],['g_sg','Safeguarding']];
   const GTIP = {'Exceptional': 'Highest of the five grades.', 'Strong standard': 'Second highest of the five grades.', 'Expected standard': 'The middle grade: the standard Ofsted expects.', 'Needs attention': 'Second lowest of the five grades.', 'Urgent improvement': 'Lowest of the five grades.', 'Met': 'Safeguarding is graded Met or Not met.', 'Not met': 'Safeguarding is graded Met or Not met.'};
   const dash_ = (el) => { el.textContent = '—'; };
   const mark = (el, src, field) => { el.setAttribute('data-source', src); el.setAttribute('data-field', field); el.setAttribute('data-row', '0'); };
@@ -150,10 +150,11 @@
       li.append(n, a, mt); li.addEventListener('pointerdown', (e) => { e.preventDefault(); OE.choose(r.urn); }); ul.append(li); });
   });
 
-  dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only); if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
+  dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only);
+    if (OE._phaseFor !== r.urn) { OE._phaseFor = r.urn; const ph = r.phase || 'Secondary'; if (P().phase !== ph) setTimeout(() => dash.setParams({phase: ph}), 0); } if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
   dash.draw('smeta', (el) => { const r = S(); if (!r) return dash_(el);
     if (r.rc_only) { el.textContent = [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '', 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : ''].filter(Boolean).join(' · '); return; }
-    el.textContent = [r.la, r.region, r.postcode, r.mat ? r.mat : 'Not in a multi-academy trust', r.type, r.selective, 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : 'No report card inspection yet'].filter(Boolean).join(' · '); });
+    el.textContent = ['Secondary', r.la, r.region, r.postcode, r.mat ? r.mat : 'Not in a multi-academy trust', r.type, r.selective, 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : 'No report card inspection yet'].filter(Boolean).join(' · '); });
 
   dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
     const nat = dash.data('national').data;
@@ -282,7 +283,7 @@
     v.data.forEach((r) => { const tr = document.createElement('tr'); tr.setAttribute('data-key', encodeURIComponent(r.grade)); [r.grade, r.n, r.above, r.close, r.below, r.ofsted].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; if (i >= 1 && i <= 4) td.className = 'n'; tr.append(td); }); tb.append(tr); }); });
 
   dash.draw('idaci', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip); return {tip}; },
-    update: (el, m) => { const d = dash.data('idaci'); el.querySelectorAll('svg').forEach((s) => s.remove()); if (d.status !== 'ok' || !d.data) return;
+    update: (el, m) => { const d = dash.data('idaci'); el.querySelectorAll('svg').forEach((s) => s.remove()); const ps = document.getElementById('oe-phase'); if (ps && ps.value !== P().phase) ps.value = P().phase; if (d.status !== 'ok' || !d.data) return;
       const G = ['Urgent improvement','Needs attention','Expected standard','Strong standard','Exceptional'];
       const W = el.clientWidth || 600, rowH = 36, M = {l: 96, r: 12, t: 6, b: 24}, H = M.t + M.b + rowH * 5;
       const x = d3.scaleLinear().domain([0, 100]).range([M.l, W - M.r]);
@@ -305,34 +306,48 @@
   const PHL = {'Primary': 'primary schools', 'Secondary': 'secondary schools', 'Special': 'special schools', 'Alternative provision': 'alternative provision schools', 'Nursery': 'nursery schools'};
   OE.PHL = PHL;
   dash.draw('areasub', (el) => { const r = S(); if (!r) { el.textContent = ''; return; } const ph = PHL[r.phase] || 'schools';
-    el.textContent = 'Each bar shows how ' + ph + ' are graded in that area. The outlined segment is this school\'s grade. The deprivation fifth is Ofsted\'s IDACI quintile, based on pupils\' home postcodes' + (r.rc_only ? '' : '; the 50 similar schools are those in the replica that have a report card') + '. Groups of fewer than 10 schools are not shown.'; });
+    el.textContent = 'Each bar shows how ' + ph + ' are graded in that area, from Urgent improvement on the left to Exceptional on the right. The marker shows this school\'s grade. Deprivation fifths are Ofsted\'s IDACI quintiles, based on pupils\' home postcodes' + (r.rc_only ? '' : '; the 50 similar schools are those in the open replica that have a report card') + '. Groups of fewer than 10 schools are not shown.'; });
+  const DARK_TEXT = new Set(['Expected standard', 'Needs attention']);
   dash.draw('areas', (box) => { const d = dash.data('areas'); box.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
-    const sec = document.getElementById('areas'); if (sec) sec.hidden = !d.data.length; if (!d.data.length) return;
+    const has = d.data.length > 0; const sec = document.getElementById('areas'); if (sec) sec.hidden = !has;
+    document.documentElement.classList.toggle('oe-noareas', !has); if (!has) return;
     const pc = d3.format('.0f'), cnt = d3.format(',');
+    const PH = (ph) => (PHL[ph] ? PHL[ph][0].toUpperCase() + PHL[ph].slice(1) : 'Schools');
     const QL = (q) => 'Same deprivation fifth: ' + (q === '1' ? 'least deprived' : q === '5' ? 'most deprived' : q + ' of 5');
     d.data.forEach((a) => {
       const row = document.createElement('div'); row.className = 'oe-ar rise';
       const h = document.createElement('div'); h.className = 'h';
       const lab = document.createElement('span'); lab.className = 'lab'; lab.textContent = a.area;
-      const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; if (a.grade === 'Expected standard') chip.style.color = '#0B1A2E';
+      const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; if (DARK_TEXT.has(a.grade)) chip.style.color = '#0B1A2E';
       h.append(lab, chip); row.append(h);
       const gs = document.createElement('div'); gs.className = 'gs';
-      const groups = [[PHL[a.phase] ? PHL[a.phase][0].toUpperCase() + PHL[a.phase].slice(1) + ' in England' : 'England', a.england, '']];
-      groups.push([a.quintile ? QL(a.quintile) : 'Same deprivation fifth', a.fifth, a.quintile ? '' : 'Ofsted has not yet published this school\'s deprivation fifth.']);
+      const groups = [[PH(a.phase) + ' in England', a.england, '']];
+      groups.push([a.quintile ? QL(a.quintile) : 'Same deprivation fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
       if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
       groups.forEach(([gl, dist, why]) => {
         const g = document.createElement('div'); g.className = 'g';
-        const t = document.createElement('span'); t.className = 'gl'; t.textContent = gl; g.append(t);
-        const n = document.createElement('span'); n.className = 'gn';
-        if (!dist || dist.n < 10) { const e = document.createElement('div'); e.className = 'bar empty'; g.append(e); n.textContent = why || (dist ? 'Fewer than 10 schools with this area graded' : ''); g.append(n); gs.append(g); return; }
+        const top = document.createElement('div'); top.className = 'gt';
+        const t = document.createElement('span'); t.className = 'gl'; t.textContent = gl;
+        const nn = document.createElement('span'); nn.className = 'gc'; top.append(t, nn); g.append(top);
+        const foot = document.createElement('p'); foot.className = 'gn';
+        if (!dist || dist.n < 10) { const e = document.createElement('div'); e.className = 'bar empty'; g.append(e);
+          foot.textContent = why || (dist ? (dist.n ? 'Only ' + dist.n + ' with this area graded: too few to show' : 'None with this area graded') : ''); g.append(foot); gs.append(g); return; }
+        nn.textContent = cnt(dist.n) + ' schools';
+        const wrap = document.createElement('div'); wrap.className = 'barw';
         const bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('role', 'img');
-        const parts = [];
-        GORDER.forEach((G) => { const v = dist[G]; if (!v) return; const w = 100 * v / dist.n; const seg = document.createElement('i'); seg.style.width = w + '%'; seg.style.background = GC[G];
-          if (G === a.grade) seg.className = 'own'; seg.setAttribute('data-tip', gl + ': ' + G + ', ' + cnt(v) + ' of ' + cnt(dist.n) + ' schools (' + pc(w) + '%)'); bar.append(seg); parts.push(G + ' ' + pc(w) + '%'); });
-        bar.setAttribute('aria-label', gl + ', ' + cnt(dist.n) + ' schools: ' + parts.join(', '));
+        const parts = []; let acc = 0, mk = null;
+        GORDER.forEach((G) => { const v = dist[G]; if (!v) return; const w = 100 * v / dist.n;
+          const seg = document.createElement('i'); seg.style.width = w + '%'; seg.style.background = GC[G]; seg.style.color = DARK_TEXT.has(G) ? '#0B1A2E' : '#fff';
+          if (w >= 9) seg.textContent = pc(w) + '%';
+          if (G === a.grade) { seg.classList.add('own'); mk = acc + w / 2; }
+          seg.setAttribute('data-tip', gl + ': ' + G + ', ' + cnt(v) + ' of ' + cnt(dist.n) + ' schools (' + pc(w) + '%)');
+          bar.append(seg); parts.push(G + ' ' + pc(w) + '%'); acc += w; });
+        bar.setAttribute('aria-label', gl + ', ' + cnt(dist.n) + ' schools: ' + parts.join(', ') + '. This school: ' + a.grade + '.');
+        wrap.append(bar);
+        if (mk !== null) { const m = document.createElement('b'); m.className = 'mk'; m.style.left = mk + '%'; m.setAttribute('aria-hidden', 'true'); wrap.append(m); }
         const below = 100 * ((dist['Needs attention'] || 0) + (dist['Urgent improvement'] || 0)) / dist.n;
-        n.textContent = cnt(dist.n) + ' schools · ' + pc(below) + '% below Expected';
-        g.append(bar, n); gs.append(g); });
+        const bb = document.createElement('b'); bb.textContent = pc(below) + '%'; foot.append(bb, ' below Expected standard');
+        g.append(wrap, foot); gs.append(g); });
       row.append(gs); box.append(row); });
   });
 })();

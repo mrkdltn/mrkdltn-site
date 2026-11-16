@@ -23,7 +23,7 @@ FONTS = os.path.join(HERE, 'fonts')
 ORIGIN = 'https://mrkdltn.com'
 
 AREAS = [('g_ach', 'Achievement'), ('g_ct', 'Curriculum and teaching'), ('g_ab', 'Attendance and behaviour'),
-         ('g_pd', 'Personal development'), ('g_inc', 'Inclusion'), ('g_lg', 'Leadership and governance'),
+         ('g_pd', 'Personal development and wellbeing'), ('g_inc', 'Inclusion'), ('g_lg', 'Leadership and governance'),
          ('g_ey', 'Early years'), ('g_p16', 'Post-16 provision')]
 GRADE_COLOUR = {'Exceptional': '#0176E0', 'Strong standard': '#33903C', 'Expected standard': '#5CD168',
                 'Needs attention': '#FF8341', 'Urgent improvement': '#CE1E02'}
@@ -144,7 +144,7 @@ def card(r, nat_mean, fonts):
         for lab, g in graded:
             d.rectangle([M, y + 4 + (step - 24) // 2, M + 16, y + 20 + (step - 24) // 2], fill=GRADE_COLOUR[g])
             d.text((M + 28, y + (step - 30) // 2), lab, font=sans(fs, 450), fill=INK)
-            d.text((M + 330, y + (step - 30) // 2), g, font=sans(fs, 650), fill=INK)
+            d.text((M + 404, y + (step - 30) // 2), g, font=sans(fs, 650), fill=INK)
             y += step
         sg = r.get('g_sg', '')
         if sg in ('Met', 'Not met'):
@@ -165,7 +165,7 @@ def card(r, nat_mean, fonts):
             d.text((x + 260, yy + 120), f'{q} of 5', font=sans(21, 650), fill=INK)
             d.text((x, yy + 153), '1 is least deprived', font=sans(17, 450), fill=MUTED)
         d.line([(M, H - 64), (W - M, H - 64)], fill=LINE, width=1)
-        d.text((M, H - 46), 'Built from public Ofsted data. A reading of the data, not a judgement on the school.',
+        d.text((M, H - 46), 'Built from public DfE and Ofsted data. A reading of the data, not a judgement on the school.',
                font=sans(17, 450), fill=MUTED)
         return im.quantize(colors=96, method=2, dither=0)
 
