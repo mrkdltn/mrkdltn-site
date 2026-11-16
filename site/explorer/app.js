@@ -145,14 +145,14 @@
     m.forEach((r, i) => { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.setAttribute('aria-selected', i === OE.active ? 'true' : 'false');
       const n = document.createElement('span'); n.className = 'n'; hl(n, r.name);
       const a = document.createElement('span'); a.className = 'a'; a.textContent = r.rc_only ? r.phase : 'A8 ' + (isNaN(num(r.a8)) ? '—' : f1(+r.a8));
-      const place = r.rc_only ? (r.town && r.town !== r.la ? r.town + ', ' + r.la : r.la) : (r.district && r.district !== r.la ? r.district + ', ' + r.la : r.la);
+      const place = r.rc_only ? (r.town && r.town !== r.la && r.town !== 'London' ? r.town + ', ' + r.la : r.la) : (r.district && r.district !== r.la ? r.district + ', ' + r.la : r.la);
       const mt = document.createElement('span'); mt.className = 'm'; mt.textContent = [place, r.postcode, r.g_ach ? 'Achievement: ' + r.g_ach : 'No report card yet'].filter(Boolean).join(' · ');
       li.append(n, a, mt); li.addEventListener('pointerdown', (e) => { e.preventDefault(); OE.choose(r.urn); }); ul.append(li); });
   });
 
   dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only); if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
   dash.draw('smeta', (el) => { const r = S(); if (!r) return dash_(el);
-    if (r.rc_only) { el.textContent = [r.phase, r.town && r.town !== r.la ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '', 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : ''].filter(Boolean).join(' · '); return; }
+    if (r.rc_only) { el.textContent = [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '', 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : ''].filter(Boolean).join(' · '); return; }
     el.textContent = [r.la, r.region, r.postcode, r.mat ? r.mat : 'Not in a multi-academy trust', r.type, r.selective, 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : 'No report card inspection yet'].filter(Boolean).join(' · '); });
 
   dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
@@ -328,7 +328,7 @@
         const bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('role', 'img');
         const parts = [];
         GORDER.forEach((G) => { const v = dist[G]; if (!v) return; const w = 100 * v / dist.n; const seg = document.createElement('i'); seg.style.width = w + '%'; seg.style.background = GC[G];
-          if (G === a.grade) seg.className = 'me'; seg.setAttribute('data-tip', gl + ': ' + G + ', ' + cnt(v) + ' of ' + cnt(dist.n) + ' schools (' + pc(w) + '%)'); bar.append(seg); parts.push(G + ' ' + pc(w) + '%'); });
+          if (G === a.grade) seg.className = 'own'; seg.setAttribute('data-tip', gl + ': ' + G + ', ' + cnt(v) + ' of ' + cnt(dist.n) + ' schools (' + pc(w) + '%)'); bar.append(seg); parts.push(G + ' ' + pc(w) + '%'); });
         bar.setAttribute('aria-label', gl + ', ' + cnt(dist.n) + ' schools: ' + parts.join(', '));
         const below = 100 * ((dist['Needs attention'] || 0) + (dist['Urgent improvement'] || 0)) / dist.n;
         n.textContent = cnt(dist.n) + ' schools · ' + pc(below) + '% below Expected';
