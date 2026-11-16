@@ -309,7 +309,7 @@
   dash.draw('areas', (box) => { const d = dash.data('areas'); box.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const sec = document.getElementById('areas'); if (sec) sec.hidden = !d.data.length; if (!d.data.length) return;
     const pc = d3.format('.0f'), cnt = d3.format(',');
-    const QL = (q) => (q === '1' ? 'least deprived fifth' : q === '5' ? 'most deprived fifth' : 'deprivation fifth ' + q + ' of 5');
+    const QL = (q) => 'Same deprivation fifth: ' + (q === '1' ? 'least deprived' : q === '5' ? 'most deprived' : q + ' of 5');
     d.data.forEach((a) => {
       const row = document.createElement('div'); row.className = 'oe-ar rise';
       const h = document.createElement('div'); h.className = 'h';
@@ -318,7 +318,7 @@
       h.append(lab, chip); row.append(h);
       const gs = document.createElement('div'); gs.className = 'gs';
       const groups = [[PHL[a.phase] ? PHL[a.phase][0].toUpperCase() + PHL[a.phase].slice(1) + ' in England' : 'England', a.england, '']];
-      groups.push([a.quintile ? 'Same ' + QL(a.quintile) : 'Same deprivation fifth', a.fifth, a.quintile ? '' : 'Ofsted has not yet published this school\'s deprivation fifth.']);
+      groups.push([a.quintile ? QL(a.quintile) : 'Same deprivation fifth', a.fifth, a.quintile ? '' : 'Ofsted has not yet published this school\'s deprivation fifth.']);
       if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
       groups.forEach(([gl, dist, why]) => {
         const g = document.createElement('div'); g.className = 'g';
