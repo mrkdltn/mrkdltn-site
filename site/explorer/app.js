@@ -98,7 +98,7 @@
   [['oe-x', 'x'], ['oe-area', 'area'], ['oe-phase', 'phase'], ['oe-area2', 'area2']].forEach(([id, k]) => { const el = document.getElementById(id); if (el) el.addEventListener('change', () => dash.setParams({[k]: el.value})); });
   dash.onData(() => {
     const p = P(), d = dash.data('ks4');
-    if (!p.urn && d.status === 'ok' && d.data.length) { const r = OE.pickRandom(d.data); dash.setParams({urn: r.urn}); return; }
+    if (!p.urn && d.status === 'ok' && d.data.length) { const r = OE.pickRandom(d.data); window.OE_RANDOM = r.urn; dash.setParams({urn: r.urn}); return; }
     [['oe-x', 'x'], ['oe-area', 'area'], ['oe-phase', 'phase'], ['oe-area2', 'area2']].forEach(([id, k]) => { const el = document.getElementById(id); if (el && el.value !== p[k]) el.value = p[k]; });
     if (idsr && document.activeElement !== idsr && idsr.value !== p.idsr) idsr.value = p.idsr;
   });

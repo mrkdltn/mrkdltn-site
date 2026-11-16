@@ -22,7 +22,7 @@
 .oe-loading{color:var(--muted);font-size:14px}
 html.loaded .oe-loading{display:none}
 </style>
-<link rel="stylesheet" href="explorer.css">
+<link rel="stylesheet" href="/explorer/explorer.css">
 </head>
 <body class="explorer">
 <header class="site-head"><div class="wrap">
@@ -248,10 +248,10 @@ html.loaded .oe-loading{display:none}
   <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
 </div></footer>
 <script src="/assets/d3.min.js"></script>
-<script src="dash.js"></script>
-<script>dash.source('ks4','data/ks4.json',{nn:'data/nn/'});dash.source('ofsted','data/rc.json');dash.source('fig3','data/fig3.csv');</script>
-<script src="app.js"></script>
-<script src="extra.js"></script>
+<script src="/explorer/dash.js"></script>
+<script>dash.source('ks4','/explorer/data/ks4.json',{nn:'/explorer/data/nn/'});dash.source('ofsted','/explorer/data/rc.json');dash.source('fig3','/explorer/data/fig3.csv');</script>
+<script src="/explorer/app.js"></script>
+<script src="/explorer/extra.js"></script>
 <script>dash.start({x:'dis_pct',area:'g_ach',phase:'Secondary',area2:'g_ach'});</script>
 </body>
 </html>

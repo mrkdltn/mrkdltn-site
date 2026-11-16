@@ -171,6 +171,10 @@ def main():
         print(n, os.path.getsize(os.path.join(OUT, n)))
     print(json.dumps(meta, indent=1))
 
+    # a page and share image per school
+    import build_pages
+    build_pages.main(ks4)
+
 
 if __name__ == '__main__':
     main()

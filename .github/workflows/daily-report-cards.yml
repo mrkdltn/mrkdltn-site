@@ -30,7 +30,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install parser
-        run: pip install pypdf==5.*
+        run: pip install pypdf==5.* -r requirements.txt
 
       - name: Read newly published report cards
         id: read

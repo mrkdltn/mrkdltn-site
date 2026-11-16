@@ -124,7 +124,7 @@
   document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => { th.tabIndex = 0; const go = () => { const k = th.dataset.sort; if (OE.tbl.k === k) OE.tbl.dir *= -1; else { OE.tbl.k = k; OE.tbl.dir = (k === 'name' || k === 'la' || k === 'region' || k === 'miles') ? 1 : -1; } redrawT(); }; th.addEventListener('click', go); th.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); }); });
 
   // ---------- map ----------
-  d3.json('data/gb.json').then((g) => { OE.gb = g; dash.draw('map'); }).catch(() => {});
+  d3.json('/explorer/data/gb.json').then((g) => { OE.gb = g; dash.draw('map'); }).catch(() => {});
   const restyle = (m) => { const k = m.k || 1; m.all.selectAll('circle').attr('r', 1.5 / Math.sqrt(k)); m.nb.selectAll('circle').attr('r', 4.6 / k ** 0.75).style('stroke-width', 1.2 / k); m.links.selectAll('line').style('stroke-width', 0.8 / k); m.land.selectAll('path').style('stroke-width', 0.8 / k); if (m.pos) m.me.attr('transform', `translate(${m.pos}) scale(${1 / k ** 0.75})`); };
   dash.draw('map', {mount: (box) => { box.replaceChildren(); const tip = el('div', 'oe-tip'); tip.hidden = true; box.append(tip);
       const svg = d3.select(box).append('svg').attr('width', '100%').attr('role', 'img').attr('aria-label', 'Map of England showing the selected school and its 50 similar schools');
@@ -173,7 +173,7 @@
 
   // ---------- actions ----------
   const pr = document.getElementById('oe-print'); if (pr) pr.addEventListener('click', () => { const s = S(); const d = document.getElementById('oe-printdate'); if (d) d.textContent = (s ? s.name + ' · ' : '') + 'generated ' + d3.timeFormat('%-d %B %Y')(new Date()) + ' · mrkdltn.com/explorer/#urn=' + (s ? s.urn : ''); const t = document.title; if (s) document.title = 'Ofsted Explorer - ' + s.name; window.print(); document.title = t; });
-  const cp = document.getElementById('oe-copy'); if (cp) cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText(location.href); cp.textContent = 'Link copied'; } catch (e) { cp.textContent = location.href; } setTimeout(() => { cp.textContent = 'Copy link'; }, 1800); });
+  const cp = document.getElementById('oe-copy'); if (cp) cp.addEventListener('click', async () => { try { const sc = S(); let u = location.href; if (sc && sc.urn) { const h = new URLSearchParams(location.hash.slice(1)); h.delete('urn'); const t = h.toString(); u = location.origin + '/explorer/school/' + sc.urn + '/' + (t ? '#' + t : ''); } await navigator.clipboard.writeText(u); cp.textContent = 'Link copied'; } catch (e) { cp.textContent = location.href; } setTimeout(() => { cp.textContent = 'Copy link'; }, 1800); });
   // section nav highlight
   const links = [...document.querySelectorAll('.oe-nav a')]; if ('IntersectionObserver' in window && links.length) { const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); }); }, {rootMargin: '-30% 0px -60% 0px'}); links.forEach((a) => { const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) io.observe(t); }); }
 })();
@@ -193,7 +193,7 @@ document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click'
 // Freshness: when the report cards were last checked, and the newest one read
 (() => {
   const fmt = (iso) => new Date(iso + (iso.length === 10 ? 'T12:00:00Z' : '')).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
-  fetch('data/build.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).then((b) => {
+  fetch('/explorer/data/build.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).then((b) => {
     if (!b || !b.built) return;
     const hint = document.querySelector('.oe-fresh');
     if (hint) { hint.textContent = 'Report cards checked ' + fmt(b.built) + (b.latest_published ? ', newest published ' + fmt(b.latest_published) : '') + '.'; hint.hidden = false; }

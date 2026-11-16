@@ -16,10 +16,16 @@
     const p = new URLSearchParams(location.hash.slice(1)); const o = {};
     p.forEach((v, k) => { o[k] = v; }); return o;
   };
+  // A chosen school lives at /explorer/school/URN/ (its own title and share image); other view settings stay in the hash.
+  // The school picked at random on /explorer/ stays in the hash, so the landing address is unchanged until someone chooses.
+  const schoolPath = /^\/explorer\/school\/\d+\/?$/;
   const writeHash = () => {
     const keep = {}; ['urn', 'x', 'area', 'phase', 'area2'].forEach((k) => { if (state[k] && state[k] !== defaults[k]) keep[k] = state[k]; });
+    const usePath = state.urn && (schoolPath.test(location.pathname) || String(state.urn) !== String(window.OE_RANDOM || ''));
+    if (usePath) delete keep.urn;
     const s = new URLSearchParams(keep).toString();
-    history.replaceState(null, '', s ? '#' + s : location.pathname + location.search);
+    const path = usePath ? '/explorer/school/' + state.urn + '/' : location.pathname;
+    history.replaceState(null, '', path + location.search + (s ? '#' + s : ''));
   };
 
   const data = (name) => {
@@ -88,8 +94,8 @@
     },
     onData: (f) => { onDataFns.push(f); },
     start: (defs) => {
-      defaults = defs || {}; state = Object.assign({}, defaults, readHash());
-      window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); rid++; ensureNN(state.urn).then(() => render()); } });
+      defaults = defs || {}; state = Object.assign({}, defaults, window.OE_URN ? {urn: String(window.OE_URN)} : {}, readHash());
+      window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); } });
       let t, lastW = window.innerWidth;
       window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { const w = window.innerWidth; if (w === lastW) return; lastW = w; render(null, 'resize'); }, 200); });
       render();
