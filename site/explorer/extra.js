@@ -189,3 +189,15 @@ document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click'
   document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click', () => {
     const t = document.getElementById(a.getAttribute('href').slice(1)); if (t && more.contains(t) && !more.open) more.open = true; }, true));
 })();
+
+// Freshness: when the report cards were last checked, and the newest one read
+(() => {
+  const fmt = (iso) => new Date(iso + (iso.length === 10 ? 'T12:00:00Z' : '')).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
+  fetch('data/build.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).then((b) => {
+    if (!b || !b.built) return;
+    const hint = document.querySelector('.oe-fresh');
+    if (hint) { hint.textContent = 'Report cards checked ' + fmt(b.built) + (b.latest_published ? ', newest published ' + fmt(b.latest_published) : '') + '.'; hint.hidden = false; }
+    const src = document.querySelector('.oe-fresh-src');
+    if (src) src.textContent = ' (last checked ' + fmt(b.built) + (b.latest_published ? '; newest read was published ' + fmt(b.latest_published) : '') + ')';
+  }).catch(() => {});
+})();

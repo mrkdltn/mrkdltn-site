@@ -88,10 +88,12 @@ def main():
     ks4, rc = load(ks4_path), load(rc_path)
 
     # report cards: MI is the record; daily reads add schools or newer inspections only
-    daily_added = 0
+    daily_added, latest_published = 0, None
     if os.path.exists(daily_path):
         by = {r['urn']: r for r in rc}
-        for d in load(daily_path):
+        daily = load(daily_path)
+        latest_published = max((d.get('published') or '' for d in daily), default='') or None
+        for d in daily:
             cur = by.get(d['urn'])
             if cur is None or (d.get('insp_date') or '') > (cur.get('insp_date') or ''):
                 base = cur if cur is not None else {c: '' for c in rc[0].keys()}
@@ -160,6 +162,7 @@ def main():
         'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
         'secondaries': len(ks4), 'report_cards': len(rc), 'daily_reports_merged': daily_added,
         'latest_inspection': rc_dates[-1] if rc_dates else None,
+        'latest_published': latest_published,
         'sources': {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path) if os.path.exists(p)},
     }
     with open(os.path.join(OUT, 'build.json'), 'w') as f:
