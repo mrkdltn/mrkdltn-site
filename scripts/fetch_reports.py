@@ -14,7 +14,7 @@ Run from the repository root:
 
 Polite by design: one request at a time, a pause between requests, and a user agent that says who we are.
 """
-import argparse, csv, datetime as dt, io, os, re, sys, time
+import argparse, csv, datetime as dt, html, io, os, re, sys, time
 import urllib.request
 
 BASE = 'https://reports.ofsted.gov.uk'
@@ -25,7 +25,8 @@ PAUSE = 1.0
 # report-card areas as written in the PDF -> column
 AREAS = [('Achievement', 'g_ach'), ('Attendance and behaviour', 'g_ab'), ('Curriculum and teaching', 'g_ct'),
          ('Early years', 'g_ey'), ('Inclusion', 'g_inc'), ('Leadership and governance', 'g_lg'),
-         ('Personal development and wellbeing', 'g_pd'), ('Post-16', 'g_p16'), ('Sixth form', 'g_p16')]
+         ('Personal development and wellbeing', 'g_pd'), ('Post-16 provision', 'g_p16'), ('Post-16', 'g_p16'),
+         ('Sixth form provision', 'g_p16'), ('Sixth form', 'g_p16')]
 GRADES = ['Exceptional', 'Strong standard', 'Expected standard', 'Needs attention', 'Urgent improvement']
 # search-result category -> phase used in the Explorer (state-funded schools only)
 PHASE = {'Primary': 'Primary', 'Secondary': 'Secondary', 'Special School': 'Special',
@@ -99,7 +100,7 @@ def search_day(day):
             name = re.search(r'<a href="[^"]+">([^<]+)</a>', it)
             cat = re.search(r'Category: <strong>([^<]+)</strong>', it)
             if href and cat and cat.group(1).strip() in PHASE:
-                found.append({'href': href.group(1), 'urn': href.group(2), 'name': name.group(1).strip() if name else '',
+                found.append({'href': href.group(1), 'urn': href.group(2), 'name': html.unescape(name.group(1).strip()) if name else '',
                               'phase': PHASE[cat.group(1).strip()], 'published': day.isoformat()})
         if len(items) < 100:
             return found
