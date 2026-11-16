@@ -56,7 +56,16 @@ python3 scripts/fetch_reports.py --since 2026-11-01
 - DfE and Ofsted, [Similar schools model for attainment: technical note](https://www.gov.uk/government/publications/similar-schools-model-for-attainment/similar-schools-model-for-attainment-technical-note)
 - DfE, [Get Information about Schools](https://get-information-schools.service.gov.uk/)
 
-Public sector information licensed under the Open Government Licence v3.0.
+## Licensing
+
+- **Code** (`scripts/`, `.github/`, and the JavaScript and CSS in `site/`): MIT licence, see [LICENSE](LICENSE).
+  Reuse the method freely.
+- **Writing, images and design artwork** on the site (articles, page text, photographs, illustrations,
+  charts): © 2026 Mark Dalton, all rights reserved. Short quotations with attribution and a link are welcome.
+- **Public data** in `data/raw/` and the Explorer's derived data contain public sector information licensed
+  under the [Open Government Licence v3.0](https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/).
+  D3 (`site/assets/d3.min.js`) is © Mike Bostock, ISC licence. Fonts in `site/assets/fonts/` are under the
+  SIL Open Font Licence.
 
 ## Corrections
 
