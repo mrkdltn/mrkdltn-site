@@ -121,3 +121,12 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 .oe-rconly #how{display:none}
 @media(max-width:640px){.oe-ar{grid-template-columns:1fr;padding:18px 0 20px}.oe-ar .h{flex-direction:row;align-items:center;justify-content:space-between}.oe-ar .gs{gap:16px}}
 .oe-nonsec #official,.oe-nonsec #national,.oe-nonsec #validate{display:none!important}
+
+/* tooltips sit above neighbouring tiles and cards (animated tiles form their own layers) */
+.oe [data-tip]:hover,.oe [data-tip]:focus-visible{z-index:60}
+.oe :is(.oe-card,.oe-tile,.oe-ar,.oe-kpi,[class*="rise"]):has(> [data-tip]:hover,> [data-tip]:focus-visible,[data-tip]:hover,[data-tip]:focus-visible){position:relative;z-index:50}
+.oe [data-tip]:hover::after,.oe [data-tip]:focus-visible::after{z-index:60}
+.oe-ar .bar,.oe-ar .bar i{overflow:visible}
+.oe-ar .bar i:first-child{border-radius:2px 0 0 2px}.oe-ar .bar i:last-child{border-radius:0 2px 2px 0}
+.oe-tsel select{font:inherit;border:0;background:transparent;color:var(--color-fg);padding:0 2px;max-width:15em}
+#oe-ntable td.muted{color:var(--color-fg-muted)}

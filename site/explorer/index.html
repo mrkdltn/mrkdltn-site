@@ -164,12 +164,12 @@ html.loaded .oe-loading{display:none}
 </section>
 <section id="neighbours" class="oe-card">
   <h2>The 50 similar schools <span class="i" tabindex="0" data-tip="The 50 schools closest to the selected school on the weighted context factors, in the open replica. Click any row to open that school.">i</span></h2>
-  <p class="sub">Click a heading to sort, a row to open that school.</p>
+  <p class="sub">Click a heading to sort, a row to open that school. Choose which report card area the last column shows.</p>
   <div class="oe-tools"><input id="oe-nf" class="oe-input sm" type="search" aria-label="Filter the similar schools" placeholder="Filter by school, area or trust">
-    <label class="chip"><input type="checkbox" id="oe-insp"> Inspected only</label><label class="chip"><input type="checkbox" id="oe-reg"> Same region</label><label class="chip"><input type="checkbox" id="oe-near"> Within 50 miles</label>
+    <label class="chip"><input type="checkbox" id="oe-insp"> Inspected only</label><label class="chip"><input type="checkbox" id="oe-reg"> Same region</label><label class="chip"><input type="checkbox" id="oe-near"> Within 50 miles</label><label class="chip oe-tsel">Grade shown <select id="oe-tarea" aria-label="Report card area shown in the table"><option value="g_ach">Achievement</option><option value="g_ct">Curriculum and teaching</option><option value="g_inc">Inclusion</option><option value="g_ab">Attendance and behaviour</option><option value="g_pd">Personal development and wellbeing</option><option value="g_lg">Leadership and governance</option><option value="g_ey">Early years</option><option value="g_p16">Post-16 provision</option><option value="g_sg">Safeguarding</option></select></label>
     <span class="oe-count" id="oe-ncount"></span></div>
   <div class="oe-tw"><table id="oe-ntable" data-source="neigh">
-    <thead><tr><th class="n" data-tip="Rank on Attainment 8 among the 50 and this school.">#</th><th data-sort="name">School</th><th data-sort="la">Local authority</th><th data-sort="region">Region</th><th class="n" data-sort="a8">A8</th><th class="n" data-sort="dis_pct">Disadv. %</th><th class="n" data-sort="pa_index">Prior att.</th><th class="n" data-sort="ss_diff" data-tip="That school's own gap to its own 50 similar schools.">Own gap</th><th class="n" data-sort="miles">Miles</th><th data-sort="g_ach">Achievement</th></tr></thead>
+    <thead><tr><th class="n" data-tip="Rank on Attainment 8 among the 50 and this school.">#</th><th data-sort="name">School</th><th data-sort="la">Local authority</th><th data-sort="region">Region</th><th class="n" data-sort="a8">A8</th><th class="n" data-sort="dis_pct">Disadv. %</th><th class="n" data-sort="pa_index">Prior att.</th><th class="n" data-sort="ss_diff" data-tip="That school's own gap to its own 50 similar schools.">Own gap</th><th class="n" data-sort="miles">Miles</th><th data-sort="grade" id="oe-tgh">Achievement</th></tr></thead>
     <tbody data-draw="neigh"></tbody>
   </table></div>
 </section>
@@ -211,6 +211,7 @@ html.loaded .oe-loading{display:none}
 </section>
 <section id="allphases" class="oe-card noprint">
   <h2>Report card grades by pupils' deprivation, all phases <span class="i" tabindex="0" data-tip="Ofsted's IDACI quintile is based on the home postcodes of a school's pupils, not the school's own address. Hover over a segment for counts.">i</span></h2>
+  <p class="sub"><a href="/explorer/areas/">Report card areas in context</a>: how each area tracks deprivation, results, pupil mobility and prior attainment across England's secondaries.</p>
   <div class="oe-row">
     <label>Phase<select class="dash-select" id="oe-phase" aria-label="Phase"><option>Secondary</option><option>Primary</option><option>Special</option><option>Alternative provision</option><option>Nursery</option></select></label>
     <label>Area<select class="dash-select" id="oe-area2" aria-label="Evaluation area for deprivation chart">
