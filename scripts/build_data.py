@@ -138,6 +138,30 @@ def enrich_em(ks4):
             r[m + '_cva'] = f'{100 / (1 + math.exp(-sum(a * x for a, x in zip(b, feats(r))))):.2f}' if v is not None else ''
 
 
+def write_model(ks4):
+    """model.json: what the Explorer needs to draw how the comparisons are built. The factor means and standard
+    deviations used to standardise, the published similar-schools weights, and the two contextual models' coefficients
+    (Attainment 8: least squares, reproduces cva_exp; EM 5+: fractional logit, reproduces em5_cva)."""
+    F = EM_FACTORS
+    rows = [r for r in ks4 if all(num(r.get(f)) is not None for f in F)]
+    X = [[1.0] + [float(r[f]) for f in F] for r in rows]
+    st = {}
+    for i, f in enumerate(F):
+        v = [x[i + 1] for x in X]; m = sum(v) / len(v)
+        st[f] = {'mean': m, 'sd': (sum((a - m) ** 2 for a in v) / (len(v) - 1)) ** 0.5}
+    a8 = [r for r in rows if num(r.get('a8')) is not None]
+    em = [r for r in rows if num(r.get('em5')) is not None]
+    b_a8 = _lstsq([[1.0] + [float(r[f]) for f in F] for r in a8], [float(r['a8']) for r in a8])
+    b_em = _fraclogit([[1.0] + [float(r[f]) for f in F] for r in em], [float(r['em5']) / 100 for r in em])
+    model = {'factors': F, 'stats': st, 'n': len(rows),
+             'weights': {'pa_index': 0.46, 'dis_pct': 0.14, 'polar4': 0.11, 'sensup_pct': 0.09, 'nonmob_pct': 0.06,
+                         'idaci_q': 0.06, 'ehc_pct': 0.04, 'eal_school': 0.03, 'nor': 0.02},
+             'a8': {'form': 'linear', 'coef': b_a8, 'mean_y': sum(float(r['a8']) for r in a8) / len(a8)},
+             'em5': {'form': 'logit', 'coef': b_em}}
+    with open(os.path.join(OUT, 'model.json'), 'w') as f:
+        json.dump(model, f, separators=(',', ':'))
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     ks4_path, rc_path = os.path.join(RAW, 'ks4_model_v3.csv'), os.path.join(RAW, 'ofsted_rc.csv')
@@ -181,6 +205,7 @@ def main():
 
     # --- English and maths at grade 5+ and 4+: similar-schools averages and a contextual expectation ---
     enrich_em(ks4)
+    write_model(ks4)
 
     # --- ks4 ---
     cols = [c for c in ks4[0].keys() if c not in KS4_DROP]

@@ -189,6 +189,7 @@ html.loaded .oe-loading{display:none}
   <p class="sub">For your own school: if you can see its official 50 similar schools in the IDSR or on the DfE schools platform, paste their URNs here, separated in any way. The Explorer then adds a reading against your official group. The list stays on your device; nothing is uploaded.</p>
   <textarea id="oe-idsr" aria-label="IDSR similar school URNs" placeholder="100001 100002 …"></textarea>
   <p class="oe-note" data-draw="offnote">—</p>
+  <div class="oe-offviz" data-draw="offviz"></div>
 </section>
 <details id="oe-more" class="oe-more noprint">
 <summary><span class="t">The national picture</span><span class="s" id="oe-more-s">Every secondary on one chart, report card grades by deprivation, and how the replica checks out</span></summary>
@@ -242,10 +243,18 @@ html.loaded .oe-loading{display:none}
     <div><b>This is a replica</b>The official groups use pupil-level data that is not public. Treat these neighbours as a close approximation and check the IDSR.</div>
   </div>
 </section>
-<details id="method">
-  <summary>Method, sources and limits</summary>
+<details id="method" open>
+  <summary>How the comparisons are built: method, sources and limits</summary>
+  <h3 class="oe-mh">1. Similar schools: what each factor counts for</h3>
+  <p class="sub">The published weights from the DfE and Ofsted technical note. POLAR4 is not public, so the replica leaves it out and shares its weight among the rest in the same proportions.</p>
+  <div class="oe-weights" data-draw="mweights"></div>
+  <h3 class="oe-mh">2. Similar schools: how this school&rsquo;s 50 are chosen</h3>
+  <div data-draw="msel"></div>
   <p><b>Similar schools, open replica.</b> Following the DfE and Ofsted technical note (16 July 2026): each factor is standardised against the national mean and standard deviation; schools are matched by weighted squared Euclidean distance; each school's 50 nearest neighbours form its group, and the comparator is their average Attainment 8. Published weights: prior attainment 0.46, FSM6 0.14, POLAR4 0.11, SEN support 0.09, pupil stability 0.06, IDACI 0.06, EHC plans 0.04, EAL 0.03, pupil numbers 0.02. Public proxies used: prior attainment profile of the 2023/24 GCSE cohort (carried from a predecessor school where the URN changed; estimated for 34 schools); disadvantaged and non-mobile shares of the 2025/26 GCSE cohort; Ofsted's pupil-based IDACI quintile; January 2026 census pupil numbers and EAL; January 2026 SEN support and EHC plans. POLAR4 is left out and the other weights rescaled. A gap counts as significant when it exceeds 1.96 standard errors (pupil-level spread 14.2 points, estimated from 2023/24 Progress 8 confidence intervals, plus the group's spread); "well above" or "well below" also needs a gap larger than one standard deviation of the group.</p>
-  <p><b>Contextual model.</b> One regression of Attainment 8 on the same factors across all schools, in the spirit of the DfE's contextual value added measure of 2006 to 2010. It explains about three quarters of the variation between schools. A gap within 2 points is read as in line.</p>
+  <h3 class="oe-mh">3. Contextual model: how this school&rsquo;s expected result is built</h3>
+  <p class="sub">Each bar is one factor&rsquo;s push on the expectation, largest first, starting from a school at the England average on every factor. It follows the results measure chosen above.</p>
+  <div class="oe-wfall" data-draw="mwf"></div>
+  <p><b>Contextual model.</b> One model of results on the same factors across all secondaries, in the spirit of the DfE's contextual value added measure of 2006 to 2010. For Attainment 8 it is a straight-line regression that explains about three quarters of the variation between schools; a gap within 2 points reads as in line. For English and maths at grade 5 or above it is fitted to the share of pupils (a fractional logit), so expected values stay between 0% and 100%; a gap within 4 points reads as in line.</p>
   <p><b>Progress 8.</b> The last published figure, for 2023/24, carried from a predecessor school where the URN changed. The DfE did not publish it for 2024/25 or 2025/26.</p>
   <p><b>Sources.</b> DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final. DfE, Schools, pupils and their characteristics, January 2026. DfE, Special educational needs in England, January 2026. Ofsted, management information, latest inspections as at 31 October 2026, with report cards published since then read from Ofsted's reports site each morning<span class="oe-fresh-src"></span>. DfE and Ofsted, Similar schools model for attainment: technical note. Ofsted, Considering the context of schools in challenging circumstances (2025/26).</p>
   <p><b>Limits.</b> Provisional results are revised in February 2027. None of these measures is a judgement on a school, and none should be read as one.</p>
@@ -263,6 +272,7 @@ html.loaded .oe-loading{display:none}
 <script src="/explorer/app.js"></script>
 <script src="/explorer/extra.js"></script>
 <script src="/explorer/slide.js"></script>
+<script src="/explorer/method.js"></script>
 <script>dash.start({x:'dis_pct',area:'g_ach',phase:'Secondary',area2:'g_ach',meas:'a8'});</script>
 </body>
 </html>
