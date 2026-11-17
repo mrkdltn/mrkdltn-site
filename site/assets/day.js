@@ -70,7 +70,9 @@
       var brs = svg.querySelectorAll('.br');
       bds.forEach(function (bd, k) {
         var a = bd.dataset.at.split(','), f = bd.dataset.from.split(',');
-        bd.style.left = (g.ox + a[0] * g.s) + 'px'; bd.style.top = (g.oy + a[1] * g.s) + 'px';
+        var bx = g.ox + a[0] * g.s, hw = bd.offsetWidth / 2 + 8;
+        bx = Math.max(hw, Math.min(layer.clientWidth - hw, bx));   // never let a badge run off the edge
+        bd.style.left = bx + 'px'; bd.style.top = (g.oy + a[1] * g.s) + 'px';
         var br = brs[k];
         trig.push({ len: nearestLen(smp, +f[0], +f[1]), fn: function () { if (br) br.classList.add('on'); bd.classList.add('on'); } });
       });
@@ -89,13 +91,13 @@
     items.forEach(function (it, k) {
       if (it.kind !== 'seam') return;
       var from = items[k - 1], to = items[k + 1];
-      var st = it.st, plate = st.querySelector('.plate');
+      var st = it.st, plate = st.querySelector('.frame');
       var sr = st.getBoundingClientRect(), pr = plate.getBoundingClientRect();
       var top = pr.bottom - sr.top, h = sr.height - top, W = st.clientWidth;
       var x1 = from.x1 + (pr.left - sr.left), x2;
       var bottomExtra = 0;
       if (to) {
-        var nr = to.st.querySelector('.plate').getBoundingClientRect();
+        var nr = to.st.querySelector('.frame').getBoundingClientRect();
         x2 = to.x0 + (nr.left - sr.left);
         bottomExtra = nr.top - sr.bottom;
       } else {
@@ -126,11 +128,13 @@
     // the last run: down the edge of the national sheet to the axis
     var lead = nat.querySelector('.lead'), axis = nat.querySelector('.axis');
     var lr = lead.getBoundingClientRect(), ar = axis.getBoundingClientRect();
-    var LH = ar.top - lr.top, LW = Math.max(40, ar.left - lr.left + 2);
+    var dx = ar.left + 1 - lr.left;   // the axis sits on the line, so this is ~0 and the run is straight
+    var LH = ar.top - lr.top, LW = Math.max(40, dx + 2);
     lead.setAttribute('width', LW); lead.setAttribute('height', LH); lead.setAttribute('viewBox', '0 0 ' + LW + ' ' + LH);
     lead.style.height = LH + 'px'; lead.style.width = LW + 'px';
     var lp = lead.querySelector('.th');
-    lp.setAttribute('d', 'M0,0 V' + Math.max(8, LH - 28) + ' H' + (LW - 1) + ' V' + LH);
+    lp.setAttribute('d', Math.abs(dx) < 6 ? 'M' + Math.max(0, dx) + ',0 V' + LH
+      : 'M0,0 V' + Math.max(8, LH - 28) + ' H' + dx + ' V' + LH);
     lp.style.strokeWidth = 2.4;
     var lsm = sample(lp, 40);
     lp.style.strokeDasharray = lsm.L + ' ' + lsm.L;
@@ -195,12 +199,12 @@
     if (reduce) return;
     var vh = window.innerHeight;
     plates.forEach(function (p) {
-      var r = p.st.querySelector('.plate').getBoundingClientRect();
+      var r = p.st.querySelector('.frame').getBoundingClientRect();
       if (r.bottom < -100 || r.top > vh + 100) return;
       var c = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);   // -1 .. 1 across the screen
       c = Math.max(-1, Math.min(1, c));
       p.layer.style.transform = 'translate3d(0,' + (c * r.height * 0.07).toFixed(1) + 'px,0)';
-      if (p.pc && !portrait) p.pc.style.transform = 'translate3d(0,' + (c * -26).toFixed(1) + 'px,0)';
+      if (p.card && !portrait) p.card.style.transform = 'translate3d(0,' + (c * -26).toFixed(1) + 'px,0)';
     });
   }
 
