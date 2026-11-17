@@ -132,7 +132,7 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 #oe-ntable td.muted{color:var(--color-fg-muted)}
 
 /* Four readings on phones: each lens becomes a stacked row with labelled figures, bar and reading */
-@media(max-width:640px){
+@media(max-width:820px){
 #lenses .oe-tw{overflow:visible}
 #lenses table,#lenses tbody,#lenses tr,#lenses td{display:block;width:auto}
 #lenses thead{display:none}
