@@ -273,3 +273,4 @@ h3.oe-mh{font-family:var(--display)!important;font-weight:400!important;font-siz
 .oe-wrow.head .bar{background:none}
 .oe-plegend i.d-b,.oe-plegend i.d-o{width:9px;height:9px;border-radius:50%}
 .oe-plegend i.d-b{background:#C9A24B}.oe-plegend i.d-o{background:#8A96A8}
+.oe-plegend i.wf-up,.oe-plegend i.wf-dn{width:14px;height:10px}.oe-plegend i.wf-up{background:#2F6F66}.oe-plegend i.wf-dn{background:#C9A24B}

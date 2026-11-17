@@ -170,6 +170,7 @@
       const t = el('div', 't'); if (cls === 'step') { const bar = el('i', bb >= a ? 'up' : 'dn'); bar.style.left = X(Math.min(a, bb)) + '%'; bar.style.width = Math.max(0.4, Math.abs(X(bb) - X(a))) + '%'; t.append(bar); }
       else { const mk = el('i', cls === 'act' ? 'me' : 'tk'); mk.style.left = X(a) + '%'; t.append(mk); }
       rw.append(t, el('div', 'v', val)); return rw; };
+    const kk = el('div', 'oe-plegend'); const k1 = el('span'); k1.append(el('i', 'wf-up'), 'Raises the expectation'); const k2 = el('span'); k2.append(el('i', 'wf-dn'), 'Lowers it'); const k3 = el('span'); k3.append(el('i', 'me'), 'Actual result'); kk.append(k1, k2, k3); box.append(kk);
     box.append(row('base', 'A school at the England average on every factor', null, base, null, fmtV(base)));
     run = base;
     parts.forEach((p) => { const st = M.stats[p.f]; const v0 = run; run += p.v; const sv = ok(r[p.f]) ? FAC[p.f].fmt(+r[p.f]) : 'not known, average used';
