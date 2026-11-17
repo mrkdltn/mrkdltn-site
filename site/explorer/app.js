@@ -328,8 +328,15 @@
     const QL = (q) => 'Same IDACI fifth: ' + (q === '1' ? 'least deprived' : q === '5' ? 'most deprived' : q + ' of 5');
     const p0 = d3.format('.0f');
     const DL = (q, c) => 'Same disadvantaged fifth: ' + (q === 1 ? 'least (under ' + p0(c[0]) + '%)' : q === 5 ? 'most (over ' + p0(c[3]) + '%)' : q + ' of 5 (' + p0(c[q - 2]) + '–' + p0(c[q - 1]) + '%)');
-    d.data.forEach((a) => {
-      const row = document.createElement('div'); row.className = 'oe-ar rise';
+    // one area at a time: a picker shows every graded area with the school's grade colour
+    const keys = d.data.map((a) => a.key); if (!keys.includes(OE.areaSel)) OE.areaSel = keys.includes('g_ach') ? 'g_ach' : keys[0];
+    const pick = document.createElement('div'); pick.className = 'oe-apick'; pick.setAttribute('role', 'group'); pick.setAttribute('aria-label', 'Report card area shown');
+    d.data.forEach((a) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', String(a.key === OE.areaSel));
+      const dot = document.createElement('i'); dot.style.background = GC[a.grade]; dot.title = a.grade; b.append(dot, a.area);
+      b.addEventListener('click', () => { OE.areaSel = a.key; dash.draw('areas'); }); pick.append(b); });
+    box.append(pick);
+    d.data.filter((a) => a.key === OE.areaSel).forEach((a) => {
+      const row = document.createElement('div'); row.className = 'oe-ar';
       const h = document.createElement('div'); h.className = 'h';
       const lab = document.createElement('span'); lab.className = 'lab'; lab.textContent = a.area;
       const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; if (DARK_TEXT.has(a.grade)) chip.style.color = '#0B1A2E';
