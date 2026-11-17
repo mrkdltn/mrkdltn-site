@@ -21,17 +21,16 @@
 
   // small chart: share below Expected standard across five groups, one or two series
   function chart(box, series, xlabels, opts) {
-    const W = 340, H = 190, m = {t: 18, r: 40, b: 34, l: 36};
-    const max = Math.max(50, ...series.flatMap((s) => s.pts.map((p) => (p.v === null ? 0 : p.v)))) ;
-    const ymax = Math.ceil(max / 10) * 10;
+    const W = 300, H = 200, m = {t: 20, r: 40, b: 40, l: 40};
+    const ymax = opts.ymax || 50;
     const x = d3.scalePoint().domain(d3.range(5)).range([m.l, W - m.r]).padding(0.25);
     const y = d3.scaleLinear().domain([0, ymax]).range([H - m.b, m.t]);
     const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', opts.aria);
-    y.ticks(4).forEach((t) => { svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID);
+    [0, ymax / 2, ymax].forEach((t) => { svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID);
       svg.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').attr('class', 'ax').text(t + '%'); });
     svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', AXIS);
-    xlabels.forEach((t, i) => svg.append('text').attr('x', x(i)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').attr('class', 'ax').text(t));
-    if (opts.xtitle) svg.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 3).attr('text-anchor', 'middle').attr('class', 'ax t').text(opts.xtitle);
+    xlabels.forEach((t, i) => svg.append('text').attr('x', x(i)).attr('y', H - m.b + 18).attr('text-anchor', 'middle').attr('class', 'ax').text(t));
+    if (opts.xtitle) svg.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 4).attr('text-anchor', 'middle').attr('class', 'ax t').text(opts.xtitle);
     series.forEach((s) => {
       const pts = s.pts.map((p, i) => ({...p, i})).filter((p) => p.v !== null && p.n >= MIN);
       const line = d3.line().x((p) => x(p.i)).y((p) => y(p.v)).defined((p, k, a) => k === 0 || p.i === a[k - 1].i + 1);
@@ -39,7 +38,7 @@
       pts.forEach((p) => { svg.append('circle').attr('cx', x(p.i)).attr('cy', y(p.v)).attr('r', s.main ? 4 : 3).attr('fill', s.main ? s.colour : '#fff').attr('stroke', s.colour).attr('stroke-width', 1.5)
         .append('title').text(`${s.name}, ${xlabels[p.i].toLowerCase()}: ${pc(p.v)}% below Expected standard (${cnt(p.n)} schools)`); });
       const last = pts[pts.length - 1]; if (last && s.main) svg.append('text').attr('x', x(last.i) + 8).attr('y', y(last.v) + 4).attr('class', 'lab').attr('fill', s.colour).text(pc(last.v) + '%');
-      const first = pts[0]; if (first && s.main) svg.append('text').attr('x', x(first.i) - 8).attr('y', y(first.v) - 8).attr('text-anchor', 'middle').attr('class', 'lab').attr('fill', s.colour).text(pc(first.v) + '%');
+      const first = pts[0]; if (first && s.main) svg.append('text').attr('x', x(first.i)).attr('y', y(first.v) - 10).attr('text-anchor', 'middle').attr('class', 'lab').attr('fill', s.colour).text(pc(first.v) + '%');
     });
     return svg;
   }
@@ -59,12 +58,14 @@
     const lead = document.getElementById('ar-a-lead');
     if (lead && ach.m[0].n >= MIN && ach.m[4].n >= MIN) rich(lead, `Among the **${cnt(matched.filter((r) => graded(r, 'g_ach')).length)}** inspected secondaries whose 2024/25 results were close to or above their similar schools, **${pc(ach.m[4].v)}%** of those in the most deprived fifth were graded below Expected standard for achievement, against **${pc(ach.m[0].v)}%** in the least deprived fifth.`);
     const ga = document.getElementById('ar-a');
+    const top = (vals) => Math.max(40, Math.ceil(d3.max(vals.filter((p) => p.n >= MIN && p.v !== null), (p) => p.v) / 10) * 10);
+    const yA = top(AREAS.flatMap(([k]) => byQ(insp, k).concat(byQ(matched, k))));
     AREAS.forEach(([k, lab]) => {
       const all = byQ(insp, k), mm = byQ(matched, k);
       const card = el('figure', 'ar-fig'); card.append(el('figcaption', '', lab));
       const box = el('div', 'ar-ch'); card.append(box);
       chart(box, [{name: 'All inspected secondaries', pts: all, colour: MUTED, dash: '4 3'}, {name: 'Results close to or above similar schools', pts: mm, colour: INK, main: true}], Q,
-        {aria: `${lab}: share below Expected standard by deprivation fifth`, xtitle: 'Deprivation fifth of pupils'});
+        {aria: `${lab}: share below Expected standard by deprivation fifth`, xtitle: 'Deprivation fifth of pupils', ymax: yA});
       const gap = mm[4].n >= MIN && mm[0].n >= MIN ? mm[4].v - mm[0].v : null;
       card.append(el('p', 'ar-note', gap === null ? 'Too few schools at one end to compare.' : `Matched results: ${pc(mm[0].v)}% to ${pc(mm[4].v)}%, least to most deprived (${cnt(mm[0].n)} and ${cnt(mm[4].n)} schools).`));
       ga.append(card); });
@@ -96,12 +97,13 @@
       ['g_ab', 'Attendance and behaviour', 'nonmob_pct', 'Pupils who joined at the usual time (non-mobile %)', ['Least stable', '2', '3', '4', 'Most stable']],
       ['g_ct', 'Curriculum and teaching', 'pa_index', 'Prior attainment of the cohort', ['Lowest', '2', '3', '4', 'Highest']],
       ['g_inc', 'Inclusion', 'ehc_pct', 'Pupils with an EHC plan (%)', ['Fewest', '2', '3', '4', 'Most']]];
-    ctx.forEach(([k, lab, f, ft, xl]) => {
-      const cuts = fifths(rows, f);
-      const pts = d3.range(1, 6).map((q) => share(insp.filter((r) => fifthOf(cuts, +r[f]) === q), k));
+    const ctxPts = ctx.map(([k, , f]) => { const cuts = fifths(rows, f); return d3.range(1, 6).map((q) => share(insp.filter((r) => fifthOf(cuts, +r[f]) === q), k)); });
+    const yC = top(ctxPts.flat());
+    ctx.forEach(([k, lab, f, ft, xl], ci) => {
+      const pts = ctxPts[ci];
       const card = el('figure', 'ar-fig'); card.append(el('figcaption', '', `${lab}, by ${ft.charAt(0).toLowerCase() + ft.slice(1)}`));
       const box = el('div', 'ar-ch'); card.append(box);
-      chart(box, [{name: 'Inspected secondaries', pts, colour: INK, main: true}], xl, {aria: `${lab}: share below Expected standard by fifths of ${ft}`, xtitle: 'Fifths of all secondaries'});
+      chart(box, [{name: 'Inspected secondaries', pts, colour: INK, main: true}], xl, {aria: `${lab}: share below Expected standard by fifths of ${ft}`, xtitle: 'Fifths of all secondaries', ymax: yC});
       card.append(el('p', 'ar-note', `${cnt(d3.sum(pts, (p) => p.n))} inspected secondaries; fifths drawn across all ${cnt(rows.length)} secondaries with results.`));
       gc.append(card); });
   }
