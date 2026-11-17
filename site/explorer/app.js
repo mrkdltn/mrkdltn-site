@@ -184,9 +184,20 @@
     const nonsec = (r.phase || 'Secondary') !== 'Secondary'; document.documentElement.classList.toggle('oe-nonsec', nonsec);
     const ms = document.getElementById('oe-more-s'); if (ms) ms.textContent = nonsec ? 'How ' + (PHL[r.phase] || 'schools') + ' across England are graded in each area, by pupils\' deprivation' : 'Every secondary on one chart, report card grades by deprivation, and how the replica checks out';
     if (OE._phaseFor !== r.urn) { OE._phaseFor = r.urn; const ph = r.phase || 'Secondary'; if (P().phase !== ph) setTimeout(() => dash.setParams({phase: ph}), 0); } if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
+  // the school's details, with the URN linked to its official DfE record and the inspection to its Ofsted page
+  const OFSTED_TYPE = {Nursery: 20, Primary: 21, 'Alternative provision': 22, Secondary: 23, Special: 25};
   dash.draw('smeta', (el) => { const r = S(); if (!r) return dash_(el);
-    if (r.rc_only) { el.textContent = [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '', 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : ''].filter(Boolean).join(' · '); return; }
-    el.textContent = ['Secondary', r.la, r.region, r.postcode, r.mat ? r.mat : 'Not in a multi-academy trust', r.type, r.selective, 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : 'No report card inspection yet'].filter(Boolean).join(' · '); });
+    const date = r.insp_date ? d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : '';
+    const parts = r.rc_only
+      ? [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '']
+      : ['Secondary', r.la, r.region, r.postcode, r.mat ? r.mat : 'Not in a multi-academy trust', r.type, r.selective];
+    const link = (text, href, title) => { const a = document.createElement('a'); a.href = href; a.textContent = text; a.target = '_blank'; a.rel = 'noopener'; a.title = title; a.className = 'oe-ext'; return a; };
+    const ofsted = 'https://reports.ofsted.gov.uk/provider/' + (OFSTED_TYPE[r.phase || 'Secondary'] || 23) + '/' + r.urn;
+    const items = parts.filter(Boolean).map((t) => document.createTextNode(t));
+    items.push(link('URN ' + r.urn, 'https://get-information-schools.service.gov.uk/Establishments/Establishment/Details/' + r.urn, 'This school\'s official record on the DfE\'s Get Information about Schools (opens in a new tab)'));
+    items.push(date ? link('Inspected ' + date, ofsted, 'This school\'s inspection reports on the Ofsted website (opens in a new tab)')
+      : link('No report card inspection yet', ofsted, 'This school\'s earlier inspection reports on the Ofsted website (opens in a new tab)'));
+    el.replaceChildren(); items.forEach((n, k) => { if (k) el.append(' · '); el.append(n); }); });
 
   dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
     const nat = dash.data('national').data;

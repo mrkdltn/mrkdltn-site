@@ -183,3 +183,8 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 .oe-meas button{font:inherit;font-size:14px;line-height:1.25;padding:9px 14px;min-height:44px;border:1px solid var(--color-border-line);background:#fff;color:var(--color-fg);border-radius:2px;cursor:pointer}
 .oe-meas button[aria-pressed="true"]{background:#0B1A2E;color:#fff;border-color:#0B1A2E}
 @media(max-width:640px){.oe-meas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}.oe-meas .ml{grid-column:1/-1;margin:0}.oe-meas button{padding:8px 6px;font-size:13.5px}}
+
+/* links in the school's details line */
+.oe-ext{color:inherit;text-decoration:underline;text-decoration-color:rgba(201,162,75,.7);text-underline-offset:3px;text-decoration-thickness:1px}
+.oe-ext:hover,.oe-ext:focus-visible{text-decoration-color:currentColor}
+.oe-ext::after{content:'\2197';font-size:.8em;margin-left:2px;opacity:.75}
