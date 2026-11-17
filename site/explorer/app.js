@@ -318,7 +318,7 @@
   const PHL = {'Primary': 'primary schools', 'Secondary': 'secondary schools', 'Special': 'special schools', 'Alternative provision': 'alternative provision schools', 'Nursery': 'nursery schools'};
   OE.PHL = PHL;
   dash.draw('areasub', (el) => { const r = S(); if (!r) { el.textContent = ''; return; } const ph = PHL[r.phase] || 'schools';
-    el.textContent = 'Each bar shows how ' + ph + ' are graded in that area, from Urgent improvement on the left to Exceptional on the right. The marker shows this school\'s grade. IDACI fifths are Ofsted\'s quintiles of area deprivation, based on pupils\' home postcodes' + (r.rc_only ? '' : '. Disadvantaged fifths split all secondaries with results by the disadvantaged share of their GCSE year group. The 50 similar schools are those in the open replica that have a report card') + '. Groups of fewer than 10 schools are not shown.'; });
+    el.textContent = 'Choose an area to see how ' + ph + ' are graded in it, from Urgent improvement on the left to Exceptional on the right. The marker shows this school\'s grade.'; });
   const DARK_TEXT = new Set(['Expected standard', 'Needs attention']);
   dash.draw('areas', (box) => { const d = dash.data('areas'); box.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const has = d.data.length > 0; const sec = document.getElementById('areas'); if (sec) sec.hidden = !has;
