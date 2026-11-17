@@ -68,7 +68,7 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
   /* the 50 similar schools: rank, school, A8, gap to its own group, achievement grade */
   #oe-ntable th:nth-child(3),#oe-ntable td:nth-child(3),#oe-ntable th:nth-child(4),#oe-ntable td:nth-child(4),
   #oe-ntable th:nth-child(6),#oe-ntable td:nth-child(6),#oe-ntable th:nth-child(7),#oe-ntable td:nth-child(7),
-  #oe-ntable th:nth-child(9),#oe-ntable td:nth-child(9){display:none}
+  #oe-ntable th:nth-child(8),#oe-ntable td:nth-child(8),#oe-ntable th:nth-child(10),#oe-ntable td:nth-child(10){display:none}
   #oe-ntable td{padding:11px 5px}
   #oe-ntable th{padding:8px 5px}
   #oe-ntable .oe-band{font-size:11px;padding:2px 6px}

@@ -44,7 +44,7 @@
     else { head = 'Close to national, and ' + (up ? 'ahead of' : down ? 'behind' : 'in line with') + ' schools like it.'; body = 'Results sit **' + natTxt + '** the national average and **' + ssTxt + '** the average of ' + SS + '.'; }
     // second opinion: graded agreement rather than agree/disagree
     if (ok(cva)) { const cv = '**' + fs(cva) + '** against expectation';
-      if (up ? cva > 2 : down ? cva < -2 : Math.abs(cva) <= 2) body += ' The contextual model agrees (' + cv + ').';
+      const ct = OE.ctxThr(r, 'a8'); if (up ? cva > ct : down ? cva < -ct : Math.abs(cva) <= ct) body += ' The contextual model agrees (' + cv + ').';
       else if ((up && cva > 0) || (down && cva < 0)) body += ' The contextual model points the same way, less strongly (' + cv + ').';
       else if (!up && !down) body += ' The contextual model is a little more ' + (cva > 0 ? 'positive' : 'negative') + ' (' + cv + '), so read “in line” as approximate.';
       else body += ' The contextual model points the other way (' + cv + '), so the two readings disagree and the direction is uncertain.'; }
@@ -122,7 +122,7 @@
     document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => th.setAttribute('aria-sort', th.dataset.sort === T.k ? (T.dir > 0 ? 'ascending' : 'descending') : 'none'));
     const o = (v, f) => (ok(v) ? f(+v) : '—');
     rows.forEach((x) => { const tr = el('tr'); const self = x === r; if (self) tr.className = 'self'; else { tr.tabIndex = 0; tr.style.cursor = 'pointer'; tr.addEventListener('click', () => OE.choose(x.urn)); tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') OE.choose(x.urn); }); }
-      const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [OE.mfmt(x[mf], mf), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(gapOf(x), fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
+      const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [OE.mfmt(x[mf], mf), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(x.pupils, d3.format(',.0f')), 'n'], [o(gapOf(x), fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
       cells.forEach(([t, c]) => tr.append(el('td', c, String(t))));
       const td = el('td'); const gv = x[T.area];
       if (GC[gv]) { const sp = el('span', 'oe-band', gv); sp.style.background = GC[gv]; if (gv === 'Expected standard' || gv === 'Needs attention') sp.style.color = '#0B1A2E'; td.append(sp); }

@@ -179,7 +179,7 @@
     box.append(row('act', 'This school’s result', null, act, null, fmtV(act)));
     const g = act - expd;
     const top = parts.slice(0, 2).map((p) => FAC[p.f].lab.toLowerCase());
-    box.append(rich(el('p', 'oe-comp'), 'Starting from a school that is average on everything, each factor moves the expectation up or down. For this school the biggest moves come from **' + top[0] + '** and **' + top[1] + '**. The result is **' + fmtV(expd) + '**; the school achieved ' + fmtV(act) + ', a gap of **' + fs(g) + '**' + (Math.abs(g) < MM.thr ? ', in line with expectation.' : '.') + (mod.form === 'logit' ? ' The model works on the share of pupils, so each factor’s push is converted to percentage points at this school’s position.' : '')));
+    box.append(rich(el('p', 'oe-comp'), 'Starting from a school that is average on everything, each factor moves the expectation up or down. For this school the biggest moves come from **' + top[0] + '** and **' + top[1] + '**. The result is **' + fmtV(expd) + '**; the school achieved ' + fmtV(act) + ', a gap of **' + fs(g) + '**' + (Math.abs(g) < OE.ctxThr(r, m) ? ', in line with expectation for a cohort of this size.' : '.') + (mod.form === 'logit' ? ' The model works on the share of pupils, so each factor’s push is converted to percentage points at this school’s position.' : '')));
   };
   dash.draw('mwf', drawWf);
 })();

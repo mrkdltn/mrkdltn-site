@@ -53,6 +53,10 @@
   // results measures: Attainment 8, or English and maths at grade 5+ / 4+ (percentages)
   OE.MEAS = {a8: {label: 'Attainment 8', short: 'A8', unit: '', scale: 15, thr: 2},
     em5: {label: 'English and maths, grade 5 or above', short: 'EM 5+', unit: '%', scale: 30, thr: 4}};
+  // contextual "in line" band, scaled to cohort size: base points for a median-sized cohort, times sqrt(median / cohort)
+  OE.medCohort = () => { const k = dash.data('ks4'); if (k.status !== 'ok') return 180; if (OE._mc && OE._mc.d === k.data) return OE._mc.v;
+    const v = k.data.map((r) => +r.pupils).filter((x) => x > 0).sort((a, b) => a - b); const med = v.length ? v[Math.floor(v.length / 2)] : 180; OE._mc = {d: k.data, v: med}; return med; };
+  OE.ctxThr = (r, m) => { const base = OE.MEAS[m || 'a8'].thr, n = +(r && r.pupils); return n > 0 ? base * Math.sqrt(OE.medCohort() / n) : base; };
   OE.meas = () => { const m = String(dash.params().meas || 'a8'); return OE.MEAS[m] ? m : 'a8'; };
   OE.mfmt = (v, m) => (v === null || v === undefined || v === '' || isNaN(v) ? '—' : (+v).toFixed(1) + (OE.MEAS[m || OE.meas()].unit));
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
@@ -86,7 +90,7 @@
         const o = official && official[0];
         if (o && o.ids && o.ids.length) { const by = new Map(ks4.map((x) => [x.urn, x])); const f = o.ids.map((i) => by.get(i)).filter((x) => x && ok2(x[m]));
           if (f.length) { const mm = f.reduce((a, x) => a + +x[m], 0) / f.length; out.push({lens: 'Similar schools (official IDSR list)', comparator_label: 'Average of ' + f.length + ' pasted schools', school: rd(v), comparator: rd(mm), gap: rd(v - mm), reading: 'Gap only', unit: M.unit, scale: M.scale}); } }
-        if (ok2(r[m + '_cva'])) { const g = v - +r[m + '_cva']; out.push({lens: 'Contextual model', comparator_label: 'Expected for this intake', school: rd(v), comparator: rd(+r[m + '_cva']), gap: rd(g), reading: Math.abs(g) < M.thr ? 'In line with expectation' : (g > 0 ? 'Above expectation' : 'Below expectation'), unit: M.unit, scale: M.scale}); }
+        if (ok2(r[m + '_cva'])) { const g = v - +r[m + '_cva']; out.push({lens: 'Contextual model', comparator_label: 'Expected for this intake', school: rd(v), comparator: rd(+r[m + '_cva']), gap: rd(g), reading: Math.abs(g) < OE.ctxThr(r, m) ? 'In line with expectation' : (g > 0 ? 'Above expectation' : 'Below expectation'), unit: M.unit, scale: M.scale}); }
         return out;
       }
       const a8 = +r.a8;
@@ -96,7 +100,7 @@
       ];
       const o = official && official[0];
       if (o && o.mean !== null) out.push({lens: 'Similar schools (official IDSR list)', comparator_label: 'Average of ' + o.found + ' pasted schools', school: rd(a8), comparator: o.mean, gap: rd(a8 - o.mean), reading: 'Gap only'});
-      out.push({lens: 'Contextual model', comparator_label: 'Expected for this intake', school: rd(a8), comparator: rd(+r.cva_exp), gap: rd(+r.cva_res), reading: Math.abs(+r.cva_res) < 2 ? 'In line with expectation' : (+r.cva_res > 0 ? 'Above expectation' : 'Below expectation')});
+      out.push({lens: 'Contextual model', comparator_label: 'Expected for this intake', school: rd(a8), comparator: rd(+r.cva_exp), gap: rd(+r.cva_res), reading: Math.abs(+r.cva_res) < OE.ctxThr(r, 'a8') ? 'In line with expectation' : (+r.cva_res > 0 ? 'Above expectation' : 'Below expectation')});
       const p8 = r.p8_24 === null || r.p8_24 === '' ? null : +r.p8_24;
       out.push({lens: 'Progress 8, 2023/24', comparator_label: r.pred ? 'National average (predecessor school)' : 'National average (zero)', school: p8, comparator: p8 === null ? null : 0, gap: p8, reading: p8 === null ? 'Not available' : OE.p8Band(p8, +r.p8lo_24, +r.p8hi_24)});
       return out; }});
@@ -238,14 +242,15 @@
     'Published attainment': 'Compares the school with the national average. It makes no allowance for intake, so it mainly reflects who the school serves.',
     'Similar schools (open replica)': 'Compares the school with the 50 schools most like it on prior attainment, disadvantage, SEND, mobility, deprivation, EAL and size, using the DfE and Ofsted method on public data.',
     'Similar schools (official IDSR list)': 'Uses the URNs you pasted. Ofsted bands this gap with its own significance test, which is not published.',
-    'Contextual model': 'What schools with this intake achieve on average across England, from one regression on the same factors, including both the disadvantaged share and IDACI. Within 2 points reads as in line.',
+    'Contextual model': 'What schools with this intake achieve on average across England, from one regression on the same factors, including both the disadvantaged share and IDACI. The in-line band is ±2 points for a median-sized GCSE cohort, wider for smaller cohorts and narrower for larger ones, because a smaller cohort\'s average moves more by chance.',
     'Progress 8, 2023/24': 'Pupil-level progress from KS2 to GCSE, last published for 2023/24. Where the school changed URN, this is the predecessor school\'s figure. The reading uses the DfE\'s published bands, which combine the score with its 95% confidence interval: well above average (0.5 or more, interval wholly above 0), above average (interval wholly above 0), average (interval includes 0), below average (interval wholly below 0), well below average (below −0.5, interval wholly below 0).'
   };
-  const CTX_EM = 'What schools with this intake achieve on average across England, from one national model on the same factors, including both the disadvantaged share and IDACI. The model is fitted to the share of pupils, so expected values always stay between 0% and 100%: near the top, a school has little room to exceed them. Within 4 points reads as in line.';
+  const CTX_EM = 'What schools with this intake achieve on average across England, from one national model on the same factors, including both the disadvantaged share and IDACI. The model is fitted to the share of pupils, so expected values always stay between 0% and 100%: near the top, a school has little room to exceed them. The in-line band is ±4 points for a median-sized GCSE cohort, wider for smaller cohorts and narrower for larger ones.';
   dash.draw('lenses', (tb) => { const d = dash.data('lenses'); tb.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const m = OE.meas(), M = OE.MEAS[m]; const ls = document.getElementById('oe-lsub');
     if (ls) ls.textContent = m === 'a8' ? 'Attainment 8, 2025/26 provisional. A positive gap means the school\'s score is higher than the comparator. The bar shows the gap on a scale of ±15 points.'
-      : 'Share of the GCSE year group achieving grade 5 or above in both English and maths, 2025/26 provisional. Gaps are in percentage points; the bar shows them on a scale of ±30. Progress 8 has no English and maths equivalent, so it is left out. Contextual readings within ±4 points count as in line.';
+      : 'Share of the GCSE year group achieving grade 5 or above in both English and maths, 2025/26 provisional. Gaps are in percentage points; the bar shows them on a scale of ±30. Progress 8 has no English and maths equivalent, so it is left out.';
+    { const sr = (dash.data('school').data || [])[0]; if (ls && sr && +sr.pupils > 0) ls.textContent += ' This school\'s GCSE cohort is ' + d3.format(',')(Math.round(+sr.pupils)) + ' pupils, so its contextual reading counts as in line within ±' + OE.ctxThr(sr, m).toFixed(1) + (m === 'a8' ? ' points' : ' percentage points') + ' (±' + M.thr + ' for a median-sized cohort of ' + OE.medCohort() + ').'; }
     document.querySelectorAll('#oe-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
     const lsc = document.getElementById('oe-lscale'); if (lsc) lsc.textContent = 'Gap on a scale of plus or minus ' + M.scale + ' points';
     const h2 = document.querySelector('#lenses h2'); if (h2 && h2.firstChild && h2.firstChild.nodeType === 3) h2.firstChild.textContent = m === 'a8' ? 'One set of results, read four ways ' : 'One set of results, read three ways ';
