@@ -95,7 +95,9 @@
     onData: (f) => { onDataFns.push(f); },
     start: (defs) => {
       defaults = defs || {}; state = Object.assign({}, defaults, window.OE_URN ? {urn: String(window.OE_URN)} : {}, readHash());
-      window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); } });
+      window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
+        // other view settings in the address (measure, chart options) also apply when only they change
+        const ch = {}; ['x', 'area', 'phase', 'area2', 'meas'].forEach((k) => { const v = h[k] || defaults[k]; if (v !== undefined && v !== state[k]) ch[k] = v; }); if (Object.keys(ch).length) window.dash.setParams(ch); });
       let t, lastW = window.innerWidth;
       window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { const w = window.innerWidth; if (w === lastW) return; lastW = w; render(null, 'resize'); }, 200); });
       render();

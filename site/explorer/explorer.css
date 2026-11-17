@@ -176,3 +176,10 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 .oe-float{position:fixed;z-index:200;pointer-events:none;width:max-content;font:400 13px/1.5 var(--font-anthropic-sans,inherit);color:#0B1A2E;background:#fff;border:1px solid #D6DCE6;box-shadow:0 8px 28px rgba(11,29,58,.16);border-radius:6px;padding:8px 10px;text-align:left;white-space:normal}
 .oe-float[hidden]{display:none}
 .oe-rconly #official,.oe-rconly .oe-nav a[href="#official"],.oe-nonsec .oe-nav a[href="#official"]{display:none!important}
+
+/* results measure switch */
+.oe-meas{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:2px 0 12px}
+.oe-meas .ml{font-size:14px;color:var(--color-fg-muted);margin-right:4px}
+.oe-meas button{font:inherit;font-size:14px;line-height:1.25;padding:9px 14px;min-height:44px;border:1px solid var(--color-border-line);background:#fff;color:var(--color-fg);border-radius:2px;cursor:pointer}
+.oe-meas button[aria-pressed="true"]{background:#0B1A2E;color:#fff;border-color:#0B1A2E}
+@media(max-width:640px){.oe-meas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}.oe-meas .ml{grid-column:1/-1;margin:0}.oe-meas button{padding:8px 6px;font-size:13.5px}}
