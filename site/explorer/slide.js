@@ -83,15 +83,15 @@
     const groups = [[(ph.charAt(0).toUpperCase() + ph.slice(1)) + ' in England', a.england], [q ? 'Same IDACI fifth: ' + QL : 'Same IDACI fifth', a.fifth]];
     if (a.dis !== undefined) { const c = a.discuts || [], dq = a.disq; const lab = !dq ? 'Same disadvantaged fifth' : 'Same disadvantaged fifth: ' + (dq === 1 ? `fewest (under ${Math.round(c[0])}%)` : dq === 5 ? `most (over ${Math.round(c[3])}%)` : `${dq} of 5 (${Math.round(c[dq - 2])}–${Math.round(c[dq - 1])}%)`); groups.push([lab, a.dis]); }
     if (a.similar) groups.push(['Its 50 similar schools with a report card', a.similar]);
-    const y0 = top + 196, avail = 940 - y0, step = Math.min(132, avail / groups.length), bw = W - 2 * M - 250, bh = Math.min(50, step - 72);
+    const y0 = top + 190, avail = 944 - y0, step = Math.min(132, avail / groups.length), bw = W - 2 * M - 250, bh = Math.max(30, Math.min(46, step - 80));
     text(x, 'Below Expected', M + bw + 40, y0 - 2, {size: 20, w: 600, fill: C.muted});
     groups.forEach(([lab, dist], i) => {
       const y = y0 + i * step;
       text(x, lab, M, y, {size: 26, w: 600});
-      if (!dist || dist.n < 10) { text(x, dist && dist.n ? `Only ${dist.n} schools: too few to show` : 'Not available for this school', M, y + 54, {size: 22, fill: C.muted}); return; }
+      if (!dist || dist.n < 10) { text(x, dist && dist.n ? `Only ${dist.n} schools: too few to show` : 'Not available for this school', M, y + 50, {size: 22, fill: C.muted}); return; }
       text(x, dist.n.toLocaleString('en-GB') + ' schools', M + bw, y + 3, {size: 23, fill: C.muted, align: 'right'});
-      distBar(x, dist, a.grade, M, y + 58, bw, bh);
-      text(x, pc(100 * ((dist['Needs attention'] || 0) + (dist['Urgent improvement'] || 0)) / dist.n), M + bw + 40, y + 58 + (bh - 38) / 2, {size: 38, w: 700});
+      distBar(x, dist, a.grade, M, y + 54, bw, bh);
+      text(x, pc(100 * ((dist['Needs attention'] || 0) + (dist['Urgent improvement'] || 0)) / dist.n), M + bw + 40, y + 54 + (bh - 38) / 2, {size: 38, w: 700});
     });
     footer(x, r, 'IDACI fifth: Ofsted’s quintile of pupils’ area deprivation.' + (a.dis !== undefined ? ' Disadvantaged fifth: share of the GCSE year group, fifths across all secondaries. Similar schools: open replica, not the official IDSR list.' : ''));
   }
@@ -121,11 +121,12 @@
         text(x, name, rx + 36, ly, {size: 23, w: 600});
         const sub = l.comparator === null || l.comparator === undefined ? 'Not available' : (p8 ? `Score ${sg(l.gap, 2)}` : `Comparator ${f1(l.comparator)}  ·  gap ${sg(l.gap)}`);
         text(x, sub, rx + 36, ly + 31, {size: 20, fill: C.muted});
-        const bx = rx + 430, bw = 230, mid = bx + bw / 2; rect(x, bx, ly + 12, bw, 20, C.track);
+        const bx = rx + 400, bw = 180, mid = bx + bw / 2; rect(x, bx, ly + 12, bw, 20, C.track);
         if (l.gap !== null && l.gap !== undefined) { const g = p8 ? l.gap * 10 : l.gap, w = Math.min(bw / 2, Math.abs(g) / 15 * bw / 2); rect(x, g < 0 ? mid - w : mid, ly + 12, w, 20, g < 0 ? '#FF8341' : '#33903C'); }
         rect(x, mid - 1, ly + 6, 2, 32, C.ink);
-        let rd = String(l.reading || ''); if (/Not significantly/.test(rd)) rd = 'Not significant';
-        text(x, rd, bx + bw + 22, ly + 10, {size: 20, w: 600}); });
+        let rd = String(l.reading || '').replace(' with expectation', '').replace(' expectation', '').replace('Not significantly different', 'Not significant');
+        const room = rx + rw - 30 - (bx + bw + 22); let fs2 = 20; while (fs2 > 15 && tw(x, rd, fs2, 600) > room) fs2--;
+        text(x, rd, bx + bw + 22, ly + 10 + (20 - fs2) / 2, {size: fs2, w: 600}); });
       const y1 = y0 + h1 + 24; rect(x, rx, y1, rw, 932 - y1, C.panel);
       text(x, 'Intake', rx + 36, y1 + 26, {size: 34, fam: SERIF});
       const dq = OE.disFifth ? OE.disFifth(r.dis_pct) : null;
