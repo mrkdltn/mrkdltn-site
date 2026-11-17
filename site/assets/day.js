@@ -232,9 +232,9 @@
     body.classList.toggle('dark-ground', lum < 0.45);
   }
 
-  // Video moves: one short clip per plate on wider screens, loaded when near, played once when seen.
+  // Video moves: one short clip per plate (vertical cuts on portrait screens), loaded when near, played once when seen.
   var vids = [].slice.call(day.querySelectorAll('video.mv'));
-  var allowVideo = !reduce && !saveData && window.innerWidth >= 600;
+  var allowVideo = !reduce && !saveData;   // phones too: the vertical clips are 100-245 KB each
   function prime(v) {
     if (v.dataset.loaded) return;
     v.dataset.loaded = '1';
