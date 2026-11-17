@@ -92,7 +92,7 @@ STOPS = [
                 badges=[('search', 'Explorer', (430, 250), (640, 250))],
                 sheet=[(680, 292, '4,26,62,7,1'), (812, 292, '2,16,36,42,4')]),
          t=dict(path='M625,-300 V360 H275 V840 H450 V1500',
-                badges=[('search', 'Explorer', (790, 250), (625, 250))],
+                badges=[('search', 'Explorer', (330, 250), (625, 250))],
                 sheet=[(372, 392, '4,26,62,7,1', 13), (372, 612, '2,16,36,42,4', 13)]),
          label='The office', fig2=('8', '46'),
          body='In the least deprived fifth of neighbourhoods, 10 of 120 secondary schools were graded below Expected for achievement. In the most deprived fifth, 87 of 188.',
@@ -164,11 +164,11 @@ def plate(st, i):
     k = st['key']
     lazy = '' if i == 0 else ' loading="lazy"'
     fetch = ' fetchpriority="high"' if i == 0 else ''
-    return ('<div class="plate"><div class="layer">'
+    return ('<div class="plate"><div class="frame"><div class="layer">'
             '<picture><source media="(orientation:portrait)" srcset="/assets/plates/%s-v.webp" width="1080" height="1440">'
             '<img src="/assets/plates/%s.webp" width="1600" height="900" alt="%s"%s%s></picture>'
             '<video class="mv" muted playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-w="/assets/video/%s.mp4" data-t="/assets/video/%s-v.mp4"></video>'
-            '%s%s<div class="bds w">%s</div><div class="bds t">%s</div></div>') % (
+            '%s%s<div class="bds w">%s</div><div class="bds t">%s</div></div></div>') % (
         k, k, e(st['alt']), lazy, fetch, k, k,
         art(st['w'], (1600, 900), 'w'), art(st['t'], (900, 1200), 't'), badges(st['w']), badges(st['t']))
 
