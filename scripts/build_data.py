@@ -18,7 +18,7 @@ Explorer's code is unchanged.
 
 Run from the repository root: python3 scripts/build_data.py [raw_dir] [out_dir]
 """
-import csv, hashlib, json, os, sys, datetime
+import csv, hashlib, json, math, os, sys, datetime
 
 RAW = sys.argv[1] if len(sys.argv) > 1 else 'data/raw'
 OUT = sys.argv[2] if len(sys.argv) > 2 else 'site/explorer/data'
@@ -96,6 +96,24 @@ def _lstsq(X, y):
     return [A[i][k] / A[i][i] for i in range(k)]
 
 
+def _fraclogit(X, p, iters=50):
+    """Fractional logit (quasi-binomial GLM) by iteratively reweighted least squares. Predictions stay between 0 and 1,
+    so a percentage measure such as EM 5+ cannot be expected above 100% or below 0%."""
+    beta = [0.0] * len(X[0])
+    for _ in range(iters):
+        eta = [sum(a * x for a, x in zip(beta, f)) for f in X]
+        mu = [1 / (1 + math.exp(-e)) for e in eta]
+        w = [max(u * (1 - u), 1e-6) for u in mu]
+        sw = [ww ** 0.5 for ww in w]
+        z = [e + (y - u) / ww for e, y, u, ww in zip(eta, p, mu, w)]
+        nb = _lstsq([[x * s for x in f] for f, s in zip(X, sw)], [zz * s for zz, s in zip(z, sw)])
+        done = max(abs(a - c) for a, c in zip(nb, beta)) < 1e-9
+        beta = nb
+        if done:
+            break
+    return beta
+
+
 def enrich_em(ks4):
     """For each school: the mean and spread of its 50 similar schools on em5 (English and maths grade 5+), and the expected
     value from one regression on the same public factors as the Attainment 8 contextual model.
@@ -108,7 +126,7 @@ def enrich_em(ks4):
     feats = lambda r: [1.0] + [float(r[f]) if num(r.get(f)) is not None else med[f] for f in EM_FACTORS]
     for m in ('em5',):
         rows = [r for r in ks4 if num(r.get(m)) is not None]
-        b = _lstsq([feats(r) for r in rows], [float(r[m]) for r in rows])
+        b = _fraclogit([feats(r) for r in rows], [float(r[m]) / 100 for r in rows])
         for r in ks4:
             v = num(r.get(m))
             nb = [float(by[u][m]) for u in (r.get('nn') or '').split() if u in by and num(by[u].get(m)) is not None]
@@ -117,7 +135,7 @@ def enrich_em(ks4):
                 r[m + '_ss'], r[m + '_ssd'] = f'{mean:.2f}', f'{sd:.2f}'
             else:
                 r[m + '_ss'] = r[m + '_ssd'] = ''
-            r[m + '_cva'] = f'{sum(a * x for a, x in zip(b, feats(r))):.2f}' if v is not None else ''
+            r[m + '_cva'] = f'{100 / (1 + math.exp(-sum(a * x for a, x in zip(b, feats(r))))):.2f}' if v is not None else ''
 
 
 def main():

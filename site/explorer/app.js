@@ -241,6 +241,7 @@
     'Contextual model': 'What schools with this intake achieve on average across England, from one regression on the same factors, including both the disadvantaged share and IDACI. Within 2 points reads as in line.',
     'Progress 8, 2023/24': 'Pupil-level progress from KS2 to GCSE, last published for 2023/24. Where the school changed URN, this is the predecessor school\'s figure. The reading uses the DfE\'s published bands, which combine the score with its 95% confidence interval: well above average (0.5 or more, interval wholly above 0), above average (interval wholly above 0), average (interval includes 0), below average (interval wholly below 0), well below average (below −0.5, interval wholly below 0).'
   };
+  const CTX_EM = 'What schools with this intake achieve on average across England, from one national model on the same factors, including both the disadvantaged share and IDACI. The model is fitted to the share of pupils, so expected values always stay between 0% and 100%: near the top, a school has little room to exceed them. Within 4 points reads as in line.';
   dash.draw('lenses', (tb) => { const d = dash.data('lenses'); tb.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const m = OE.meas(), M = OE.MEAS[m]; const ls = document.getElementById('oe-lsub');
     if (ls) ls.textContent = m === 'a8' ? 'Attainment 8, 2025/26 provisional. A positive gap means the school\'s score is higher than the comparator. The bar shows the gap on a scale of ±15 points.'
@@ -250,7 +251,7 @@
     const animate = motion();
     d.data.forEach((r) => { const tr = document.createElement('tr'); tr.setAttribute('data-key', encodeURIComponent(r.lens));
       const isP8 = /Progress 8/.test(r.lens), pct = r.unit === '%'; const fmt = (v) => (v === null || v === undefined ? '—' : (isP8 ? d3.format('+.2f')(v) : f1(v) + (pct ? '%' : '')));
-      const td0 = document.createElement('td'); td0.className = 'tip-cell'; const sp0 = document.createElement('span'); sp0.textContent = r.lens + ' '; const ic = document.createElement('span'); ic.className = 'i'; ic.textContent = 'i'; ic.tabIndex = 0; ic.setAttribute('data-tip', LTIP[r.lens] || ''); td0.append(sp0, ic); tr.append(td0);
+      const td0 = document.createElement('td'); td0.className = 'tip-cell'; const sp0 = document.createElement('span'); sp0.textContent = r.lens + ' '; const ic = document.createElement('span'); ic.className = 'i'; ic.textContent = 'i'; ic.tabIndex = 0; ic.setAttribute('data-tip', (r.lens === 'Contextual model' && m === 'em5') ? CTX_EM : (LTIP[r.lens] || '')); td0.append(sp0, ic); tr.append(td0);
       const LBL = ['Compared with', 'School', 'Comparator', 'Gap'];
       [r.comparator_label, fmt(r.school), fmt(r.comparator), r.gap === null ? '—' : (isP8 ? d3.format('+.2f')(r.gap) : fs(r.gap) + (pct ? ' pts' : ''))].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; td.setAttribute('data-label', LBL[i]); if (i >= 1) td.className = 'n'; tr.append(td); });
       const tdb = document.createElement('td'); const bar = document.createElement('div'); bar.className = 'oe-gapbar'; const fill = document.createElement('i'); const mid = document.createElement('u'); bar.append(fill, mid); tdb.append(bar); tr.append(tdb);

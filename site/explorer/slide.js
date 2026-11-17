@@ -135,7 +135,7 @@
         ['Prior attainment index', sg(+r.pa_index), 'national middle about 0'], ['GCSE cohort', String(Math.round(r.pupils)), 'pupils']];
       items.forEach(([l, v, n], i) => { const cx = rx + 36 + (i % 2) * ((rw - 72) / 2), cy = y1 + 82 + Math.floor(i / 2) * 64;
         text(x, l, cx, cy, {size: 19, fill: C.muted}); text(x, v, cx, cy + 24, {size: 26, w: 700}); if (n) text(x, n, cx + tw(x, v, 26, 700) + 12, cy + 31, {size: 18, fill: C.muted}); });
-      footer(x, r, 'Similar schools are an open replica of the DfE and Ofsted model, not the official IDSR list' + (mm === 'a8' ? '' : ', built for Attainment 8') + '. Contextual model: one regression on the same public factors.');
+      footer(x, r, 'Similar schools are an open replica of the DfE and Ofsted model, not the official IDSR list' + (mm === 'a8' ? '' : ', built for Attainment 8') + '. Contextual model: one national model on the same public factors' + (mm === 'a8' ? '' : ', bounded between 0% and 100%') + '.');
     } else {
       // other phases: each area beside same-phase schools in England
       rect(x, rx, y0, rw, cardH, C.panel);
