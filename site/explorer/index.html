@@ -130,7 +130,7 @@ html.loaded .oe-loading{display:none}
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
   <div class="oe-schoolhead"><div><p class="oe-school" data-draw="sname">—</p><p class="oe-meta" data-draw="smeta">—</p></div>
-    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-copy">Copy link</button></div></div>
+    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-slide" title="A 1920×1080 image (16:9) for PowerPoint, Keynote or Google Slides">Slide (PNG)</button><button type="button" class="oe-btn" id="oe-copy">Copy link</button></div></div>
   <div class="oe-kpis" data-draw="kpis"></div>
   <div class="oe-story" data-draw="story" data-source="school neigh stats"></div>
   <h2>Report card <span class="i" tabindex="0" data-tip="Ofsted's renewed framework (from November 2025) grades each evaluation area on five points: Exceptional, Strong standard, Expected standard, Needs attention and Urgent improvement. Safeguarding is Met or Not met. There is no overall grade.">i</span></h2>
@@ -143,6 +143,7 @@ html.loaded .oe-loading{display:none}
   <p class="sub" data-draw="areasub" data-source="school"></p>
   <div class="oe-legend oe-arleg"><span><i style="background:#CE1E02"></i>Urgent improvement</span><span><i style="background:#FF8341"></i>Needs attention</span><span><i style="background:#5CD168"></i>Expected standard</span><span><i style="background:#33903C"></i>Strong standard</span><span><i style="background:#0176E0"></i>Exceptional</span><span class="mkl"><b class="mk" aria-hidden="true"></b>This school's grade</span></div>
   <div class="oe-areas" data-draw="areas" data-source="areas"></div>
+  <p class="oe-slidebtn noprint"><button type="button" class="oe-btn" id="oe-aslide">Download this area as a slide (PNG)</button><span>1920×1080, 16:9, ready for PowerPoint, Keynote or Google Slides</span></p>
 </section>
 <section id="lenses" class="oe-card">
   <h2>One set of results, read four ways <span class="i" tabindex="0" data-tip="The same Attainment 8 score looks very different depending on what it is compared with. Hover over each row to see what that comparison controls for.">i</span></h2>
@@ -259,6 +260,7 @@ html.loaded .oe-loading{display:none}
 <script>dash.source('ks4','/explorer/data/ks4.json',{nn:'/explorer/data/nn/'});dash.source('ofsted','/explorer/data/rc.json');dash.source('fig3','/explorer/data/fig3.csv');</script>
 <script src="/explorer/app.js"></script>
 <script src="/explorer/extra.js"></script>
+<script src="/explorer/slide.js"></script>
 <script>dash.start({x:'dis_pct',area:'g_ach',phase:'Secondary',area2:'g_ach'});</script>
 </body>
 </html>
