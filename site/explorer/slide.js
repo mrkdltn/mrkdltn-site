@@ -142,11 +142,11 @@
       text(x, `Beside ${ph} in England`, rx + 36, y0 + 30, {size: 40, fam: SERIF});
       text(x, 'Share graded below Expected standard in each area', rx + 36, y0 + 84, {size: 22, fill: C.muted});
       const areas = (dash.data('areas').data || []);
-      const stepA = Math.min(84, (cardH - 150) / Math.max(areas.length, 1)), hA = Math.max(24, Math.min(30, stepA - 50));
-      areas.slice(0, 8).forEach((a, i) => { const ay = y0 + 128 + i * stepA;
-        text(x, a.area, rx + 36, ay, {size: 21, w: 600});
-        if (a.england && a.england.n >= 10) { distBar(x, a.england, a.grade, rx + 36, ay + 44, rw - 200, hA);
-          text(x, pc(100 * ((a.england['Needs attention'] || 0) + (a.england['Urgent improvement'] || 0)) / a.england.n), rx + rw - 36, ay + 44 + (hA - 24) / 2, {size: 24, w: 700, align: 'right'}); } });
+      const stepA = Math.min(84, (cardH - 140) / Math.max(areas.length, 1)), hA = Math.max(16, Math.min(28, stepA - 52)), lab = stepA < 74 ? 19 : 21;
+      areas.slice(0, 8).forEach((a, i) => { const ay = y0 + 124 + i * stepA, by = ay + lab + 14;
+        text(x, a.area, rx + 36, ay, {size: lab, w: 600});
+        if (a.england && a.england.n >= 10) { distBar(x, a.england, a.grade, rx + 36, by, rw - 200, hA);
+          text(x, pc(100 * ((a.england['Needs attention'] || 0) + (a.england['Urgent improvement'] || 0)) / a.england.n), rx + rw - 36, by + (hA - 24) / 2, {size: 24, w: 700, align: 'right'}); } });
       footer(x, r, 'Bars: how ' + ph + ' in England are graded in each area; the outlined segment is this school’s grade.');
     }
   }
