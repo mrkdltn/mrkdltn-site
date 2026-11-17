@@ -247,6 +247,7 @@
     if (ls) ls.textContent = m === 'a8' ? 'Attainment 8, 2025/26 provisional. A positive gap means the school\'s score is higher than the comparator. The bar shows the gap on a scale of ±15 points.'
       : 'Share of the GCSE year group achieving grade 5 or above in both English and maths, 2025/26 provisional. Gaps are in percentage points; the bar shows them on a scale of ±30. Progress 8 has no English and maths equivalent, so it is left out. Contextual readings within ±4 points count as in line.';
     document.querySelectorAll('#oe-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
+    const lsc = document.getElementById('oe-lscale'); if (lsc) lsc.textContent = 'Gap on a scale of plus or minus ' + M.scale + ' points';
     const h2 = document.querySelector('#lenses h2'); if (h2 && h2.firstChild && h2.firstChild.nodeType === 3) h2.firstChild.textContent = m === 'a8' ? 'One set of results, read four ways ' : 'One set of results, read three ways ';
     const animate = motion();
     d.data.forEach((r) => { const tr = document.createElement('tr'); tr.setAttribute('data-key', encodeURIComponent(r.lens));
