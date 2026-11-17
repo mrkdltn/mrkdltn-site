@@ -43,6 +43,11 @@
     const have = new Set(k.data.map((r) => r.urn));
     const extra = od ? od.filter((r) => !have.has(r.urn)).map((r) => Object.assign({rc_only: 'yes'}, r)) : [];
     const rows = k.data.concat(extra); OE._pool = {k: k.data, o: od, rows}; return rows; };
+  // fifths of the disadvantaged share of the GCSE cohort, across every secondary with results
+  OE.disCuts = () => { const k = dash.data('ks4'); if (k.status !== 'ok') return null; if (OE._dc && OE._dc.d === k.data) return OE._dc.c;
+    const v = k.data.map((r) => +r.dis_pct).filter((x) => r_ok(x)).sort(d3.ascending); const c = [0.2, 0.4, 0.6, 0.8].map((q) => d3.quantileSorted(v, q)); OE._dc = {d: k.data, c}; return c; };
+  OE.disFifth = (x) => { const c = OE.disCuts(); x = +x; return c && r_ok(x) && String(x) !== '' ? 1 + c.filter((t) => x > t).length : null; };
+  const r_ok = (x) => x !== null && x !== '' && !isNaN(x) && isFinite(x);
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
 
   // ---------- calcs ----------
@@ -86,13 +91,15 @@
   // each area of the school's report card beside comparable schools
   const AREAS_ALL = [['g_ach','Achievement'],['g_ct','Curriculum and teaching'],['g_inc','Inclusion'],['g_ab','Attendance and behaviour'],['g_pd','Personal development and wellbeing'],['g_lg','Leadership and governance'],['g_ey','Early years'],['g_p16','Post-16 provision']];
   OE.AREAS_ALL = AREAS_ALL;
-  dash.calc('areas', {inputs: ['ofsted', 'school', 'neigh'], title: 'Report card areas beside comparable schools', description: 'For each graded area, how schools of the same phase are graded in England, in the same IDACI quintile of pupils and, for secondaries, among the 50 similar schools.',
-    fn: (ofsted, school, neigh) => { const r = school && school[0]; if (!r) return [];
+  dash.calc('areas', {inputs: ['ofsted', 'school', 'neigh', 'ks4'], title: 'Report card areas beside comparable schools', description: 'For each graded area, how schools of the same phase are graded in England, in the same IDACI quintile of pupils and, for secondaries, among the 50 similar schools.',
+    fn: (ofsted, school, neigh, ks4) => { const r = school && school[0]; if (!r) return [];
       const ph = r.phase || 'Secondary', q = String(r.idaci_q || '');
       const same = ofsted.filter((x) => x.phase === ph), fifth = q ? same.filter((x) => String(x.idaci_q) === q) : null;
       const sim = r.rc_only ? null : neigh;
+      const dq = r.rc_only ? null : OE.disFifth(r.dis_pct), dcut = OE.disCuts();
+      const disSet = dq ? ks4.filter((x) => OE.disFifth(x.dis_pct) === dq) : null;
       const dist = (rows, k) => { if (!rows) return null; const g = rows.filter((x) => GC[x[k]]); const o = {n: g.length}; GORDER.forEach((G) => { o[G] = g.filter((x) => x[k] === G).length; }); return o; };
-      return AREAS_ALL.filter(([k]) => GC[r[k]]).map(([k, lab]) => ({area: lab, key: k, grade: r[k], phase: ph, quintile: q, england: dist(same, k), fifth: dist(fifth, k), similar: dist(sim, k)})); }});
+      return AREAS_ALL.filter(([k]) => GC[r[k]]).map(([k, lab]) => ({area: lab, key: k, grade: r[k], phase: ph, quintile: q, england: dist(same, k), fifth: dist(fifth, k), similar: dist(sim, k), disq: dq, discuts: dcut, dis: r.rc_only ? undefined : dist(disSet, k)})); }});
 
   // ---------- controls (listen; set params, value, hidden, aria only) ----------
   const q = document.getElementById('oe-q'), pop = document.getElementById('oe-pop');
@@ -184,13 +191,14 @@
       ['dis_pct', 'Disadvantaged (cohort) %', f1, 'Weight 0.14. Disadvantaged share of the 2025/26 GCSE cohort, the closest public stand-in for whole-school FSM6.'],
       ['sensup_pct', 'SEN support %', f1, 'Weight 0.09. Whole school, January 2026 census.'],
       ['nonmob_pct', 'Non-mobile (cohort) %', f1, 'Weight 0.06. Share of the GCSE cohort who joined at a normal time: a stand-in for pupil stability.'],
+      ['_disq', 'Disadvantaged fifth', (v) => v + ' of 5', 'Where the disadvantaged share of the GCSE year group places the school among all secondaries with results: 1 is the lowest fifth, 5 the highest.'],
       ['idaci_q', 'IDACI quintile of pupils', (v) => String(v), 'Weight 0.06. Ofsted\'s deprivation quintile based on pupils\' home postcodes: 1 least deprived, 5 most.'],
       ['ehc_pct', 'EHC plan %', f1, 'Weight 0.04. Whole school, January 2026.'],
       ['eal_school', 'EAL %', f1, 'Weight 0.03. Pupils whose first language is not English, January 2026.'],
       ['nor', 'Pupils on roll', (v) => d3.format(',')(v), 'Weight 0.02. January 2026 census.'],
       ['pupils', 'GCSE cohort', (v) => d3.format(',')(v), 'Pupils in the 2025/26 GCSE results. Not a model factor, but small cohorts make results less stable.']
     ];
-    items.forEach(([k, lab, fmt, tip]) => { const v = num(r[k]); const d = document.createElement('div'); d.className = 'oe-k rise'; d.setAttribute('data-tip', tip); d.tabIndex = 0;
+    items.forEach(([k, lab, fmt, tip]) => { const v = k === '_disq' ? (OE.disFifth(r.dis_pct) || NaN) : num(r[k]); const d = document.createElement('div'); d.className = 'oe-k rise'; d.setAttribute('data-tip', tip); d.tabIndex = 0;
       const s = document.createElement('span'); s.textContent = lab + (k === 'pa_index' && r.pa_imputed === 'yes' ? ' (estimated)' : ''); const b = document.createElement('b'); b.textContent = isNaN(v) ? '—' : fmt(v); mark(b, 'school', k); d.append(s, b); el.append(d); }); });
 
   const LTIP = {
@@ -309,14 +317,16 @@
   const PHL = {'Primary': 'primary schools', 'Secondary': 'secondary schools', 'Special': 'special schools', 'Alternative provision': 'alternative provision schools', 'Nursery': 'nursery schools'};
   OE.PHL = PHL;
   dash.draw('areasub', (el) => { const r = S(); if (!r) { el.textContent = ''; return; } const ph = PHL[r.phase] || 'schools';
-    el.textContent = 'Each bar shows how ' + ph + ' are graded in that area, from Urgent improvement on the left to Exceptional on the right. The marker shows this school\'s grade. Deprivation fifths are Ofsted\'s IDACI quintiles, based on pupils\' home postcodes' + (r.rc_only ? '' : '; the 50 similar schools are those in the open replica that have a report card') + '. Groups of fewer than 10 schools are not shown.'; });
+    el.textContent = 'Each bar shows how ' + ph + ' are graded in that area, from Urgent improvement on the left to Exceptional on the right. The marker shows this school\'s grade. IDACI fifths are Ofsted\'s quintiles of area deprivation, based on pupils\' home postcodes' + (r.rc_only ? '' : '. Disadvantaged fifths split all secondaries with results by the disadvantaged share of their GCSE year group. The 50 similar schools are those in the open replica that have a report card') + '. Groups of fewer than 10 schools are not shown.'; });
   const DARK_TEXT = new Set(['Expected standard', 'Needs attention']);
   dash.draw('areas', (box) => { const d = dash.data('areas'); box.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const has = d.data.length > 0; const sec = document.getElementById('areas'); if (sec) sec.hidden = !has;
     document.documentElement.classList.toggle('oe-noareas', !has); if (!has) return;
     const pc = d3.format('.0f'), cnt = d3.format(',');
     const PH = (ph) => (PHL[ph] ? PHL[ph][0].toUpperCase() + PHL[ph].slice(1) : 'Schools');
-    const QL = (q) => 'Same deprivation fifth: ' + (q === '1' ? 'least deprived' : q === '5' ? 'most deprived' : q + ' of 5');
+    const QL = (q) => 'Same IDACI fifth: ' + (q === '1' ? 'least deprived' : q === '5' ? 'most deprived' : q + ' of 5');
+    const p0 = d3.format('.0f');
+    const DL = (q, c) => 'Same disadvantaged fifth: ' + (q === 1 ? 'least (under ' + p0(c[0]) + '%)' : q === 5 ? 'most (over ' + p0(c[3]) + '%)' : q + ' of 5 (' + p0(c[q - 2]) + '–' + p0(c[q - 1]) + '%)');
     d.data.forEach((a) => {
       const row = document.createElement('div'); row.className = 'oe-ar rise';
       const h = document.createElement('div'); h.className = 'h';
@@ -325,7 +335,8 @@
       h.append(lab, chip); row.append(h);
       const gs = document.createElement('div'); gs.className = 'gs';
       const groups = [[PH(a.phase) + ' in England', a.england, '']];
-      groups.push([a.quintile ? QL(a.quintile) : 'Same deprivation fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
+      groups.push([a.quintile ? QL(a.quintile) : 'Same IDACI fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
+      if (a.dis !== undefined) groups.push([a.disq ? DL(a.disq, a.discuts) : 'Same disadvantaged fifth', a.dis, a.disq ? '' : 'No disadvantaged figure published']);
       if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
       groups.forEach(([gl, dist, why]) => {
         const g = document.createElement('div'); g.className = 'g';

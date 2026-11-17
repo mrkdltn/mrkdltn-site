@@ -21,6 +21,10 @@
 .oe h2{font-family:var(--sans)}
 .oe-loading{color:var(--muted);font-size:14px}
 html.loaded .oe-loading{display:none}
+.ar-mode{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 16px}
+.ar-mode .ml{font-size:14px;color:var(--color-fg-muted);margin-right:4px}
+.ar-mode button{font:inherit;font-size:14px;padding:9px 14px;min-height:44px;border:1px solid var(--color-border-line);background:#fff;color:var(--color-fg);border-radius:2px;cursor:pointer}
+.ar-mode button[aria-pressed="true"]{background:#0B1A2E;color:#fff;border-color:#0B1A2E}
 </style>
 <link rel="stylesheet" href="/explorer/explorer.css">
 <style>
@@ -78,7 +82,8 @@ html.loaded .oe-loading{display:none}
 <section id="results">
   <h2>Same results, different grades</h2>
   <p class="lead" id="ar-a-lead"></p>
-  <p class="sub">Each chart shows the share of inspected secondaries graded below Expected standard in one area, from the least to the most deprived fifth of schools (Ofsted's IDACI quintile of pupils). The solid line keeps only schools whose 2024/25 GCSE results were close to or above their 50 similar schools in the open replica, so the comparison holds results roughly level. If grades followed results alone, the solid line would be close to flat.</p>
+  <p class="sub">Each chart shows the share of inspected secondaries graded below Expected standard in one area, across five groups of schools. By default the groups are Ofsted's IDACI quintiles, based on how deprived the areas pupils live in are. Switch to group them instead by the disadvantaged share of each school's GCSE year group, split into fifths across every secondary with results; the two measures agree closely but not exactly. The solid line keeps only schools whose 2024/25 GCSE results were close to or above their 50 similar schools in the open replica, so the comparison holds results roughly level. If grades followed results alone, the solid line would be close to flat.</p>
+  <div class="ar-mode" id="ar-mode" role="group" aria-label="Group schools by"><span class="ml">Group schools by</span><button type="button" data-mode="idaci" aria-pressed="true">Area deprivation (IDACI)</button><button type="button" data-mode="dis" aria-pressed="false">Disadvantaged pupils (%)</button></div>
   <div class="ar-key"><span><i></i>Results close to or above similar schools</span><span><i class="d"></i>All inspected secondaries</span></div>
   <div class="ar-grid" id="ar-a"></div>
 </section>

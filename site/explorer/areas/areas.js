@@ -53,22 +53,35 @@
     const asof = document.getElementById('ar-asof');
     if (asof) asof.textContent = `${cnt(insp.length)} secondary schools with a report card and published results` + (build && build.built ? `, data checked ${new Date(build.built).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}` : '') + '.';
 
-    // A: same results, different grades
-    const ach = {all: byQ(insp, 'g_ach'), m: byQ(matched, 'g_ach')};
-    const lead = document.getElementById('ar-a-lead');
-    if (lead && ach.m[0].n >= MIN && ach.m[4].n >= MIN) rich(lead, `Among the **${cnt(matched.filter((r) => graded(r, 'g_ach')).length)}** inspected secondaries whose 2024/25 results were close to or above their similar schools, **${pc(ach.m[4].v)}%** of those in the most deprived fifth were graded below Expected standard for achievement, against **${pc(ach.m[0].v)}%** in the least deprived fifth.`);
-    const ga = document.getElementById('ar-a');
+    // A: same results, different grades, grouped by IDACI quintile (default) or disadvantaged fifth
+    const disCuts = fifths(rows, 'dis_pct');
+    const groupOf = (mode, r) => (mode === 'dis' ? fifthOf(disCuts, +r.dis_pct) : +String(r.idaci_q).split('.')[0] || null);
+    const byG = (mode, set, k) => d3.range(1, 6).map((q) => share(set.filter((r) => groupOf(mode, r) === q), k));
     const top = (vals) => Math.max(40, Math.ceil(d3.max(vals.filter((p) => p.n >= MIN && p.v !== null), (p) => p.v) / 10) * 10);
-    const yA = top(AREAS.flatMap(([k]) => byQ(insp, k).concat(byQ(matched, k))));
-    AREAS.forEach(([k, lab]) => {
-      const all = byQ(insp, k), mm = byQ(matched, k);
-      const card = el('figure', 'ar-fig'); card.append(el('figcaption', '', lab));
-      const box = el('div', 'ar-ch'); card.append(box);
-      chart(box, [{name: 'All inspected secondaries', pts: all, colour: MUTED, dash: '4 3'}, {name: 'Results close to or above similar schools', pts: mm, colour: INK, main: true}], Q,
-        {aria: `${lab}: share below Expected standard by deprivation fifth`, xtitle: 'Deprivation fifth of pupils', ymax: yA});
-      const gap = mm[4].n >= MIN && mm[0].n >= MIN ? mm[4].v - mm[0].v : null;
-      card.append(el('p', 'ar-note', gap === null ? 'Too few schools at one end to compare.' : `Matched results: ${pc(mm[0].v)}% to ${pc(mm[4].v)}%, least to most deprived (${cnt(mm[0].n)} and ${cnt(mm[4].n)} schools).`));
-      ga.append(card); });
+    const p0 = d3.format('.0f');
+    const MODES = {
+      idaci: {x: 'IDACI fifth of pupils (area deprivation)', most: 'most deprived fifth', least: 'least deprived fifth', aria: 'IDACI fifth'},
+      dis: {x: 'Fifth by disadvantaged share of GCSE year group', most: `fifth with the most disadvantaged pupils (over ${p0(disCuts[3])}%)`, least: `fifth with the fewest (under ${p0(disCuts[0])}%)`, aria: 'disadvantaged fifth'}};
+    const ga = document.getElementById('ar-a'), lead = document.getElementById('ar-a-lead');
+    const drawA = (mode) => {
+      const M = MODES[mode]; ga.replaceChildren(); if (lead) lead.replaceChildren();
+      const am = byG(mode, matched, 'g_ach');
+      if (lead && am[0].n >= MIN && am[4].n >= MIN) rich(lead, `Among the **${cnt(matched.filter((r) => graded(r, 'g_ach')).length)}** inspected secondaries whose 2024/25 results were close to or above their similar schools, **${pc(am[4].v)}%** of those in the ${M.most} were graded below Expected standard for achievement, against **${pc(am[0].v)}%** in the ${M.least}.`);
+      const yA = top(AREAS.flatMap(([k]) => byG(mode, insp, k).concat(byG(mode, matched, k))));
+      const Q = mode === 'dis' ? ['Fewest', '2', '3', '4', 'Most'] : ['Least', '2', '3', '4', 'Most'];
+      AREAS.forEach(([k, lab]) => {
+        const all = byG(mode, insp, k), mm = byG(mode, matched, k);
+        const card = el('figure', 'ar-fig'); card.append(el('figcaption', '', lab));
+        const box = el('div', 'ar-ch'); card.append(box);
+        chart(box, [{name: 'All inspected secondaries', pts: all, colour: MUTED, dash: '4 3'}, {name: 'Results close to or above similar schools', pts: mm, colour: INK, main: true}], Q,
+          {aria: `${lab}: share below Expected standard by ${M.aria}`, xtitle: M.x, ymax: yA});
+        const ok2 = mm[4].n >= MIN && mm[0].n >= MIN;
+        card.append(el('p', 'ar-note', ok2 ? `Matched results: ${pc(mm[0].v)}% to ${pc(mm[4].v)}%, ${Q[0].toLowerCase()} to ${Q[4].toLowerCase()} (${cnt(mm[0].n)} and ${cnt(mm[4].n)} schools).` : 'Too few schools at one end to compare.'));
+        ga.append(card); });
+    };
+    drawA('idaci');
+    document.querySelectorAll('#ar-mode button').forEach((b) => b.addEventListener('click', () => {
+      document.querySelectorAll('#ar-mode button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); drawA(b.dataset.mode); }));
 
     // B: grades travel together
     const gb = document.getElementById('ar-b');
