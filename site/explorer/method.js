@@ -71,8 +71,8 @@
         if (ok(r[m])) { const me = el('i', 'me'); me.style.left = X(+r[m]) + '%'; t.append(me); }
         row.append(t, el('span', 'v', OE.mfmt(mean, m))); return row; };
       f2.append(strip('Open replica', A, ma, offSet), strip('Your official list', B, mb, repSet));
-      const ax = el('div', 'oe-dstrip ax'); ax.append(el('span', 'l', '')); const at = el('span', 't'); [lo, (lo + hi) / 2, hi].forEach((v, i) => { const s = el('b', '', OE.mfmt(v, m).replace('.0', '')); s.style.left = X(v) + '%'; if (i === 2) s.className = 'end'; at.append(s); }); ax.append(at, el('span', 'v', 'Average')); f2.append(ax);
-      const key2 = el('div', 'oe-plegend'); const a1 = el('span'); a1.append(el('i', 'me'), 'This school ' + OE.mfmt(+r[m], m)); const a2 = el('span'); a2.append(el('i', 'mn'), 'Group average'); const a3 = el('span'); a3.append(el('i', 'u-b'), 'On both lists'); key2.append(a1, a2, a3); f2.append(key2);
+      const ax = el('div', 'oe-dstrip ax'); ax.append(el('span', 'l', '')); const at = el('span', 't'); d3.ticks(lo, hi, 5).forEach((v) => { const s = el('b', '', String(v) + MM.unit); s.style.left = X(v) + '%'; at.append(s); }); ax.append(at, el('span', 'v', 'Average')); f2.append(ax);
+      const key2 = el('div', 'oe-plegend'); const a1 = el('span'); a1.append(el('i', 'me'), 'This school ' + OE.mfmt(+r[m], m)); const a2 = el('span'); a2.append(el('i', 'mn'), 'Group average'); const a3 = el('span'); a3.append(el('i', 'd-b'), 'On both lists'); const a4 = el('span'); a4.append(el('i', 'd-o'), 'On one list only'); key2.append(a1, a2, a3, a4); f2.append(key2);
       const d = mb - ma; const g1 = +r[m] - ma, g2 = +r[m] - mb;
       f2.append(rich(el('p', 'oe-comp'), 'The official group averages **' + OE.mfmt(mb, m) + '**, ' + (Math.abs(d) < 0.05 ? 'the same as' : Math.abs(d).toFixed(1) + (MM.unit ? ' points' : '') + ' ' + (d > 0 ? 'above' : 'below')) + ' the replica’s ' + OE.mfmt(ma, m) + '. So this school’s gap is **' + fs(g2) + '** against the official list and ' + fs(g1) + ' against the replica.'));
     }
@@ -94,7 +94,7 @@
         const vv = el('div', 'vals'); vv.append(el('span', 's', FAC[f].fmt(+r[f])), el('span', 'g', FAC[f].fmt(a)), el('span', 'o', FAC[f].fmt(b))); row.append(vv); f3.append(row);
         n++; if (Math.abs(b - +r[f]) < Math.abs(a - +r[f])) closer++; });
       const dA = d3.mean(rA, (x) => dist(r, x)), dB = d3.mean(rB, (x) => dist(r, x));
-      f3.append(rich(el('p', 'oe-comp'), 'Your official list sits closer to this school on **' + closer + ' of ' + n + '** factors. Weighting the factors as the model does, the official list’s average distance from this school is **' + (dB / dA).toFixed(2) + ' times** the replica’s' + (dB > dA * 1.02 ? '. The official model also uses pupil-level data the replica cannot see, which explains some of the difference.' : '.')));
+      f3.append(rich(el('p', 'oe-comp'), 'Your official list sits closer to this school on **' + closer + ' of ' + n + '** factors. Weighting the factors as the model does, the official list’s average distance from this school is **' + (dB / dA).toFixed(2) + ' times** the replica’s' + (dB > dA * 1.02 ? '. The official model also uses pupil-level data and POLAR4, which the replica cannot see, so your list may match more closely on things not shown here.' : '.')));
       box.append(f3);
     } else later('offviz');
   };
@@ -161,7 +161,7 @@
     const act = +r[m]; let run = base; const pts = [base, expd, act];
     parts.forEach((p) => { run += p.v; pts.push(run); });
     const lo = Math.floor(d3.min(pts) - 1), hi = Math.ceil(d3.max(pts) + 1); const X = (v) => 100 * (v - lo) / ((hi - lo) || 1);
-    const fmtV = (v) => OE.mfmt(v, m), fmtD = (v) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1);
+    const fmtV = (v) => OE.mfmt(v, m), fmtD = (v) => (Math.abs(v) < 0.05 ? '0.0' : (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1));
     const row = (cls, lab, sub, a, bb, val) => { const rw = el('div', 'oe-wf ' + cls); const l = el('div', 'lab'); l.append(el('b', '', lab)); if (sub) l.append(el('small', '', sub)); rw.append(l);
       const t = el('div', 't'); if (cls === 'step') { const bar = el('i', bb >= a ? 'up' : 'dn'); bar.style.left = X(Math.min(a, bb)) + '%'; bar.style.width = Math.max(0.4, Math.abs(X(bb) - X(a))) + '%'; t.append(bar); }
       else { const mk = el('i', cls === 'act' ? 'me' : 'tk'); mk.style.left = X(a) + '%'; t.append(mk); }
@@ -169,7 +169,7 @@
     box.append(row('base', 'A school at the England average on every factor', null, base, null, fmtV(base)));
     run = base;
     parts.forEach((p) => { const st = M.stats[p.f]; const v0 = run; run += p.v; const sv = ok(r[p.f]) ? FAC[p.f].fmt(+r[p.f]) : 'not known, average used';
-      box.append(row('step', FAC[p.f].lab, 'this school ' + sv + '; England ' + FAC[p.f].fmt(st.mean), v0, run, fmtD(p.v))); });
+      box.append(row('step', FAC[p.f].lab, 'this school ' + sv + '; England average ' + (p.f === 'idaci_q' ? 'fifth ' + st.mean.toFixed(1) : FAC[p.f].fmt(st.mean)), v0, run, fmtD(p.v))); });
     box.append(row('exp', 'Expected for this intake', null, expd, null, fmtV(expd)));
     box.append(row('act', 'This school’s result', null, act, null, fmtV(act)));
     const g = act - expd;

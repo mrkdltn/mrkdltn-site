@@ -210,8 +210,6 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 .oe-dstrip .t i.me{top:50%;margin:-6.5px 0 0 -6.5px}
 .oe-dstrip.ax .t{height:22px;border:0}
 .oe-dstrip.ax .t b{position:absolute;top:2px;font-weight:400;font-size:12px;color:#55627A;transform:translateX(-50%)}
-.oe-dstrip.ax .t b:first-child{transform:none}
-.oe-dstrip.ax .t b.end{transform:translateX(-100%)}
 .oe-dstrip.ax .v{font-weight:400;font-size:12px;color:#55627A}
 .oe-plegend i.mn{width:3px;height:16px;background:#0B1A2E}
 i.om{width:3px;height:22px;background:#C9A24B}
@@ -271,3 +269,7 @@ h3.oe-mh{font-family:var(--display)!important;font-weight:400!important;font-siz
   .oe-steps{grid-template-columns:1fr 1fr}
   .oe-wf{grid-template-columns:1fr 56px;gap:4px 10px}.oe-wf .lab{grid-column:1/-1}
 }
+
+.oe-wrow.head .bar{background:none}
+.oe-plegend i.d-b,.oe-plegend i.d-o{width:9px;height:9px;border-radius:50%}
+.oe-plegend i.d-b{background:#C9A24B}.oe-plegend i.d-o{background:#8A96A8}
