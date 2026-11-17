@@ -1,0 +1,16 @@
+name: Recon KS2 data
+on:
+  push:
+    branches: [primary-data]
+    paths: ['scripts/recon_ks2.py', '.github/workflows/recon-ks2.yml']
+jobs:
+  recon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python3 scripts/recon_ks2.py
+      - uses: actions/upload-artifact@v4
+        with: {name: recon, path: recon/, retention-days: 3}
