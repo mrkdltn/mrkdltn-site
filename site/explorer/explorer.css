@@ -276,4 +276,4 @@ h3.oe-mh{font-family:var(--display)!important;font-weight:400!important;font-siz
 .oe-plegend i.wf-up,.oe-plegend i.wf-dn{width:14px;height:10px}.oe-plegend i.wf-up{background:#2F6F66}.oe-plegend i.wf-dn{background:#C9A24B}
 .oe-endnote{margin:8px 0 0;padding:0 36px}
 @media screen and (max-width:820px){.oe-endnote{padding:0 20px;line-height:1.55}}
-@media screen and (max-width:560px){.oe-endnote{padding:0 16px}}
+@media screen and (max-width:640px){.oe-endnote{padding:0 16px}}
