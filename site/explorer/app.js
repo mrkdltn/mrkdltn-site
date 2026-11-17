@@ -205,7 +205,7 @@
     'Published attainment': 'Compares the school with the national average. It makes no allowance for intake, so it mainly reflects who the school serves.',
     'Similar schools (open replica)': 'Compares the school with the 50 schools most like it on prior attainment, disadvantage, SEND, mobility, deprivation, EAL and size, using the DfE and Ofsted method on public data.',
     'Similar schools (official IDSR list)': 'Uses the URNs you pasted. Ofsted bands this gap with its own significance test, which is not published.',
-    'Contextual model': 'What schools with this intake achieve on average across England, from one regression on the same factors. Within 2 points reads as in line.',
+    'Contextual model': 'What schools with this intake achieve on average across England, from one regression on the same factors, including both the disadvantaged share and IDACI. Within 2 points reads as in line.',
     'Progress 8, 2023/24': 'Pupil-level progress from KS2 to GCSE, last published for 2023/24. Where the school changed URN, this is the predecessor school\'s figure.'
   };
   dash.draw('lenses', (tb) => { const d = dash.data('lenses'); tb.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
@@ -213,7 +213,8 @@
     d.data.forEach((r) => { const tr = document.createElement('tr'); tr.setAttribute('data-key', encodeURIComponent(r.lens));
       const isP8 = /Progress 8/.test(r.lens); const fmt = (v) => (v === null || v === undefined ? '—' : (isP8 ? d3.format('+.2f')(v) : f1(v)));
       const td0 = document.createElement('td'); td0.className = 'tip-cell'; const sp0 = document.createElement('span'); sp0.textContent = r.lens + ' '; const ic = document.createElement('span'); ic.className = 'i'; ic.textContent = 'i'; ic.tabIndex = 0; ic.setAttribute('data-tip', LTIP[r.lens] || ''); td0.append(sp0, ic); tr.append(td0);
-      [r.comparator_label, fmt(r.school), fmt(r.comparator), r.gap === null ? '—' : (isP8 ? d3.format('+.2f')(r.gap) : fs(r.gap))].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; if (i >= 1) td.className = 'n'; tr.append(td); });
+      const LBL = ['Compared with', 'School', 'Comparator', 'Gap'];
+      [r.comparator_label, fmt(r.school), fmt(r.comparator), r.gap === null ? '—' : (isP8 ? d3.format('+.2f')(r.gap) : fs(r.gap))].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; td.setAttribute('data-label', LBL[i]); if (i >= 1) td.className = 'n'; tr.append(td); });
       const tdb = document.createElement('td'); const bar = document.createElement('div'); bar.className = 'oe-gapbar'; const fill = document.createElement('i'); const mid = document.createElement('u'); bar.append(fill, mid); tdb.append(bar); tr.append(tdb);
       const g = r.gap === null ? 0 : (isP8 ? r.gap * 10 : r.gap); const w = Math.min(50, Math.abs(g) / 15 * 50);
       fill.style.background = g >= 0 ? '#33903C' : '#FF8341';

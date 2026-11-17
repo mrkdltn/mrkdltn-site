@@ -130,3 +130,20 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 .oe-ar .bar i:first-child{border-radius:2px 0 0 2px}.oe-ar .bar i:last-child{border-radius:0 2px 2px 0}
 .oe-tsel select{font:inherit;border:0;background:transparent;color:var(--color-fg);padding:0 2px;max-width:15em}
 #oe-ntable td.muted{color:var(--color-fg-muted)}
+
+/* Four readings on phones: each lens becomes a stacked row with labelled figures, bar and reading */
+@media(max-width:640px){
+#lenses .oe-tw{overflow:visible}
+#lenses table,#lenses tbody,#lenses tr,#lenses td{display:block;width:auto}
+#lenses thead{display:none}
+#lenses tbody tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 12px;padding:16px 0;border-bottom:1px solid var(--color-border-line)}
+#lenses tbody td{padding:0;border:0;text-align:left;white-space:normal}
+#lenses tbody td:nth-child(1){grid-column:1/-1;font-weight:600;font-size:16px}
+#lenses tbody td:nth-child(2){grid-column:1/-1;color:var(--color-fg-muted);font-size:14.5px;margin-bottom:6px}
+#lenses tbody td:nth-child(2)::before{content:none}
+#lenses tbody td:nth-child(3),#lenses tbody td:nth-child(4),#lenses tbody td:nth-child(5){font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+#lenses tbody td[data-label]:not(:nth-child(2))::before{content:attr(data-label);display:block;font-size:12.5px;font-weight:400;color:var(--color-fg-muted);margin-bottom:2px}
+#lenses tbody td:nth-child(6){grid-column:1/-1;margin-top:8px}
+#lenses tbody td:nth-child(7){grid-column:1/-1;margin-top:6px}
+#lenses tbody tr:hover td,#lenses tbody tr td{background:transparent}
+}
