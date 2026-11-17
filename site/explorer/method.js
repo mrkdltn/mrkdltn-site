@@ -68,13 +68,13 @@
       const lo = Math.floor(d3.min(all) - 1), hi = Math.ceil(d3.max(all) + 1); const X = (v) => 100 * (v - lo) / ((hi - lo) || 1);
       const ma = d3.mean(A, (x) => +x[m]), mb = d3.mean(B, (x) => +x[m]);
       const strip = (label, rows, mean, setOther) => { const row = el('div', 'oe-dstrip'); row.append(el('span', 'l', label));
-        const t = el('span', 't'); const srt = rows.slice().sort((a, b) => +a[m] - +b[m]); const tw = Math.max(200, (box.clientWidth || 600) - 270); const rw = dodge(srt.map((x) => X(+x[m])), tw, 9); t.style.height = Math.max(50, 14 + 9 * (Math.max(...rw) + 1)) + 'px';
+        const t = el('span', 't'); const srt = rows.slice().sort((a, b) => +a[m] - +b[m]); const bw = box.clientWidth || 600; const tw = Math.max(200, bw - (bw < 760 ? 72 : 270)); const rw = dodge(srt.map((x) => X(+x[m])), tw, 9); t.style.height = Math.max(50, 14 + 9 * (Math.max(...rw) + 1)) + 'px';
         srt.forEach((x, i) => { const d = el('i', setOther.has(x.urn) ? 'b' : 'o'); d.style.left = X(+x[m]) + '%'; d.style.bottom = (5 + 9 * rw[i]) + 'px'; d.setAttribute('data-tip', x.name + ': ' + OE.mfmt(+x[m], m)); t.append(d); });
         const mk = el('i', 'mn'); mk.style.left = X(mean) + '%'; t.append(mk);
         if (ok(r[m])) { const me = el('i', 'me'); me.style.left = X(+r[m]) + '%'; t.append(me); }
         row.append(t, el('span', 'v', OE.mfmt(mean, m))); return row; };
       f2.append(strip('Open replica', A, ma, offSet), strip('Your official list', B, mb, repSet));
-      const ax = el('div', 'oe-dstrip ax'); ax.append(el('span', 'l', '')); const at = el('span', 't'); d3.ticks(lo, hi, 5).forEach((v) => { const s = el('b', '', String(v) + MM.unit); s.style.left = X(v) + '%'; at.append(s); }); ax.append(at, el('span', 'v', 'Average')); f2.append(ax);
+      const ax = el('div', 'oe-dstrip ax'); ax.append(el('span', 'l', '')); const at = el('span', 't'); d3.ticks(lo, hi, 5).forEach((v) => { const s = el('b', '', String(v) + MM.unit); s.style.left = X(v) + '%'; if (X(v) < 6) s.style.transform = 'none'; else if (X(v) > 94) s.style.transform = 'translateX(-100%)'; at.append(s); }); ax.append(at, el('span', 'v', 'Average')); f2.append(ax);
       const key2 = el('div', 'oe-plegend'); const a1 = el('span'); a1.append(el('i', 'me'), 'This school ' + OE.mfmt(+r[m], m)); const a2 = el('span'); a2.append(el('i', 'mn'), 'Group average'); const a3 = el('span'); a3.append(el('i', 'd-b'), 'On both lists'); const a4 = el('span'); a4.append(el('i', 'd-o'), 'On one list only'); key2.append(a1, a2, a3, a4); f2.append(key2);
       const d = mb - ma; const g1 = +r[m] - ma, g2 = +r[m] - mb;
       f2.append(rich(el('p', 'oe-comp'), 'The official group averages **' + OE.mfmt(mb, m) + '**, ' + (Math.abs(d) < 0.05 ? 'the same as' : Math.abs(d).toFixed(1) + (MM.unit ? ' points' : '') + ' ' + (d > 0 ? 'above' : 'below')) + ' the replica’s ' + OE.mfmt(ma, m) + '. So this school’s gap is **' + fs(g2) + '** against the official list and ' + fs(g1) + ' against the replica.'));
