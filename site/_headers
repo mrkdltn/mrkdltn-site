@@ -2,3 +2,6 @@
 # Unchanged files come back as 304 Not Modified, which costs a round trip, not a download.
 /*
   Cache-Control: public, max-age=0, must-revalidate
+
+/media/*
+  Access-Control-Allow-Origin: https://www.linkedin.com
