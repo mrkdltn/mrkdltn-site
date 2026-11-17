@@ -155,3 +155,13 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 .oe-apick button[aria-pressed="true"]{border-color:#0B1A2E;box-shadow:inset 0 0 0 1px #0B1A2E;font-weight:600}
 .oe-areas .oe-ar:first-of-type{border-top:0}
 @media(max-width:640px){.oe-apick{display:grid;grid-template-columns:1fr 1fr;gap:6px}.oe-apick button{font-size:13.5px;padding:8px 10px;min-height:44px}}
+
+/* Areas in context, desktop: groups in an even grid so bars line up */
+.oe-ar .gs.n4,.oe-ar .gs.n2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.oe-ar .gs.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.oe-ar .gt{min-height:2.7em;align-items:flex-start}
+.oe-ar .gl{padding-right:6px}
+.oe-ar .bar i span{display:block;padding:0 3px;white-space:nowrap}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:900px){.oe-ar .gs.n3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.oe-ar .gs.n4,.oe-ar .gs.n3,.oe-ar .gs.n2{grid-template-columns:1fr}.oe-ar .gt{min-height:0}}

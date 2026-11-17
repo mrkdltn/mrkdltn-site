@@ -360,7 +360,7 @@
         const parts = []; let acc = 0, mk = null;
         GORDER.forEach((G) => { const v = dist[G]; if (!v) return; const w = 100 * v / dist.n;
           const seg = document.createElement('i'); seg.style.width = w + '%'; seg.style.background = GC[G]; seg.style.color = DARK_TEXT.has(G) ? '#0B1A2E' : '#fff';
-          if (w >= 9) seg.textContent = pc(w) + '%';
+          if (w >= 8) { const t = document.createElement('span'); t.textContent = pc(w) + '%'; seg.append(t); }
           if (G === a.grade) { seg.classList.add('own'); mk = acc + w / 2; }
           seg.setAttribute('data-tip', gl + ': ' + G + ', ' + cnt(v) + ' of ' + cnt(dist.n) + ' schools (' + pc(w) + '%)');
           bar.append(seg); parts.push(G + ' ' + pc(w) + '%'); acc += w; });
@@ -370,6 +370,8 @@
         const below = 100 * ((dist['Needs attention'] || 0) + (dist['Urgent improvement'] || 0)) / dist.n;
         const bb = document.createElement('b'); bb.textContent = pc(below) + '%'; foot.append(bb, ' below Expected standard');
         g.append(wrap, foot); gs.append(g); });
-      row.append(gs); box.append(row); });
+      gs.classList.add('n' + gs.children.length); row.append(gs); box.append(row);
+      // drop a percentage that does not fit inside its segment
+      row.querySelectorAll('.bar i span').forEach((t) => { const w2 = t.parentNode.clientWidth; if (w2 && t.offsetWidth + 4 > w2) t.remove(); }); });
   });
 })();
