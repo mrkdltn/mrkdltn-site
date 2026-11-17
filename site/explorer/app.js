@@ -48,6 +48,8 @@
     const v = k.data.map((r) => +r.dis_pct).filter((x) => r_ok(x)).sort(d3.ascending); const c = [0.2, 0.4, 0.6, 0.8].map((q) => d3.quantileSorted(v, q)); OE._dc = {d: k.data, c}; return c; };
   OE.disFifth = (x) => { const c = OE.disCuts(); x = +x; return c && r_ok(x) && String(x) !== '' ? 1 + c.filter((t) => x > t).length : null; };
   const r_ok = (x) => x !== null && x !== '' && !isNaN(x) && isFinite(x);
+  // the DfE's published Progress 8 bands: score and 95% confidence interval together
+  OE.p8Band = (s, lo, hi) => (isNaN(lo) || isNaN(hi) ? 'Not available' : lo > 0 ? (s >= 0.5 ? 'Well above average' : 'Above average') : hi < 0 ? (s < -0.5 ? 'Well below average' : 'Below average') : 'Average');
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
 
   // ---------- calcs ----------
@@ -76,7 +78,7 @@
       if (o && o.mean !== null) out.push({lens: 'Similar schools (official IDSR list)', comparator_label: 'Average of ' + o.found + ' pasted schools', school: rd(a8), comparator: o.mean, gap: rd(a8 - o.mean), reading: 'Gap only'});
       out.push({lens: 'Contextual model', comparator_label: 'Expected for this intake', school: rd(a8), comparator: rd(+r.cva_exp), gap: rd(+r.cva_res), reading: Math.abs(+r.cva_res) < 2 ? 'In line with expectation' : (+r.cva_res > 0 ? 'Above expectation' : 'Below expectation')});
       const p8 = r.p8_24 === null || r.p8_24 === '' ? null : +r.p8_24;
-      out.push({lens: 'Progress 8, 2023/24', comparator_label: r.pred ? 'National average (predecessor school)' : 'National average (zero)', school: p8, comparator: p8 === null ? null : 0, gap: p8, reading: p8 === null ? 'Not available' : (+r.p8lo_24 > 0 ? 'Significantly above' : (+r.p8hi_24 < 0 ? 'Significantly below' : 'Not significantly different'))});
+      out.push({lens: 'Progress 8, 2023/24', comparator_label: r.pred ? 'National average (predecessor school)' : 'National average (zero)', school: p8, comparator: p8 === null ? null : 0, gap: p8, reading: p8 === null ? 'Not available' : OE.p8Band(p8, +r.p8lo_24, +r.p8hi_24)});
       return out; }});
   dash.calc('valid', {inputs: ['ks4', 'fig3'], title: 'Replica bands by Achievement grade (2024/25 results)', description: 'Share of inspected secondaries above, close to and below their replica similar schools on 2024/25 results, by Achievement grade.',
     fn: (ks4, fig3) => GORDER.slice().reverse().map((g) => { const rows = ks4.filter((r) => r.g_ach === g && r.ss_band_25); const n = rows.length || 1;
@@ -160,7 +162,7 @@
   dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only);
     // secondary-results sections only make sense for secondaries; other phases keep the phase-specific deprivation chart
     const nonsec = (r.phase || 'Secondary') !== 'Secondary'; document.documentElement.classList.toggle('oe-nonsec', nonsec);
-    const ms = document.getElementById('oe-more-s'); if (ms) ms.textContent = nonsec ? 'How ' + (PHL[r.phase] || 'schools') + ' across England are graded in each area, by pupils\' deprivation' : 'Your official similar-schools list, every secondary on one chart, report card grades by deprivation, and how the replica checks out';
+    const ms = document.getElementById('oe-more-s'); if (ms) ms.textContent = nonsec ? 'How ' + (PHL[r.phase] || 'schools') + ' across England are graded in each area, by pupils\' deprivation' : 'Every secondary on one chart, report card grades by deprivation, and how the replica checks out';
     if (OE._phaseFor !== r.urn) { OE._phaseFor = r.urn; const ph = r.phase || 'Secondary'; if (P().phase !== ph) setTimeout(() => dash.setParams({phase: ph}), 0); } if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
   dash.draw('smeta', (el) => { const r = S(); if (!r) return dash_(el);
     if (r.rc_only) { el.textContent = [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '', 'URN ' + r.urn, r.insp_date ? 'Inspected ' + d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : ''].filter(Boolean).join(' · '); return; }
@@ -206,7 +208,7 @@
     'Similar schools (open replica)': 'Compares the school with the 50 schools most like it on prior attainment, disadvantage, SEND, mobility, deprivation, EAL and size, using the DfE and Ofsted method on public data.',
     'Similar schools (official IDSR list)': 'Uses the URNs you pasted. Ofsted bands this gap with its own significance test, which is not published.',
     'Contextual model': 'What schools with this intake achieve on average across England, from one regression on the same factors, including both the disadvantaged share and IDACI. Within 2 points reads as in line.',
-    'Progress 8, 2023/24': 'Pupil-level progress from KS2 to GCSE, last published for 2023/24. Where the school changed URN, this is the predecessor school\'s figure.'
+    'Progress 8, 2023/24': 'Pupil-level progress from KS2 to GCSE, last published for 2023/24. Where the school changed URN, this is the predecessor school\'s figure. The reading uses the DfE\'s published bands, which combine the score with its 95% confidence interval: well above average (0.5 or more, interval wholly above 0), above average (interval wholly above 0), average (interval includes 0), below average (interval wholly below 0), well below average (below −0.5, interval wholly below 0).'
   };
   dash.draw('lenses', (tb) => { const d = dash.data('lenses'); tb.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const animate = motion();
@@ -221,7 +223,7 @@
       const fin = () => { fill.style.left = (g >= 0 ? 50 : 50 - w) + '%'; fill.style.width = w + '%'; };
       if (animate) { fill.style.left = '50%'; fill.style.width = '0%'; } else fin();
       const td = document.createElement('td'); const sp = document.createElement('span'); sp.className = 'oe-band'; sp.textContent = r.reading;
-      sp.style.background = BANDC[r.reading] || (/above/i.test(r.reading) ? '#33903C' : /below/i.test(r.reading) ? '#FF8341' : '#8A96A8'); td.append(sp); tr.append(td); tb.append(tr);
+      sp.style.background = BANDC[r.reading] || BANDC[String(r.reading).replace(' average', '')] || (/above/i.test(r.reading) ? '#33903C' : /below/i.test(r.reading) ? '#FF8341' : '#8A96A8'); td.append(sp); tr.append(td); tb.append(tr);
       if (animate) requestAnimationFrame(() => requestAnimationFrame(fin)); }); });
 
   dash.draw('strip', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip); return {tip}; },

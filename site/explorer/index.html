@@ -125,7 +125,7 @@ html.loaded .oe-loading{display:none}
     <p class="oe-hint">Opens on a school chosen at random. <span class="oe-fresh" hidden></span> <span class="oe-loading">Loading schools…</span></p>
   </div>
 </div>
-<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#oe-more">National picture</a><a href="#method">Method</a></div></nav>
+<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#official">Your IDSR list</a><a href="#oe-more">National picture</a><a href="#method">Method</a></div></nav>
 <main class="oe-main"><div class="oe">
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
@@ -183,14 +183,15 @@ html.loaded .oe-loading{display:none}
     <aside class="oe-geo" data-draw="geo" data-source="school neigh"></aside>
   </div>
 </section>
-<details id="oe-more" class="oe-more noprint">
-<summary><span class="t">The national picture</span><span class="s" id="oe-more-s">Your official similar-schools list, every secondary on one chart, report card grades by deprivation, and how the replica checks out</span></summary>
 <section id="official" class="oe-card noprint">
-  <h2>Compare with the official IDSR list <span class="i" tabindex="0" data-tip="Schools can see their official 50 similar schools in the IDSR and on the DfE schools platform. Paste their URNs here and the page averages their 2025/26 Attainment 8. Nothing you paste is saved or sent anywhere beyond this page's link.">i</span></h2>
-  <p class="sub">Paste the URNs of your official similar schools, separated in any way.</p>
+  <h2>Check against your official similar schools <span class="i" tabindex="0" data-tip="Schools can see their official 50 similar schools in the IDSR and on the DfE schools platform. Paste their URNs here and the page averages their 2025/26 Attainment 8. Nothing you paste is saved or sent anywhere beyond this page's link.">i</span></h2>
+  <p class="sub">For your own school: if you can see its official 50 similar schools in the IDSR or on the DfE schools platform, paste their URNs here, separated in any way. The Explorer then adds a reading against your official group. The list stays on your device; nothing is uploaded.</p>
   <textarea id="oe-idsr" aria-label="IDSR similar school URNs" placeholder="100001 100002 …"></textarea>
   <p class="oe-note" data-draw="offnote">—</p>
 </section>
+<details id="oe-more" class="oe-more noprint">
+<summary><span class="t">The national picture</span><span class="s" id="oe-more-s">Every secondary on one chart, report card grades by deprivation, and how the replica checks out</span></summary>
+
 <section id="national" class="oe-card noprint">
   <h2>Every secondary school: results against context <span class="i" tabindex="0" data-tip="Each dot is a school. Change the horizontal axis to see how much of the variation in results the context explains. Choose 'Similar schools average' to see schools above the diagonal outperforming their group. Click any dot to open that school.">i</span></h2>
   <p class="sub">Coloured by report card grade in the chosen area; grey means no report card yet. The selected school is the dark diamond, its similar schools are ringed.</p>

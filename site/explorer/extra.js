@@ -214,3 +214,21 @@ document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click'
     if (src) src.textContent = ' (last checked ' + fmt(b.built) + (b.latest_published ? '; newest read was published ' + fmt(b.latest_published) : '') + ')';
   }).catch(() => {});
 })();
+
+// ---------- tooltips: one floating box that always stays on screen ----------
+(() => {
+  const tip = document.createElement('div'); tip.className = 'oe-float'; tip.id = 'oe-float'; tip.setAttribute('role', 'tooltip'); tip.hidden = true; document.body.append(tip);
+  let cur = null;
+  const place = (el) => { const r = el.getBoundingClientRect(); tip.style.maxWidth = Math.min(320, innerWidth - 24) + 'px'; tip.style.left = '0px'; tip.style.top = '0px'; tip.hidden = false;
+    const w = tip.offsetWidth, h = tip.offsetHeight; const left = Math.max(12, Math.min(r.left, innerWidth - w - 12));
+    let top = r.bottom + 8; if (top + h > innerHeight - 12 && r.top - h - 8 > 12) top = r.top - h - 8;
+    tip.style.left = Math.round(left) + 'px'; tip.style.top = Math.round(top) + 'px'; };
+  const show = (el) => { const t = el.getAttribute('data-tip'); if (!t) return; if (cur && cur !== el) cur.removeAttribute('aria-describedby'); cur = el; tip.textContent = t; place(el); el.setAttribute('aria-describedby', 'oe-float'); };
+  const hide = () => { if (cur) cur.removeAttribute('aria-describedby'); cur = null; tip.hidden = true; };
+  document.addEventListener('pointerover', (e) => { if (e.pointerType === 'touch') return; const el = e.target.closest && e.target.closest('[data-tip]'); if (el) { if (el !== cur) show(el); } else if (cur && document.activeElement !== cur) hide(); });
+  document.addEventListener('pointerdown', (e) => { if (e.pointerType === 'mouse') return; const el = e.target.closest && e.target.closest('[data-tip]'); if (el) { if (el === cur) hide(); else show(el); } else hide(); });
+  document.addEventListener('focusin', (e) => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) show(el); });
+  document.addEventListener('focusout', () => { if (!cur || !cur.matches(':hover')) hide(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+  addEventListener('scroll', () => { if (cur) place(cur); }, {passive: true}); addEventListener('resize', hide);
+})();

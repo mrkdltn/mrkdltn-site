@@ -170,3 +170,9 @@ body.explorer .site-foot .wrap{border-top-color:#D9D4C8}
 .oe-slidebtn{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:18px 0 0}
 .oe-slidebtn span{font-size:13.5px;color:var(--color-fg-muted)}
 .oe-btn[disabled]{opacity:.6;cursor:progress}
+
+/* tooltips: the floating box replaces the CSS ones, which could run off the screen */
+.oe [data-tip]:hover::after,.oe [data-tip]:focus-visible::after{content:none!important;display:none!important}
+.oe-float{position:fixed;z-index:200;pointer-events:none;width:max-content;font:400 13px/1.5 var(--font-anthropic-sans,inherit);color:#0B1A2E;background:#fff;border:1px solid #D6DCE6;box-shadow:0 8px 28px rgba(11,29,58,.16);border-radius:6px;padding:8px 10px;text-align:left;white-space:normal}
+.oe-float[hidden]{display:none}
+.oe-rconly #official,.oe-rconly .oe-nav a[href="#official"],.oe-nonsec .oe-nav a[href="#official"]{display:none!important}
