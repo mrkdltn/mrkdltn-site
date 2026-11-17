@@ -75,7 +75,8 @@
     const blead = document.getElementById('ar-b-lead');
     const others = AREAS.filter(([k]) => k !== 'g_ach');
     const alone = achLow.filter((r) => !others.some(([k]) => BELOW.has(r[k]))).length;
-    if (blead && achLow.length >= MIN) rich(blead, `Of the **${cnt(achLow.length)}** secondaries graded below Expected standard for achievement, **${pc(100 * alone / achLow.length)}%** have no other area below Expected standard. Where achievement is Expected standard or better, other areas are rarely below it.`);
+    const okMax = d3.max(others, ([k]) => { const s = share(achOk, k); return s.n >= MIN ? s.v : 0; });
+    if (blead && achLow.length >= MIN) rich(blead, `Of the **${cnt(achLow.length)}** secondaries graded below Expected standard for achievement, **${pc(100 * alone / achLow.length)}%** have no other area below Expected standard. Where achievement is Expected standard or better, no other area is below Expected standard in more than **${pc(okMax)}%** of schools.`);
     const W = 640, rowH = 46, H = others.length * rowH + 40, lx = 230;
     const svg = d3.select(gb).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Share of secondaries below Expected standard in each area, by achievement grade');
     const xs = d3.scaleLinear().domain([0, 100]).range([lx, W - 50]);
