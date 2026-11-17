@@ -78,18 +78,17 @@
     const alone = achLow.filter((r) => !others.some(([k]) => BELOW.has(r[k]))).length;
     const okMax = d3.max(others, ([k]) => { const s = share(achOk, k); return s.n >= MIN ? s.v : 0; });
     if (blead && achLow.length >= MIN) rich(blead, `Of the **${cnt(achLow.length)}** secondaries graded below Expected standard for achievement, **${pc(100 * alone / achLow.length)}%** have no other area below Expected standard. Where achievement is Expected standard or better, no other area is below Expected standard in more than **${pc(okMax)}%** of schools.`);
-    const W = 640, rowH = 46, H = others.length * rowH + 40, lx = 230;
-    const svg = d3.select(gb).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Share of secondaries below Expected standard in each area, by achievement grade');
-    const xs = d3.scaleLinear().domain([0, 100]).range([lx, W - 50]);
-    [0, 25, 50, 75, 100].forEach((t) => { svg.append('line').attr('x1', xs(t)).attr('x2', xs(t)).attr('y1', 22).attr('y2', H - 8).attr('stroke', GRID); svg.append('text').attr('x', xs(t)).attr('y', 14).attr('text-anchor', 'middle').attr('class', 'ax').text(t + '%'); });
-    others.forEach(([k, lab], i) => {
-      const y0 = 28 + i * rowH; const a = share(achLow, k), b = share(achOk, k);
-      svg.append('text').attr('x', lx - 12).attr('y', y0 + 17).attr('text-anchor', 'end').attr('class', 'rl').text(lab);
-      [[a, '#FF8341', 0, 'Achievement below Expected standard'], [b, '#5CD168', 18, 'Achievement Expected standard or better']].forEach(([s, c, dy, nm]) => {
-        if (s.n < MIN) return;
-        svg.append('rect').attr('x', xs(0)).attr('y', y0 + dy).attr('width', Math.max(1, xs(s.v) - xs(0))).attr('height', 14).attr('fill', c).append('title').text(`${lab}, ${nm.toLowerCase()}: ${pc(s.v)}% below Expected standard (${cnt(s.n)} schools)`);
-        svg.append('text').attr('x', xs(s.v) + 6).attr('y', y0 + dy + 11).attr('class', 'lab').text(pc(s.v) + '%'); });
-    });
+    others.forEach(([k, lab]) => {
+      const a = share(achLow, k), b = share(achOk, k);
+      const row = el('div', 'tb-row'); row.append(el('div', 'tb-lab', lab));
+      const bars = el('div', 'tb-bars');
+      [[a, '#FF8341', 'Achievement below Expected standard'], [b, '#5CD168', 'Achievement Expected standard or better']].forEach(([s2, c, nm]) => {
+        const line = el('div', 'tb-line');
+        if (s2.n < MIN) { line.append(el('span', 'tb-na', 'Too few schools')); bars.append(line); return; }
+        const bar = el('span', 'tb-bar'); bar.style.width = Math.max(0.5, s2.v) + '%'; bar.style.background = c;
+        bar.title = `${lab}, ${nm.toLowerCase()}: ${pc(s2.v)}% below Expected standard (${cnt(s2.n)} schools)`;
+        line.append(bar, el('span', 'tb-v', pc(s2.v) + '%')); line.setAttribute('aria-label', bar.title); bars.append(line); });
+      row.append(bars); gb.append(row); });
 
     // C: other context
     const gc = document.getElementById('ar-c');
