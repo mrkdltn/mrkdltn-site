@@ -109,13 +109,13 @@
     box.append(comp); });
 
   // ---------- table: filter, sort, chips ----------
-  OE.tbl = {k: 'a8', dir: -1, q: '', insp: false, reg: false, near: false};
+  OE.tbl = {k: 'a8', dir: -1, q: '', insp: false, reg: false, near: false, area: 'g_ach'};
   const GI = (g) => (g ? GORDER.indexOf(g) : -1);
   dash.draw('neigh', (tb) => { const r = S(), nb = N(); tb.replaceChildren(); const cnt = document.getElementById('oe-ncount'); if (!r || !nb.length) { if (cnt) cnt.textContent = ''; return; }
     const T = OE.tbl; const all = nb.concat([r]).sort((a, b) => +b.a8 - +a.a8); all.forEach((x, i) => { x._rank = i + 1; x._mi = x === r ? 0 : hav(r, x); });
     const toks = T.q.toLowerCase().split(/\s+/).filter(Boolean);
     let rows = all.filter((x) => x === r || ((!T.insp || x.g_ach) && (!T.reg || x.region === r.region) && (!T.near || x._mi <= 50) && toks.every((t) => (x.name + ' ' + x.la + ' ' + x.region + ' ' + (x.mat || '') + ' ' + (x.district || '')).toLowerCase().includes(t))));
-    const val = (x) => T.k === 'g_ach' ? GI(x.g_ach) : T.k === 'miles' ? x._mi : T.k === 'name' || T.k === 'la' || T.k === 'region' ? String(x[T.k] || '') : (ok(x[T.k]) ? +x[T.k] : -Infinity);
+    const SGI = (v) => (v === 'Not met' ? -2 : v === 'Met' ? 9 : GI(v)); const val = (x) => T.k === 'grade' ? (T.area === 'g_sg' ? SGI(x.g_sg) : GI(x[T.area])) : T.k === 'miles' ? x._mi : T.k === 'name' || T.k === 'la' || T.k === 'region' ? String(x[T.k] || '') : (ok(x[T.k]) ? +x[T.k] : -Infinity);
     rows.sort((a, b) => { const va = val(a), vb = val(b); return (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * T.dir; });
     if (cnt) cnt.textContent = 'Showing ' + (rows.length - 1) + ' of ' + nb.length;
     document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => th.setAttribute('aria-sort', th.dataset.sort === T.k ? (T.dir > 0 ? 'ascending' : 'descending') : 'none'));
@@ -123,7 +123,14 @@
     rows.forEach((x) => { const tr = el('tr'); const self = x === r; if (self) tr.className = 'self'; else { tr.tabIndex = 0; tr.style.cursor = 'pointer'; tr.addEventListener('click', () => OE.choose(x.urn)); tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') OE.choose(x.urn); }); }
       const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [o(x.a8, f1), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(x.ss_diff, fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
       cells.forEach(([t, c]) => tr.append(el('td', c, String(t))));
-      const td = el('td'); if (x.g_ach) { const sp = el('span', 'oe-band', x.g_ach); sp.style.background = GC[x.g_ach]; if (x.g_ach === 'Expected standard') sp.style.color = '#0B1A2E'; td.append(sp); } else td.textContent = '—'; tr.append(td); tb.append(tr); }); });
+      const td = el('td'); const gv = x[T.area];
+      if (GC[gv]) { const sp = el('span', 'oe-band', gv); sp.style.background = GC[gv]; if (gv === 'Expected standard' || gv === 'Needs attention') sp.style.color = '#0B1A2E'; td.append(sp); }
+      else if (gv === 'Not met') { const sp = el('span', 'oe-band', 'Not met'); sp.style.background = '#CE1E02'; td.append(sp); }
+      else if (gv === 'Met') td.textContent = 'Met';
+      else { td.textContent = x.g_ach ? 'Not graded' : '—'; td.className = 'muted'; }
+      tr.append(td); tb.append(tr); }); });
+  const tsel = document.getElementById('oe-tarea'), tgh = document.getElementById('oe-tgh');
+  if (tsel) tsel.addEventListener('change', () => { OE.tbl.area = tsel.value; if (tgh) tgh.textContent = tsel.options[tsel.selectedIndex].text; redrawT(); });
   const redrawT = () => dash.draw('neigh');
   const nf = document.getElementById('oe-nf'); if (nf) nf.addEventListener('input', () => { OE.tbl.q = nf.value; redrawT(); });
   [['oe-insp', 'insp'], ['oe-reg', 'reg'], ['oe-near', 'near']].forEach(([id, k]) => { const c = document.getElementById(id); if (c) c.addEventListener('change', () => { OE.tbl[k] = c.checked; redrawT(); }); });
