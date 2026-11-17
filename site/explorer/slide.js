@@ -114,15 +114,16 @@
     if (!r.rc_only) {
       const lenses = (dash.data('lenses').data || []).filter((l) => !/official/i.test(l.lens));
       const h1 = 404; rect(x, rx, y0, rw, h1, C.panel);
-      text(x, 'GCSE results, read four ways', rx + 36, y0 + 30, {size: 40, fam: SERIF});
-      text(x, `Attainment 8, 2025/26 provisional: ${f1(r.a8)}`, rx + 36, y0 + 84, {size: 22, fill: C.muted});
+      const mm = OE.meas ? OE.meas() : 'a8', MM = (OE.MEAS || {})[mm] || {label: 'Attainment 8', unit: '', scale: 15}, u = MM.unit;
+      text(x, mm === 'a8' ? 'GCSE results, read four ways' : 'GCSE results, read three ways', rx + 36, y0 + 30, {size: 40, fam: SERIF});
+      text(x, `${MM.label}, 2025/26 provisional: ${f1(r[mm])}${u}`, rx + 36, y0 + 84, {size: 22, fill: C.muted});
       lenses.slice(0, 4).forEach((l, i) => { const ly = y0 + 134 + i * 66, p8 = /Progress 8/.test(l.lens);
         const name = l.lens.replace(' (open replica)', '').replace('Published attainment', 'National average').replace('Similar schools', '50 similar schools');
         text(x, name, rx + 36, ly, {size: 23, w: 600});
-        const sub = l.comparator === null || l.comparator === undefined ? 'Not available' : (p8 ? `Score ${sg(l.gap, 2)}` : `Comparator ${f1(l.comparator)}  ·  gap ${sg(l.gap)}`);
+        const sub = l.comparator === null || l.comparator === undefined ? 'Not available' : (p8 ? `Score ${sg(l.gap, 2)}` : `Comparator ${f1(l.comparator)}${u}  ·  gap ${sg(l.gap)}${u ? ' pts' : ''}`);
         text(x, sub, rx + 36, ly + 31, {size: 20, fill: C.muted});
         const bx = rx + 400, bw = 180, mid = bx + bw / 2; rect(x, bx, ly + 12, bw, 20, C.track);
-        if (l.gap !== null && l.gap !== undefined) { const g = p8 ? l.gap * 10 : l.gap, w = Math.min(bw / 2, Math.abs(g) / 15 * bw / 2); rect(x, g < 0 ? mid - w : mid, ly + 12, w, 20, g < 0 ? '#FF8341' : '#33903C'); }
+        if (l.gap !== null && l.gap !== undefined) { const g = p8 ? l.gap * 10 : l.gap, w = Math.min(bw / 2, Math.abs(g) / (l.scale || 15) * bw / 2); rect(x, g < 0 ? mid - w : mid, ly + 12, w, 20, g < 0 ? '#FF8341' : '#33903C'); }
         rect(x, mid - 1, ly + 6, 2, 32, C.ink);
         let rd = String(l.reading || '').replace(' with expectation', '').replace(' expectation', '').replace('Not significantly different', 'Not significant');
         const room = rx + rw - 30 - (bx + bw + 22); let fs2 = 20; while (fs2 > 15 && tw(x, rd, fs2, 600) > room) fs2--;
@@ -134,7 +135,7 @@
         ['Prior attainment index', sg(+r.pa_index), 'national middle about 0'], ['GCSE cohort', String(Math.round(r.pupils)), 'pupils']];
       items.forEach(([l, v, n], i) => { const cx = rx + 36 + (i % 2) * ((rw - 72) / 2), cy = y1 + 82 + Math.floor(i / 2) * 64;
         text(x, l, cx, cy, {size: 19, fill: C.muted}); text(x, v, cx, cy + 24, {size: 26, w: 700}); if (n) text(x, n, cx + tw(x, v, 26, 700) + 12, cy + 31, {size: 18, fill: C.muted}); });
-      footer(x, r, 'Similar schools are an open replica of the DfE and Ofsted model, not the official IDSR list. Contextual model: one regression on the same public factors.');
+      footer(x, r, 'Similar schools are an open replica of the DfE and Ofsted model, not the official IDSR list' + (mm === 'a8' ? '' : ', built for Attainment 8') + '. Contextual model: one regression on the same public factors.');
     } else {
       // other phases: each area beside same-phase schools in England
       rect(x, rx, y0, rw, cardH, C.panel);

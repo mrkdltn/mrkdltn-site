@@ -81,6 +81,45 @@ def load(path):
         return list(csv.DictReader(f))
 
 
+EM_FACTORS = ['pa_index', 'nor', 'nonmob_pct', 'dis_pct', 'idaci_q', 'ehc_pct', 'sensup_pct', 'eal_school']
+
+
+def _lstsq(X, y):
+    """Ordinary least squares by the normal equations (small, dependency-free)."""
+    k = len(X[0])
+    A = [[sum(r[i] * r[j] for r in X) for j in range(k)] + [sum(r[i] * yy for r, yy in zip(X, y))] for i in range(k)]
+    for c in range(k):
+        p = max(range(c, k), key=lambda i: abs(A[i][c])); A[c], A[p] = A[p], A[c]
+        for i in range(k):
+            if i != c and A[c][c]:
+                f = A[i][c] / A[c][c]; A[i] = [a - f * b for a, b in zip(A[i], A[c])]
+    return [A[i][k] / A[i][i] for i in range(k)]
+
+
+def enrich_em(ks4):
+    """For each school: the mean and spread of its 50 similar schools on em5 and em4, and the expected
+    value from one regression on the same public factors as the Attainment 8 contextual model.
+    The similar-schools groups are the Attainment 8 replica's, so these are an approximation."""
+    by = {r['urn']: r for r in ks4}
+    med = {}
+    for f in EM_FACTORS:
+        v = sorted(float(r[f]) for r in ks4 if num(r.get(f)) is not None)
+        med[f] = v[len(v) // 2] if v else 0.0
+    feats = lambda r: [1.0] + [float(r[f]) if num(r.get(f)) is not None else med[f] for f in EM_FACTORS]
+    for m in ('em5', 'em4'):
+        rows = [r for r in ks4 if num(r.get(m)) is not None]
+        b = _lstsq([feats(r) for r in rows], [float(r[m]) for r in rows])
+        for r in ks4:
+            v = num(r.get(m))
+            nb = [float(by[u][m]) for u in (r.get('nn') or '').split() if u in by and num(by[u].get(m)) is not None]
+            if nb:
+                mean = sum(nb) / len(nb); sd = (sum((x - mean) ** 2 for x in nb) / max(len(nb) - 1, 1)) ** 0.5
+                r[m + '_ss'], r[m + '_ssd'] = f'{mean:.2f}', f'{sd:.2f}'
+            else:
+                r[m + '_ss'] = r[m + '_ssd'] = ''
+            r[m + '_cva'] = f'{sum(a * x for a, x in zip(b, feats(r))):.2f}' if v is not None else ''
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     ks4_path, rc_path = os.path.join(RAW, 'ks4_model_v3.csv'), os.path.join(RAW, 'ofsted_rc.csv')
@@ -121,6 +160,9 @@ def main():
                 for c in GRADE_COLS + ['insp_date']:
                     if c in k and c in r:
                         k[c] = r[c]
+
+    # --- English and maths at grade 5+ and 4+: similar-schools averages and a contextual expectation ---
+    enrich_em(ks4)
 
     # --- ks4 ---
     cols = [c for c in ks4[0].keys() if c not in KS4_DROP]

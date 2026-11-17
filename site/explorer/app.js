@@ -9,7 +9,7 @@
   // smooth(): transitions the reader asked for (changing a control), never on resize.
   const motion = () => !reduced() && dash.fresh();
   const smooth = () => !reduced() && !dash.resizing();
-  const P = () => Object.assign({urn: '', q: '', x: 'dis_pct', area: 'g_ach', phase: 'Secondary', area2: 'g_ach', idsr: ''}, dash.params());
+  const P = () => Object.assign({urn: '', q: '', x: 'dis_pct', area: 'g_ach', phase: 'Secondary', area2: 'g_ach', idsr: '', meas: 'a8'}, dash.params());
   const OE = window.OE = {GC, GORDER, BANDC, num, f1, fs, P, motion, smooth, active: 0, matches: []};
 
   // ---------- search ----------
@@ -50,6 +50,12 @@
   const r_ok = (x) => x !== null && x !== '' && !isNaN(x) && isFinite(x);
   // the DfE's published Progress 8 bands: score and 95% confidence interval together
   OE.p8Band = (s, lo, hi) => (isNaN(lo) || isNaN(hi) ? 'Not available' : lo > 0 ? (s >= 0.5 ? 'Well above average' : 'Above average') : hi < 0 ? (s < -0.5 ? 'Well below average' : 'Below average') : 'Average');
+  // results measures: Attainment 8, or English and maths at grade 5+ / 4+ (percentages)
+  OE.MEAS = {a8: {label: 'Attainment 8', short: 'A8', unit: '', scale: 15, thr: 2},
+    em5: {label: 'English and maths, grade 5 or above', short: 'EM 5+', unit: '%', scale: 30, thr: 4},
+    em4: {label: 'English and maths, grade 4 or above', short: 'EM 4+', unit: '%', scale: 30, thr: 4}};
+  OE.meas = () => { const m = String(dash.params().meas || 'a8'); return OE.MEAS[m] ? m : 'a8'; };
+  OE.mfmt = (v, m) => (v === null || v === undefined || v === '' || isNaN(v) ? '—' : (+v).toFixed(1) + (OE.MEAS[m || OE.meas()].unit));
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
 
   // ---------- calcs ----------
@@ -65,11 +71,26 @@
     fn: (ks4) => { const txt = String(dash.params().idsr || ''); const ids = [...new Set(txt.match(/\d{6}/g) || [])]; if (!ids.length) return [];
       const by = new Map(ks4.map((r) => [r.urn, r])); const found = ids.map((i) => by.get(i)).filter((r) => r && r.a8 !== null && r.a8 !== '');
       const mean = found.length ? found.reduce((s, r) => s + +r.a8, 0) / found.length : null;
-      return [{pasted: ids.length, found: found.length, mean: mean === null ? null : Math.round(mean * 10) / 10}]; }});
+      return [{pasted: ids.length, found: found.length, ids, mean: mean === null ? null : Math.round(mean * 10) / 10}]; }});
   dash.calc('lenses', {inputs: ['ks4', 'national', 'official'], title: 'Four lenses on the selected school', description: 'Published attainment, similar schools (replica and official), contextual model and last Progress 8.',
     fn: (ks4, national, official) => {
       const u = String(dash.params().urn || ''); const r = ks4.find((x) => x.urn === u); if (!r) return [];
-      const a8 = +r.a8, rd = (v) => (v === null || isNaN(v) ? null : Math.round(v * 10) / 10);
+      const rd = (v) => (v === null || isNaN(v) ? null : Math.round(v * 10) / 10);
+      const m = OE.meas();
+      if (m !== 'a8') {
+        const M = OE.MEAS[m], v = +r[m], ok2 = (x) => x !== null && x !== '' && !isNaN(+x);
+        let s = 0, n = 0; ks4.forEach((x) => { const p = +x.pupils; if (ok2(x[m]) && p > 0) { s += +x[m] * p; n += p; } }); const nat = n ? s / n : null;
+        const out = [{lens: 'Published attainment', comparator_label: 'National average', school: rd(v), comparator: rd(nat), gap: rd(v - nat), reading: v - nat >= 0 ? 'Above national' : 'Below national', unit: M.unit, scale: M.scale}];
+        if (ok2(r[m + '_ss'])) { const g = v - +r[m + '_ss'], sd = +r[m + '_ssd'], pp = Math.min(99, Math.max(1, v)), se = Math.sqrt(pp * (100 - pp) / Math.max(+r.pupils, 1) + sd * sd / 50);
+          const band = Math.abs(g) < 1.96 * se ? 'Close to' : (g > 0 ? (g > sd ? 'Well above' : 'Above') : (-g > sd ? 'Well below' : 'Below'));
+          out.push({lens: 'Similar schools (open replica)', comparator_label: 'Average of 50 similar schools', school: rd(v), comparator: rd(+r[m + '_ss']), gap: rd(g), reading: band, unit: M.unit, scale: M.scale}); }
+        const o = official && official[0];
+        if (o && o.ids && o.ids.length) { const by = new Map(ks4.map((x) => [x.urn, x])); const f = o.ids.map((i) => by.get(i)).filter((x) => x && ok2(x[m]));
+          if (f.length) { const mm = f.reduce((a, x) => a + +x[m], 0) / f.length; out.push({lens: 'Similar schools (official IDSR list)', comparator_label: 'Average of ' + f.length + ' pasted schools', school: rd(v), comparator: rd(mm), gap: rd(v - mm), reading: 'Gap only', unit: M.unit, scale: M.scale}); } }
+        if (ok2(r[m + '_cva'])) { const g = v - +r[m + '_cva']; out.push({lens: 'Contextual model', comparator_label: 'Expected for this intake', school: rd(v), comparator: rd(+r[m + '_cva']), gap: rd(g), reading: Math.abs(g) < M.thr ? 'In line with expectation' : (g > 0 ? 'Above expectation' : 'Below expectation'), unit: M.unit, scale: M.scale}); }
+        return out;
+      }
+      const a8 = +r.a8;
       const out = [
         {lens: 'Published attainment', comparator_label: 'National average', school: rd(a8), comparator: national, gap: rd(a8 - national), reading: a8 - national >= 0 ? 'Above national' : 'Below national'},
         {lens: 'Similar schools (open replica)', comparator_label: 'Average of 50 similar schools', school: rd(a8), comparator: rd(+r.ss_mean), gap: rd(+r.ss_diff), reading: r.ss_band}
@@ -211,14 +232,19 @@
     'Progress 8, 2023/24': 'Pupil-level progress from KS2 to GCSE, last published for 2023/24. Where the school changed URN, this is the predecessor school\'s figure. The reading uses the DfE\'s published bands, which combine the score with its 95% confidence interval: well above average (0.5 or more, interval wholly above 0), above average (interval wholly above 0), average (interval includes 0), below average (interval wholly below 0), well below average (below −0.5, interval wholly below 0).'
   };
   dash.draw('lenses', (tb) => { const d = dash.data('lenses'); tb.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
+    const m = OE.meas(), M = OE.MEAS[m]; const ls = document.getElementById('oe-lsub');
+    if (ls) ls.textContent = m === 'a8' ? 'Attainment 8, 2025/26 provisional. A positive gap means the school\'s score is higher than the comparator. The bar shows the gap on a scale of ±15 points.'
+      : 'Share of the GCSE year group achieving grade ' + (m === 'em5' ? '5' : '4') + ' or above in both English and maths, 2025/26 provisional. Gaps are in percentage points; the bar shows them on a scale of ±30. Progress 8 has no English and maths equivalent, so it is left out. Contextual readings within ±4 points count as in line.';
+    document.querySelectorAll('#oe-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
+    const h2 = document.querySelector('#lenses h2'); if (h2 && h2.firstChild && h2.firstChild.nodeType === 3) h2.firstChild.textContent = m === 'a8' ? 'One set of results, read four ways ' : 'One set of results, read three ways ';
     const animate = motion();
     d.data.forEach((r) => { const tr = document.createElement('tr'); tr.setAttribute('data-key', encodeURIComponent(r.lens));
-      const isP8 = /Progress 8/.test(r.lens); const fmt = (v) => (v === null || v === undefined ? '—' : (isP8 ? d3.format('+.2f')(v) : f1(v)));
+      const isP8 = /Progress 8/.test(r.lens), pct = r.unit === '%'; const fmt = (v) => (v === null || v === undefined ? '—' : (isP8 ? d3.format('+.2f')(v) : f1(v) + (pct ? '%' : '')));
       const td0 = document.createElement('td'); td0.className = 'tip-cell'; const sp0 = document.createElement('span'); sp0.textContent = r.lens + ' '; const ic = document.createElement('span'); ic.className = 'i'; ic.textContent = 'i'; ic.tabIndex = 0; ic.setAttribute('data-tip', LTIP[r.lens] || ''); td0.append(sp0, ic); tr.append(td0);
       const LBL = ['Compared with', 'School', 'Comparator', 'Gap'];
-      [r.comparator_label, fmt(r.school), fmt(r.comparator), r.gap === null ? '—' : (isP8 ? d3.format('+.2f')(r.gap) : fs(r.gap))].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; td.setAttribute('data-label', LBL[i]); if (i >= 1) td.className = 'n'; tr.append(td); });
+      [r.comparator_label, fmt(r.school), fmt(r.comparator), r.gap === null ? '—' : (isP8 ? d3.format('+.2f')(r.gap) : fs(r.gap) + (pct ? ' pts' : ''))].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; td.setAttribute('data-label', LBL[i]); if (i >= 1) td.className = 'n'; tr.append(td); });
       const tdb = document.createElement('td'); const bar = document.createElement('div'); bar.className = 'oe-gapbar'; const fill = document.createElement('i'); const mid = document.createElement('u'); bar.append(fill, mid); tdb.append(bar); tr.append(tdb);
-      const g = r.gap === null ? 0 : (isP8 ? r.gap * 10 : r.gap); const w = Math.min(50, Math.abs(g) / 15 * 50);
+      const g = r.gap === null ? 0 : (isP8 ? r.gap * 10 : r.gap); const w = Math.min(50, Math.abs(g) / (r.scale || 15) * 50);
       fill.style.background = g >= 0 ? '#33903C' : '#FF8341';
       const fin = () => { fill.style.left = (g >= 0 ? 50 : 50 - w) + '%'; fill.style.width = w + '%'; };
       if (animate) { fill.style.left = '50%'; fill.style.width = '0%'; } else fin();
@@ -228,21 +254,21 @@
 
   dash.draw('strip', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip); return {tip}; },
     update: (el, m) => { const r = S(), n = dash.data('neigh'); el.querySelectorAll('svg').forEach((s) => s.remove()); if (!r || n.status !== 'ok' || !n.data.length) return;
-      const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x.a8).concat([+r.a8]);
-      const x = d3.scaleLinear().domain(d3.extent(vals)).nice().range([M.l, W - M.r]); const mean = +r.ss_mean;
-      const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Attainment 8 of the 50 similar schools with the selected school marked');
+      const mf = OE.meas(), MS = OE.MEAS[mf]; const ss = document.getElementById('oe-ssub'); if (ss) ss.textContent = MS.label + ', 2025/26. Dots are spread vertically only so they do not overlap.'; const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x[mf]).filter((v) => !isNaN(v)).concat([+r[mf]]);
+      const x = d3.scaleLinear().domain(d3.extent(vals)).nice().range([M.l, W - M.r]); const mean = mf === 'a8' ? +r.ss_mean : +r[mf + '_ss'];
+      const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', MS.label + ' of the 50 similar schools with the selected school marked');
       svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${H - M.b})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor(W / 90))));
       svg.append('line').attr('x1', x(mean)).attr('x2', x(mean)).attr('y1', 30).attr('y2', 86).style('stroke', 'var(--color-fg)').style('stroke-width', 2);
-      svg.append('text').attr('x', x(mean)).attr('y', 22).attr('text-anchor', 'middle').style('font-size', '11px').style('fill', 'var(--color-fg-muted)').text('Group average ' + f1(mean));
+      svg.append('text').attr('x', x(mean)).attr('y', 22).attr('text-anchor', 'middle').style('font-size', '11px').style('fill', 'var(--color-fg-muted)').text('Group average ' + f1(mean) + MS.unit);
       const dots = svg.selectAll('circle.n').data(n.data).join('circle').attr('class', 'n').attr('cy', (d, i) => 58 + ((i % 7) - 3) * 4).attr('r', 5.5).style('fill', (d) => GC[d.g_ach] || '#D6DCE6').style('stroke', 'var(--color-bg)').style('cursor', 'pointer')
-        .on('pointerenter', (e, d) => { m.tip.hidden = false; m.tip.textContent = d.name + ' (' + d.la + '): A8 ' + f1(+d.a8) + (d.g_ach ? ' · Achievement ' + d.g_ach : ' · no report card yet') + '. Click to open.'; m.tip.style.left = Math.max(0, Math.min(W - 260, x(+d.a8) - 40)) + 'px'; m.tip.style.top = '-6px'; })
+        .on('pointerenter', (e, d) => { m.tip.hidden = false; m.tip.textContent = d.name + ' (' + d.la + '): ' + MS.short + ' ' + OE.mfmt(d[mf], mf) + (d.g_ach ? ' · Achievement ' + d.g_ach : ' · no report card yet') + '. Click to open.'; m.tip.style.left = Math.max(0, Math.min(W - 260, x(+d[mf]) - 40)) + 'px'; m.tip.style.top = '-6px'; })
         .on('pointerleave', () => { m.tip.hidden = true; }).on('click', (e, d) => OE.choose(d.urn));
       const animate = motion();
-      if (animate) dots.attr('cx', x(mean)).style('opacity', 0).transition().duration(650).delay((d, i) => i * 10).ease(d3.easeCubicOut).attr('cx', (d) => x(+d.a8)).style('opacity', 1);
-      else dots.attr('cx', (d) => x(+d.a8));
-      const sx = x(+r.a8); const dia = svg.append('path').attr('d', d3.symbol(d3.symbolDiamond, 170)()).style('fill', '#0B1A2E').style('stroke', 'var(--color-bg)').style('stroke-width', 2);
+      if (animate) dots.attr('cx', x(mean)).style('opacity', 0).transition().duration(650).delay((d, i) => i * 10).ease(d3.easeCubicOut).attr('cx', (d) => x(+d[mf])).style('opacity', 1);
+      else dots.attr('cx', (d) => x(+d[mf]));
+      const sx = x(+r[mf]); const dia = svg.append('path').attr('d', d3.symbol(d3.symbolDiamond, 170)()).style('fill', '#0B1A2E').style('stroke', 'var(--color-bg)').style('stroke-width', 2);
       if (animate) dia.attr('transform', `translate(${x(mean)},58) scale(0.2)`).transition().delay(500).duration(600).ease(d3.easeBackOut).attr('transform', `translate(${sx},58) scale(1)`); else dia.attr('transform', `translate(${sx},58)`);
-      svg.append('text').attr('x', sx).attr('y', 100 - 4).attr('text-anchor', sx > W - 80 ? 'end' : (sx < 80 ? 'start' : 'middle')).style('font-size', '11px').style('font-weight', 600).style('fill', '#0B1A2E').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', 4).text('This school ' + f1(+r.a8));
+      svg.append('text').attr('x', sx).attr('y', 100 - 4).attr('text-anchor', sx > W - 80 ? 'end' : (sx < 80 ? 'start' : 'middle')).style('font-size', '11px').style('font-weight', 600).style('fill', '#0B1A2E').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', 4).text('This school ' + OE.mfmt(r[mf], mf));
     }});
 
   dash.draw('offnote', (el) => { const o = dash.data('official'); const r = S();

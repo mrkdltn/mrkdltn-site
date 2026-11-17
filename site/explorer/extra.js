@@ -111,17 +111,18 @@
   // ---------- table: filter, sort, chips ----------
   OE.tbl = {k: 'a8', dir: -1, q: '', insp: false, reg: false, near: false, area: 'g_ach'};
   const GI = (g) => (g ? GORDER.indexOf(g) : -1);
-  dash.draw('neigh', (tb) => { const r = S(), nb = N(); tb.replaceChildren(); const cnt = document.getElementById('oe-ncount'); if (!r || !nb.length) { if (cnt) cnt.textContent = ''; return; }
-    const T = OE.tbl; const all = nb.concat([r]).sort((a, b) => +b.a8 - +a.a8); all.forEach((x, i) => { x._rank = i + 1; x._mi = x === r ? 0 : hav(r, x); });
+  dash.draw('neigh', (tb) => { const r = S(), nb = N(); tb.replaceChildren(); const ah = document.querySelector('#oe-ntable th[data-sort="a8"]'); if (ah) ah.textContent = OE.MEAS[OE.meas()].short; const cnt = document.getElementById('oe-ncount'); if (!r || !nb.length) { if (cnt) cnt.textContent = ''; return; }
+    const T = OE.tbl; const mf = OE.meas(); const mv = (x) => { const v = x[mf]; return v === null || v === '' || isNaN(+v) ? -Infinity : +v; }; const gapOf = (x) => (mf === 'a8' ? x.ss_diff : (x[mf + '_ss'] === '' || x[mf + '_ss'] == null ? '' : +x[mf] - +x[mf + '_ss']));
+    const all = nb.concat([r]).sort((a, b) => mv(b) - mv(a)); all.forEach((x, i) => { x._rank = i + 1; x._mi = x === r ? 0 : hav(r, x); });
     const toks = T.q.toLowerCase().split(/\s+/).filter(Boolean);
     let rows = all.filter((x) => x === r || ((!T.insp || x.g_ach) && (!T.reg || x.region === r.region) && (!T.near || x._mi <= 50) && toks.every((t) => (x.name + ' ' + x.la + ' ' + x.region + ' ' + (x.mat || '') + ' ' + (x.district || '')).toLowerCase().includes(t))));
-    const SGI = (v) => (v === 'Not met' ? -2 : v === 'Met' ? 9 : GI(v)); const val = (x) => T.k === 'grade' ? (T.area === 'g_sg' ? SGI(x.g_sg) : GI(x[T.area])) : T.k === 'miles' ? x._mi : T.k === 'name' || T.k === 'la' || T.k === 'region' ? String(x[T.k] || '') : (ok(x[T.k]) ? +x[T.k] : -Infinity);
+    const SGI = (v) => (v === 'Not met' ? -2 : v === 'Met' ? 9 : GI(v)); const val = (x) => T.k === 'grade' ? (T.area === 'g_sg' ? SGI(x.g_sg) : GI(x[T.area])) : T.k === 'miles' ? x._mi : T.k === 'a8' ? mv(x) : T.k === 'ss_diff' ? (ok(gapOf(x)) ? +gapOf(x) : -Infinity) : T.k === 'name' || T.k === 'la' || T.k === 'region' ? String(x[T.k] || '') : (ok(x[T.k]) ? +x[T.k] : -Infinity);
     rows.sort((a, b) => { const va = val(a), vb = val(b); return (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * T.dir; });
     if (cnt) cnt.textContent = 'Showing ' + (rows.length - 1) + ' of ' + nb.length;
     document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => th.setAttribute('aria-sort', th.dataset.sort === T.k ? (T.dir > 0 ? 'ascending' : 'descending') : 'none'));
     const o = (v, f) => (ok(v) ? f(+v) : '—');
     rows.forEach((x) => { const tr = el('tr'); const self = x === r; if (self) tr.className = 'self'; else { tr.tabIndex = 0; tr.style.cursor = 'pointer'; tr.addEventListener('click', () => OE.choose(x.urn)); tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') OE.choose(x.urn); }); }
-      const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [o(x.a8, f1), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(x.ss_diff, fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
+      const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [OE.mfmt(x[mf], mf), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(gapOf(x), fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
       cells.forEach(([t, c]) => tr.append(el('td', c, String(t))));
       const td = el('td'); const gv = x[T.area];
       if (GC[gv]) { const sp = el('span', 'oe-band', gv); sp.style.background = GC[gv]; if (gv === 'Expected standard' || gv === 'Needs attention') sp.style.color = '#0B1A2E'; td.append(sp); }
@@ -232,3 +233,6 @@ document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click'
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
   addEventListener('scroll', () => { if (cur) place(cur); }, {passive: true}); addEventListener('resize', hide);
 })();
+
+// results measure switch (Attainment 8, or English and maths 5+ / 4+)
+document.querySelectorAll('#oe-meas button').forEach((b) => b.addEventListener('click', () => dash.setParams({meas: b.dataset.m})));

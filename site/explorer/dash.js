@@ -20,7 +20,7 @@
   // The school picked at random on /explorer/ stays in the hash, so the landing address is unchanged until someone chooses.
   const schoolPath = /^\/explorer\/school\/\d+\/?$/;
   const writeHash = () => {
-    const keep = {}; ['urn', 'x', 'area', 'phase', 'area2'].forEach((k) => { if (state[k] && state[k] !== defaults[k]) keep[k] = state[k]; });
+    const keep = {}; ['urn', 'x', 'area', 'phase', 'area2', 'meas'].forEach((k) => { if (state[k] && state[k] !== defaults[k]) keep[k] = state[k]; });
     const usePath = state.urn && (schoolPath.test(location.pathname) || String(state.urn) !== String(window.OE_RANDOM || ''));
     if (usePath) delete keep.urn;
     const s = new URLSearchParams(keep).toString();
