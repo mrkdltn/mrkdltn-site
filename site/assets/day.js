@@ -128,11 +128,13 @@
     // the last run: down the edge of the national sheet to the axis
     var lead = nat.querySelector('.lead'), axis = nat.querySelector('.axis');
     var lr = lead.getBoundingClientRect(), ar = axis.getBoundingClientRect();
-    var LH = ar.top - lr.top, LW = Math.max(40, ar.left - lr.left + 2);
+    var dx = ar.left + 1 - lr.left;   // the axis sits on the line, so this is ~0 and the run is straight
+    var LH = ar.top - lr.top, LW = Math.max(40, dx + 2);
     lead.setAttribute('width', LW); lead.setAttribute('height', LH); lead.setAttribute('viewBox', '0 0 ' + LW + ' ' + LH);
     lead.style.height = LH + 'px'; lead.style.width = LW + 'px';
     var lp = lead.querySelector('.th');
-    lp.setAttribute('d', 'M0,0 V' + Math.max(8, LH - 28) + ' H' + (LW - 1) + ' V' + LH);
+    lp.setAttribute('d', Math.abs(dx) < 6 ? 'M' + Math.max(0, dx) + ',0 V' + LH
+      : 'M0,0 V' + Math.max(8, LH - 28) + ' H' + dx + ' V' + LH);
     lp.style.strokeWidth = 2.4;
     var lsm = sample(lp, 40);
     lp.style.strokeDasharray = lsm.L + ' ' + lsm.L;

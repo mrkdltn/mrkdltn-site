@@ -87,6 +87,7 @@ svg.art,.seam{filter:drop-shadow(0 0 1.5px rgba(255,251,240,.9)) drop-shadow(0 0
 .national{position:relative;padding:8px 0 96px}
 .national .sheet{position:relative;background:#fff;padding:44px 48px 48px 64px;color:#0B1A2E;--ink:#0B1A2E;--ink-2:#33405A;--ink-muted:#55627A;--line:#D8DDE5}
 .national .lead{left:22px;top:0}
+.national .bars{margin-left:-43px}
 .national .label{margin:0}
 .national h2{font-size:clamp(32px,4vw,50px);margin:8px 0 0;max-width:760px}
 .chart-title{font:400 19px/1.5 var(--serif-text);color:#33405A;max-width:640px;margin:16px 0 40px}
@@ -144,6 +145,7 @@ svg.art,.seam{filter:drop-shadow(0 0 1.5px rgba(255,251,240,.9)) drop-shadow(0 0
   .hero h1{font-size:clamp(30px,7.4vw,56px)}
   .national .sheet{padding:32px 20px 36px 44px}
   .national .lead{left:14px}
+  .national .bars{margin-left:-31px}
   .wcard{flex-direction:column}.wcard img{width:100%;height:auto;min-height:0;aspect-ratio:16/9}
 }
 @media(orientation:portrait) and (min-width:700px){.pc,.hero-cards .pc{margin-left:44px}.hero-cards{display:grid;grid-template-columns:1fr 1fr;gap:0 0;padding-right:20px}.hero-cards .pc{margin-right:0}}
