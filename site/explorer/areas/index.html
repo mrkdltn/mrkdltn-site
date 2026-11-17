@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Report card areas in context · Ofsted Explorer</title>
+<meta name="description" content="How Ofsted's report card areas relate to deprivation, results, pupil mobility and prior attainment across England's secondary schools. Built from public data, updated daily.">
+<link rel="canonical" href="https://mrkdltn.com/explorer/areas/">
+<meta property="og:title" content="Report card areas in context">
+<meta property="og:description" content="How Ofsted's report card areas relate to deprivation, results, pupil mobility and prior attainment across England's secondary schools. Built from public data, updated daily.">
+<meta property="og:image" content="https://mrkdltn.com/writing/ofsted-report-cards/img/explorer-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>
+:root{--font-anthropic-sans:var(--sans);--font-anthropic-serif:var(--serif);--color-fg:#0B1D3A;--color-fg-muted:#5E6B80;--color-panel:#FFFFFF;--color-border-line:#E3E7EE;--color-bg:#FFFFFF;
+--cds-gap-xl:28px;--cds-gap-lg:22px;--cds-gap-md:14px;--cds-font-size-heading:20px;--cds-font-size-body:17px;--cds-font-size-caption:14px;--cds-font-weight-medium:500;--cds-pad-lg:24px;--cds-radius:6px;
+--cds-surface-popover:#FFFFFF;--cds-border:#D6DCE6;--cds-shadow-popover:0 8px 28px rgba(11,29,58,.14);--cds-chart-grid:#EEF1F5;--cds-chart-axis:#C5CCD8;--cds-chart-reference:#5E6B80;--cds-text-secondary:#5E6B80;--cds-ease-out:cubic-bezier(.2,.7,.2,1)}
+.oe-main{max-width:1180px;margin:0 auto;padding:40px 24px 64px}
+.dash-select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--color-border-line);border-radius:6px;background:#fff;color:var(--ink)}
+.oe h2{font-family:var(--sans)}
+.oe-loading{color:var(--muted);font-size:14px}
+html.loaded .oe-loading{display:none}
+</style>
+<link rel="stylesheet" href="/explorer/explorer.css">
+<style>
+.ar{max-width:1100px;margin:0 auto}
+.ar-hero{padding:8px 0 18px}
+.ar-hero .eyebrow{font:600 13px/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:#8A6D2B;margin:0 0 10px}
+.ar-hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,5vw,52px);line-height:1.08;margin:0 0 14px;color:var(--color-fg)}
+.ar-hero p{max-width:46em;font-size:18px;line-height:1.55;color:var(--color-fg)}
+.ar-hero .asof{font-size:14px;color:var(--color-fg-muted)}
+.ar section{margin:30px 0 0;padding:26px 28px 28px;background:#fff;border:1px solid var(--color-border-line);border-radius:2px}
+.ar h2{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.15;margin:0 0 10px}
+.ar .lead{font-size:17px;line-height:1.55;max-width:48em;margin:0 0 8px}
+.ar .sub{font-size:15px;line-height:1.55;color:var(--color-fg-muted);max-width:52em;margin:0 0 18px}
+.ar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px 30px}
+.ar-fig{margin:0}
+.ar-fig figcaption{font-weight:600;font-size:15px;margin:0 0 4px}
+.ar-ch svg{width:100%;height:auto;display:block;overflow:visible}
+.ar svg .ax{font-size:11px;fill:#5E6B80}
+.ar svg .ax.t{font-size:11.5px}
+.ar svg .lab{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.ar svg .rl{font-size:13.5px;fill:#0B1A2E}
+.ar-note{font-size:13px;color:var(--color-fg-muted);margin:4px 0 0}
+.ar-key{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;margin:0 0 18px;color:var(--color-fg)}
+.ar-key span{display:inline-flex;align-items:center;gap:8px}
+.ar-key i{display:inline-block;width:26px;height:0;border-top:2.5px solid #0B1A2E}
+.ar-key i.d{border-top:1.75px dashed #8A96A8}
+.ar-key b{display:inline-block;width:14px;height:12px}
+.ar-b svg{width:100%;max-width:760px;height:auto;display:block}
+.ar ul.care{margin:0;padding-left:20px;max-width:52em;line-height:1.6;font-size:16px}
+.ar ul.care li{margin:0 0 8px}
+.ar .back{margin:26px 0 0;font-size:16px}
+@media(max-width:640px){.ar section{padding:20px 16px 22px}.ar h2{font-size:25px}.ar-hero p{font-size:17px}}
+</style>
+</head>
+<body class="explorer">
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/" aria-current="page">Ofsted Explorer</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+<style>
+.oe{--ink:#0B1D3A;--cobalt:#2E5BFF;position:relative;font-family:var(--font-anthropic-sans);color:var(--color-fg);display:flex;flex-direction:column;gap:var(--cds-gap-xl)}
+.oe-pills{display:flex;gap:6px;flex-wrap:wrap}
+.oe-pill{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;padding:6px 10px;border-radius:999px;color:#fff;background:var(--ink)}
+.oe-pill.c{background:var(--cobalt)}
+.oe h1{font-family:var(--font-anthropic-serif);font-weight:400;font-size:clamp(28px,4vw,40px);line-height:1.1;margin:10px 0 6px}
+.oe h2{font-size:var(--cds-font-size-heading);font-weight:var(--cds-font-weight-medium);margin:0 0 4px;display:flex;align-items:center;gap:6px}
+.oe .lede{font-size:var(--cds-font-size-body);color:var(--color-fg-muted);max-width:70ch;margin:0}
+.oe .sub{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);margin:0 0 var(--cds-gap-md);max-width:80ch}
+.oe-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-lg)}
+.oe-row{display:flex;gap:var(--cds-gap-md);flex-wrap:wrap;align-items:end}
+.oe-row label{display:flex;flex-direction:column;gap:4px;font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.oe-search{position:relative;flex:1 1 320px;max-width:640px}
+.oe-input{font:inherit;width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--color-border-line);border-radius:var(--cds-radius);background-color:var(--color-bg);color:var(--color-fg)}
+.oe-input:focus{outline:2px solid var(--cobalt);outline-offset:1px}
+.oe-btn{font:inherit;font-size:13px;padding:9px 14px;border-radius:var(--cds-radius);border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);cursor:pointer;transition:transform .15s,border-color .15s}
+.oe-btn:hover{border-color:var(--cobalt);transform:translateY(-1px)}
+.oe-pop{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:20;background:var(--cds-surface-popover);border:1px solid var(--cds-border);box-shadow:var(--cds-shadow-popover);border-radius:var(--cds-radius);max-height:360px;overflow:auto}
+.oe-pop ul{list-style:none;margin:0;padding:4px}
+.oe-pop li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 10px;border-radius:6px;cursor:pointer}
+.oe-pop li[aria-selected=true],.oe-pop li:hover{background:color-mix(in srgb,var(--cobalt) 12%,transparent)}
+.oe-pop .n{font-size:14px}.oe-pop .m{font-size:12px;color:var(--color-fg-muted)}.oe-pop .a{grid-row:span 2;align-self:center;font-variant-numeric:tabular-nums;font-size:13px}
+.oe-pop mark{background:none;color:var(--cobalt);font-weight:600}
+.oe-pop .empty{padding:12px;color:var(--color-fg-muted);font-size:13px}
+.oe-hint{font-size:12px;color:var(--color-fg-muted);margin:6px 0 0}
+.oe-school{font-family:var(--font-anthropic-serif);font-size:28px;margin:0}
+.oe-meta{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);margin:2px 0 var(--cds-gap-md)}
+.oe-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 var(--cds-gap-lg)}
+.oe-kpi{border-radius:10px;padding:12px 14px;background:var(--color-bg);border:1px solid var(--color-border-line)}
+.oe-kpi span{display:block;font-size:12px;color:var(--color-fg-muted)}
+.oe-kpi b{display:block;font-family:var(--font-anthropic-serif);font-weight:400;font-size:30px;font-variant-numeric:tabular-nums;margin-top:2px}
+.oe-kpi small{font-size:12px;color:var(--color-fg-muted)}
+.oe-grades{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.oe-g{border-radius:8px;padding:10px;color:#fff;background:#D6DCE6;min-height:58px;position:relative}
+.oe-g span{display:block;font-size:11px;opacity:.92}
+.oe-g b{display:block;font-size:14px;margin-top:4px}
+.oe-g.dark{color:var(--ink)}
+.oe-ctx{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:var(--cds-gap-md)}
+.oe-k{border:1px solid var(--color-border-line);border-radius:8px;padding:8px 10px;position:relative}
+.oe-k span{display:block;font-size:11px;color:var(--color-fg-muted)}
+.oe-k b{font-size:18px;font-variant-numeric:tabular-nums;font-weight:500}
+.oe-tw{overflow-x:auto}
+.oe table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+.oe th{text-align:left;font-weight:500;color:var(--color-fg-muted);border-bottom:1px solid var(--color-border-line);padding:6px 8px;white-space:nowrap}
+.oe td{border-bottom:1px solid var(--color-border-line);padding:7px 8px;vertical-align:middle}
+.oe td.n,.oe th.n{text-align:right}
+.oe tbody tr{transition:background .15s}
+.oe tbody tr:hover{background:color-mix(in srgb,var(--cobalt) 6%,transparent)}
+.oe-band{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;color:#fff;white-space:nowrap}
+.oe-gapbar{position:relative;height:10px;min-width:120px;background:var(--cds-chart-grid);border-radius:5px}
+.oe-gapbar i{position:absolute;top:0;bottom:0;border-radius:5px;transition:left .6s var(--cds-ease-out),width .6s var(--cds-ease-out)}
+.oe-gapbar u{position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--color-fg-muted)}
+.oe-chart{position:relative;min-height:120px}
+.oe-tip{position:absolute;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);box-shadow:var(--cds-shadow-popover);border-radius:6px;padding:6px 8px;font-size:12px;max-width:260px;z-index:15}
+.oe-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--color-fg-muted);margin-top:6px}
+.oe-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.oe textarea{font:12px/1.4 ui-monospace,Menlo,monospace;width:100%;min-height:70px;box-sizing:border-box;padding:8px;border:1px solid var(--color-border-line);border-radius:var(--cds-radius);background:var(--color-bg);color:var(--color-fg)}
+.oe-note{font-size:12px;color:var(--color-fg-muted);margin:8px 0 0}
+.oe details{font-size:13px;line-height:1.55}
+.oe details p{max-width:80ch}
+.oe summary{cursor:pointer;font-weight:500}
+.oe .ax text{fill:var(--cds-text-secondary);font-size:11px}
+.oe .ax line,.oe .ax path{stroke:var(--cds-chart-axis)}
+.oe .grid line{stroke:var(--cds-chart-grid)}
+.oe-how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.oe-how div{border-left:3px solid var(--cobalt);padding:4px 10px;font-size:13px;color:var(--color-fg-muted)}
+.oe-how b{display:block;color:var(--color-fg);font-weight:500}
+/* hover explainers: pure CSS so they work by hover and by keyboard focus */
+.oe [data-tip]{position:relative}
+.oe .i{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1px solid var(--color-border-line);font:600 10px/1 ui-monospace,Menlo,monospace;color:var(--color-fg-muted);cursor:help;flex:none}
+.oe [data-tip]:hover::after,.oe [data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);z-index:30;width:max-content;max-width:280px;white-space:normal;text-align:left;font:400 12px/1.45 var(--font-anthropic-sans);color:var(--color-fg);background:var(--cds-surface-popover);border:1px solid var(--cds-border);box-shadow:var(--cds-shadow-popover);border-radius:6px;padding:8px 10px;pointer-events:none}
+.oe th[data-tip]{cursor:help;text-decoration:underline dotted;text-underline-offset:3px}
+.oe .tipr[data-tip]:hover::after{left:auto;right:0}
+[data-dash-source-state=refreshing]{opacity:.5;transition:opacity .2s}
+@media (prefers-reduced-motion:no-preference){
+.oe .rise{animation:oeRise .5s var(--cds-ease-out) both}
+.oe .rise:nth-child(2){animation-delay:.04s}.oe .rise:nth-child(3){animation-delay:.08s}.oe .rise:nth-child(4){animation-delay:.12s}.oe .rise:nth-child(5){animation-delay:.16s}.oe .rise:nth-child(6){animation-delay:.2s}.oe .rise:nth-child(7){animation-delay:.24s}.oe .rise:nth-child(8){animation-delay:.28s}.oe .rise:nth-child(9){animation-delay:.32s}
+@keyframes oeRise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+<div class="oe-hero noprint"><div class="oe-hero-art" data-draw="heroart" data-source="ks4" aria-hidden="true"></div>
+  <div class="oe-hero-in oe">
+    <div><div class="oe-pills"><span class="oe-pill c">FREE TOOL</span><span class="oe-pill g">EVERY SCHOOL WITH A REPORT CARD</span></div>
+    <h1>Ofsted Explorer</h1>
+    <p class="lede">Look up any school in England with an Ofsted report card, and any secondary school. See each area of the report card beside comparable schools and, for secondaries, GCSE results read against the national average, the 50 most similar schools and a contextual model.</p>
+    <p class="lede-short">Report cards in context, and every secondary read four ways.</p></div>
+    <div class="oe-row" id="pick">
+      <div class="oe-search">
+        <input class="oe-input" id="oe-q" type="search" role="combobox" aria-expanded="false" aria-controls="oe-results" aria-autocomplete="list" autocomplete="off" aria-label="Search for a school" placeholder="Search by school, town, local authority, trust, postcode or URN">
+        <div class="oe-pop" id="oe-pop" hidden><ul id="oe-results" role="listbox" data-draw="results" data-source="ks4"></ul></div>
+      </div>
+      <button class="oe-btn" id="oe-random" type="button" aria-label="Show me another school"><span class="oe-long">Show me another school</span><span class="oe-short" aria-hidden="true">Another</span></button>
+    </div>
+    <p class="oe-hint">Opens on a school chosen at random. <span class="oe-fresh" hidden></span> <span class="oe-loading">Loading schools…</span></p>
+  </div>
+</div>
+<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#oe-more">National picture</a><a href="#method">Method</a></div></nav>
+<main class="oe-main"><div class="ar">
+<div class="ar-hero">
+  <p class="eyebrow">Ofsted Explorer · national view</p>
+  <h1>Report card areas in context</h1>
+  <p>Ofsted's report cards grade each school in up to eight areas. This page sets those grades beside what we know about secondary schools' intakes and results, to see which areas track context most closely. It describes patterns across England; it says nothing about whether any single grade is right.</p>
+  <p class="asof" id="ar-asof">Loading the data…</p>
+</div>
+
+<section id="results">
+  <h2>Same results, different grades</h2>
+  <p class="lead" id="ar-a-lead"></p>
+  <p class="sub">Each chart shows the share of inspected secondaries graded below Expected standard in one area, from the least to the most deprived fifth of schools (Ofsted's IDACI quintile of pupils). The solid line keeps only schools whose 2024/25 GCSE results were close to or above their 50 similar schools in the open replica, so the comparison holds results roughly level. If grades followed results alone, the solid line would be close to flat.</p>
+  <div class="ar-key"><span><i></i>Results close to or above similar schools</span><span><i class="d"></i>All inspected secondaries</span></div>
+  <div class="ar-grid" id="ar-a"></div>
+</section>
+
+<section id="together" class="ar-b">
+  <h2>Grades travel together</h2>
+  <p class="lead" id="ar-b-lead"></p>
+  <p class="sub">For each area, the share of secondaries graded below Expected standard, split by whether achievement was graded below Expected standard or at Expected standard and above.</p>
+  <div class="ar-key"><span><b style="background:#FF8341"></b>Achievement below Expected standard</span><span><b style="background:#5CD168"></b>Achievement Expected standard or better</span></div>
+  <div id="ar-b"></div>
+</section>
+
+<section id="context">
+  <h2>Other parts of context</h2>
+  <p class="sub">Deprivation is not the only thing that differs between schools. These charts take three areas and the part of context most closely tied to each: how many pupils joined at the usual time, the prior attainment of the year group and the share with an education, health and care plan. Fifths are drawn across every secondary with published results.</p>
+  <div class="ar-grid" id="ar-c"></div>
+</section>
+
+<section id="care">
+  <h2>Reading this carefully</h2>
+  <ul class="care">
+    <li>These are associations, not evidence of bias. Deprivation, mobility, prior attainment and need overlap heavily, and inspection judges more than any one of them.</li>
+    <li>The first year of report cards is not a random sample of schools: who was inspected first depends on Ofsted's scheduling.</li>
+    <li>Results are one year of provisional data matched to an open replica of the similar-schools model, not the official list. "Close to or above" uses the 2024/25 results inspectors would have seen.</li>
+    <li>Groups of fewer than 10 schools are not plotted. Hover over or tap a point for its exact share and the number of schools behind it.</li>
+    <li>Sources: Ofsted management information on state-funded school inspections (report cards), updated daily from reports.ofsted.gov.uk; DfE key stage 4 performance data, 2024/25 and 2025/26 (provisional). Method and code are open.</li>
+  </ul>
+  <p class="back"><a href="/explorer/">Open the Ofsted Explorer</a> to see any school's report card beside comparable schools.</p>
+</section>
+</div></main>
+<footer class="site-foot noprint"><div class="wrap">
+  <span>© 2026 Mark Dalton. Built from public DfE and Ofsted data. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<script src="/assets/d3.min.js"></script>
+<script src="/explorer/areas/areas.js"></script>
+</body>
+</html>
