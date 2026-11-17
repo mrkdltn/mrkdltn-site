@@ -33,6 +33,8 @@
   const z = (r, k) => (+r[k] - M.stats[k].mean) / M.stats[k].sd;
   const dist = (a, b) => used().reduce((s, k) => s + M.weights[k] * (z(a, k) - z(b, k)) ** 2, 0);
 
+  // place dots in rows so none overlap: xs are percentages of a track w pixels wide; returns a row index per dot
+  const dodge = (xs, w, gap) => { const rows = []; return xs.map((x) => { const px = x * w / 100; let k = 0; while (rows[k] !== undefined && px - rows[k] < gap) k++; rows[k] = px; return k; }); };
   const pasted = () => [...new Set(String(dash.params().idsr || '').match(/\d{6}/g) || [])];
   const mv = (r, m) => (ok(r[m]) ? +r[m] : NaN);
 
@@ -66,7 +68,8 @@
       const lo = Math.floor(d3.min(all) - 1), hi = Math.ceil(d3.max(all) + 1); const X = (v) => 100 * (v - lo) / ((hi - lo) || 1);
       const ma = d3.mean(A, (x) => +x[m]), mb = d3.mean(B, (x) => +x[m]);
       const strip = (label, rows, mean, setOther) => { const row = el('div', 'oe-dstrip'); row.append(el('span', 'l', label));
-        const t = el('span', 't'); rows.forEach((x, i) => { const d = el('i', setOther.has(x.urn) ? 'b' : 'o'); d.style.left = X(+x[m]) + '%'; d.style.top = (14 + ((i * 7) % 22)) + 'px'; d.setAttribute('data-tip', x.name + ': ' + OE.mfmt(+x[m], m)); t.append(d); });
+        const t = el('span', 't'); const srt = rows.slice().sort((a, b) => +a[m] - +b[m]); const tw = Math.max(200, (box.clientWidth || 600) - 270); const rw = dodge(srt.map((x) => X(+x[m])), tw, 9); t.style.height = Math.max(50, 14 + 9 * (Math.max(...rw) + 1)) + 'px';
+        srt.forEach((x, i) => { const d = el('i', setOther.has(x.urn) ? 'b' : 'o'); d.style.left = X(+x[m]) + '%'; d.style.bottom = (5 + 9 * rw[i]) + 'px'; d.setAttribute('data-tip', x.name + ': ' + OE.mfmt(+x[m], m)); t.append(d); });
         const mk = el('i', 'mn'); mk.style.left = X(mean) + '%'; t.append(mk);
         if (ok(r[m])) { const me = el('i', 'me'); me.style.left = X(+r[m]) + '%'; t.append(me); }
         row.append(t, el('span', 'v', OE.mfmt(mean, m))); return row; };
@@ -119,17 +122,18 @@
     if (!r || !k || r.rc_only || r.phase && r.phase !== 'Secondary') { box.append(el('p', 'oe-ofv-empty', 'Choose a secondary school with 2025/26 results to see its own 50 chosen here.')); return; }
     if (!M) { later('msel'); return; }
     const d = k.filter((x) => x.urn !== r.urn && used().every((f) => ok(x[f]))).map((x) => ({x, d: dist(r, x)})).sort((a, b) => a.d - b.d);
-    const N = 150, near = d.slice(0, N), cut = near[49].d, max = near[N - 1].d; const X = (v) => 100 * Math.sqrt(v / max);
+    const N = 150, near = d.slice(0, N), cut = near[49].d, max = near[N - 1].d; const X = (v) => 100 * v / max;
     const steps = el('ol', 'oe-steps');
     [['Put every factor on one scale', 'Each is measured in standard deviations from the England average.'], ['Weight them', 'Prior attainment counts most, pupil numbers least.'], ['Measure the distance', 'From this school to each of ' + d3.format(',')(d.length) + ' other secondaries.'], ['Keep the nearest 50', 'Their average result is the comparator.']]
       .forEach(([a, b]) => { const li = el('li'); li.append(el('b', '', a), el('span', '', b)); steps.append(li); });
     box.append(steps);
     const fig = el('div', 'oe-sel'); const t = el('div', 't');
-    near.forEach((o, i) => { const dot = el('i', i < 50 ? 'b' : 'o'); dot.style.left = X(o.d) + '%'; dot.style.top = (8 + ((i * 11) % 44)) + 'px'; dot.setAttribute('data-tip', o.x.name + (i < 50 ? ', similar school ' : ', ') + 'number ' + (i + 1) + ' by distance'); t.append(dot); });
+    const tw = Math.max(280, (box.clientWidth || 700) - 12); const rw = dodge(near.map((o) => X(o.d)), tw, 10); t.style.height = (16 + 10 * (Math.max(...rw) + 1)) + 'px';
+    near.forEach((o, i) => { const dot = el('i', i < 50 ? 'b' : 'o'); dot.style.left = X(o.d) + '%'; dot.style.bottom = (6 + 10 * rw[i]) + 'px'; dot.setAttribute('data-tip', o.x.name + (i < 50 ? ', similar school ' : ', ') + 'number ' + (i + 1) + ' by distance'); t.append(dot); });
     const c = el('i', 'cut'); c.style.left = X((cut + near[50].d) / 2) + '%'; t.append(c);
     const me = el('i', 'me'); me.style.left = '0%'; t.append(me);
     fig.append(t);
-    const ax = el('div', 'ax'); const a1 = el('span', '', 'This school'); const a2 = el('span', 'mid', '50th nearest'); a2.style.left = X((cut + near[50].d) / 2) + '%'; const a3 = el('span', 'end', 'Further away →'); ax.append(a1, a2, a3); fig.append(ax);
+    const ax = el('div', 'ax'); const a1 = el('span', '', 'This school'); const a2 = el('span', 'mid', '50th nearest'); a2.style.left = X((cut + near[50].d) / 2) + '%'; ax.append(a1, a2); fig.append(ax);
     box.append(fig);
     const sameReg = near.slice(0, 50).filter((o) => o.x.region === r.region).length;
     box.append(rich(el('p', 'oe-comp'), 'The **50 nearest** (gold) form the group; the next 100 (grey) just missed out. Distance is about intake, not geography: ' + sameReg + ' of the 50 are in the same region as this school. Rebuilt here from public data, these are the same 50 schools listed above.'));
