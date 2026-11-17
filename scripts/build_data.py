@@ -97,7 +97,7 @@ def _lstsq(X, y):
 
 
 def enrich_em(ks4):
-    """For each school: the mean and spread of its 50 similar schools on em5 and em4, and the expected
+    """For each school: the mean and spread of its 50 similar schools on em5 (English and maths grade 5+), and the expected
     value from one regression on the same public factors as the Attainment 8 contextual model.
     The similar-schools groups are the Attainment 8 replica's, so these are an approximation."""
     by = {r['urn']: r for r in ks4}
@@ -106,7 +106,7 @@ def enrich_em(ks4):
         v = sorted(float(r[f]) for r in ks4 if num(r.get(f)) is not None)
         med[f] = v[len(v) // 2] if v else 0.0
     feats = lambda r: [1.0] + [float(r[f]) if num(r.get(f)) is not None else med[f] for f in EM_FACTORS]
-    for m in ('em5', 'em4'):
+    for m in ('em5',):
         rows = [r for r in ks4 if num(r.get(m)) is not None]
         b = _lstsq([feats(r) for r in rows], [float(r[m]) for r in rows])
         for r in ks4:

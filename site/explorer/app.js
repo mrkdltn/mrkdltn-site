@@ -52,8 +52,7 @@
   OE.p8Band = (s, lo, hi) => (isNaN(lo) || isNaN(hi) ? 'Not available' : lo > 0 ? (s >= 0.5 ? 'Well above average' : 'Above average') : hi < 0 ? (s < -0.5 ? 'Well below average' : 'Below average') : 'Average');
   // results measures: Attainment 8, or English and maths at grade 5+ / 4+ (percentages)
   OE.MEAS = {a8: {label: 'Attainment 8', short: 'A8', unit: '', scale: 15, thr: 2},
-    em5: {label: 'English and maths, grade 5 or above', short: 'EM 5+', unit: '%', scale: 30, thr: 4},
-    em4: {label: 'English and maths, grade 4 or above', short: 'EM 4+', unit: '%', scale: 30, thr: 4}};
+    em5: {label: 'English and maths, grade 5 or above', short: 'EM 5+', unit: '%', scale: 30, thr: 4}};
   OE.meas = () => { const m = String(dash.params().meas || 'a8'); return OE.MEAS[m] ? m : 'a8'; };
   OE.mfmt = (v, m) => (v === null || v === undefined || v === '' || isNaN(v) ? '—' : (+v).toFixed(1) + (OE.MEAS[m || OE.meas()].unit));
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
@@ -234,7 +233,7 @@
   dash.draw('lenses', (tb) => { const d = dash.data('lenses'); tb.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const m = OE.meas(), M = OE.MEAS[m]; const ls = document.getElementById('oe-lsub');
     if (ls) ls.textContent = m === 'a8' ? 'Attainment 8, 2025/26 provisional. A positive gap means the school\'s score is higher than the comparator. The bar shows the gap on a scale of ±15 points.'
-      : 'Share of the GCSE year group achieving grade ' + (m === 'em5' ? '5' : '4') + ' or above in both English and maths, 2025/26 provisional. Gaps are in percentage points; the bar shows them on a scale of ±30. Progress 8 has no English and maths equivalent, so it is left out. Contextual readings within ±4 points count as in line.';
+      : 'Share of the GCSE year group achieving grade 5 or above in both English and maths, 2025/26 provisional. Gaps are in percentage points; the bar shows them on a scale of ±30. Progress 8 has no English and maths equivalent, so it is left out. Contextual readings within ±4 points count as in line.';
     document.querySelectorAll('#oe-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === m)));
     const h2 = document.querySelector('#lenses h2'); if (h2 && h2.firstChild && h2.firstChild.nodeType === 3) h2.firstChild.textContent = m === 'a8' ? 'One set of results, read four ways ' : 'One set of results, read three ways ';
     const animate = motion();
