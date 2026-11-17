@@ -59,10 +59,10 @@
     rect(x, px, py, w, h, C.track); let acc = 0, mk = null;
     G.forEach((g) => { const c = dist[g] || 0; if (!c) return; const sw = w * c / dist.n; rect(x, px + acc, py, sw, h, GC[g]);
       if (g === grade) { x.strokeStyle = C.ink; x.lineWidth = 3; x.strokeRect(px + acc + 1.5, py + 1.5, sw - 3, h - 3); mk = px + acc + sw / 2; }
-      const p = pc(100 * c / dist.n), size = Math.round(h * 0.46);
+      const p = pc(100 * c / dist.n), size = Math.max(14, Math.round(h * 0.46));
       if (tw(x, p, size, 650) + 14 < sw) text(x, p, px + acc + sw / 2, py + (h - size) / 2 - 1, {size, w: 650, align: 'center', fill: DARK.has(g) ? C.ground : '#FFFFFF'});
       acc += sw; });
-    if (mk !== null) { x.fillStyle = C.ink; x.beginPath(); x.moveTo(mk - 11, py - 18); x.lineTo(mk + 11, py - 18); x.lineTo(mk, py - 5); x.closePath(); x.fill(); }
+    if (mk !== null) { const m = Math.min(13, Math.max(8, h * 0.28)); x.fillStyle = C.ink; x.beginPath(); x.moveTo(mk - m, py - m * 1.5); x.lineTo(mk + m, py - m * 1.5); x.lineTo(mk, py - 4); x.closePath(); x.fill(); }
   }
 
   function key(x, px, py) {
@@ -142,10 +142,11 @@
       text(x, `Beside ${ph} in England`, rx + 36, y0 + 30, {size: 40, fam: SERIF});
       text(x, 'Share graded below Expected standard in each area', rx + 36, y0 + 84, {size: 22, fill: C.muted});
       const areas = (dash.data('areas').data || []);
-      areas.slice(0, 8).forEach((a, i) => { const ay = y0 + 134 + i * Math.min(78, (cardH - 160) / Math.max(areas.length, 1));
+      const stepA = Math.min(84, (cardH - 150) / Math.max(areas.length, 1)), hA = Math.max(24, Math.min(30, stepA - 50));
+      areas.slice(0, 8).forEach((a, i) => { const ay = y0 + 128 + i * stepA;
         text(x, a.area, rx + 36, ay, {size: 21, w: 600});
-        if (a.england && a.england.n >= 10) { distBar(x, a.england, a.grade, rx + 36, ay + 34, rw - 200, 26);
-          text(x, pc(100 * ((a.england['Needs attention'] || 0) + (a.england['Urgent improvement'] || 0)) / a.england.n), rx + rw - 36, ay + 34, {size: 24, w: 700, align: 'right'}); } });
+        if (a.england && a.england.n >= 10) { distBar(x, a.england, a.grade, rx + 36, ay + 44, rw - 200, hA);
+          text(x, pc(100 * ((a.england['Needs attention'] || 0) + (a.england['Urgent improvement'] || 0)) / a.england.n), rx + rw - 36, ay + 44 + (hA - 24) / 2, {size: 24, w: 700, align: 'right'}); } });
       footer(x, r, 'Bars: how ' + ph + ' in England are graded in each area; the outlined segment is this school’s grade.');
     }
   }
