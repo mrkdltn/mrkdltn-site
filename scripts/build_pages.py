@@ -29,7 +29,7 @@ GRADE_COLOUR = {'Exceptional': '#0176E0', 'Strong standard': '#33903C', 'Expecte
                 'Needs attention': '#FF8341', 'Urgent improvement': '#CE1E02'}
 GROUND, PANEL, INK, MUTED, LINE, BRASS = '#0B1A2E', '#13263F', '#F5F1E8', '#A8B5C8', '#2B3C55', '#C9A24B'
 
-STATIC_PAGES = ['/', '/explorer/', '/explorer/areas/', '/writing/', '/writing/ofsted-report-cards/', '/writing/progress-8/',
+STATIC_PAGES = ['/', '/explorer/', '/explorer/areas/', '/explorer/updates/', '/writing/', '/writing/ofsted-report-cards/', '/writing/progress-8/',
                 '/writing/curriculum-review/', '/colophon/']
 
 
