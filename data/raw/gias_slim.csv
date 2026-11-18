@@ -2,6 +2,7 @@ urn,la,region,mat,town,postcode,status
 100009,Camden,London,,London,NW6 1QL,Open
 100014,Camden,London,,London,NW3 2QT,Open
 100025,Camden,London,,London,NW3 2JB,Open
+100029,Camden,London,,London,NW1 4BD,Open
 100033,Camden,London,,London,NW1 8DE,Open
 100046,Camden,London,,London,NW3 3DS,Open
 100055,Camden,London,,London,NW1 1LY,Open
@@ -66,6 +67,7 @@ urn,la,region,mat,town,postcode,status
 100894,Tower Hamlets,London,,London,E14 7NG,Open
 100903,Tower Hamlets,London,,London,E2 0BP,Open
 100916,Tower Hamlets,London,,London,E3 5DN,Open
+100930,Tower Hamlets,London,,London,E1 5AR,Open
 100934,Tower Hamlets,London,,London,E1 5AD,Open
 100953,Tower Hamlets,London,,London,E2 9LR,Open
 100962,Tower Hamlets,London,,London,E1 8DJ,Open
@@ -196,6 +198,7 @@ urn,la,region,mat,town,postcode,status
 102661,Merton,London,,Mitcham,CR4 1PJ,Open
 102669,Merton,London,,Morden,SM4 6RL,Open
 102670,Merton,London,,London,SW19 1QL,Open
+102672,Merton,London,,London,SW19 8LX,Open
 102723,Newham,London,,London,E13 0HE,Open
 102745,Newham,London,,London,E7 8NL,Open
 102765,Newham,London,,London,E15 3QG,Open
@@ -245,9 +248,11 @@ urn,la,region,mat,town,postcode,status
 103560,Birmingham,West Midlands,,Birmingham,B14 7EG,Open
 103563,Birmingham,West Midlands,,Birmingham,B45 9NY,Open
 103598,Wirral,North West,,Prenton,CH43 0RQ,Open
+103623,Birmingham,West Midlands,,Solihull,B93 0AJ,Open
 103625,Birmingham,West Midlands,,Birmingham,B13 8QB,Open
 103656,Coventry,West Midlands,,Coventry,CV5 9NG,Open
 103663,Coventry,West Midlands,,Coventry,CV6 6JN,Open
+103665,Coventry,West Midlands,,Coventry,CV5 7EG,Open
 103671,Coventry,West Midlands,,Coventry,CV3 2QX,Open
 103672,Coventry,West Midlands,,Coventry,CV6 5DP,Open
 103686,Coventry,West Midlands,,Coventry,CV3 6PY,Open
@@ -259,6 +264,7 @@ urn,la,region,mat,town,postcode,status
 103836,Dudley,West Midlands,,Brierley Hill,DY5 4DZ,Open
 103846,Dudley,West Midlands,,Halesowen,B63 2UL,Open
 103850,Dudley,West Midlands,,Halesowen,B63 4AR,Open
+103855,Dudley,West Midlands,,Dudley,DY3 1SN,Open
 103870,Dudley,West Midlands,,Stourbridge,DY8 1QX,Open
 103881,Dudley,West Midlands,,Halesowen,B62 9DR,Open
 103895,Sandwell,West Midlands,,Birmingham,B43 5BE,Open
@@ -364,6 +370,7 @@ urn,la,region,mat,town,postcode,status
 105070,Wirral,North West,,Prenton,CH43 7TE,Open
 105087,Wirral,North West,,Birkenhead,CH41 7DU,Open
 105090,Wirral,North West,,Wirral,CH49 5LE,Open
+105103,Wirral,North West,,Wallasey,CH45 8PJ,Open
 105129,Wirral,North West,,Leasowe,CH46 1RA,Open
 105135,Greenwich,London,ST BENEDICT CATHOLIC ACADEMY TRUST,London,SE2 9PX,Open
 105137,Wirral,North West,,Wirral,CH48 5DH,Open
@@ -390,6 +397,7 @@ urn,la,region,mat,town,postcode,status
 105352,Bury,North West,,Bury,BL9 8JT,Open
 105354,Bury,North West,,Bury,BL8 1RN,Open
 105413,Manchester,North West,,Manchester,M12 5SY,Open
+105428,Manchester,North West,,Manchester,M9 4HH,Open
 105448,Manchester,North West,,Manchester,M23 0BT,Open
 105449,Manchester,North West,,Manchester,M11 4EG,"Open, but proposed to close"
 105491,Manchester,North West,,Manchester,M13 0DX,Open
@@ -407,6 +415,7 @@ urn,la,region,mat,town,postcode,status
 105688,Oldham,North West,,Manchester,M35 9WL,Open
 105693,Oldham,North West,,Oldham,OL3 5RY,Open
 105710,Oldham,North West,,Oldham,OL2 7TD,Open
+105764,Rochdale,North West,,Rochdale,OL11 4NB,Open
 105765,Rochdale,North West,,Rochdale,OL11 2QD,Open
 105768,Rochdale,North West,,Rochdale,OL12 0HZ,Open
 105787,Rochdale,North West,,MANCHESTER,M24 2PB,Open
@@ -451,6 +460,7 @@ urn,la,region,mat,town,postcode,status
 106229,Tameside,North West,,Ashton-under-Lyne,OL6 8JS,Open
 106245,Tameside,North West,,Ashton-under-Lyne,OL7 0NB,Open
 106271,Tameside,North West,,Manchester,M34 6AF,Open
+106288,Trafford,North West,,Altrincham,WA15 6BZ,Open
 106293,Trafford,North West,,Altrincham,WA15 8QA,"Open, but proposed to close"
 106298,Trafford,North West,,Sale,M33 7XS,Open
 106301,Trafford,North West,,Sale,M33 3SY,Open
@@ -496,9 +506,11 @@ urn,la,region,mat,town,postcode,status
 107204,Bradford,Yorkshire and the Humber,,Bradford,BD9 4HP,Open
 107241,Bradford,Yorkshire and the Humber,,Bradford,BD15 7PQ,Open
 107246,Bradford,Yorkshire and the Humber,,Bradford,BD12 9EL,Open
+107262,Bradford,Yorkshire and the Humber,,Keighley,BD21 1BW,Open
 107273,Bradford,Yorkshire and the Humber,,Keighley,BD20 0JJ,Open
 107283,Bradford,Yorkshire and the Humber,,Shipley,BD17 6DN,Open
 107395,Bradford,Yorkshire and the Humber,,Bradford,BD17 5RH,Open
+107439,Bradford,Yorkshire and the Humber,,Bingley,BD16 2RS,Open
 107502,Calderdale,Yorkshire and the Humber,,Halifax,HX3 9QJ,Open
 107521,Calderdale,Yorkshire and the Humber,,Todmorden,OL14 8PL,Open
 107537,Calderdale,Yorkshire and the Humber,,Sowerby Bridge,HX6 3RN,Open
@@ -527,6 +539,7 @@ urn,la,region,mat,town,postcode,status
 107869,Leeds,Yorkshire and the Humber,,Wetherby,LS23 6DX,Open
 107887,Leeds,Yorkshire and the Humber,,Leeds,LS4 2QZ,Open
 107892,Leeds,Yorkshire and the Humber,,Leeds,LS16 8DY,Open
+107897,Leeds,Yorkshire and the Humber,,Leeds,LS16 5NW,Open
 107910,Leeds,Yorkshire and the Humber,,Leeds,LS8 1NE,Open
 107923,Leeds,Yorkshire and the Humber,,Leeds,LS14 1AX,Open
 107932,Leeds,Yorkshire and the Humber,,Leeds,LS14 2BL,Open
@@ -724,6 +737,7 @@ urn,la,region,mat,town,postcode,status
 111106,Cheshire West and Chester,North West,,Chester,CH3 7QT,Open
 111109,Cheshire West and Chester,North West,,Chester,CH3 8AB,Open
 111112,Cheshire West and Chester,North West,,Ellesmere Port,CH66 1HF,Open
+111116,Halton,North West,,Runcorn,WA7 2DZ,Open
 111124,Halton,North West,,Runcorn,WA7 2HB,Open
 111125,Halton,North West,,Runcorn,WA7 5YP,Open
 111171,Cheshire East,North West,,Near Crewe,CW4 8PE,Open
@@ -806,6 +820,7 @@ urn,la,region,mat,town,postcode,status
 112403,Cumberland,North West,,Carlisle,CA4 8AT,Open
 112409,Westmorland and Furness,North West,,Askam-in-furness,LA16 7DA,Open
 112415,Westmorland and Furness,North West,,Askam-in-Furness,LA16 7EY,Open
+112417,Cumberland,North West,,Brampton,CA8 2NJ,Open
 112419,Westmorland and Furness,North West,,Penrith,CA10 3RG,Open
 112472,Derby,East Midlands,,Derby,DE1 3LR,Open
 112479,Derby,East Midlands,,Derby,DE1 1GJ,Open
@@ -859,6 +874,7 @@ urn,la,region,mat,town,postcode,status
 112983,Derby,East Midlands,,Derby,DE24 9EJ,Open
 112991,Derby,East Midlands,,Derby,DE3 9LL,Open
 113040,Derbyshire,East Midlands,,Alfreton,DE55 7AL,Open
+113068,Devon,South West,,Crediton,EX17 5NX,Open
 113069,Devon,South West,,Crediton,EX17 3AX,Open
 113106,Devon,South West,,Ottery St Mary,EX11 1UQ,Open
 113117,Devon,South West,,Crediton,EX17 3JH,Open
@@ -979,6 +995,7 @@ urn,la,region,mat,town,postcode,status
 115539,Gloucestershire,South West,,Stonehouse,GL10 2NP,Open
 115554,Gloucestershire,South West,,Lydney,GL15 4QT,Open
 115626,Gloucestershire,South West,,Stonehouse,GL10 3EF,Open
+115642,Gloucestershire,South West,,Gloucester,GL2 9LJ,Open
 115651,Gloucestershire,South West,,Lechlade,GL7 3NU,Open
 115660,Gloucestershire,South West,,Gloucester,GL2 7PJ,Open
 115663,Gloucestershire,South West,,Gloucester,GL19 4HT,Open
@@ -1007,6 +1024,7 @@ urn,la,region,mat,town,postcode,status
 115988,Hampshire,South East,,Southampton,SO45 4SB,Open
 115992,Hampshire,South East,,Alresford,SO24 9NB,Open
 116001,Hampshire,South East,,Basingstoke,RG24 9HB,Open
+116003,Hampshire,South East,,Fleet,GU52 7LQ,Open
 116006,Hampshire,South East,,Southampton,SO32 1EP,Open
 116009,Hampshire,South East,,Fareham,PO14 2DE,Open
 116022,Hampshire,South East,,Waterlooville,PO7 5NQ,Open
@@ -1060,6 +1078,7 @@ urn,la,region,mat,town,postcode,status
 116362,Hampshire,South East,,Havant,PO9 2JX,Open
 116363,Hampshire,South East,,Romsey,SO51 0JG,Open
 116372,Hampshire,South East,,Southampton,SO32 1JD,Open
+116388,Hampshire,South East,,Farnborough,GU14 7AP,Open
 116392,Hampshire,South East,,Gosport,PO12 2JS,Open
 116395,Southampton,South East,,Southampton,SO17 1PX,Open
 116412,Hampshire,South East,,Fleet,GU52 7RY,Open
@@ -1423,6 +1442,7 @@ urn,la,region,mat,town,postcode,status
 120796,Norfolk,East of England,,Great Yarmouth,NR30 5ET,Open
 120798,Norfolk,East of England,,Norwich,NR11 7EA,Open
 120822,Norfolk,East of England,,Norwich,NR12 8PX,Open
+120856,Norfolk,East of England,,Norwich,NR10 5DZ,Open
 120903,Norfolk,East of England,,King's Lynn,PE30 3LJ,Open
 120918,Norfolk,East of England,,Norwich,NR9 3GN,Open
 120995,Norfolk,East of England,,Thetford,IP24 1JW,Open
@@ -1535,6 +1555,7 @@ urn,la,region,mat,town,postcode,status
 123546,Shropshire,West Midlands,,Shrewsbury,SY5 8EX,Open
 123641,Somerset,South West,,Wells,BA5 1RD,Open
 123642,Somerset,South West,,Shepton Mallet,BA4 6RB,Open
+123650,Somerset,South West,,Somerton,TA11 6ES,Open
 123672,Somerset,South West,,Shepton Mallet,BA4 5JQ,Open
 123718,Somerset,South West,,Yeovil,BA22 9TH,Open
 123724,Somerset,South West,,Yeovil,BA21 4PG,Open
@@ -1705,6 +1726,7 @@ urn,la,region,mat,town,postcode,status
 131443,Cumberland,North West,,Egremont,CA22 2HH,Open
 131447,St. Helens,North West,,Prescot,L35 4NW,Open
 131478,Haringey,London,,London,N22 5HJ,Open
+131512,Salford,North West,,Salford,M6 8AA,Open
 131522,"Bristol, City of",South West,,Bristol,BS4 3DE,Open
 131534,Worcestershire,West Midlands,,Worcester,WR5 1DR,Open
 131545,County Durham,North East,,Stanley,DH9 9LU,Open
@@ -1714,6 +1736,7 @@ urn,la,region,mat,town,postcode,status
 131673,Sandwell,West Midlands,,Oldbury,B69 1BG,Open
 131726,Rochdale,North West,,Heywood,OL10 2AA,Open
 131727,Cheshire East,North West,,Middlewich,CW10 9BS,Open
+131773,Islington,London,,London,N1 2UT,Open
 131775,Barking and Dagenham,London,,Barking,IG11 7DR,Open
 131789,Brighton and Hove,South East,,Brighton,BN1 8LU,Open
 131799,Derby,East Midlands,,Derby.,DE21 2RQ,Open
@@ -2035,6 +2058,7 @@ urn,la,region,mat,town,postcode,status
 137146,Staffordshire,West Midlands,LANDAU FORTE CHARITABLE TRUST,Tamworth,B79 8AH,Open
 137161,Leicestershire,East Midlands,TUDOR GRANGE ACADEMIES TRUST,Market Harborough,LE16 7JG,Open
 137172,Warwickshire,West Midlands,,Alcester,B49 6QQ,Open
+137175,Somerset,South West,,Chard,TA20 2RX,Open
 137192,Somerset,South West,,Shepton Mallet,BA4 5PF,Open
 137196,North East Lincolnshire,Yorkshire and the Humber,,Grimsby,DN34 5AH,Closed
 137205,Westmorland and Furness,North West,SOUTH WESTMORLAND MULTI ACADEMY TRUST,Cumbria,LA7 7DD,Open
@@ -2197,6 +2221,7 @@ urn,la,region,mat,town,postcode,status
 138305,Swindon,South West,THE WHITE HORSE FEDERATION,Swindon,SN5 6JU,Open
 138307,Swindon,South West,THE WHITE HORSE FEDERATION,Swindon,SN3 3RD,Open
 138312,Westminster,London,,London,SW1E 5HJ,Open
+138314,Doncaster,Yorkshire and the Humber,CONSILIUM ACADEMIES,Doncaster,DN3 2DA,Open
 138318,Cheshire West and Chester,North West,,Neston,CH64 9NH,Open
 138322,Hertfordshire,East of England,THE DIOCESE OF WESTMINSTER ACADEMY TRUST,Hitchin,SG5 1XT,Open
 138331,Sunderland,North East,TYNE AND WEAR LEARNING TRUST,Sunderland,SR3 3PR,Open
@@ -2301,6 +2326,7 @@ urn,la,region,mat,town,postcode,status
 139102,Shropshire,West Midlands,THE 3-18 EDUCATION TRUST,Ellesmere,SY12 0EA,Open
 139103,Sunderland,North East,INSPIRE MULTI ACADEMY TRUST,Sunderland,SR3 3DJ,Open
 139105,Thurrock,East of England,,Grays,RM17 5YN,Open
+139110,Redcar and Cleveland,North East,,Saltburn-by-the-Sea,TS12 2UW,Open
 139124,South Tyneside,North East,TYNE COAST ACADEMY TRUST,South Shields,NE34 8AB,Open
 139127,Warwickshire,West Midlands,BIRMINGHAM DIOCESAN MULTI-ACADEMY TRUST,Tamworth,B78 1DZ,Open
 139130,Lancashire,North West,PENDLE EDUCATION TRUST,Colne,BB8 8JF,Open
@@ -2364,6 +2390,7 @@ urn,la,region,mat,town,postcode,status
 139553,Devon,South West,ATHENA LEARNING TRUST,Ilfracombe,EX34 9JB,Open
 139579,"Kingston upon Hull, City of",Yorkshire and the Humber,HULL COLLABORATIVE ACADEMY TRUST,Hull,HU3 5QE,Open
 139584,Hartlepool,North East,EDEN ACADEMY TRUST LIMITED,Hartlepool,TS25 4BT,Open
+139587,Southwark,London,THE CHARTER SCHOOLS EDUCATIONAL TRUST,London,SE16 4EE,Open
 139604,Plymouth,South West,THE TED WRAGG MULTI ACADEMY TRUST,Plymouth,PL5 2AF,Open
 139610,Walsall,West Midlands,GREENHEART LEARNING PARTNERSHIP,Walsall,WS3 1RQ,Open
 139611,Rutland,East Midlands,ST THOMAS AQUINAS CATHOLIC MULTI ACADEMY TRUST,Oakham,LE15 6EH,Open
@@ -2616,6 +2643,7 @@ urn,la,region,mat,town,postcode,status
 141292,Sandwell,West Midlands,VICTORIA ACADEMIES TRUST,Smethwick,B67 7AT,Open
 141297,Cambridgeshire,East of England,THE CAM ACADEMY TRUST,Huntingdon,PE29 6JA,Open
 141306,Cheshire East,North West,HALLIARD TRUST,Macclesfield,SK10 4TR,Open
+141307,Calderdale,Yorkshire and the Humber,TOGETHER LEARNING TRUST,Sowerby Bridge,HX6 1DF,Open
 141308,Kent,South East,THE STOUR ACADEMY TRUST,Canterbury,CT3 3JW,Open
 141328,Essex,East of England,BMAT EDUCATION,Stansted Mountfitchet,CM24 8TZ,Open
 141333,Oldham,North West,THE HARMONY TRUST LTD,Oldham,OL8 2EL,Open
@@ -2711,6 +2739,7 @@ urn,la,region,mat,town,postcode,status
 142074,Sheffield,Yorkshire and the Humber,INOVA MULTI-ACADEMY TRUST LIMITED,Sheffield,S6 4SD,Open
 142075,Solihull,West Midlands,SUMMIT LEARNING TRUST,Solihull,B92 8EJ,Open
 142079,South Gloucestershire,South West,CABOT LEARNING FEDERATION,Bristol,BS30 8XQ,Open
+142083,Surrey,South East,THE GOOD SHEPHERD TRUST,Dorking,RH5 4QW,Open
 142094,Staffordshire,West Midlands,THE SHAW EDUCATION TRUST,Lichfield,WS14 9DE,Open
 142100,"Bournemouth, Christchurch and Poole",South West,COASTAL LEARNING PARTNERSHIP,Bournemouth,BH1 4DJ,Open
 142101,"Bournemouth, Christchurch and Poole",South West,COASTAL LEARNING PARTNERSHIP,Bournemouth,BH11 8HB,Open
@@ -2737,6 +2766,7 @@ urn,la,region,mat,town,postcode,status
 142255,Hackney,London,THE MOSSBOURNE FEDERATION,London,E8 1AS,Open
 142261,Leicestershire,East Midlands,"OADBY, WIGSTON AND LEICESTERSHIRE SCHOOLS ACADEMY TRUST",Wigston,LE18 2GZ,Open
 142263,Luton,East of England,ST THOMAS CATHOLIC ACADEMIES TRUST,Luton,LU1 5PP,Open
+142273,Redcar and Cleveland,North East,NICHOLAS POSTGATE CATHOLIC ACADEMY TRUST,Redcar,TS10 1PJ,Open
 142280,Stockton-on-Tees,North East,NICHOLAS POSTGATE CATHOLIC ACADEMY TRUST,Stockton-on-Tees,TS17 0QP,Open
 142281,Stockton-on-Tees,North East,NICHOLAS POSTGATE CATHOLIC ACADEMY TRUST,Stockton-on-Tees,TS17 9DE,Open
 142286,Tameside,North West,FOCUS ACADEMY TRUST (UK) LTD,Manchester,M34 7NS,Open
@@ -2873,6 +2903,7 @@ urn,la,region,mat,town,postcode,status
 143909,Medway,South East,THE PRIMARY FIRST TRUST,Chatham,ME5 0HH,Open
 143922,Bexley,London,THE WOODLAND ACADEMY TRUST,Erith,DA8 1FJ,Open
 143925,Harrow,London,,Harrow,HA3 6RR,Open
+143927,Greenwich,London,"UNIVERSITY SCHOOLS TRUST, EAST LONDON",London,SE7 8LJ,Open
 143950,North Northamptonshire,East Midlands,PETERBOROUGH DIOCESE EDUCATION TRUST,Northampton,NN6 0DW,Open
 143959,Staffordshire,West Midlands,INNOVATE2EDUCATE PARTNERSHIP LIMITED,Stoke-On-Trent,ST10 4SR,Open
 143965,Sheffield,Yorkshire and the Humber,L.E.A.D. ACADEMY TRUST,Sheffield,S12 4QE,Open
@@ -3018,6 +3049,7 @@ urn,la,region,mat,town,postcode,status
 144535,Devon,South West,TEAM MULTI-ACADEMY TRUST,Umberleigh,EX37 9AY,Open
 144537,Cambridgeshire,East of England,THE CAM ACADEMY TRUST,Great Cambourne,CB23 6DZ,Open
 144539,Doncaster,Yorkshire and the Humber,EMPOWERING MINDS ACADEMY TRUST,Mexborough,S64 9ES,Open
+144541,Cheshire West and Chester,North West,CONCORDIA MULTI ACADEMY TRUST,Ellesmere Port,CH66 3RL,Open
 144542,Stockton-on-Tees,North East,ONE EXCELLENCE MULTI ACADEMY TRUST,Billingham,TS23 2RG,Open
 144545,Bedford,East of England,HEART ACADEMIES TRUST,Bedford,MK42 9LZ,Open
 144546,Bedford,East of England,HEART ACADEMIES TRUST,Bedford,MK42 0GS,Open
@@ -3072,7 +3104,9 @@ urn,la,region,mat,town,postcode,status
 144663,Essex,East of England,NET ACADEMIES TRUST,Old Harlow,CM17 0DA,Open
 144664,Essex,East of England,NET ACADEMIES TRUST,Harlow,CM17 0GT,Open
 144668,Kent,South East,THE GOLDEN THREAD ALLIANCE,Dartford,DA1 3DZ,Open
+144670,"Kingston upon Hull, City of",Yorkshire and the Humber,HUMBER EDUCATION TRUST,Hull,HU6 7DE,Open
 144671,"Kingston upon Hull, City of",Yorkshire and the Humber,EBOR ACADEMY TRUST,Hull,HU9 5RJ,Open
+144674,"Kingston upon Hull, City of",Yorkshire and the Humber,HORIZON ACADEMY TRUST,Hull,HU9 4AY,Open
 144676,"Kingston upon Hull, City of",Yorkshire and the Humber,HUMBER EDUCATION TRUST,Kingston-upon-Hull,HU9 5SN,Open
 144677,"Kingston upon Hull, City of",Yorkshire and the Humber,HUMBER EDUCATION TRUST,Hull,HU2 9BP,Open
 144679,North Yorkshire,Yorkshire and the Humber,YORKSHIRE ENDEAVOUR ACADEMY TRUST,Whitby,YO21 1PZ,Open
@@ -3087,6 +3121,7 @@ urn,la,region,mat,town,postcode,status
 144700,Tower Hamlets,London,MULBERRY SCHOOLS TRUST,London,E1 4SD,Open
 144704,Wiltshire,South West,PICKWICK ACADEMY TRUST,Melksham,SN12 6HN,Open
 144705,Wiltshire,South West,PICKWICK ACADEMY TRUST,Chippenham,SN15 1HE,Open
+144710,York,Yorkshire and the Humber,EBOR ACADEMY TRUST,York,YO30 4YL,Open
 144713,York,Yorkshire and the Humber,YORKSHIRE LEARNING TRUST,York,YO19 5QG,Open
 144724,"Bristol, City of",South West,LIGHTHOUSE SCHOOLS PARTNERSHIP,Bristol,BS3 4DP,Open
 144739,Newham,London,THE DAVID ROSS EDUCATION TRUST,London,E20 2AE,Open
@@ -3279,6 +3314,7 @@ urn,la,region,mat,town,postcode,status
 145252,Devon,South West,THE FIRST FEDERATION TRUST,Exeter,EX5 2EQ,Open
 145255,Hertfordshire,East of England,RIDGEWAY LEARNING PARTNERSHIP,Tring,HP23 5PD,Open
 145257,Hertfordshire,East of England,AGORA LEARNING PARTNERSHIP,Welwyn Garden City,AL7 1NZ,Open
+145260,North Somerset,South West,LIGHTHOUSE SCHOOLS PARTNERSHIP,Nailsea,BS48 4YZ,Open
 145264,North Somerset,South West,LIGHTHOUSE SCHOOLS PARTNERSHIP,Bristol,BS41 9NG,Open
 145270,Peterborough,East of England,SOKE EDUCATION TRUST,Peterborough,PE6 7DX,Open
 145273,Rotherham,Yorkshire and the Humber,THE DIOCESE OF SHEFFIELD ACADEMIES TRUST,Mexborough,S64 5UA,Open
@@ -3368,6 +3404,7 @@ urn,la,region,mat,town,postcode,status
 145538,Staffordshire,West Midlands,THE ARTHUR TERRY LEARNING PARTNERSHIP,Lichfield,WS13 6DE,Open
 145541,Suffolk,East of England,EVOLUTION ACADEMY TRUST,Lowestoft,NR32 4HN,Open
 145544,West Sussex,South East,THE COLLEGIATE TRUST,Crawley,RH11 8RA,Open
+145545,Wiltshire,South West,THE WHITE HORSE FEDERATION,Salisbury,SP4 8QB,Open
 145553,Cambridgeshire,East of England,THE DIAMOND LEARNING PARTNERSHIP TRUST,Wisbech,PE13 4NB,Open
 145556,Kirklees,Yorkshire and the Humber,LEARNING ACCORD MULTI ACADEMY TRUST,Holmfirth,HD9 5RW,Open
 145560,Bury,North West,THE SYCAMORE CHURCH OF ENGLAND TRUST LIMITED,Bury,M26 1AW,Open
@@ -3407,6 +3444,7 @@ urn,la,region,mat,town,postcode,status
 145710,Warrington,North West,THE CHALLENGE ACADEMY TRUST,Warrington,WA5 2PN,Open
 145711,Warwickshire,West Midlands,ARDEN FOREST C OF E MULTI ACADEMY TRUST,Alcester,B49 5HN,Open
 145715,Wolverhampton,West Midlands,SHINE ACADEMIES,Bilston,WV14 6PR,Open
+145727,Essex,East of England,ALL SAINTS ACADEMY TRUST,Colchester,CO5 9QB,Open
 145735,Liverpool,North West,RAINBOW EDUCATION MULTI-ACADEMY TRUST,Liverpool,L19 5NS,Open
 145736,Milton Keynes,South East,TOVE LEARNING TRUST,Milton Keynes,MK3 6EW,Open
 145742,Sutton,London,CIRRUS PRIMARY ACADEMY TRUST,Wallington,SM6 9JN,Open
@@ -3418,6 +3456,7 @@ urn,la,region,mat,town,postcode,status
 145788,Shropshire,West Midlands,EMPOWER TRUST,MARKET DRAYTON,TF9 3HU,Open
 145790,Shropshire,West Midlands,EMPOWER TRUST,Shrewsbury,SY4 5BX,Open
 145792,Shropshire,West Midlands,EMPOWER TRUST,Market Drayton,TF9 3BA,Open
+145799,Warrington,North West,WARRINGTON PRIMARY ACADEMY TRUST,Warrington,WA2 7RQ,Open
 145800,Warrington,North West,WARRINGTON PRIMARY ACADEMY TRUST,Warrington,WA4 1PW,Open
 145806,Derby,East Midlands,THE HARMONY TRUST LTD,Derby,DE24 3HF,Open
 145816,Lancashire,North West,APEX COLLABORATIVE TRUST,Nelson,BB9 6LS,Open
@@ -3438,8 +3477,10 @@ urn,la,region,mat,town,postcode,status
 146096,Devon,South West,THE HARBOUR SCHOOLS PARTNERSHIP,Barnstaple,EX32 8EF,Open
 146103,Oxfordshire,South East,MAIDEN ERLEGH TRUST,Reading,RG4 9LN,Open
 146107,Solihull,West Midlands,BIRMINGHAM DIOCESAN MULTI-ACADEMY TRUST,Solihull,B92 7RR,Open
+146117,Southwark,London,OASIS COMMUNITY LEARNING,London,SE17 2JY,Open
 146124,Birmingham,West Midlands,ST TERESA OF CALCUTTA MULTI ACADEMY COMPANY,Birmingham,B27 7XY,Open
 146136,Havering,London,EMPOWER LEARNING ACADEMY TRUST,Hornchurch,RM12 6AU,Open
+146139,Essex,East of England,BRIDGE ACADEMY TRUST,Ongar,CM5 9NB,Open
 146149,Warwickshire,West Midlands,THE DIOCESE OF COVENTRY MULTI-ACADEMY TRUST,Southam,CV47 9QP,Open
 146171,Warwickshire,West Midlands,BIRMINGHAM DIOCESAN MULTI-ACADEMY TRUST,Birmingham,B46 3LL,Open
 146181,Essex,East of England,LIFT SCHOOLS,Hockley,SS5 4UR,Open
@@ -3475,6 +3516,7 @@ urn,la,region,mat,town,postcode,status
 146785,Walsall,West Midlands,SHINE ACADEMIES,Walsall,WS3 2QF,Open
 146796,"Bournemouth, Christchurch and Poole",South West,UNITED LEARNING TRUST,Bournemouth,BH11 9DG,Open
 146807,Staffordshire,West Midlands,ST BARTHOLOMEW'S CE MULTI ACADEMY TRUST,Wolverhampton,WV5 7HR,Open
+146841,Sheffield,Yorkshire and the Humber,THE DIOCESE OF SHEFFIELD ACADEMIES TRUST,Sheffield,S3 9EF,Open
 146855,Derby,East Midlands,ODYSSEY COLLABORATIVE TRUST,Derby,DE21 7PH,Open
 146877,Derby,East Midlands,ODYSSEY COLLABORATIVE TRUST,Derby,DE21 6BT,Open
 146892,Bexley,London,AMADEUS PRIMARY ACADEMIES  TRUST,London,SE28 8QA,Open
@@ -3504,6 +3546,7 @@ urn,la,region,mat,town,postcode,status
 147393,Redcar and Cleveland,North East,STEEL RIVER ACADEMY TRUST,Middlesbrough,TS6 8AD,Open
 147406,"Herefordshire, County of",West Midlands,THE HEREFORDSHIRE MARCHES FEDERATION OF ACADEMIES,Hereford,HR2 8NU,Open
 147425,Staffordshire,West Midlands,STAFFORDSHIRE UNIVERSITY ACADEMIES TRUST,Stafford,ST20 0AG,Open
+147443,Dorset,South West,ASPIRATIONS ACADEMIES TRUST,Weymouth,DT4 9SY,Open
 147449,Staffordshire,West Midlands,STAFFORDSHIRE UNIVERSITY ACADEMIES TRUST,Stafford,ST17 0SD,Open
 147456,Nottingham,East Midlands,GREENWOOD ACADEMIES TRUST,Nottingham,NG3 5LR,Open
 147481,Sheffield,Yorkshire and the Humber,THE DIOCESE OF SHEFFIELD ACADEMIES TRUST,Sheffield,S17 4AP,Open
@@ -3938,6 +3981,7 @@ urn,la,region,mat,town,postcode,status
 150083,Wolverhampton,West Midlands,LYKOS MULTI ACADEMY TRUST,Wolverhampton,WV4 4NJ,Open
 150084,Wolverhampton,West Midlands,LYKOS MULTI ACADEMY TRUST,Wolverhampton,WV4 4LU,Open
 150085,Tameside,North West,VICTORIOUS ACADEMIES TRUST,Dukinfield,SK16 4JS,Open
+150089,Middlesbrough,North East,THE LEGACY LEARNING TRUST,Middlesbrough,TS5 7NJ,Open
 150090,Middlesbrough,North East,THE LEGACY LEARNING TRUST,Middlesbrough,TS4 2DS,Open
 150091,Gloucestershire,South West,SEVERN FEDERATION ACADEMY TRUST,Newnham,GL14 1AT,Open
 150092,Lancashire,North West,THE BAY LEARNING TRUST,Preston,PR3 3AR,Open
@@ -3949,6 +3993,7 @@ urn,la,region,mat,town,postcode,status
 150123,Essex,East of England,LIFE EDUCATION TRUST,Colchester,CO6 2DD,Open
 150125,Gloucestershire,South West,GREENSHAW LEARNING TRUST,Gloucester,GL1 4AW,Open
 150128,"Herefordshire, County of",West Midlands,THREE COUNTIES ACADEMY TRUST,Leominster,HR6 0ND,Open
+150131,Liverpool,North West,NORTHERN SCHOOLS TRUST,Liverpool,L5 1XP,Open
 150133,Rotherham,Yorkshire and the Humber,VENN ACADEMY TRUST,Mexborough,S64 8QG,Open
 150134,Somerset,South West,CABOT LEARNING FEDERATION,Taunton,TA2 7HW,Open
 150149,Liverpool,North West,,Liverpool,L17 6BH,Open
