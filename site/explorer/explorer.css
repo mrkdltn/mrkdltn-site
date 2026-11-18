@@ -315,3 +315,16 @@ i.nm{background:#55627A;width:2px}
 .oe-cite{font-size:16px;background:#F5F1E8;border-left:3px solid #C9A24B;padding:14px 18px;max-width:72ch}
 @media screen and (max-width:820px){.oe-mdl{grid-template-columns:1fr;gap:2px}.oe-mdl dd{margin-bottom:10px}.oe-mtable td:first-child{white-space:normal}.oe-method .lead{font-size:17px}}
 @media print{.oe-mtabs{display:none}.oe-mpanel[hidden]{display:block!important}}
+/* feedback form (18 Nov 2026) */
+.oe-fb form{max-width:640px}
+.oe-fbrow{display:flex;flex-direction:column;gap:6px;margin:0 0 14px}
+.oe-fbrow label{font-weight:600;font-size:15px;color:#0B1A2E}
+.oe-fb select,.oe-fb textarea,.oe-fb input[type=email]{font:400 16px/1.4 var(--sans);color:#0B1A2E;background:#fff;border:1px solid #8A96A8;border-radius:2px;padding:10px 12px;width:100%;box-sizing:border-box}
+.oe-fb textarea{resize:vertical;min-height:120px}
+.oe-fb input[type=email]:disabled{background:#F3F4F6;color:#55627A}
+.oe-fb select:focus,.oe-fb textarea:focus,.oe-fb input:focus{outline:2px solid #2F6F66;outline-offset:1px}
+.oe-fbchk{font-weight:400!important;display:flex;gap:8px;align-items:center}
+.oe-fbhp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+.oe-fbnote{font-size:14px;line-height:1.5;color:#55627A;max-width:64ch}
+.oe-fbact{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#oe-fb-status{font-size:15px;color:#2F6F66}#oe-fb-status.bad{color:#A3402B}

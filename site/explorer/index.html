@@ -125,7 +125,7 @@ html.loaded .oe-loading{display:none}
     <p class="oe-hint">Opens on a school chosen at random. <span class="oe-fresh" hidden></span> <span class="oe-loading">Loading schools…</span></p>
   </div>
 </div>
-<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#official">Your IDSR list</a><a href="#oe-more">National picture</a><a href="#method">Method</a></div></nav>
+<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#official">Your IDSR list</a><a href="#oe-more">National picture</a><a href="#method">Method</a><a href="#feedback">Feedback</a></div></nav>
 <main class="oe-main"><div class="oe">
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
@@ -346,6 +346,27 @@ html.loaded .oe-loading{display:none}
     <p>Every change is listed, with dates, on <a href="/explorer/updates/">What&rsquo;s new in the Ofsted Explorer</a>.</p>
   </div>
 </section>
+<section id="feedback" class="oe-card oe-fb noprint">
+  <h2>Tell me what to improve</h2>
+  <p class="sub">Spotted an error, want a feature, or have a question about the data? Every message is read, and changes made are listed on <a href="/explorer/updates/">What&rsquo;s new</a>.</p>
+  <form id="oe-fb" novalidate>
+    <div class="oe-fbrow">
+      <label for="oe-fb-type">What is it about?</label>
+      <select id="oe-fb-type" name="type"><option value="suggestion">A suggestion or feature</option><option value="error">Something looks wrong</option><option value="data">A question about the data</option><option value="other">Something else</option></select>
+    </div>
+    <div class="oe-fbrow">
+      <label for="oe-fb-msg">Your message</label>
+      <textarea id="oe-fb-msg" name="message" rows="5" maxlength="4000" required placeholder="The more specific the better: which school, which section, what you expected to see."></textarea>
+    </div>
+    <div class="oe-fbrow oe-fbhp" aria-hidden="true"><label for="oe-fb-web">Leave this empty</label><input id="oe-fb-web" name="website" tabindex="-1" autocomplete="off"></div>
+    <div class="oe-fbrow">
+      <label class="oe-fbchk"><input type="checkbox" id="oe-fb-consent"> I&rsquo;d like a reply. Keep my email address for that.</label>
+      <input type="email" id="oe-fb-email" name="email" placeholder="Email address (optional)" autocomplete="email" disabled>
+    </div>
+    <p class="oe-fbnote">Messages are stored privately on this site&rsquo;s hosting and read only by Mark Dalton, to improve the Explorer. The page and school you were viewing are attached. Your email, if you give it, is used only to reply and is deleted within 12 months. Please do not include details about individual pupils or staff.</p>
+    <p class="oe-fbact"><button type="submit" class="oe-btn primary">Send</button> <span id="oe-fb-status" role="status" aria-live="polite"></span></p>
+  </form>
+</section>
 <p class="oe-note noprint oe-endnote">Read the analysis behind this tool: <a href="/writing/ofsted-report-cards/">I checked every Ofsted report card. Results alone don't explain the gap.</a><br>What&rsquo;s new: <a href="/explorer/updates/">the November 2026 update</a>, 17 November 2026.</p>
 <p class="print-only oe-note">These are replica figures built from public data, not the official IDSR groups. None of these measures is a judgement on a school. Method and sources: mrkdltn.com/explorer</p>
 </div></main>
@@ -360,6 +381,7 @@ html.loaded .oe-loading{display:none}
 <script src="/explorer/extra.js"></script>
 <script src="/explorer/slide.js"></script>
 <script src="/explorer/method.js"></script>
+<script src="/explorer/feedback.js"></script>
 <script>dash.start({x:'dis_pct',area:'g_ach',phase:'Secondary',area2:'g_ach',meas:'a8'});</script>
 </body>
 </html>
