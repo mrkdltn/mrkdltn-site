@@ -98,7 +98,7 @@
   dash.draw('profile', (box) => { const r = S(), nb = N(), st = ST(); box.replaceChildren(); if (!r || !nb.length || !st) return;
     FACT.forEach(([k, lab, fmt, w]) => { const vals = nb.map((x) => x[k]).filter(ok).map(Number); if (!vals.length || !ok(r[k])) return;
       const lo = Math.min(st[k].lo, +r[k], d3.min(vals)), hi = Math.max(st[k].hi, +r[k], d3.max(vals)); const X = (v) => 100 * (v - lo) / ((hi - lo) || 1);
-      const row = el('div', 'oe-prow rise'); const l = el('div', 'lab'); l.append(el('b', '', lab), el('small', '', 'weight ' + w)); row.append(l);
+      const out = +r[k] < d3.min(vals) || +r[k] > d3.max(vals); const row = el('div', 'oe-prow rise' + (out ? ' out' : '')); const l = el('div', 'lab'); const sm = el('small', '', 'weight ' + w); if (out) sm.append(el('em', '', ' \u00b7 outside the range of the 50')); l.append(el('b', '', lab), sm); row.append(l);
       const tr = el('div', 'track'); const rng = el('i', 'rng'); rng.style.left = X(d3.min(vals)) + '%'; rng.style.width = Math.max(1, X(d3.max(vals)) - X(d3.min(vals))) + '%';
       const gm = el('i', 'gm'); gm.style.left = X(d3.mean(vals)) + '%'; const nm = el('i', 'nm'); nm.style.left = X(st[k].mean) + '%'; const me = el('i', 'me'); me.style.left = X(+r[k]) + '%';
       tr.append(rng, nm, gm, me); row.append(tr);

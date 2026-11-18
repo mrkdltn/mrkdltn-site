@@ -277,3 +277,18 @@ h3.oe-mh{font-family:var(--display)!important;font-weight:400!important;font-siz
 .oe-endnote{margin:8px 0 0;padding:0 36px}
 @media screen and (max-width:820px){.oe-endnote{padding:0 20px;line-height:1.55}}
 @media screen and (max-width:640px){.oe-endnote{padding:0 16px}}
+
+/* colour and contrast pass (18 Nov 2026): verdigris = the comparison group, midnight diamond = this school, grey = England; readings on their own scale */
+.oe-band{font-size:13px;padding:3px 8px;color:#fff;font-weight:500;letter-spacing:.01em}
+.oe-prow .rng{background:rgba(47,111,102,.24)}
+i.gm{background:#2F6F66}
+.oe-plegend i.gm{background:#2F6F66}
+i.nm{background:#55627A;width:2px}
+.oe-prow .vals .g{color:#2F6F66;font-weight:600}
+.oe-plegend .cols b:nth-child(2){color:#2F6F66}
+.oe-prow.out .lab small em{font-style:normal;color:#A3402B;font-weight:600}
+.oe-prow.out .vals .s{color:#A3402B}
+.oe-dstrip .t i.mn{background:#2F6F66}
+.oe-plegend i.mn{background:#2F6F66}
+.oe-dstrip .t i.o{background:#7B879A;opacity:.8}
+.oe-plegend i.d-o{background:#7B879A}

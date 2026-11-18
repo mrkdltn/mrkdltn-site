@@ -1,7 +1,8 @@
 (function () {
   const GC = {'Exceptional':'#0176E0','Strong standard':'#33903C','Expected standard':'#5CD168','Needs attention':'#FF8341','Urgent improvement':'#CE1E02'};
   const GORDER = ['Urgent improvement','Needs attention','Expected standard','Strong standard','Exceptional'];
-  const BANDC = {'Well above':'#0176E0','Above':'#33903C','Close to':'#8A96A8','Below':'#FF8341','Well below':'#CE1E02'};
+  // readings of results get their own scale, never Ofsted's grade colours: verdigris above, grey close, rust below (white text at 4.5:1 or better)
+  const BANDC = {'Well above':'#1E544D','Above':'#2F6F66','Close to':'#55627A','Below':'#A3402B','Well below':'#7A2617'};
   const num = (v) => (v === null || v === undefined || v === '' ? NaN : +v);
   const f1 = d3.format('.1f'), fs = d3.format('+.1f');
   const reduced = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -213,7 +214,7 @@
     ];
     tiles.forEach(([lab, v, fmt, field, sm, tip]) => { const d = document.createElement('div'); d.className = 'oe-kpi rise'; d.setAttribute('data-tip', tip); d.tabIndex = 0;
       const s = document.createElement('span'); s.textContent = lab; const b = document.createElement('b'); mark(b, 'school', field);
-      if (field !== 'a8' && !isNaN(v)) b.style.color = v >= 0 ? '#33903C' : '#E0662E';
+      if (field !== 'a8' && !isNaN(v)) b.style.color = v >= 0 ? '#2F6F66' : '#A3402B';
       const small = document.createElement('small'); small.textContent = sm; d.append(s, b, small); el.append(d); countUp(b, v, fmt); }); });
 
   dash.draw('sgrades', (el) => { const r = S(); el.replaceChildren(); if (!r) return;
@@ -262,21 +263,23 @@
       [r.comparator_label, fmt(r.school), fmt(r.comparator), r.gap === null ? '—' : (isP8 ? d3.format('+.2f')(r.gap) : fs(r.gap) + (pct ? ' pts' : ''))].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; td.setAttribute('data-label', LBL[i]); if (i >= 1) td.className = 'n'; tr.append(td); });
       const tdb = document.createElement('td'); const bar = document.createElement('div'); bar.className = 'oe-gapbar'; const fill = document.createElement('i'); const mid = document.createElement('u'); bar.append(fill, mid); tdb.append(bar); tr.append(tdb);
       const g = r.gap === null ? 0 : (isP8 ? r.gap * 10 : r.gap); const w = Math.min(50, Math.abs(g) / (r.scale || 15) * 50);
-      fill.style.background = g >= 0 ? '#33903C' : '#FF8341';
+      fill.style.background = g >= 0 ? '#2F6F66' : '#A3402B';
       const fin = () => { fill.style.left = (g >= 0 ? 50 : 50 - w) + '%'; fill.style.width = w + '%'; };
       if (animate) { fill.style.left = '50%'; fill.style.width = '0%'; } else fin();
       const td = document.createElement('td'); const sp = document.createElement('span'); sp.className = 'oe-band'; sp.textContent = r.reading;
-      sp.style.background = BANDC[r.reading] || BANDC[String(r.reading).replace(' average', '')] || (/above/i.test(r.reading) ? '#33903C' : /below/i.test(r.reading) ? '#FF8341' : '#8A96A8'); td.append(sp); tr.append(td); tb.append(tr);
+      sp.style.background = BANDC[r.reading] || BANDC[String(r.reading).replace(' average', '')] || (/well above/i.test(r.reading) ? '#1E544D' : /above/i.test(r.reading) ? '#2F6F66' : /well below/i.test(r.reading) ? '#7A2617' : /below/i.test(r.reading) ? '#A3402B' : '#55627A'); td.append(sp); tr.append(td); tb.append(tr);
       if (animate) requestAnimationFrame(() => requestAnimationFrame(fin)); }); });
 
   dash.draw('strip', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip); return {tip}; },
     update: (el, m) => { const r = S(), n = dash.data('neigh'); el.querySelectorAll('svg').forEach((s) => s.remove()); if (!r || n.status !== 'ok' || !n.data.length) return;
-      const mf = OE.meas(), MS = OE.MEAS[mf]; const ss = document.getElementById('oe-ssub'); if (ss) ss.textContent = MS.label + ', 2025/26. Dots are spread vertically only so they do not overlap.'; const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x[mf]).filter((v) => !isNaN(v)).concat([+r[mf]]);
+      const mf = OE.meas(), MS = OE.MEAS[mf]; const ss = document.getElementById('oe-ssub'); if (ss) ss.textContent = MS.label + ', 2025/26. The shaded band is the middle half of the 50; dots are spread vertically only so they do not overlap.'; const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x[mf]).filter((v) => !isNaN(v)).concat([+r[mf]]);
       const x = d3.scaleLinear().domain(d3.extent(vals)).nice().range([M.l, W - M.r]); const mean = mf === 'a8' ? +r.ss_mean : +r[mf + '_ss'];
       const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', MS.label + ' of the 50 similar schools with the selected school marked');
       svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${H - M.b})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor(W / 90))));
-      svg.append('line').attr('x1', x(mean)).attr('x2', x(mean)).attr('y1', 30).attr('y2', 86).style('stroke', 'var(--color-fg)').style('stroke-width', 2);
-      svg.append('text').attr('x', x(mean)).attr('y', 22).attr('text-anchor', 'middle').style('font-size', '11px').style('fill', 'var(--color-fg-muted)').text('Group average ' + f1(mean) + MS.unit);
+      { const sv = vals.slice().sort(d3.ascending), q1 = d3.quantileSorted(sv, 0.25), q3 = d3.quantileSorted(sv, 0.75);
+        svg.append('rect').attr('x', x(q1)).attr('width', Math.max(1, x(q3) - x(q1))).attr('y', 34).attr('height', 48).style('fill', 'rgba(47,111,102,.12)'); }
+      svg.append('line').attr('x1', x(mean)).attr('x2', x(mean)).attr('y1', 30).attr('y2', 86).style('stroke', '#2F6F66').style('stroke-width', 2.5);
+      svg.append('text').attr('x', x(mean)).attr('y', 22).attr('text-anchor', 'middle').style('font-size', '12px').style('font-weight', 600).style('fill', '#2F6F66').text('Group average ' + f1(mean) + MS.unit);
       const dots = svg.selectAll('circle.n').data(n.data).join('circle').attr('class', 'n').attr('cy', (d, i) => 58 + ((i % 7) - 3) * 4).attr('r', 5.5).style('fill', (d) => GC[d.g_ach] || '#D6DCE6').style('stroke', 'var(--color-bg)').style('cursor', 'pointer')
         .on('pointerenter', (e, d) => { m.tip.hidden = false; m.tip.textContent = d.name + ' (' + d.la + '): ' + MS.short + ' ' + OE.mfmt(d[mf], mf) + (d.g_ach ? ' · Achievement ' + d.g_ach : ' · no report card yet') + '. Click to open.'; m.tip.style.left = Math.max(0, Math.min(W - 260, x(+d[mf]) - 40)) + 'px'; m.tip.style.top = '-6px'; })
         .on('pointerleave', () => { m.tip.hidden = true; }).on('click', (e, d) => OE.choose(d.urn));
@@ -285,7 +288,7 @@
       else dots.attr('cx', (d) => x(+d[mf]));
       const sx = x(+r[mf]); const dia = svg.append('path').attr('d', d3.symbol(d3.symbolDiamond, 170)()).style('fill', '#0B1A2E').style('stroke', 'var(--color-bg)').style('stroke-width', 2);
       if (animate) dia.attr('transform', `translate(${x(mean)},58) scale(0.2)`).transition().delay(500).duration(600).ease(d3.easeBackOut).attr('transform', `translate(${sx},58) scale(1)`); else dia.attr('transform', `translate(${sx},58)`);
-      svg.append('text').attr('x', sx).attr('y', 100 - 4).attr('text-anchor', sx > W - 80 ? 'end' : (sx < 80 ? 'start' : 'middle')).style('font-size', '11px').style('font-weight', 600).style('fill', '#0B1A2E').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', 4).text('This school ' + OE.mfmt(r[mf], mf));
+      svg.append('text').attr('x', sx).attr('y', 100 - 4).attr('text-anchor', sx > W - 80 ? 'end' : (sx < 80 ? 'start' : 'middle')).style('font-size', '12px').style('font-weight', 600).style('fill', '#0B1A2E').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', 4).text('This school ' + OE.mfmt(r[mf], mf));
     }});
 
   dash.draw('offnote', (el) => { const o = dash.data('official'); const r = S();
