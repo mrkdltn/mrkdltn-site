@@ -243,22 +243,109 @@ html.loaded .oe-loading{display:none}
     <div><b>This is a replica</b>The official groups use pupil-level data that is not public. Treat these neighbours as a close approximation and check the IDSR.</div>
   </div>
 </section>
-<details id="method" open>
-  <summary>How the comparisons are built: method, sources and limits</summary>
-  <h3 class="oe-mh">1. Similar schools: what each factor counts for</h3>
-  <p class="sub">The published weights from the DfE and Ofsted technical note. POLAR4 is not public, so the replica leaves it out and shares its weight among the rest in the same proportions.</p>
-  <div class="oe-weights" data-draw="mweights"></div>
-  <h3 class="oe-mh">2. Similar schools: how this school&rsquo;s 50 are chosen</h3>
-  <div data-draw="msel"></div>
-  <p><b>Similar schools, open replica.</b> Following the DfE and Ofsted technical note (16 July 2026): each factor is standardised against the national mean and standard deviation; schools are matched by weighted squared Euclidean distance; each school's 50 nearest neighbours form its group, and the comparator is their average Attainment 8. Published weights: prior attainment 0.46, FSM6 0.14, POLAR4 0.11, SEN support 0.09, pupil stability 0.06, IDACI 0.06, EHC plans 0.04, EAL 0.03, pupil numbers 0.02. Public proxies used: prior attainment profile of the 2023/24 GCSE cohort (carried from a predecessor school where the URN changed; estimated for 34 schools); disadvantaged and non-mobile shares of the 2025/26 GCSE cohort; Ofsted's pupil-based IDACI quintile; January 2026 census pupil numbers and EAL; January 2026 SEN support and EHC plans. POLAR4 is left out and the other weights rescaled. A gap counts as significant when it exceeds 1.96 standard errors (pupil-level spread 14.2 points, estimated from 2023/24 Progress 8 confidence intervals, plus the group's spread); "well above" or "well below" also needs a gap larger than one standard deviation of the group.</p>
-  <h3 class="oe-mh">3. Contextual model: how this school&rsquo;s expected result is built</h3>
-  <p class="sub">Each bar is one factor&rsquo;s push on the expectation, largest first, starting from a school at the England average on every factor. It follows the results measure chosen above.</p>
-  <div class="oe-wfall" data-draw="mwf"></div>
-  <p><b>Contextual model.</b> One model of results on the same factors across all secondaries, in the spirit of the DfE's contextual value added measure of 2006 to 2010. For Attainment 8 it is a straight-line regression that explains about three quarters of the variation between schools; for a median-sized GCSE cohort a gap within 2 points reads as in line. For English and maths at grade 5 or above it is fitted to the share of pupils (a fractional logit), so expected values stay between 0% and 100%; for a median-sized cohort a gap within 4 points reads as in line. Both bands scale with the square root of cohort size, wider for smaller cohorts and narrower for larger ones, because a smaller cohort&rsquo;s average moves more by chance.</p>
-  <p><b>Progress 8.</b> The last published figure, for 2023/24, carried from a predecessor school where the URN changed. The DfE did not publish it for 2024/25 or 2025/26.</p>
-  <p><b>Sources.</b> DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final. DfE, Schools, pupils and their characteristics, January 2026. DfE, Special educational needs in England, January 2026. Ofsted, management information, latest inspections as at 31 October 2026, with report cards published since then read from Ofsted's reports site each morning<span class="oe-fresh-src"></span>. DfE and Ofsted, Similar schools model for attainment: technical note. Ofsted, Considering the context of schools in challenging circumstances (2025/26).</p>
-  <p><b>Limits.</b> Provisional results are revised in February 2027. None of these measures is a judgement on a school, and none should be read as one.</p>
-</details>
+<section id="method" class="oe-card oe-method">
+  <h2>How the Explorer works</h2>
+  <p class="sub">Every comparison on this page, how it is made and where the data comes from. The figures below use the school you are looking at.</p>
+  <div class="oe-mtabs" role="tablist" aria-label="Method">
+    <button role="tab" id="mt-ss" aria-controls="mp-ss" aria-selected="true">Similar schools</button>
+    <button role="tab" id="mt-cv" aria-controls="mp-cv" aria-selected="false" tabindex="-1">Contextual model</button>
+    <button role="tab" id="mt-rd" aria-controls="mp-rd" aria-selected="false" tabindex="-1">Readings</button>
+    <button role="tab" id="mt-ar" aria-controls="mp-ar" aria-selected="false" tabindex="-1">Report card areas</button>
+    <button role="tab" id="mt-src" aria-controls="mp-src" aria-selected="false" tabindex="-1">Data and sources</button>
+    <button role="tab" id="mt-lim" aria-controls="mp-lim" aria-selected="false" tabindex="-1">Limits and terms</button>
+    <button role="tab" id="mt-cite" aria-controls="mp-cite" aria-selected="false" tabindex="-1">Cite</button>
+  </div>
+
+  <div class="oe-mpanel" role="tabpanel" id="mp-ss" aria-labelledby="mt-ss">
+    <p class="lead">Each secondary is compared with the 50 schools whose intakes are most like its own, following the DfE and Ofsted similar-schools model (technical note, 16 July 2026). The official groups use pupil-level data that is not public, so this is an open replica built from published figures.</p>
+    <h3 class="oe-mh">What each factor counts for</h3>
+    <p class="sub">The published weights. POLAR4 is not public, so the replica leaves it out and shares its weight among the rest in the same proportions.</p>
+    <div class="oe-weights" data-draw="mweights"></div>
+    <h3 class="oe-mh">How this school&rsquo;s 50 are chosen</h3>
+    <div data-draw="msel"></div>
+    <h3 class="oe-mh">The data behind each factor</h3>
+    <dl class="oe-mdl">
+      <dt>Prior attainment</dt><dd>Key stage 2 profile of the 2023/24 GCSE year group, carried from a predecessor school where the URN changed; estimated for 34 schools.</dd>
+      <dt>Disadvantaged pupils and pupil stability</dt><dd>Shares of the 2025/26 GCSE year group.</dd>
+      <dt>Area deprivation</dt><dd>Ofsted&rsquo;s IDACI quintile, from pupils&rsquo; home postcodes.</dd>
+      <dt>SEN support, EHC plans, English as an additional language, pupil numbers</dt><dd>January 2026 school census and SEN statistics.</dd>
+    </dl>
+    <p>Each factor is put on one scale (standard deviations from the England average), weighted, and the distance from this school to every other secondary is measured. The 50 nearest form the group, and their average result is the comparator.</p>
+  </div>
+
+  <div class="oe-mpanel" role="tabpanel" id="mp-cv" aria-labelledby="mt-cv" hidden>
+    <p class="lead">One model, fitted across all 3,298 secondaries with 2025/26 results, of what schools with a given intake typically achieve. It uses the same factors as the similar-schools model, in the spirit of the DfE&rsquo;s contextual value added measure of 2006 to 2010.</p>
+    <h3 class="oe-mh">How this school&rsquo;s expected result is built</h3>
+    <p class="sub">Each bar is one factor&rsquo;s push on the expectation, largest first, starting from a school at the England average on every factor. It follows the results measure chosen above.</p>
+    <div class="oe-wfall" data-draw="mwf"></div>
+    <dl class="oe-mdl">
+      <dt>Attainment 8</dt><dd>A straight-line regression that explains about three quarters of the variation between schools.</dd>
+      <dt>English and maths, grade 5 or above</dt><dd>Fitted to the share of pupils (a fractional logit), so expected values always stay between 0% and 100%.</dd>
+    </dl>
+  </div>
+
+  <div class="oe-mpanel" role="tabpanel" id="mp-rd" aria-labelledby="mt-rd" hidden>
+    <p class="lead">Each set of results is read against four comparators. The words in the Reading column follow fixed rules, set out here.</p>
+    <table class="oe-mtable">
+      <thead><tr><th>Comparator</th><th>How the reading is decided</th></tr></thead>
+      <tbody>
+        <tr><td>National average</td><td>Above or below the national figure for 2025/26.</td></tr>
+        <tr><td>50 similar schools</td><td>Above or below only when the gap is larger than chance would explain: 1.96 standard errors, combining pupil-level spread (14.2 Attainment 8 points, from 2023/24 Progress 8 confidence intervals) with the spread within the group. &ldquo;Well above&rdquo; or &ldquo;well below&rdquo; also needs a gap larger than one standard deviation of the group. Otherwise &ldquo;close to&rdquo;.</td></tr>
+        <tr><td>Contextual model</td><td>In line within &plusmn;2 Attainment 8 points, or &plusmn;4 percentage points for English and maths, for a median-sized GCSE cohort of 180. The band scales with the square root of cohort size: wider for smaller cohorts, narrower for larger ones.</td></tr>
+        <tr><td>Progress 8, 2023/24</td><td>The DfE&rsquo;s own published bands, which combine the score with its 95% confidence interval. The last published year, carried from a predecessor school where the URN changed; the DfE did not publish Progress 8 for 2024/25 or 2025/26.</td></tr>
+      </tbody>
+    </table>
+    <p>Readings use their own colours, green above, grey close and rust below, and never Ofsted&rsquo;s grade colours, which are kept for inspection grades only.</p>
+  </div>
+
+  <div class="oe-mpanel" role="tabpanel" id="mp-ar" aria-labelledby="mt-ar" hidden>
+    <p class="lead">Each area of a school&rsquo;s report card is shown beside the grades given in that area to comparable schools of the same phase.</p>
+    <dl class="oe-mdl">
+      <dt>Schools in England</dt><dd>Every school of the same phase with a report card grade in that area.</dd>
+      <dt>Same IDACI fifth</dt><dd>Schools of the same phase in the same fifth of area deprivation, using Ofsted&rsquo;s pupil-based IDACI quintile.</dd>
+      <dt>Same disadvantaged fifth (secondaries)</dt><dd>Secondaries split into fifths by the disadvantaged share of their GCSE year group, cut at about 17%, 24%, 32% and 43%.</dd>
+      <dt>Its 50 similar schools (secondaries)</dt><dd>Those of the 50 that have a report card so far.</dd>
+    </dl>
+    <p>Every group shows how many schools it contains. Small groups move a lot as new report cards are published, so read them with care.</p>
+  </div>
+
+  <div class="oe-mpanel" role="tabpanel" id="mp-src" aria-labelledby="mt-src" hidden>
+    <ul class="oe-msrc">
+      <li>DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final.</li>
+      <li>DfE, Schools, pupils and their characteristics, January 2026.</li>
+      <li>DfE, Special educational needs in England, January 2026.</li>
+      <li>Ofsted, management information, latest inspections as at 31 October 2026, with report cards published since then read from Ofsted&rsquo;s reports site each morning<span class="oe-fresh-src"></span>.</li>
+      <li>DfE, Get Information about Schools, daily extract, for local authority, region, trust and location.</li>
+      <li>DfE and Ofsted, Similar schools model for attainment: technical note (16 July 2026).</li>
+      <li>Ofsted, Considering the context of schools in challenging circumstances (2025/26).</li>
+    </ul>
+    <p>Provisional 2025/26 results are revised in February 2027, when the Explorer will be rebuilt.</p>
+  </div>
+
+  <div class="oe-mpanel" role="tabpanel" id="mp-lim" aria-labelledby="mt-lim" hidden>
+    <ul class="oe-msrc">
+      <li>None of these measures is a judgement on a school, and none should be read as one.</li>
+      <li>One year of provisional results is noisy; look for patterns over time.</li>
+      <li>The similar-schools groups are a replica built from public proxies, not the official lists. Check your IDSR.</li>
+      <li>The contextual model is built for transparency, not accountability.</li>
+    </ul>
+    <h3 class="oe-mh">Terms</h3>
+    <dl class="oe-mdl">
+      <dt>Attainment 8</dt><dd>A pupil&rsquo;s average grade across eight GCSE-level slots, with English and maths double-weighted; the school figure is the average across pupils.</dd>
+      <dt>English and maths 5+</dt><dd>The share of pupils achieving grade 5 or above in both English and maths.</dd>
+      <dt>Disadvantaged</dt><dd>Pupils eligible for free school meals at any point in the last six years, looked after, or adopted from care.</dd>
+      <dt>IDACI</dt><dd>Income Deprivation Affecting Children Index: the share of children in an area living in income-deprived families.</dd>
+      <dt>IDSR</dt><dd>Ofsted&rsquo;s inspection data summary report, which lists a school&rsquo;s official 50 similar schools.</dd>
+    </dl>
+  </div>
+
+  <div class="oe-mpanel" role="tabpanel" id="mp-cite" aria-labelledby="mt-cite" hidden>
+    <p class="lead">If you use the Explorer in a report, a paper or a presentation, please cite it like this.</p>
+    <p class="oe-cite" id="oe-cite">Dalton, M. (2026) <i>Ofsted Explorer</i>. Available at: https://mrkdltn.com/explorer/</p>
+    <p><button type="button" class="oe-btn ghost" id="oe-cite-copy">Copy citation</button></p>
+    <p>Every change is listed, with dates, on <a href="/explorer/updates/">What&rsquo;s new in the Ofsted Explorer</a>.</p>
+  </div>
+</section>
 <p class="oe-note noprint oe-endnote">Read the analysis behind this tool: <a href="/writing/ofsted-report-cards/">I checked every Ofsted report card. Results alone don't explain the gap.</a><br>What&rsquo;s new: <a href="/explorer/updates/">the November 2026 update</a>, 17 November 2026.</p>
 <p class="print-only oe-note">These are replica figures built from public data, not the official IDSR groups. None of these measures is a judgement on a school. Method and sources: mrkdltn.com/explorer</p>
 </div></main>

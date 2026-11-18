@@ -292,3 +292,26 @@ i.nm{background:#55627A;width:2px}
 .oe-plegend i.mn{background:#2F6F66}
 .oe-dstrip .t i.o{background:#7B879A;opacity:.8}
 .oe-plegend i.d-o{background:#7B879A}
+
+/* method section rebuild (18 Nov 2026) */
+.oe-method{font-size:16px;line-height:1.6}
+.oe-method .lead{font-size:18px;line-height:1.55;max-width:68ch;margin:6px 0 18px;color:#0B1A2E}
+.oe-method p,.oe-method dd,.oe-method li{max-width:72ch}
+.oe-mtabs{display:flex;gap:4px;border-bottom:1px solid #0B1A2E;margin:18px 0 6px;overflow-x:auto;scrollbar-width:none}
+.oe-mtabs::-webkit-scrollbar{display:none}
+.oe-mtabs [role=tab]{flex:0 0 auto;font:500 15px/1.2 var(--sans);color:#55627A;background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 9px;cursor:pointer;white-space:nowrap}
+.oe-mtabs [role=tab][aria-selected=true]{color:#0B1A2E;border-bottom-color:#C9A24B}
+.oe-mtabs [role=tab]:hover{color:#0B1A2E}
+.oe-mtabs [role=tab]:focus-visible{outline:2px solid #2F6F66;outline-offset:-2px}
+.oe-mpanel{padding-top:8px}
+.oe-mdl{display:grid;grid-template-columns:minmax(180px,260px) 1fr;gap:10px 24px;margin:12px 0 18px}
+.oe-mdl dt{font-weight:600;color:#0B1A2E}
+.oe-mdl dd{margin:0;color:#33405A}
+.oe-mtable{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:15px}
+.oe-mtable th{text-align:left;font-weight:600;font-size:13px;color:#55627A;border-bottom:1px solid #0B1A2E;padding:6px 10px 6px 0}
+.oe-mtable td{vertical-align:top!important;border-bottom:1px solid #D8DDE5;padding:10px 10px 10px 0;color:#33405A}
+.oe-mtable td:first-child{font-weight:600;color:#0B1A2E;white-space:nowrap;padding-right:20px}
+.oe-msrc{padding-left:20px;margin:8px 0 14px}.oe-msrc li{margin:0 0 8px;color:#33405A}
+.oe-cite{font-size:16px;background:#F5F1E8;border-left:3px solid #C9A24B;padding:14px 18px;max-width:72ch}
+@media screen and (max-width:820px){.oe-mdl{grid-template-columns:1fr;gap:2px}.oe-mdl dd{margin-bottom:10px}.oe-mtable td:first-child{white-space:normal}.oe-method .lead{font-size:17px}}
+@media print{.oe-mtabs{display:none}.oe-mpanel[hidden]{display:block!important}}

@@ -182,4 +182,19 @@
     box.append(rich(el('p', 'oe-comp'), 'Starting from a school that is average on everything, each factor moves the expectation up or down. For this school the biggest moves come from **' + top[0] + '** and **' + top[1] + '**. The result is **' + fmtV(expd) + '**; the school achieved ' + fmtV(act) + ', a gap of **' + fs(g) + '**' + (Math.abs(g) < OE.ctxThr(r, m) ? ', in line with expectation for a cohort of this size.' : '.') + (mod.form === 'logit' ? ' The model works on the share of pupils, so each factor’s push is converted to percentage points at this school’s position.' : '')));
   };
   dash.draw('mwf', drawWf);
+
+  // ---------------------------------------------------------------- method tabs and citation
+  const tabs = [...document.querySelectorAll('.oe-mtabs [role=tab]')];
+  const show = (t, focus) => { tabs.forEach((b) => { const on = b === t; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; const pnl = document.getElementById(b.getAttribute('aria-controls')); if (pnl) pnl.hidden = !on; });
+    if (focus) t.focus(); const pnl = document.getElementById(t.getAttribute('aria-controls'));
+    if (pnl) pnl.querySelectorAll('[data-draw]').forEach((d) => { try { dash.draw(d.getAttribute('data-draw')); } catch (e) {} }); };
+  tabs.forEach((t, i) => { t.addEventListener('click', () => show(t));
+    t.addEventListener('keydown', (e) => { const k = e.key; if (k === 'ArrowRight' || k === 'ArrowLeft' || k === 'Home' || k === 'End') { e.preventDefault();
+      const n = k === 'Home' ? 0 : k === 'End' ? tabs.length - 1 : (i + (k === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length; show(tabs[n], true); } }); });
+  const cite = document.getElementById('oe-cite'), copy = document.getElementById('oe-cite-copy');
+  const today = new Date().toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
+  fetch('/explorer/data/build.json').then((r) => (r.ok ? r.json() : null)).then((b) => {
+    const built = b && b.built ? new Date(b.built).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'}) : null;
+    if (cite) { cite.replaceChildren('Dalton, M. (2026) ', el('i', '', 'Ofsted Explorer'), ' [online tool]' + (built ? ', data built ' + built : '') + '. Available at: https://mrkdltn.com/explorer/ (Accessed: ' + today + ').'); } }).catch(() => {});
+  if (copy && cite) copy.addEventListener('click', () => { const t = cite.textContent; (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { copy.textContent = 'Copied'; setTimeout(() => { copy.textContent = 'Copy citation'; }, 1800); }).catch(() => {}); });
 })();
