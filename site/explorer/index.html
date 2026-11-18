@@ -125,7 +125,7 @@ html.loaded .oe-loading{display:none}
     <p class="oe-hint">Opens on a school chosen at random. <span class="oe-fresh" hidden></span> <span class="oe-loading">Loading schools…</span></p>
   </div>
 </div>
-<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#official">Your IDSR list</a><a href="#oe-more">National picture</a><a href="#method">Method</a><a href="#feedback">Feedback</a></div></nav>
+<nav class="oe-nav noprint" aria-label="Sections"><div class="in"><a href="#school" class="on">Profile</a><a href="#areas">Areas in context</a><a href="#lenses">Four readings</a><a href="#community">Disadvantaged pupils</a><a href="#strip">Its 50 similar schools</a><a href="#neighbours">Table</a><a href="#map">Map</a><a href="#official">Your IDSR list</a><a href="#oe-more">National picture</a><a href="#method">Method</a><a href="#feedback">Feedback</a></div></nav>
 <main class="oe-main"><div class="oe">
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
@@ -153,6 +153,12 @@ html.loaded .oe-loading{display:none}
     <thead><tr><th data-field="lens">Lens</th><th data-field="comparator_label">Compared with</th><th class="n" data-field="school">School</th><th class="n" data-field="comparator">Comparator</th><th class="n" data-field="gap">Gap</th><th><span class="sr-only" id="oe-lscale">Gap on a scale of plus or minus 15 points</span></th><th data-field="reading">Reading</th></tr></thead>
     <tbody data-draw="lenses"></tbody>
   </table></div>
+</section>
+<section id="community" class="oe-card" data-source="school">
+  <h2>Disadvantaged pupils and the community the school serves <span class="i" tabindex="0" data-tip="Schools are grouped by the share of their pupils who are White British (school census, January 2026). Disadvantaged pupils&rsquo; Attainment 8 is averaged across all their pupils in each group. This describes a national pattern; ethnicity is not used in any expected score or in choosing similar schools.">i</span></h2>
+  <p class="sub" data-draw="wbsub" data-source="ks4"></p>
+  <div class="oe-wb" data-draw="wb" data-source="school ks4"></div>
+  <p class="oe-read" data-draw="wbnote" data-source="school ks4"></p>
 </section>
 <section id="strip" class="oe-card" data-source="school neigh">
   <h2>Where the school sits among its 50 similar schools <span class="i" tabindex="0" data-tip="Each dot is one similar school, coloured by its Achievement grade where it has a report card. The black bar is the group's average. The dark diamond is the selected school. Hover over a dot to see the school.">i</span></h2>
@@ -312,7 +318,7 @@ html.loaded .oe-loading{display:none}
   <div class="oe-mpanel" role="tabpanel" id="mp-src" aria-labelledby="mt-src" hidden>
     <ul class="oe-msrc">
       <li>DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final.</li>
-      <li>DfE, Schools, pupils and their characteristics, January 2026.</li>
+      <li>DfE, Schools, pupils and their characteristics, January 2026 (school-level underlying data, published 4 June 2026), including the White British share of pupils with known ethnicity, used only in the community lens.</li>
       <li>DfE, Special educational needs in England, January 2026.</li>
       <li>Ofsted, management information, latest inspections as at 31 October 2026, with report cards published since then read from Ofsted&rsquo;s reports site each morning<span class="oe-fresh-src"></span>.</li>
       <li>DfE, Get Information about Schools, daily extract, for local authority, region, trust and location.</li>
@@ -328,6 +334,7 @@ html.loaded .oe-loading{display:none}
       <li>One year of provisional results is noisy; look for patterns over time.</li>
       <li>The similar-schools groups are a replica built from public proxies, not the official lists. Check your IDSR.</li>
       <li>The contextual model is built for transparency, not accountability.</li>
+      <li>Ethnicity is never used to choose similar schools or to set any expected score. The community lens describes; it does not adjust. It compares schools, not pupils, and uses each school&rsquo;s whole-school ethnicity, not that of its GCSE year group.</li>
     </ul>
     <h3 class="oe-mh">Terms</h3>
     <dl class="oe-mdl">
@@ -381,6 +388,7 @@ html.loaded .oe-loading{display:none}
 <script src="/explorer/extra.js"></script>
 <script src="/explorer/slide.js"></script>
 <script src="/explorer/method.js"></script>
+<script src="/explorer/wb.js"></script>
 <script src="/explorer/feedback.js"></script>
 <script>dash.start({x:'dis_pct',area:'g_ach',phase:'Secondary',area2:'g_ach',meas:'a8'});</script>
 </body>

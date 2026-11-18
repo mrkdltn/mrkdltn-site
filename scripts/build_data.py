@@ -203,6 +203,14 @@ def main():
                     if c in k and c in r:
                         k[c] = r[c]
 
+    # White British share of pupils with known ethnicity, school census January 2026 (DfE, Schools, pupils and
+    # their characteristics, school-level underlying data, published 4 June 2026). Descriptive lens only:
+    # never used in matching or in any expected score.
+    wb_path = os.path.join(RAW, 'census_wb_2026.csv')
+    wb = {w['urn']: w['wb_pct'] for w in load(wb_path)} if os.path.exists(wb_path) else {}
+    for r in ks4:
+        r['wb_pct'] = wb.get(r['urn'], '')
+
     # --- English and maths at grade 5+ and 4+: similar-schools averages and a contextual expectation ---
     enrich_em(ks4)
     write_model(ks4)
@@ -260,7 +268,7 @@ def main():
         'secondaries': len(ks4), 'report_cards': len(rc), 'daily_reports_merged': daily_added,
         'latest_inspection': rc_dates[-1] if rc_dates else None,
         'latest_published': latest_published,
-        'sources': {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path) if os.path.exists(p)},
+        'sources': {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path, wb_path) if os.path.exists(p)},
     }
     with open(os.path.join(OUT, 'build.json'), 'w') as f:
         json.dump(meta, f, indent=1)
