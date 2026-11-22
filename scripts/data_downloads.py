@@ -57,7 +57,7 @@ COLUMNS = {
     'dis_pct': ('Share of the GCSE year group who are disadvantaged (free school meals in the last six years, looked after, or adopted from care)', '%', KS4),
     'dis_a8': ('Attainment 8 of disadvantaged pupils. Blank where fewer than 10 disadvantaged pupils (estimated as pupils x dis_pct, rounded)', 'points', KS4),
     'nondis_a8': ('Attainment 8 of other pupils. Blank where fewer than 10 such pupils', 'points', KS4),
-    'nonmob_pct': ("Pupil stability: share of the GCSE year group counted as non-mobile in the DfE's key stage 4 data", '%', KS4),
+    'nonmob_pct': ('Pupil stability: share of the GCSE year group who joined the school at the usual time (non-mobile pupils)', '%', KS4),
     'eal_school': ('Share of pupils whose first language is known or believed to be other than English (whole school)', '%', CENSUS),
     'sensup_pct': ('Share of pupils on SEN support (whole school)', '%', SEN),
     'ehc_pct': ('Share of pupils with an education, health and care plan (whole school)', '%', SEN),
