@@ -73,8 +73,13 @@ After a production push, check the live site, then add an entry to the What's ne
 - Contextual model: Attainment 8 linear OLS; English and maths 5+ fractional logit (`_fraclogit`, IRLS), bounded 0–100%. The "in line" band scales with cohort: base × √(median cohort / cohort), base ±2 (A8) and ±4 (EM 5+), median cohort 180 (`OE.ctxThr`).
 - Ethnicity is never used in matching or in any expected score.
 
+## Site standards
+
+`docs/site-standards.md` holds the sixteen standards for the main site, each with a test, the scorecard as at 22 November 2026 and the phased plan (Now, Next, Later). Run its tests alongside the checks above before any preview of a non-Explorer page goes to Mark, and re-score it monthly. `CLAUDE.md` wins where the two differ.
+
 ## Open work (as at 22 November 2026)
 
+- **Main site, from `docs/site-standards.md`:** the "Now" items (share cards, text before motion, contact, feed and structured data, headers and caching, portrait), each on its own branch. Five decisions for Mark are listed at the end of that file.
 - **Parked by Mark (18 Nov): community lens** (disadvantaged pupils by school White British share). Branch `wb-lens`, unmerged; cut from `887d197`, rebase before any merge. Analysis and plan are in the claude.ai Project. Do not merge or revive without Mark.
 - **Header motion** (looping motion behind the Explorer header): undecided; the style guide currently says motion never loops.
 - **Primary schools:** decisions pending on a KS1 2022/23 prior-attainment proxy, and on moving school pages to a Pages Function to stay under Cloudflare's 20,000-file limit (about 13,100 files per deploy now). Recon scripts on branch `primary-data`.
