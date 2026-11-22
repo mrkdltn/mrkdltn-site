@@ -335,3 +335,9 @@ i.nm{background:#55627A;width:2px}
   .oe-nallp{display:block;margin:16px 0 0}
   body.explorer .oe-nallp .oe-btn{width:100%;min-height:44px;font-size:15px}
 }
+/* likely range and last year (22 November 2026) */
+.oe-gapbar .oe-rngbar{position:absolute;top:50%;height:2px;margin-top:-1px;background:#0B1A2E;opacity:.55;border-radius:1px}
+.oe-gapbar .oe-rngbar::before,.oe-gapbar .oe-rngbar::after{content:"";position:absolute;top:-4px;width:1.5px;height:10px;background:inherit}
+.oe-gapbar .oe-rngbar::before{left:0}.oe-gapbar .oe-rngbar::after{right:0}
+.oe small.oe-rng,.oe small.oe-prev{display:block;font-size:11.5px;font-weight:400;color:#55627A;white-space:nowrap;margin-top:3px}
+@media print{.oe-gapbar .oe-rngbar{opacity:1}}
