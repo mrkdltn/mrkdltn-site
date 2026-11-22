@@ -35,11 +35,10 @@ NN_SHARDS = 32
 
 
 def sha(path):
-    h = hashlib.sha256()
+    """SHA-256 of an input file with line endings normalised to LF, so a Windows checkout (CRLF) gives the same
+    checksum as Linux and Cloudflare (LF); on an LF file this is the plain sha256sum."""
     with open(path, 'rb') as f:
-        for b in iter(lambda: f.read(1 << 16), b''):
-            h.update(b)
-    return h.hexdigest()
+        return hashlib.sha256(f.read().replace(b'\r\n', b'\n')).hexdigest()
 
 
 def num(v):
