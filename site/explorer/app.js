@@ -392,7 +392,14 @@
     const p0 = d3.format('.0f');
     const DL = (q, c) => 'Same disadvantaged fifth: ' + (q === 1 ? 'least (under ' + p0(c[0]) + '%)' : q === 5 ? 'most (over ' + p0(c[3]) + '%)' : q + ' of 5 (' + p0(c[q - 2]) + '–' + p0(c[q - 1]) + '%)');
     // one area at a time: a picker shows every graded area with the school's grade colour
+    const groupsOf = (a) => { const groups = [[PH(a.phase) + ' in England', a.england, '']];
+      groups.push([a.quintile ? QL(a.quintile) : 'Same IDACI fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
+      if (a.dis !== undefined) groups.push([a.disq ? DL(a.disq, a.discuts) : 'Same disadvantaged fifth', a.dis, a.disq ? '' : 'No disadvantaged figure published']);
+      if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
+      return groups; };
     const keys = d.data.map((a) => a.key); if (!keys.includes(OE.areaSel)) OE.areaSel = keys.includes('g_ach') ? 'g_ach' : keys[0];
+    // for the table view and downloads (exhibit.js): every area, and the one on screen
+    OE.xd = OE.xd || {}; OE.xd.areas = {sel: OE.areaSel, all: d.data.map((a) => ({key: a.key, area: a.area, grade: a.grade, groups: groupsOf(a).map(([gl, dist, why]) => ({gl, dist, why}))}))};
     const pick = document.createElement('div'); pick.className = 'oe-apick'; pick.setAttribute('role', 'group'); pick.setAttribute('aria-label', 'Report card area shown');
     d.data.forEach((a) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', String(a.key === OE.areaSel));
       const dot = document.createElement('i'); dot.style.background = GC[a.grade]; dot.title = a.grade; b.append(dot, a.area);
@@ -405,10 +412,7 @@
       const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; if (DARK_TEXT.has(a.grade)) chip.style.color = '#0B1A2E';
       h.append(lab, chip); row.append(h);
       const gs = document.createElement('div'); gs.className = 'gs';
-      const groups = [[PH(a.phase) + ' in England', a.england, '']];
-      groups.push([a.quintile ? QL(a.quintile) : 'Same IDACI fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
-      if (a.dis !== undefined) groups.push([a.disq ? DL(a.disq, a.discuts) : 'Same disadvantaged fifth', a.dis, a.disq ? '' : 'No disadvantaged figure published']);
-      if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
+      const groups = groupsOf(a);
       groups.forEach(([gl, dist, why]) => {
         const g = document.createElement('div'); g.className = 'g';
         const top = document.createElement('div'); top.className = 'gt';

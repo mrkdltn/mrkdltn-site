@@ -341,3 +341,23 @@ i.nm{background:#55627A;width:2px}
 .oe-gapbar .oe-rngbar::before{left:0}.oe-gapbar .oe-rngbar::after{right:0}
 .oe small.oe-rng,.oe small.oe-prev{display:block;font-size:11.5px;font-weight:400;color:#55627A;white-space:nowrap;margin-top:3px}
 @media print{.oe-gapbar .oe-rngbar{opacity:1}}
+/* every chart: picture, table, download, source (23 November 2026) */
+.oe-xbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin:14px 0 0;font-size:13px}
+.oe-xseg{display:inline-flex;border:1px solid #D8DDE5}
+.oe-xseg button,.oe-xdl button{font:inherit;font-size:13px;background:#fff;color:#0B1A2E;border:0;padding:6px 12px;cursor:pointer;min-height:32px}
+.oe-xseg button+button{border-left:1px solid #D8DDE5}
+.oe-xseg button[aria-pressed=true]{background:#0B1A2E;color:#fff}
+.oe-xdl{display:inline-flex;align-items:center;gap:2px;color:#55627A}
+.oe-xdl span{margin-right:4px}
+.oe-xdl button{padding:6px 8px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#C9A24B}
+.oe-xdl button:hover,.oe-xseg button[aria-pressed=false]:hover{color:#7A5C14}
+.oe-xdl button:disabled{opacity:.5;cursor:progress}
+.oe-xseg button:focus-visible,.oe-xdl button:focus-visible{outline:2px solid #C9A24B;outline-offset:1px}
+.oe-xtab{margin-top:12px}
+.oe-xtab table{font-size:13px}
+.oe-xtab tr.self td{background:#F3F1EA;font-weight:600}
+.oe-xtab .oe-note{margin-top:8px}
+.oe .oe-xsrc{font-size:12px;line-height:1.5;color:#55627A;margin:8px 0 0;max-width:none}
+.oe .oe-xsrc a{color:#7A5C14}
+@media screen and (max-width:640px){.oe-xseg button,.oe-xdl button{min-height:40px;font-size:14px}.oe-xdl button{padding:6px 9px}.oe-xbar{gap:6px 10px}}
+@media screen and (max-width:640px){.oe .oe-xsrc:not(.open){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}}

@@ -95,8 +95,9 @@
 
   // ---------- profile of the 50 ----------
   const FACT = [['pa_index', 'Prior attainment index', fs, 0.46], ['dis_pct', 'Disadvantaged (cohort) %', f1, 0.14], ['sensup_pct', 'SEN support %', f1, 0.09], ['nonmob_pct', 'Non-mobile (cohort) %', f1, 0.06], ['ehc_pct', 'EHC plan %', f1, 0.04], ['eal_school', 'EAL %', f1, 0.03], ['nor', 'Pupils on roll', d3.format(',.0f'), 0.02]];
-  dash.draw('profile', (box) => { const r = S(), nb = N(), st = ST(); box.replaceChildren(); if (!r || !nb.length || !st) return;
+  dash.draw('profile', (box) => { const r = S(), nb = N(), st = ST(); box.replaceChildren(); OE.xd = OE.xd || {}; OE.xd.profile = []; if (!r || !nb.length || !st) return;
     FACT.forEach(([k, lab, fmt, w]) => { const vals = nb.map((x) => x[k]).filter(ok).map(Number); if (!vals.length || !ok(r[k])) return;
+      OE.xd.profile.push({lab, w, fmt, me: +r[k], min: d3.min(vals), max: d3.max(vals), mean: d3.mean(vals), nat: st[k].mean, lo: Math.min(st[k].lo, +r[k], d3.min(vals)), hi: Math.max(st[k].hi, +r[k], d3.max(vals)), n: vals.length});
       const lo = Math.min(st[k].lo, +r[k], d3.min(vals)), hi = Math.max(st[k].hi, +r[k], d3.max(vals)); const X = (v) => 100 * (v - lo) / ((hi - lo) || 1);
       const out = +r[k] < d3.min(vals) || +r[k] > d3.max(vals); const row = el('div', 'oe-prow rise' + (out ? ' out' : '')); const l = el('div', 'lab'); const sm = el('small', '', 'weight ' + w); if (out) sm.append(el('em', '', ' \u00b7 outside the range of the 50')); l.append(el('b', '', lab), sm); row.append(l);
       const tr = el('div', 'track'); const rng = el('i', 'rng'); rng.style.left = X(d3.min(vals)) + '%'; rng.style.width = Math.max(1, X(d3.max(vals)) - X(d3.min(vals))) + '%';
@@ -188,8 +189,8 @@
       if (m.key !== p.urn) { m.key = p.urn; m.svg.call(m.zoom.transform, d3.zoomIdentity); }
       restyle(m); }});
 
-  dash.draw('geo', (box) => { const r = S(), nb = N(); box.replaceChildren(); if (!r || !nb.length) return; if (!ok(r.lat)) { box.append(el('p', '', 'No location is available for this school.')); return; }
-    const ds = nb.map((x) => [x, hav(r, x)]).filter((x) => ok(x[1])).sort((a, b) => a[1] - b[1]); if (!ds.length) return;
+  dash.draw('geo', (box) => { const r = S(), nb = N(); box.replaceChildren(); OE.xd = OE.xd || {}; OE.xd.map = []; if (!r || !nb.length) return; if (!ok(r.lat)) { box.append(el('p', '', 'No location is available for this school.')); return; }
+    const ds = nb.map((x) => [x, hav(r, x)]).filter((x) => ok(x[1])).sort((a, b) => a[1] - b[1]); OE.xd = OE.xd || {}; OE.xd.map = ds; if (!ds.length) return;
     const within = (m) => ds.filter((x) => x[1] <= m).length; const same = nb.filter((x) => x.region === r.region).length; const med = d3.median(ds, (x) => x[1]);
     box.append(rich(el('p'), 'Similar does not mean nearby. Only **' + within(25) + '** of the 50 are within 25 miles and **' + same + '** are in the same region (' + r.region + '). The typical similar school is **' + d3.format('.0f')(med) + ' miles** away; the farthest is ' + d3.format('.0f')(ds[ds.length - 1][1]) + ' miles away, in ' + ds[ds.length - 1][0].la + '.'));
     box.append(el('h3', '', 'Nearest similar schools')); const ul = el('ol', 'oe-near');
