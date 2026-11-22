@@ -138,6 +138,20 @@
   if (tsel) tsel.addEventListener('change', () => { OE.tbl.area = tsel.value; if (tgh) tgh.textContent = tsel.options[tsel.selectedIndex].text; redrawT(); });
   const redrawT = () => dash.draw('neigh');
   const nall = document.getElementById('oe-nall'); if (nall) nall.addEventListener('click', () => { const was = OE.tbl.all; OE.tbl.all = !was; redrawT(); if (was) document.getElementById('neighbours').scrollIntoView({block: 'start'}); });
+  // Get the data (22 November 2026): this school and its 50 similar schools as CSV, every column, with the data version
+  const csvb = document.getElementById('oe-csv');
+  if (csvb) csvb.addEventListener('click', async () => { const r = S(), nb = N(); if (!r || !nb.length) return;
+    let ver = ''; try { const b = await fetch('/explorer/data/build.json', {cache: 'no-cache'}).then((x) => x.json()); ver = b.version || (b.built || '').slice(0, 10); } catch (e) { ver = ''; }
+    const cols = Object.keys(nb[0]).filter((c) => c !== 'nn' && c[0] !== '_');
+    const order = String(r.nn || '').split(' '); const pos = (u) => order.indexOf(String(u)) + 1;
+    const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const rows = [['relation', 'list_position'].concat(cols, ['data_version'])];
+    rows.push(['this school', ''].concat(cols.map((c) => r[c]), [ver]));
+    nb.slice().sort((a, b) => pos(a.urn) - pos(b.urn)).forEach((x) => rows.push(['similar school', pos(x.urn) || ''].concat(cols.map((c) => x[c]), [ver])));
+    const blob = new Blob([rows.map((row) => row.map(q).join(',')).join('\n') + '\n'], {type: 'text/csv;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'ofsted-explorer-' + r.urn + '-and-50-similar-schools' + (ver ? '-' + ver : '') + '.csv';
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); });
   const nf = document.getElementById('oe-nf'); if (nf) nf.addEventListener('input', () => { OE.tbl.q = nf.value; redrawT(); });
   [['oe-insp', 'insp'], ['oe-reg', 'reg'], ['oe-near', 'near']].forEach(([id, k]) => { const c = document.getElementById(id); if (c) c.addEventListener('change', () => { OE.tbl[k] = c.checked; redrawT(); }); });
   document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => { th.tabIndex = 0; const go = () => { const k = th.dataset.sort; if (OE.tbl.k === k) OE.tbl.dir *= -1; else { OE.tbl.k = k; OE.tbl.dir = (k === 'name' || k === 'la' || k === 'region' || k === 'miles') ? 1 : -1; } redrawT(); }; th.addEventListener('click', go); th.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); }); });

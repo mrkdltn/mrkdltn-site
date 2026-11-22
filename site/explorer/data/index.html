@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Get the data · Ofsted Explorer · Mark Dalton</title>
+<meta name="description" content="Download the data behind the Ofsted Explorer: every secondary's results and context, every report card, the 50 similar schools of each secondary and the model coefficients, with a data dictionary, sources, licence and checksums.">
+<link rel="canonical" href="https://mrkdltn.com/explorer/data/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Get the data behind the Ofsted Explorer">
+<meta property="og:description" content="Versioned CSVs, a data dictionary, sources, licence and checksums. Rebuild any number in the Explorer.">
+<meta name="theme-color" content="#0B1A2E">
+<link rel="preload" href="/assets/fonts/libre-caslon-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>
+.gd h2{font:400 clamp(26px,3vw,32px)/1.15 var(--display);margin:1.7em 0 .5em}.gd h2:first-of-type{margin-top:.4em}
+.gd h3{font:600 18px/1.3 var(--sans);margin:1.4em 0 .4em}
+.gd .meta,.gd .src{font:400 15.5px/1.55 var(--sans);color:var(--ink-2)}
+.gd .ver{font-family:var(--sans);border:1px solid var(--line);padding:14px 16px;margin:1em 0 1.4em;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:15px}
+.gd .ver dt{color:var(--ink-muted)}.gd .ver dd{margin:0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.gd .tw{overflow-x:auto;margin:.6em 0 1.2em}
+.gd table{border-collapse:collapse;width:100%;font:400 14.5px/1.45 var(--sans)}
+.gd th{text-align:left;font-weight:600;color:var(--ink-muted);border-bottom:1px solid var(--ink-muted);padding:6px 8px;white-space:nowrap}
+.gd td{border-bottom:1px solid var(--line);padding:8px;vertical-align:top}
+.gd td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.gd td code,.gd .sha{font:12.5px/1.4 ui-monospace,Menlo,Consolas,monospace;overflow-wrap:anywhere}
+.gd .files td:first-child a{font-weight:600;white-space:nowrap}
+.gd details{border-top:1px solid var(--line);padding:10px 0}
+.gd details:last-of-type{border-bottom:1px solid var(--line)}
+.gd summary{cursor:pointer;font:600 16px/1.4 var(--sans)}
+.gd .dict td:first-child{white-space:nowrap}
+.gd .cta{margin:1.6em 0 0;font-family:var(--sans)}
+.gd ol li,.gd ul li{margin:.3em 0}
+.gd .fsize{color:var(--ink-muted);white-space:nowrap}
+@media(max-width:700px){.gd .files thead{display:none}.gd .files,.gd .files tbody,.gd .files tr,.gd .files td{display:block}.gd .files tr{border-bottom:1px solid var(--line);padding:10px 0}.gd .files td{border:0;padding:2px 0}.gd .files td:nth-child(3){display:none}
+.gd .dict thead{display:none}.gd .dict,.gd .dict tbody,.gd .dict tr,.gd .dict td{display:block}.gd .dict tr{border-bottom:1px solid var(--line);padding:10px 0}.gd .dict td{border:0;padding:2px 0}.gd .dict td:nth-child(3),.gd .dict td:nth-child(4){font-size:13px;color:var(--ink-muted)}.gd .dict td:nth-child(3)::before{content:"Unit: "}.gd .dict td:nth-child(4)::before{content:"Source: "}
+.gd .ver{grid-template-columns:1fr;gap:2px}.gd .ver dd{margin-bottom:8px}}
+</style>
+</head>
+<body class="stone">
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-head band midnight"><div class="wrap">
+  <a class="brand" href="/">Mark Dalton</a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/" aria-current="page">Ofsted Explorer</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+<main id="main">
+<div class="band midnight article-band"><div class="wrap"><header class="article-head"><p class="label">Ofsted Explorer &middot; Get the data</p><h1>Every number in the Explorer, ready to download</h1><p class="standfirst">The files behind the Ofsted Explorer, rebuilt with the site every morning: what each column means, where it comes from, and how to check it.</p></header></div></div>
+<div class="wrap"><div class="prose prose-sheet gd">
+
+<h2>This version</h2>
+<p>Every download carries the same data version. Quote it when you cite the data, and check a file against its checksum below.</p>
+<dl class="ver" id="gd-ver">
+  <dt>Data version</dt><dd id="gd-version">Loading…</dd>
+  <dt>Built</dt><dd id="gd-built">—</dd>
+  <dt>Latest inspection included</dt><dd id="gd-insp">—</dd>
+  <dt>Code version</dt><dd id="gd-commit">—</dd>
+</dl>
+<noscript><p>The version details need JavaScript. The same information is in <a href="/explorer/data/build.json">build.json</a>.</p></noscript>
+
+<h2>Downloads</h2>
+<p>Comma-separated, UTF-8, one header row. Blank means no figure: not published, not applicable, or withheld because the group is too small.</p>
+<div class="tw"><table class="files">
+  <thead><tr><th>File</th><th>What it holds</th><th>SHA-256</th></tr></thead>
+  <tbody id="gd-files">
+    <tr><td><a href="csv/secondaries.csv">secondaries.csv</a></td><td>One row per secondary school with 2025/26 GCSE results: results, context, the similar-schools and contextual-model figures, and report card grades.</td><td></td></tr>
+    <tr><td><a href="csv/report-cards.csv">report-cards.csv</a></td><td>One row per school with an Ofsted report card, every phase.</td><td></td></tr>
+    <tr><td><a href="csv/similar-schools.csv">similar-schools.csv</a></td><td>The 50 similar schools of each secondary in the open replica: one row per school and similar school.</td><td></td></tr>
+    <tr><td><a href="csv/model.csv">model.csv</a></td><td>How the comparisons are built: factor means and standard deviations, the published similar-schools weights and both contextual models' coefficients.</td><td></td></tr>
+    <tr><td><a href="csv/dictionary.csv">dictionary.csv</a></td><td>Every column in the files above: what it means, its unit and its source.</td><td></td></tr>
+  </tbody>
+</table></div>
+<p><b>One school and its 50 similar schools.</b> Open any secondary in the <a href="/explorer/">Explorer</a> and choose <i>Download CSV</i> under its table of 50 similar schools. The file has the columns of <code>secondaries.csv</code> that the Explorer loads (all but <code>relig</code>, <code>ss_z</code> and <code>ss_mean_25</code>), with two more at the front (which row is the school itself, and each similar school's place in its list) and the data version at the end.</p>
+<p>The Explorer itself loads compact JSON versions of the same data (<a href="ks4.json">ks4.json</a>, <a href="rc.json">rc.json</a>, <a href="model.json">model.json</a>, <a href="build.json">build.json</a>). They hold the same figures; the CSVs are easier to use.</p>
+
+<h2>What each column means</h2>
+<p>The full dictionary is also a download, <a href="csv/dictionary.csv">dictionary.csv</a>.</p>
+<div id="gd-dict"><p>Loading the dictionary…</p></div>
+
+<h2>Rebuild any number</h2>
+<p>Every figure on a school page can be worked out from these files.</p>
+<ul>
+  <li><b>Gap to national:</b> <code>a8</code> minus the England average, which is the average of <code>a8</code> across <code>secondaries.csv</code> weighted by <code>pupils</code> (47.6 for 2025/26). It is given as <code>nat_diff</code>.</li>
+  <li><b>Similar schools:</b> take the school's 50 from <code>similar-schools.csv</code>, average their <code>a8</code> (<code>ss_mean</code>) and subtract it from the school's (<code>ss_diff</code>). The reading uses the standard error √(14.2² ÷ pupils + ss_sd² ÷ 50): above or below beyond 1.96 standard errors, well above or well below when the gap is also larger than <code>ss_sd</code>. 14.2 is the pupil-level spread of Attainment 8, from the DfE's 2023/24 Progress 8 confidence intervals.</li>
+  <li><b>Contextual model:</b> expected Attainment 8 is the intercept plus each factor times its coefficient in <code>model.csv</code>. English and maths 5+ uses the logistic form given there, so it stays between 0% and 100%. The result is in line within ±2 Attainment 8 points (±4 percentage points for English and maths) for a cohort of 180, scaled by √(180 ÷ pupils).</li>
+  <li><b>Likely ranges:</b> each gap plus or minus the margin its reading uses: 1.96 standard errors for national and similar schools, the cohort-scaled band for the contextual model, and the DfE's published interval (<code>p8lo_24</code> to <code>p8hi_24</code>) for Progress 8.</li>
+</ul>
+<p>The code that builds the files is open (<a href="https://github.com/mrkdltn/mrkdltn-site">github.com/mrkdltn/mrkdltn-site</a>, MIT licence). Check out the code version above and run <code>python3 scripts/build_data.py</code>, then <code>python3 scripts/test_downloads.py</code>, which rebuilds the similar-schools figures and both models from the CSVs and checks them.</p>
+
+<h2>What is not here</h2>
+<ul>
+  <li><b>Groups under 10 pupils.</b> The Attainment 8 of disadvantaged pupils (<code>dis_a8</code>), or of other pupils (<code>nondis_a8</code>), is left blank wherever that group is estimated at fewer than 10 pupils (the GCSE cohort times the disadvantaged share, rounded). <span id="gd-supp"></span></li>
+  <li><b>Pupil-level data.</b> Everything here is published at school level. The official similar-schools groups use pupil-level data that is not public; these are an open replica.</li>
+  <li><b>POLAR4,</b> one factor in the official similar-schools model, is not public and is left out; its weight is shared among the others.</li>
+  <li><b>Ethnicity</b> is not used in matching or in any expected score.</li>
+</ul>
+
+<h2>Sources and dates</h2>
+<ul class="src">
+  <li>DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final. Provisional results are revised in February 2027, when the data will be rebuilt.</li>
+  <li>DfE, Schools, pupils and their characteristics, January 2026.</li>
+  <li>DfE, Special educational needs in England, January 2026.</li>
+  <li>Ofsted, management information, latest inspections as at 31 October 2026, with report cards published since then read from Ofsted's reports website each morning.</li>
+  <li>DfE, Get Information about Schools, daily extract, for local authority, region, trust, district, constituency and location.</li>
+  <li>DfE and Ofsted, Similar schools model for attainment: technical note (16 July 2026).</li>
+</ul>
+<p class="meta">Each file's columns are traced to these sources in the dictionary. The build records a SHA-256 checksum for every input file in <a href="build.json">build.json</a>.</p>
+
+<h2>Licence and how to cite</h2>
+<p>The downloads contain public sector information licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>. The Explorer's own derived figures (the similar-schools groups and averages, readings, the contextual models and their expected values) are released on the same terms, so you can copy, adapt and republish everything here, commercially or not, provided you acknowledge the source.</p>
+<p>Please cite as: <i>Ofsted Explorer data, mrkdltn.com/explorer/data/, data version <span id="gd-cite-ver">[version]</span>. Contains public sector information licensed under the Open Government Licence v3.0.</i></p>
+<p>None of these figures is a judgement on a school, and none should be read as one. One year of provisional results is noisy; look for patterns over time.</p>
+
+<h2>Errors and changes</h2>
+<p>If something looks wrong, use the <a href="/explorer/#feedback">feedback form</a> and I will correct it. Every change to the Explorer and its data is listed on <a href="/explorer/updates/">What's new</a>.</p>
+<p class="cta"><a class="btn" href="/explorer/">Open the Ofsted Explorer</a></p>
+</div></div>
+</main>
+<footer class="site-foot"><div class="wrap">
+  <span>© 2026 Mark Dalton. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/writing/">Writing</a> · <a href="/explorer/">Ofsted Explorer</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<script src="/explorer/data/data.js" defer></script>
+</body>
+</html>
