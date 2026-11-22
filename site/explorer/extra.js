@@ -121,7 +121,11 @@
     if (cnt) cnt.textContent = 'Showing ' + (rows.length - 1) + ' of ' + nb.length;
     document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => th.setAttribute('aria-sort', th.dataset.sort === T.k ? (T.dir > 0 ? 'ascending' : 'descending') : 'none'));
     const o = (v, f) => (ok(v) ? f(+v) : '—');
-    rows.forEach((x) => { const tr = el('tr'); const self = x === r; if (self) tr.className = 'self'; else { tr.tabIndex = 0; tr.style.cursor = 'pointer'; tr.addEventListener('click', () => OE.choose(x.urn)); tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') OE.choose(x.urn); }); }
+    // phones show the first 10 similar schools (and this school wherever it ranks) until "Show all" is pressed
+    const nOther = rows.length - 1; let k = 0; const fb = document.getElementById('oe-nall');
+    if (fb) { fb.hidden = nOther <= 10; fb.textContent = OE.tbl.all ? 'Show the first 10' : 'Show all ' + nOther; fb.setAttribute('aria-expanded', OE.tbl.all ? 'true' : 'false'); }
+    document.getElementById('neighbours').classList.toggle('oe-nall', !!OE.tbl.all);
+    rows.forEach((x) => { const tr = el('tr'); const self = x === r; if (self) tr.className = 'self'; else { if (++k > 10) tr.className = 'oe-x10'; tr.tabIndex = 0; tr.style.cursor = 'pointer'; tr.addEventListener('click', () => OE.choose(x.urn)); tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') OE.choose(x.urn); }); }
       const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [OE.mfmt(x[mf], mf), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(x.pupils, d3.format(',.0f')), 'n'], [o(gapOf(x), fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
       cells.forEach(([t, c]) => tr.append(el('td', c, String(t))));
       const td = el('td'); const gv = x[T.area];
@@ -133,6 +137,7 @@
   const tsel = document.getElementById('oe-tarea'), tgh = document.getElementById('oe-tgh');
   if (tsel) tsel.addEventListener('change', () => { OE.tbl.area = tsel.value; if (tgh) tgh.textContent = tsel.options[tsel.selectedIndex].text; redrawT(); });
   const redrawT = () => dash.draw('neigh');
+  const nall = document.getElementById('oe-nall'); if (nall) nall.addEventListener('click', () => { const was = OE.tbl.all; OE.tbl.all = !was; redrawT(); if (was) document.getElementById('neighbours').scrollIntoView({block: 'start'}); });
   const nf = document.getElementById('oe-nf'); if (nf) nf.addEventListener('input', () => { OE.tbl.q = nf.value; redrawT(); });
   [['oe-insp', 'insp'], ['oe-reg', 'reg'], ['oe-near', 'near']].forEach(([id, k]) => { const c = document.getElementById(id); if (c) c.addEventListener('change', () => { OE.tbl[k] = c.checked; redrawT(); }); });
   document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => { th.tabIndex = 0; const go = () => { const k = th.dataset.sort; if (OE.tbl.k === k) OE.tbl.dir *= -1; else { OE.tbl.k = k; OE.tbl.dir = (k === 'name' || k === 'la' || k === 'region' || k === 'miles') ? 1 : -1; } redrawT(); }; th.addEventListener('click', go); th.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); }); });
@@ -188,8 +193,9 @@
   // ---------- actions ----------
   const pr = document.getElementById('oe-print'); if (pr) pr.addEventListener('click', () => { const s = S(); const d = document.getElementById('oe-printdate'); if (d) d.textContent = (s ? s.name + ' · ' : '') + 'generated ' + d3.timeFormat('%-d %B %Y')(new Date()) + ' · mrkdltn.com/explorer/#urn=' + (s ? s.urn : ''); const t = document.title; if (s) document.title = 'Ofsted Explorer - ' + s.name; window.print(); document.title = t; });
   const cp = document.getElementById('oe-copy'); if (cp) cp.addEventListener('click', async () => { try { const sc = S(); let u = location.href; if (sc && sc.urn) { const h = new URLSearchParams(location.hash.slice(1)); h.delete('urn'); const t = h.toString(); u = location.origin + '/explorer/school/' + sc.urn + '/' + (t ? '#' + t : ''); } await navigator.clipboard.writeText(u); cp.textContent = 'Link copied'; } catch (e) { cp.textContent = location.href; } setTimeout(() => { cp.textContent = 'Copy link'; }, 1800); });
-  // section nav highlight
-  const links = [...document.querySelectorAll('.oe-nav a')]; if ('IntersectionObserver' in window && links.length) { const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); }); }, {rootMargin: '-30% 0px -60% 0px'}); links.forEach((a) => { const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) io.observe(t); }); }
+  // section nav highlight; on phones the sticky menu scrolls sideways to keep the current section's link in view
+  const phone = window.matchMedia('(max-width: 640px)');
+  const links = [...document.querySelectorAll('.oe-nav a')]; if ('IntersectionObserver' in window && links.length) { const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => { const on = a.getAttribute('href') === '#' + e.target.id; a.classList.toggle('on', on); if (on && phone.matches) { const p = a.parentNode; p.scrollTo({left: p.scrollLeft + a.getBoundingClientRect().left - p.getBoundingClientRect().left - 16, behavior: 'smooth'}); }; }); }); }, {rootMargin: '-30% 0px -60% 0px'}); links.forEach((a) => { const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) io.observe(t); }); }
 })();
 document.querySelectorAll('.oe-nav a').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) t.scrollIntoView({behavior: 'smooth', block: 'start'}); }));
 

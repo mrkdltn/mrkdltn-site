@@ -328,3 +328,10 @@ i.nm{background:#55627A;width:2px}
 .oe-fbnote{font-size:14px;line-height:1.5;color:#55627A;max-width:64ch}
 .oe-fbact{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 #oe-fb-status{font-size:15px;color:#2F6F66}#oe-fb-status.bad{color:#A3402B}
+/* shorter phone page (22 November 2026): the 50 similar schools fold to the first 10 on phones */
+.oe-nallp{display:none}
+@media screen and (max-width:640px){
+  #neighbours:not(.oe-nall) #oe-ntable tr.oe-x10{display:none}
+  .oe-nallp{display:block;margin:16px 0 0}
+  body.explorer .oe-nallp .oe-btn{width:100%;min-height:44px;font-size:15px}
+}
