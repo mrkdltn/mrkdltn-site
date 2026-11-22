@@ -16,6 +16,7 @@
   const school = () => { const s = dash.data('school'); return s.status === 'ok' && s.data && s.data[0] ? s.data[0] : null; };
   const slug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
   const save = (blob, name) => { const a = el('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+  const cap = (t) => String(t).charAt(0).toUpperCase() + String(t).slice(1);
   const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
 
   // fonts, embedded in exported images so they render the same anywhere
@@ -26,7 +27,11 @@
 
   // copy the page's computed styles onto a cloned SVG, so it looks the same outside the page
   const PROPS = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-linejoin', 'stroke-linecap', 'paint-order', 'letter-spacing', 'opacity', 'font-family', 'font-size', 'font-weight', 'text-anchor', 'dominant-baseline', 'visibility', 'display'];
-  const inline = (a, b) => { if (a.nodeType !== 1) return; const cs = getComputedStyle(a); b.setAttribute('style', PROPS.map((p) => p + ':' + cs.getPropertyValue(p)).join(';'));
+  const DEF = {'fill-opacity': '1', stroke: 'none', 'stroke-width': '1px', 'stroke-opacity': '1', 'stroke-dasharray': 'none', 'stroke-linejoin': 'miter', 'stroke-linecap': 'butt', 'paint-order': 'normal', 'letter-spacing': 'normal', opacity: '1', visibility: 'visible', display: 'inline', 'dominant-baseline': 'auto', 'text-anchor': 'start'};
+  const FONT = new Set(['font-family', 'font-size', 'font-weight', 'text-anchor', 'dominant-baseline', 'letter-spacing']);
+  // only what differs from the defaults, and font styles only on text, keeps an SVG of 3,000 dots small
+  const inline = (a, b) => { if (a.nodeType !== 1) return; const cs = getComputedStyle(a), txt = /^(text|tspan|g|svg)$/.test(a.tagName);
+    b.setAttribute('style', PROPS.filter((p) => txt || !FONT.has(p)).map((p) => [p, cs.getPropertyValue(p)]).filter(([p, v]) => DEF[p] !== v).map(([p, v]) => p + ':' + v).join(';'));
     for (let i = 0; i < a.children.length; i++) inline(a.children[i], b.children[i]); };
 
   // wrap text to a width, roughly (average glyph about 0.52 em in Hanken Grotesk)
@@ -34,12 +39,12 @@
     String(s).split(/\s+/).forEach((w) => { if ((line + ' ' + w).trim().length > max && line) { out.push(line); line = w; } else line = (line + ' ' + w).trim(); }); if (line) out.push(line); return out; };
 
   // the exported image: title, the school, the figure, then the source and data version, on white
-  const compose = async (cfg, fig) => { await verP; const s = school(); const W = Math.max(fig.w, 520), pad = 28;
+  const compose = async (cfg, fig) => { await verP; const s = cfg.noSchool ? null : school(); const W = Math.max(fig.w, 520), pad = 28;
     // a figure drawn narrower than the image (a phone) is scaled up to fill it
     const FW = W, FH = Math.round(fig.h * W / fig.w);
     const tl = wrap(cfg.title(), 22, W), sl = s ? wrap(s.name + (s.la ? ', ' + s.la : '') + (s.urn ? ' (URN ' + s.urn + ')' : ''), 14, W) : [];
     const kl = cfg.key ? wrap(cfg.key(), 13, W) : [];
-    const src = wrap('Source: ' + cfg.source() + ' Data version ' + (VER || 'unknown') + '. mrkdltn.com/explorer', 12, W);
+    const src = wrap('Source: ' + cap(cfg.source()) + ' Data version ' + (VER || 'unknown') + '. mrkdltn.com/explorer', 12, W);
     const top = pad + tl.length * 28 + sl.length * 19 + kl.length * 18 + 24, H = top + FH + 18 + src.length * 17 + pad;
     const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('xmlns', NS); svg.setAttribute('width', W + 2 * pad); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W + 2 * pad} ${H}`);
     const st = document.createElementNS(NS, 'style'); st.textContent = await fonts(); svg.append(st);
@@ -54,8 +59,8 @@
     y = top + FH + 26; src.forEach((l) => { text(l, pad, y, 12, '"Hanken Grotesk",Arial,sans-serif', 400, '#55627A'); y += 17; });
     return {str: new XMLSerializer().serializeToString(svg), w: W + 2 * pad, h: H}; };
 
-  const figure = (cfg) => { const f = cfg.svg(); if (!f) return null; if (f.live) { const c = f.node.cloneNode(true); inline(f.node, c); c.querySelectorAll('[class]').forEach((n) => n.removeAttribute('class')); return {node: c, w: f.w, h: f.h}; } return f; };
-  const fname = (cfg, ext) => { const s = school(); return 'ofsted-explorer-' + cfg.name + (s ? '-' + s.urn + '-' + slug(s.name) : '') + (VER ? '-' + VER : '') + '.' + ext; };
+  const figure = async (cfg) => { const f = await cfg.svg(); if (!f) return null; if (f.live) { const c = f.node.cloneNode(true); inline(f.node, c); c.querySelectorAll('[class]').forEach((n) => n.removeAttribute('class')); return {node: c, w: f.w, h: f.h}; } return f; };
+  const fname = (cfg, ext) => { const s = cfg.noSchool ? null : school(); return 'ofsted-explorer-' + cfg.name + (s ? '-' + s.urn + '-' + slug(s.name) : '') + (VER ? '-' + VER : '') + '.' + ext; };
 
   OE.exhibit = (cfg) => {
     const host = cfg.host; if (!host || host.dataset.exhibit) return; host.dataset.exhibit = cfg.name;
@@ -69,24 +74,29 @@
       const tb = el('table'); if (t.caption) tb.append(el('caption', 'sr-only', t.caption)); const th = el('thead'), hr = el('tr'); t.cols.forEach((c, i) => { const h = el('th', t.num && t.num[i] ? 'n' : '', c); h.scope = 'col'; hr.append(h); }); th.append(hr); tb.append(th);
       const body = el('tbody'); t.rows.forEach((r) => { const tr = el('tr'); if (r.self) tr.className = 'self'; r.cells.forEach((v, i) => tr.append(el('td', t.num && t.num[i] ? 'n' : '', v === null || v === undefined || v === '' ? '—' : String(v)))); body.append(tr); }); tb.append(body); tw.append(tb);
       if (t.note) tw.append(el('p', 'oe-note', t.note)); };
-    const setSrc = () => { srcP.replaceChildren('Source: ' + cfg.source() + (VER ? ' Data version ' + VER + '. ' : ' '), Object.assign(el('a', '', 'About this data'), {href: '/explorer/data/'})); };
+    const setSrc = () => { srcP.replaceChildren('Source: ' + cap(cfg.source()) + (VER ? ' Data version ' + VER + '. ' : ' '), Object.assign(el('a', '', 'About this data'), {href: '/explorer/data/'})); };
     verP.then(setSrc); setSrc();
     const show = (table) => { bC.setAttribute('aria-pressed', String(!table)); bT.setAttribute('aria-pressed', String(table)); host.hidden = table; (cfg.hideAlso || []).forEach((e) => { if (e) e.hidden = table; }); tw.hidden = !table; if (table) fill(); else if (cfg.onChart) cfg.onChart(); };
     bC.addEventListener('click', () => show(false)); bT.addEventListener('click', () => show(true));
     const busy = (b, f) => async () => { const t = b.textContent; b.disabled = true; try { await f(); } catch (e) { console.error(e); } b.disabled = false; b.textContent = t; };
     const bP = el('button', '', 'PNG'), bS = el('button', '', 'SVG'), bV = el('button', '', 'CSV'); [bP, bS, bV].forEach((b) => { b.type = 'button'; dl.append(b); });
     bP.setAttribute('aria-label', 'Download this chart as a PNG image'); bS.setAttribute('aria-label', 'Download this chart as an SVG image'); bV.setAttribute('aria-label', 'Download this chart\'s data as CSV');
-    bS.addEventListener('click', busy(bS, async () => { const f = figure(cfg); if (!f) return; const o = await compose(cfg, f); save(new Blob([o.str], {type: 'image/svg+xml'}), fname(cfg, 'svg')); }));
-    bP.addEventListener('click', busy(bP, async () => { const f = figure(cfg); if (!f) return; const o = await compose(cfg, f); const k = 2;
+    bS.addEventListener('click', busy(bS, async () => { const f = await figure(cfg); if (!f) return; const o = await compose(cfg, f); save(new Blob([o.str], {type: 'image/svg+xml'}), fname(cfg, 'svg')); }));
+    bP.addEventListener('click', busy(bP, async () => { const f = await figure(cfg); if (!f) return; const o = await compose(cfg, f); const k = 2;
       const img = new Image(); img.src = 'data:image/svg+xml;base64,' + b64(new TextEncoder().encode(o.str)); await img.decode();
       const cv = el('canvas'); cv.width = o.w * k; cv.height = o.h * k; const x = cv.getContext('2d'); x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, cv.width, cv.height); x.drawImage(img, 0, 0, cv.width, cv.height);
       save(await new Promise((r) => cv.toBlob(r, 'image/png')), fname(cfg, 'png')); }));
     bV.addEventListener('click', busy(bV, async () => { await verP; const t = cfg.table(); if (!t) return; const s = school();
       const head = (t.csvCols || t.cols).concat(['source', 'data_version']); const rows = (t.csv || t.rows.map((r) => r.cells)).map((r) => r.concat([cfg.source(), VER]));
       const body = [head].concat(rows).map((r) => r.map(q).join(',')).join('\n') + '\n'; save(new Blob([body], {type: 'text/csv;charset=utf-8'}), fname(cfg, 'csv')); }));
+    // options: noTable (the figure already is a table), kinds (which downloads)
+    const kinds = cfg.kinds || ['PNG', 'SVG', 'CSV']; [bP, bS, bV].forEach((b) => { if (!kinds.includes(b.textContent)) b.remove(); });
+    if (cfg.noTable) seg.hidden = true;
     bar.append(seg, dl); host.after(bar); bar.after(tw); tw.after(srcP);
     // keep an open table in step with the chart: redraws replace the chart's children, data changes fire onData
-    const sync = () => { if (!tw.hidden) fill(); setSrc(); };
-    new MutationObserver(sync).observe(host, {childList: true}); dash.onData(() => requestAnimationFrame(sync));
+    // a figure with nothing to show (a primary school's method figures, say) shows no toolbar or source
+    const has = () => { try { const t = cfg.table(); return !!t && ((t.rows && t.rows.length) || (t.csv && t.csv.length)); } catch (e) { return false; } };
+    const sync = () => { const h = has(); bar.hidden = !h; srcP.hidden = !h; if (!h && !tw.hidden) show(false); if (!tw.hidden) fill(); setSrc(); };
+    new MutationObserver(sync).observe(host, {childList: true}); dash.onData(() => requestAnimationFrame(sync)); sync();
   };
 })();

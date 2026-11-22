@@ -112,13 +112,14 @@
       const t = el('div', 'bar'); const b = el('i'); b.style.width = (100 * w / 0.46) + '%'; t.append(b); row.append(t);
       row.append(el('div', 'v', Math.round(100 * w) + '%'), el('div', 'v r', f === 'polar4' ? '—' : Math.round(100 * w / kept) + '%'));
       box.append(row); });
+    OE.xd = OE.xd || {}; OE.xd.mweights = ORDER.map((f) => ({lab: FAC[f].lab, sub: FAC[f].sub, official: M.weights[f], replica: f === 'polar4' ? null : M.weights[f] / kept}));
     const h = el('div', 'oe-wrow head'); h.append(el('div', 'lab', ''), el('div', 'bar', ''), el('div', 'v', 'Official'), el('div', 'v r', 'Replica')); box.prepend(h);
   };
   dash.draw('mweights', drawW);
 
   // ---------------------------------------------------------------- 2b. how this school's 50 are chosen
   const drawSel = (box) => {
-    box.replaceChildren(); const r = S(), k = K();
+    box.replaceChildren(); const r = S(), k = K(); OE.xd = OE.xd || {}; OE.xd.msel = null;
     if (!r || !k || r.rc_only || r.phase && r.phase !== 'Secondary') { box.append(el('p', 'oe-ofv-empty', 'Choose a secondary school with 2025/26 results to see its own 50 chosen here.')); return; }
     if (!M) { later('msel'); return; }
     const d = k.filter((x) => x.urn !== r.urn && used().every((f) => ok(x[f]))).map((x) => ({x, d: dist(r, x)})).sort((a, b) => a.d - b.d);
@@ -130,6 +131,7 @@
     const fig = el('div', 'oe-sel'); const t = el('div', 't');
     const tw = Math.max(280, (box.clientWidth || 700) - 12); const rw = dodge(near.map((o) => X(o.d)), tw, 10); t.style.height = (16 + 10 * (Math.max(...rw) + 1)) + 'px';
     near.forEach((o, i) => { const dot = el('i', i < 50 ? 'b' : 'o'); dot.style.left = X(o.d) + '%'; dot.style.bottom = (6 + 10 * rw[i]) + 'px'; dot.setAttribute('data-tip', o.x.name + (i < 50 ? ', similar school ' : ', ') + 'number ' + (i + 1) + ' by distance'); t.append(dot); });
+    OE.xd.msel = {cut: (cut + near[50].d) / 2, max, row: rw, near: near.map((o, i) => ({urn: o.x.urn, name: o.x.name, la: o.x.la, region: o.x.region, d: o.d, in: i < 50}))};
     const c = el('i', 'cut'); c.style.left = X((cut + near[50].d) / 2) + '%'; t.append(c);
     const me = el('i', 'me'); me.style.left = '0%'; t.append(me);
     fig.append(t);
@@ -143,7 +145,7 @@
   // ---------------------------------------------------------------- 3. contextual model, factor by factor
   const sig = (e) => 1 / (1 + Math.exp(-e));
   const drawWf = (box) => {
-    box.replaceChildren(); const r = S();
+    box.replaceChildren(); const r = S(); OE.xd = OE.xd || {}; OE.xd.mwf = null;
     if (!r || r.rc_only || !ok(r.a8)) { box.append(el('p', 'oe-ofv-empty', 'Choose a secondary school with 2025/26 results to see its expected result built up here.')); return; }
     if (!M) { later('mwf'); return; }
     const m = OE.meas(), MM = OE.MEAS[m], mod = M[m], F = M.factors, b = mod.coef;
@@ -171,6 +173,7 @@
       else { const mk = el('i', cls === 'act' ? 'me' : 'tk'); mk.style.left = X(a) + '%'; t.append(mk); }
       rw.append(t, el('div', 'v', val)); return rw; };
     const kk = el('div', 'oe-plegend'); const k1 = el('span'); k1.append(el('i', 'wf-up'), 'Raises the expectation'); const k2 = el('span'); k2.append(el('i', 'wf-dn'), 'Lowers it'); const k3 = el('span'); k3.append(el('i', 'me'), 'Actual result'); kk.append(k1, k2, k3); box.append(kk);
+    { let rr = base; OE.xd.mwf = {m, label: MM.label, base, expd, act, lo, hi, fmtV, fmtD, steps: parts.map((p) => { const st = M.stats[p.f]; const a = rr; rr += p.v; return {lab: FAC[p.f].lab, school: ok(r[p.f]) ? FAC[p.f].fmt(+r[p.f]) : 'not known, average used', england: p.f === 'idaci_q' ? 'fifth ' + st.mean.toFixed(1) : FAC[p.f].fmt(st.mean), v: p.v, from: a, to: rr}; })}; }
     box.append(row('base', 'A school at the England average on every factor', null, base, null, fmtV(base)));
     run = base;
     parts.forEach((p) => { const st = M.stats[p.f]; const v0 = run; run += p.v; const sv = ok(r[p.f]) ? FAC[p.f].fmt(+r[p.f]) : 'not known, average used';
