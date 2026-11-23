@@ -243,6 +243,6 @@
     let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } });
     addEventListener('hashchange', () => { readHash(); sel.value = state.area; draw(); });
     draw();
-    if (window.AXsearch) AXsearch($('ax-q'), $('ax-qlist'), (r) => { location.href = AXsearch.href(r.urn); });
+    if (window.AXsearch) AXsearch($('ax-q'), $('ax-qlist'), AXsearch.go, true);
   }).catch((e) => { console.error(e); $('ax-date').textContent = 'The attendance data could not be loaded. Please try again shortly.'; });
 })();

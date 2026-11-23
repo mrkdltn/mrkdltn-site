@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trusts and constituencies · Attendance Explorer · Mark Dalton</title>
+<meta name="description" content="School attendance in England, day by day: every local authority and region read against England and against last year. Built from the DfE's fortnightly attendance data.">
+<link rel="canonical" href="https://mrkdltn.com/attendance/group/">
+<meta property="og:title" content="Attendance Explorer">
+<meta property="og:description" content="School attendance in every local authority in England, day by day, against England and last year. Free, built from public data.">
+<meta property="og:url" content="https://mrkdltn.com/attendance/group/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/attendance/attendance.css">
+</head>
+<body class="explorer">
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+
+<main class="ax">
+  <header class="ax-top">
+    <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · <span id="gx-kind">Trusts and constituencies</span></p>
+    <h1 id="gx-name">Find a trust or constituency</h1>
+    <p class="ax-date" id="gx-meta">Absence across the schools of any academy trust or parliamentary constituency in England, built from the DfE’s school-level statistics.</p>
+  </header>
+
+  <section class="ax-controls" aria-label="Search">
+    <label class="ax-field ax-find"><span>Trust, constituency or school</span>
+      <input id="gx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Start typing a name" role="combobox" aria-expanded="false" aria-controls="gx-list" aria-autocomplete="list">
+      <ul id="gx-list" class="ax-pop" role="listbox" hidden></ul></label>
+    <div class="ax-field" id="gx-phase-f" hidden><span id="gx-phase-l">Schools</span>
+      <div class="ax-seg" id="gx-phase" role="group" aria-labelledby="gx-phase-l"></div></div>
+    <div class="ax-field" id="gx-meas-f" hidden><span id="gx-meas-l">Measure</span>
+      <div class="ax-seg" id="gx-meas" role="group" aria-labelledby="gx-meas-l"><button type="button" data-m="abs">Overall absence</button><button type="button" data-m="pa">Persistent absence</button></div></div>
+  </section>
+
+  <div id="gx-body" hidden>
+  <section class="ax-card">
+    <h2 id="gx-period"></h2>
+    <p class="ax-reading" id="gx-reading"></p>
+    <div class="ax-kpis" id="gx-kpis"></div>
+  </section>
+
+  <section class="ax-card" id="gx-strip-c">
+    <h2>School by school</h2>
+    <p class="ax-sub">Each circle is one of its <span class="gx-phase-n"></span>, sized by the number of pupils and placed by <span class="gx-meas-n"></span>. Tap a circle for the school.</p>
+    <div id="gx-strip" class="ax-chart"></div>
+    <p class="ax-reading" id="gx-strip-r"></p>
+  </section>
+
+  <section class="ax-card" id="gx-hist-c">
+    <h2>Year by year</h2>
+    <p class="ax-sub" id="gx-hist-s"></p>
+    <div id="gx-hist" class="ax-chart"></div>
+  </section>
+
+  <section class="ax-card" id="gx-over-c">
+    <h2 id="gx-over-h"></h2>
+    <p class="ax-sub" id="gx-over-s"></p>
+    <div id="gx-over" class="ax-chart"></div>
+    <p class="ax-reading" id="gx-over-r"></p>
+  </section>
+
+  <section class="ax-card">
+    <h2>The schools</h2>
+    <p class="ax-sub">In alphabetical order, for the <span id="gx-table-p"></span>. A dash means no rate is shown.</p>
+    <div class="ax-tablewrap"><table class="ax-table" id="gx-table"></table></div>
+  </section>
+  </div>
+
+  <section class="ax-card ax-method">
+    <h2>Sources and method</h2>
+    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files: <span id="gx-src"></span>. Trust and constituency of each school from Get Information about Schools. Open Government Licence v3.0. The DfE publishes no absence figures for trusts or constituencies; these are built from its school figures.</p>
+    <p><b>Pooled rates.</b> Sessions missed across the schools over sessions possible, and persistent absentees over pupils on roll. Phases are kept apart because primary, secondary and special schools differ so much that a single figure would mostly describe the mix.</p>
+    <p><b>When a pooled rate is shown.</b> Only where at least three schools of the phase contribute, and for a trust only where it has five or more schools in all. Smaller groups list their schools without a pooled figure.</p>
+    <p><b>Trusts are as they stand today.</b> A trust’s earlier years are the earlier years of the schools it holds now, including years before they joined, and including a predecessor school where there was exactly one. They describe these schools, not the trust’s record. The list includes the trusts of some maintained foundation schools, as recorded by the DfE.</p>
+    <p><b>Constituencies.</b> 2024 boundaries. A figure describes the schools located in the constituency, not the children who live there; many pupils cross boundaries to school.</p>
+    <p><b>The funnel.</b> Each trust’s rate is set against its number of pupils. The curved bands show where about 95% and 99.8% of trusts of a given size fall, widened to match the spread actually seen between trusts. Small trusts vary more by chance alone, so position within the band says little.</p>
+    <p><b>Maps.</b> Hexagon layout from <a href="https://github.com/odileeds/hexmaps">Open Innovations</a> (MIT licence), one hexagon per constituency.</p>
+  </section>
+</main>
+
+
+<footer class="site-foot noprint"><div class="wrap">
+  <span>© 2026 Mark Dalton. Built from public DfE and Ofsted data. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<div class="ax-tip" id="ax-tip" role="status" hidden></div>
+<script src="/assets/d3.min.js"></script>
+<script src="/attendance/search.js"></script>
+<script src="/attendance/group.js"></script>
+</body>
+</html>

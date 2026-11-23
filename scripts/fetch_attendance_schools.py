@@ -115,12 +115,12 @@ def main():
             w.writerow(list(k) + rows[k])
     with open(os.path.join(OUT, 'schools.csv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f, lineterminator='\n')
-        w.writerow(['urn', 'name', 'phase', 'la', 'town', 'postcode', 'trust', 'ward_code', 'ward', 'pcon_code', 'pcon', 'open', 'pred'])
+        w.writerow(['urn', 'name', 'phase', 'la', 'town', 'postcode', 'trust_id', 'trust', 'ward_code', 'ward', 'pcon_code', 'pcon', 'open', 'pred'])
         for u in sorted(have, key=int):
             g, n = G.get(u, {}), names[u]
             p = pred.get(u, [])
             w.writerow([u, g.get('EstablishmentName') or n[1], n[2], n[3], g.get('Town', ''), g.get('Postcode', ''),
-                        g.get('Trusts (name)', ''), g.get('AdministrativeWard (code)', ''), g.get('AdministrativeWard (name)', ''),
+                        g.get('Trusts (code)', ''), g.get('Trusts (name)', ''), g.get('AdministrativeWard (code)', ''), g.get('AdministrativeWard (name)', ''),
                         g.get('ParliamentaryConstituency (code)', ''), g.get('ParliamentaryConstituency (name)', ''),
                         '1' if g.get('EstablishmentStatus (name)', '').startswith('Open') else '0', p[0] if len(p) == 1 else ''])
     json.dump({'full_year': files['fy'], 'autumn_spring': files['as'], 'gias': gdate},

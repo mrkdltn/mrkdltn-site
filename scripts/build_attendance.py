@@ -203,23 +203,25 @@ def schools():
         """A school's figures for one period, or None where withheld."""
         return None if v is None or v[0] is None or v[0] < MIN_ENROL or v[2] is None else [v[0]] + v[2:]
 
-    def history(u):
-        """Full-year history under this URN, extended back through single predecessors. Returns ({period: values}, join)."""
-        out, join, seen, cur = {}, None, {u}, u
-        for p, v in rows[u].items():
-            out[p] = shown(v)
+    def raw_history(u):
+        """Every period under this URN, with full years extended back through single predecessors. ({period: raw}, join)."""
+        out, join, seen, cur = dict(rows[u]), None, {u}, u
         while True:
             pr = meta.get(cur, {}).get('pred')
             if not pr or pr in seen or pr not in rows:
                 break
             seen.add(pr)
             first = min([p for p in out if not p.endswith('AS')] or ['9999'])
-            add = {p: shown(v) for p, v in rows[pr].items() if not p.endswith('AS') and p < first}
+            add = {p: v for p, v in rows[pr].items() if not p.endswith('AS') and p < first}
             if add:
                 join = join or first
                 out.update(add)
             cur = pr
         return out, join
+
+    def history(u):
+        raw, join = raw_history(u)
+        return {p: shown(v) for p, v in raw.items()}, join
 
     current = sorted((u for u in rows if latest in rows[u] or fy_last in rows[u]), key=int)
     current = [u for u in current if latest in rows[u]]            # the newest release defines who is listed
@@ -230,11 +232,16 @@ def schools():
     index = {k: [] for k in ('urn', 'name', 'town', 'pc', 'la', 'ph')}
     dist = {ph: {k: [] for k in ('urn', 'la', 'enrol', 'abs', 'pa', 'chg')} for ph in 'PSX'}
     base = '2018'
+    trust_n = {}
+    for u in current:
+        trust_n[meta[u].get('trust_id', '')] = trust_n.get(meta[u].get('trust_id', ''), 0) + 1
     for u in current:
         m = meta[u]
         h, join = history(u)
-        rec = {'n': m['name'], 'ph': m['phase'], 'la': m['la'], 'town': m['town'], 'pc': m['postcode'], 'trust': m['trust'],
-               'ward': m['ward'], 'pcon': m['pcon'], 'h': {p: v for p, v in h.items() if v}}
+        rec = {'n': m['name'], 'ph': m['phase'], 'la': m['la'], 'town': m['town'], 'pc': m['postcode'], 'trust': m['trust'], 'tid': m.get('trust_id', ''),
+               'ward': m['ward'], 'pcon': m['pcon'], 'pc_code': m['pcon_code'], 'h': {p: v for p, v in h.items() if v}}
+        if m.get('trust_id'):
+            rec['tname'] = tidy(m['trust']); rec['multi'] = trust_n[m['trust_id']] >= 2
         if join:
             rec['join'] = join
         if u in grade:
@@ -263,6 +270,83 @@ def schools():
           f"{sum(1 for u in current if u in grade)} with an Ofsted attendance and behaviour grade")
     for d in dist.values():
         assert all(0 <= x <= 10000 for x in d['abs'] + d['pa'])
+    groups_build(current, meta, rows, raw_history, shown, pool, periods, latest)
+
+
+# ---------------------------------------------------------------- trusts and constituencies
+G_SHARDS = 16
+MIN_SCHOOLS = 3         # a pooled rate for a phase needs at least three schools
+MIN_TRUST = 5           # and a trust needs at least five schools in all
+
+
+def tidy(name):
+    """GIAS holds trust names in capitals."""
+    small = {'of', 'and', 'the', 'for', 'in', 'at', 'on'}
+    keep = {'CE', 'RC', 'UK', 'MAT', 'CIO', 'II', 'III', 'E-ACT', 'ARK', 'TKAT', 'DRET', 'OGAT', 'CofE'}
+    out = []
+    for i, w in enumerate(name.split()):
+        if w in keep or not w.isupper():
+            out.append(w)
+        elif w.lower() in small and i:
+            out.append(w.lower())
+        else:
+            out.append('-'.join(x[:1] + x[1:].lower() for x in w.split('-')).replace("'S", "'s"))
+    return ' '.join(out)
+
+
+def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest):
+    members = {}
+    for u in current:
+        m = meta[u]
+        if m.get('trust_id'):
+            members.setdefault(('t', m['trust_id']), []).append(u)
+        if m['pcon_code'].startswith('E14'):
+            members.setdefault(('c', m['pcon_code']), []).append(u)
+    hexes = json.load(open(os.path.join(RAW, 'pcon_hex.json')))
+    shards = {k: [dict() for _ in range(G_SHARDS)] for k in 'tc'}
+    index = {k: [] for k in ('k', 'id', 'name', 'n')}
+    overview = {'t': [], 'c': []}
+    hist = {u: raw_history(u)[0] for u in current}
+    key = lambda g: sum(ord(c) for c in g) % G_SHARDS
+    for (kind, gid), us in sorted(members.items()):
+        if kind == 't' and len(us) < 2:
+            continue
+        name = tidy(meta[us[0]]['trust']) if kind == 't' else meta[us[0]]['pcon']
+        big = kind == 'c' or len(us) >= MIN_TRUST
+        rec = {'name': name, 'n': len(us), 'pooled': big, 'bench': {}, 'schools': []}
+        row = {'id': gid, 'name': name, 'n': len(us)}
+        for ph in 'PSX':
+            ms = [u for u in us if meta[u]['phase'] == ph]
+            if big and len(ms) >= MIN_SCHOOLS:
+                b = {}
+                for p in periods:
+                    vs = [hist[u][p] for u in ms if p in hist[u]]
+                    if len(vs) >= MIN_SCHOOLS:
+                        r = pool(vs)
+                        if r:
+                            b[p] = r + [len(vs)]
+                rec['bench'][ph] = b
+                if latest in b:
+                    row[ph] = [len(ms), sum(rows[u][latest][0] or 0 for u in ms if latest in rows[u])] + b[latest][:3]
+        for u in sorted(us, key=lambda u: meta[u]['name']):
+            v = shown(rows[u].get(latest))
+            rec['schools'].append([int(u), meta[u]['name'], meta[u]['phase'], meta[u]['town']] + (v[:2] + [v[3]] if v else [None, None, None]))
+        shards[kind][key(gid)][gid] = rec
+        for k, v in (('k', kind), ('id', gid), ('name', name), ('n', len(us))):
+            index[k].append(v)
+        if kind == 'c' or big:
+            if kind == 'c':
+                row.update(hexes['hexes'].get(gid, {}))
+            overview[kind].append(row)
+    out = os.path.join(OUT, 'grp')
+    os.makedirs(out, exist_ok=True)
+    for kind in 'tc':
+        for i, sh in enumerate(shards[kind]):
+            json.dump(sh, open(os.path.join(out, f'{kind}{i}.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+        json.dump(overview[kind], open(os.path.join(out, f'{kind}_all.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    json.dump({'shards': G_SHARDS, 'data': index}, open(os.path.join(OUT, 'groups.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    print(f"attendance groups: {index['k'].count('c')} constituencies, {index['k'].count('t')} trusts with two or more schools "
+          f"({len(overview['t'])} with {MIN_TRUST} or more, which get pooled figures)")
 
 
 if __name__ == '__main__':

@@ -39,7 +39,8 @@
     const L = B.latest, prevP = B.periods.filter((p) => p.endsWith('AS') && p < L).pop(), now = S.h[L], was = prevP && S.h[prevP];
     const la = B.la_names[S.la] || '', e = bench('E', S.ph, L), l = bench(S.la, S.ph, L);
     $('sx-name').textContent = S.n;
-    $('sx-meta').textContent = [PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase()), S.town, la, S.trust ? S.trust.replace(/\b([A-Z])([A-Z']+)\b/g, (m, a, b) => a + b.toLowerCase()) : '', S.pcon ? S.pcon + ' constituency' : ''].filter(Boolean).join(' · ');
+    const link = (t, k, id) => (id ? `<a href="${AXsearch.ghref(k, id)}">${esc(t)}</a>` : esc(t));
+    $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
     document.title = S.n + ': attendance · Attendance Explorer · Mark Dalton';
     $('sx-period').textContent = 'The ' + period(L);
     $('sx-phase-n').textContent = PH[S.ph]; $('sx-base-n').textContent = ay(B.base) + ' and ' + ay(B.fy_last);
@@ -155,7 +156,7 @@
   d3.json('/attendance/data/bench.json').then((j) => {
     B = j; const u = AXsearch.urn();
     vs = (new URLSearchParams(location.hash.slice(1)).get('vs') || '').split(',').filter((x) => /^\d{5,7}$/.test(x)).slice(0, 4);
-    AXsearch($('sx-q'), $('sx-list'), (r) => { open(r.urn, true); scrollTo({top: 0}); });
+    AXsearch($('sx-q'), $('sx-list'), (r) => { if (r.kind) { AXsearch.go(r); return; } open(r.urn, true); scrollTo({top: 0}); }, true);
     AXsearch($('sx-q2'), $('sx-list2'), (r) => { const k = String(r.urn); if (k !== urn && !vs.includes(k) && vs.length < 4) { vs.push(k); go(); } });
     document.querySelector('.sx-meas').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { meas = b.dataset.m; draw(); } });
     let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; if (S) draw(); } });

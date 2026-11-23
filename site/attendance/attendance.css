@@ -57,3 +57,15 @@
 .ax-grade{display:inline-block;padding:3px 9px;border-radius:4px;font-weight:600;color:#fff;margin:0 4px}
 #sx-body:not([hidden]){display:flex;flex-direction:column;gap:22px}
 @media (max-width:480px){#sx-body:not([hidden]){gap:16px}}
+/* trusts and constituencies */
+#gx-body:not([hidden]){display:flex;flex-direction:column;gap:22px}
+.ax-date a{color:inherit}
+.ax-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ax-table{border-collapse:collapse;width:100%;font-size:15px}
+.ax-table th{text-align:left;font-weight:600;font-size:13px;color:var(--muted);padding:6px 10px 6px 0;border-bottom:1px solid var(--muted);white-space:nowrap}
+.ax-table td{padding:8px 10px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.ax-table td.n,.ax-table th.n{text-align:right;font-variant-numeric:tabular-nums;padding-right:0;padding-left:10px}
+.ax-table a{color:var(--ink)}
+.ax-table small{display:block;color:var(--muted);font-size:13px}
+@media (max-width:480px){#gx-body:not([hidden]){gap:16px}.ax-table{font-size:14px}}
+@media (max-width:480px){.ax-controls{position:static}.ax-table th.n{white-space:normal}}
