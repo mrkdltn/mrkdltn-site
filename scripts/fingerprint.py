@@ -85,7 +85,7 @@ def main():
     moves = plan()
     total, files = 0, 0
     for root, dirs, names in os.walk(SITE):
-        dirs[:] = [d for d in dirs if d not in ('static', 'data')]
+        dirs[:] = [d for d in dirs if d != 'static' and not (d in ('nn', 'csv') and os.path.basename(root) == 'data')]  # the data files, not the Get the data page
         for name in names:
             if not name.endswith(TEXT):
                 continue
@@ -108,7 +108,7 @@ def main():
     # nothing may still point at a plain name
     left = []
     for root, dirs, names in os.walk(SITE):
-        dirs[:] = [d for d in dirs if d not in ('static', 'data')]
+        dirs[:] = [d for d in dirs if d != 'static' and not (d in ('nn', 'csv') and os.path.basename(root) == 'data')]  # the data files, not the Get the data page
         for name in names:
             if name.endswith(TEXT):
                 with open(os.path.join(root, name), encoding='utf-8') as f:
