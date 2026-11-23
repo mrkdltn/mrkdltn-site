@@ -51,7 +51,7 @@ Updated 23 November 2026 as each "Now" item ships: Met 3 · Partly met 10 · Not
 
 | # | Standard | Status | Evidence |
 | --- | --- | --- | --- |
-| 1 | Identity in the first screen | Partly | Wordmark only, no role line; intro and Explorer cards below the fold on desktop |
+| 1 | Identity in the first screen | Partly (23 Nov) | 23 Nov: portrait re-exported from the original at its declared 880 × 1100 and 480 × 600 (was 400 × 500 for both). Still: wordmark only, no role line; intro and Explorer cards below the fold on desktop |
 | 2 | Reachable | Not met | LinkedIn is the only route |
 | 3 | Followable | Met (23 Nov) | 23 Nov: `/feed.xml` is Atom with the full text and dates of all 4 articles, valid on the W3C validator (0 errors); linked from every page head; built in the same build as the articles, and the build fails without it |
 | 4 | One template | Partly | Update box on 2 of 4 articles; report-cards piece on an older pattern; no author note or related reading |
