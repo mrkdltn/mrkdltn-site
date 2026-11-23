@@ -119,3 +119,8 @@ body.explorer{background:#ECE9E1}
 .ax-map path{stroke:#fff;stroke-width:1;cursor:pointer}
 .ax-map path.me{stroke:#0B1A2E;stroke-width:2.5}
 @media (max-width:480px){.ax-top{padding:20px 16px;margin:-8px -16px 0}.ax{gap:14px}.ax-nav a{padding:8px 0}}
+.ax-sw{display:inline-block;width:10px;height:10px;margin-right:8px;vertical-align:0}
+.ax-cmp td.n{font-weight:600}
+#gx-view button{padding-left:10px;padding-right:10px}
+.ax-more-link{display:block;margin-top:10px;font:15px/1.4 var(--sans)}
+.ax-more-link a{color:var(--ink)}

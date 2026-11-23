@@ -8,23 +8,24 @@
       key: (d.name[i] + ' ' + d.town[i] + ' ' + d.pc[i] + ' ' + d.pc[i].replace(' ', '')).toLowerCase()})); return idx; }));
   const PH = {P: 'Primary', S: 'Secondary', X: 'Special'};
   const findG = (t) => grp.filter((r) => t.every((w) => r.key.includes(w))).sort((a, b) => (b.key.startsWith(t[0]) - a.key.startsWith(t[0])) || ((b.kind !== 'w') - (a.kind !== 'w')) || b.n - a.n).slice(0, 4);
-  const find = (q, groups) => { const t = q.toLowerCase().split(/\s+/).filter(Boolean); if (!t.length) return [];
+  const find = (q, groups, only) => { const t = q.toLowerCase().split(/\s+/).filter(Boolean); if (!t.length) return [];
+    if (only) return grp.filter((r) => r.kind === only && t.every((w) => r.key.includes(w))).sort((a, b) => (b.key.startsWith(t[0]) - a.key.startsWith(t[0])) || a.name.localeCompare(b.name)).slice(0, 8);
     if (groups) { const g = findG(t); return g.concat(findS(t).slice(0, 8 - g.length)); } return findS(t); };
   const findS = (t) => {
     const out = []; for (const r of idx) { if (t.every((w) => r.key.includes(w))) { out.push(r); if (out.length >= 60) break; } }
     const f = t[0]; return out.sort((a, b) => (b.name.toLowerCase().startsWith(f) - a.name.toLowerCase().startsWith(f)) || a.name.localeCompare(b.name)).slice(0, 8); };
-  function AXsearch(input, list, onPick, groups) {
+  function AXsearch(input, list, onPick, groups, only) {
     if (!input || !list) return;
     let res = [], sel = -1;
     const close = () => { list.hidden = true; input.setAttribute('aria-expanded', 'false'); sel = -1; };
     const render = () => { list.innerHTML = '';
-      if (!res.length) { const li = document.createElement('li'); li.className = 'none'; li.textContent = groups ? 'Nothing matches. Try a school’s town or postcode.' : 'No school matches. Try the town or postcode.'; list.appendChild(li); }
+      if (!res.length) { const li = document.createElement('li'); li.className = 'none'; li.textContent = only ? 'Nothing of the same kind matches.' : groups ? 'Nothing matches. Try a school’s town or postcode.' : 'No school matches. Try the town or postcode.'; list.appendChild(li); }
       res.forEach((r, i) => { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.setAttribute('aria-selected', String(i === sel));
-        li.textContent = r.name; const s = document.createElement('small'); s.textContent = r.kind ? ({t: 'Trust', c: 'Constituency', w: 'Ward', y: 'County'}[r.kind]) + ' · ' + r.n + (r.n === 1 ? ' school' : ' schools') : [PH[r.ph], r.town, r.pc].filter(Boolean).join(' · '); li.appendChild(s);
+        li.textContent = r.name; const s = document.createElement('small'); s.textContent = r.kind ? ({t: 'Trust', c: 'Constituency', w: 'Ward', y: 'County', a: 'Local authority'}[r.kind]) + ' · ' + r.n + (r.n === 1 ? ' school' : ' schools') : [PH[r.ph], r.town, r.pc].filter(Boolean).join(' · '); li.appendChild(s);
         li.addEventListener('pointerdown', (e) => { e.preventDefault(); pick(r); }); list.appendChild(li); });
       list.hidden = false; input.setAttribute('aria-expanded', 'true'); };
     const pick = (r) => { input.value = ''; close(); input.blur(); onPick(r); };
-    const run = () => { const q = input.value.trim(); if (q.length < 2) { close(); return; } load().then(() => { if (input.value.trim() !== q) return; res = find(q, groups); sel = res.length ? 0 : -1; render(); }); };
+    const run = () => { const q = input.value.trim(); if (q.length < 2) { close(); return; } load().then(() => { if (input.value.trim() !== q) return; res = find(q, groups, only); sel = res.length ? 0 : -1; render(); }); };
     input.addEventListener('focus', load); input.addEventListener('input', run);
     input.addEventListener('keydown', (e) => { if (list.hidden) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sel = (sel + (e.key === 'ArrowDown' ? 1 : res.length - 1)) % Math.max(1, res.length); render(); }

@@ -355,7 +355,32 @@ def tidy(name):
     return ' '.join(out)
 
 
-G_KIND_SHARDS = {'t': 16, 'c': 16, 'w': 64, 'y': 1}
+G_KIND_SHARDS = {'t': 16, 'c': 16, 'w': 64, 'y': 1, 'a': 8}
+PG = ['all', 'fsm', 'nfsm', 'sen', 'ehcp', 'nosen']
+
+
+def pupil_groups():
+    """Absence by pupil group for England, regions and local authorities (DfE): {code: {phase: {group: {period: [enrol, poss, abs, pa]}}}}.
+    Groups of fewer than 10 pupils are dropped."""
+    path = os.path.join(RAW, 'la_groups.csv')
+    out = {}
+    if os.path.exists(path):
+        for r in csv.DictReader(open(path, encoding='utf-8')):
+            if int(r['enrol']) >= MIN_ENROL:
+                out.setdefault(r['code'], {}).setdefault(r['phase'], {}).setdefault(r['group'], {})[r['period']] = [int(r['enrol']), int(r['poss']), int(r['abs']), int(r['pa'])]
+    return out
+
+
+def pg_pool(parts):
+    """Pool several areas' pupil-group figures: {phase: {group: {period: [abs, pa]}}}."""
+    acc = {}
+    for a in parts:
+        for ph, gs in a.items():
+            for g, ps in gs.items():
+                for p, v in ps.items():
+                    t = acc.setdefault(ph, {}).setdefault(g, {}).setdefault(p, [0, 0, 0, 0])
+                    t[0] += v[0]; t[1] += v[1]; t[2] += v[2] * v[1]; t[3] += v[3] * v[0]
+    return {ph: {g: {p: [round(t[2] / t[1]), round(t[3] / t[0])] for p, t in ps.items() if t[0] >= MIN_ENROL and t[1]} for g, ps in gs.items()} for ph, gs in acc.items()}
 
 
 def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest, bench=None, la_names=None):
@@ -364,6 +389,11 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
     geo = json.load(open(os.path.join(RAW, 'ward_geo.json'))) if os.path.exists(os.path.join(RAW, 'ward_geo.json')) else {'districts': {}}
     ward_lad = {w: d for d, v in geo['districts'].items() for w in v['wards']}
     slug = lambda t: ''.join(ch if ch.isalnum() else '-' for ch in t.lower()).strip('-')
+    la_hex = json.load(open(os.path.join(RAW, 'la_hex.json')))['hexes']
+    pg = pupil_groups()
+    terms = [p for p in periods if p.endswith('AS')]
+    fys = [p for p in periods if not p.endswith('AS')]
+    prev_as, fy_last, base = (terms[-2] if len(terms) > 1 else None), fys[-1], '2018'
     members = {}
     for u in current:
         m = meta[u]
@@ -375,6 +405,7 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
             members.setdefault(('w', m['ward_code']), []).append(u)
         if m['la'] in county:
             members.setdefault(('y', slug(county[m['la']])), []).append(u)
+            members.setdefault(('a', m['la']), []).append(u)
     hexes = json.load(open(os.path.join(RAW, 'pcon_hex.json')))
     shards = {k: [dict() for _ in range(n)] for k, n in G_KIND_SHARDS.items()}
     index = {k: [] for k in ('k', 'id', 'name', 'n')}
@@ -386,7 +417,7 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
         if kind == 't' and len(us) < 2:
             continue
         m0 = meta[us[0]]
-        name = {'t': lambda: tidy(m0['trust']), 'c': lambda: m0['pcon'], 'y': lambda: county[m0['la']],
+        name = {'t': lambda: tidy(m0['trust']), 'c': lambda: m0['pcon'], 'y': lambda: county[m0['la']], 'a': lambda: (la_names or {}).get(m0['la'], m0['la']),
                 'w': lambda: m0['ward'] + ', ' + (geo['districts'].get(ward_lad.get(gid), {}).get('name') or (la_names or {}).get(m0['la'], ''))}[kind]()
         big = kind != 't' or len(us) >= MIN_TRUST
         rec = {'name': name, 'n': len(us), 'pooled': big, 'bench': {}, 'schools': []}
@@ -403,7 +434,10 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
                             b[p] = r + [len(vs)]
                 rec['bench'][ph] = b
                 if latest in b:
-                    row[ph] = [len(ms), sum(rows[u][latest][0] or 0 for u in ms if latest in rows[u])] + b[latest][:3]
+                    g2 = lambda p, i: b[p][i] if p and p in b else None
+                    # schools, pupils, overall, unauthorised, persistent; then the same two terms a year earlier (overall, persistent);
+                    # then the newest full year and 2018/19 (overall, overall, persistent, persistent), for comparing change
+                    row[ph] = [len(ms), sum(rows[u][latest][0] or 0 for u in ms if latest in rows[u])] + b[latest][:3] + [g2(prev_as, 0), g2(prev_as, 2), g2(fy_last, 0), g2(base, 0), g2(fy_last, 2), g2(base, 2)]
         if kind == 't' and big:
             # the trust's own record: only schools that had joined by the end of December of each year, under their present URN
             rec['bench_in'] = {}
@@ -417,12 +451,18 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
                             b[p] = r + [len(vs)]
                 if b:
                     rec['bench_in'][ph] = b
+        if kind == 'a' and gid in pg:
+            rec['pg'] = {ph: {g: {p: v[2:] for p, v in ps.items()} for g, ps in gs.items()} for ph, gs in pg[gid].items()}
+        if kind == 'y':
+            rec['pg'] = pg_pool([pg[la] for la in {meta[u]['la'] for u in us} if la in pg])
+        if kind in 'ay' and rec.get('pg'):
+            row['pg'] = {ph: {g: ps.get(latest) for g, ps in gs.items() if ps.get(latest)} for ph, gs in rec['pg'].items()}
         if kind == 'y':
             rec['las'] = [[la, (la_names or {}).get(la, la), {ph: (bench[la].get(ph, {}).get(latest) if bench and la in bench else None) for ph in 'PSX'}]
                           for la in sorted({meta[u]['la'] for u in us}, key=lambda c: (la_names or {}).get(c, c))]
         if kind == 'w':
             rec['lad'] = ward_lad.get(gid)
-            ward_val[gid] = [len(us)] + (rec['bench'].get('P', {}).get(latest, [None, None, None])[:3])
+            ward_val[gid] = [len(us)] + (row['P'][2:] if 'P' in row else [None] * 9)
         for u in ([] if kind == 'y' else sorted(us, key=lambda u: meta[u]['name'])):
             v = shown(rows[u].get(latest))
             rec['schools'].append([int(u), meta[u]['name'], meta[u]['phase'], meta[u]['town']] + (v[:2] + [v[3]] if v else [None, None, None])
@@ -433,6 +473,8 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
         if kind != 'w' and (kind != 't' or big):
             if kind == 'c':
                 row.update(hexes['hexes'].get(gid, {}))
+            if kind == 'a':
+                row.update(la_hex.get(gid, {}))
             overview[kind].append(row)
     out = os.path.join(OUT, 'grp')
     os.makedirs(out, exist_ok=True)
@@ -446,9 +488,13 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
     for code, d in geo['districts'].items():
         json.dump({'name': d['name'], 'w': d['w'], 'h': d['h'], 'wards': [{'c': w, 'n': v['n'], 'p': v['p'], 'v': ward_val.get(w)} for w, v in d['wards'].items()]},
                   open(os.path.join(gdir, code + '.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    eng_code = next((c for c in pg if c.startswith('E92')), None)
+    json.dump({'periods': terms, 'groups': PG, 'england': {ph: {g: {p: v[2:] for p, v in ps.items()} for g, ps in gs.items()} for ph, gs in pg.get(eng_code, {}).items()},
+               'release': json.load(open(os.path.join(RAW, 'groups_release.json'))) if os.path.exists(os.path.join(RAW, 'groups_release.json')) else None},
+              open(os.path.join(OUT, 'pg.json'), 'w'), separators=(',', ':'))
     nomap = sum(1 for (k, g) in members if k == 'w' and g not in ward_lad)
     json.dump({'shards': G_KIND_SHARDS, 'data': index}, open(os.path.join(OUT, 'groups.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
-    print(f"attendance groups: {index['k'].count('y')} counties, {index['k'].count('w')} wards ({sum(1 for v in ward_val.values() if v[1] is not None)} with a pooled primary rate, {nomap} without an outline), {index['k'].count('c')} constituencies, {index['k'].count('t')} trusts with two or more schools "
+    print(f"attendance groups: {index['k'].count('a')} local authorities, {index['k'].count('y')} counties, {index['k'].count('w')} wards ({sum(1 for v in ward_val.values() if v[1] is not None)} with a pooled primary rate, {nomap} without an outline), {index['k'].count('c')} constituencies, {index['k'].count('t')} trusts with two or more schools "
           f"({len(overview['t'])} with {MIN_TRUST} or more, which get pooled figures)")
 
 

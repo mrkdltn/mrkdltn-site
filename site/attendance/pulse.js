@@ -71,6 +71,7 @@
     el.innerHTML = t;
     const dl = yl ? gap(y.abs, yl.abs) : null, de = a.l !== 'national' && e ? gap(y.abs, e.abs) : null;
     el.innerHTML += '<span class="ax-pills">' + (dl == null ? '' : AXc.pill(dl, 'this point last year')) + (de == null ? '' : AXc.pill(de, 'England')) + '</span>';
+    if (a.l === 'la' && window.AXsearch) el.innerHTML += `<span class="ax-more-link"><a href="${AXsearch.ghref('a', a.c)}">Schools, pupil groups and comparisons for ${a.n}</a></span>`;
     const k = [
       ['Overall absence since September', pc(y.abs), yl ? 'last year ' + pc(yl.abs) : ''],
       ['Latest week, from ' + (li >= 0 ? fmtD(P.weeks[cur][li], {day: 'numeric', month: 'short'}) : ''), li >= 0 ? pc(w[li]) : '–', a.l !== 'national' ? 'England ' + pc(P.weekly[eng][cur][ph].abs[li]) : ''],
