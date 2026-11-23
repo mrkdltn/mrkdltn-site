@@ -52,6 +52,16 @@
 <h2>How this was checked</h2>
 <p>On 23 November 2026 the Explorer was checked by hand in Chrome on desktop (1,900 pixels wide) and at phone width (375 pixels): names for every button and link, text alternatives for charts and images, labels for form fields, heading order, colour contrast against WCAG 2.2, keyboard use, and that the page does not jump as it loads. It has not been audited by an outside specialist. Problems found are fixed or listed above.</p>
 
+<h2>Speed</h2>
+<p>The aim is that on a mid-range phone over 4G a page shows its first finding within 2.5 seconds, nothing on it moves as it loads (a layout shift score under 0.1), and a first visit transfers under 1 MB. Measured on 23 November 2026 in Chrome, as a phone on 4G with a cold cache, the median of three loads:</p>
+<ul>
+  <li><b>Explorer front page:</b> first finding in 1.1 seconds, layout shift 0.00, 743 KB. It was 5.5 seconds and 0.37 before the school it opens on was written into the page.</li>
+  <li><b>A secondary school's page:</b> 1.1 seconds, 0.00, 743 KB.</li>
+  <li><b>A primary school's page:</b> 1.0 seconds, 0.00, 746 KB.</li>
+  <li><b>Explore a measure and Compare schools:</b> 0.7 seconds, 0.00, about 515 KB.</li>
+</ul>
+<p>Most of each first visit is the data for every school (about 420 KB, compressed), which later views reuse. The script that takes these measurements is <code>scripts/measure.mjs</code> in the <a href="https://github.com/mrkdltn/mrkdltn-site">site&rsquo;s open code</a>.</p>
+
 <h2>Tell me about a problem</h2>
 <p>If something in the Explorer is hard to use, please say so through the <a href="/explorer/#feedback">feedback form</a>. Every message is read, and changes are listed on <a href="/explorer/updates/">What's new</a>.</p>
 <p class="meta">Last reviewed 23 November 2026.</p>
