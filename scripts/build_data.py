@@ -272,6 +272,13 @@ def main():
     import build_pages
     build_pages.main(ks4, rc)
 
+    # share cards for the main site, then fail the build if any page lacks its share tags
+    import site_meta
+    import check_meta
+    site_meta.build()
+    if check_meta.main():
+        raise SystemExit('metadata check failed: see the list above')
+
 
 if __name__ == '__main__':
     main()

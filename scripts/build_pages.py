@@ -75,11 +75,16 @@ def page(template, r, has_card):
         (r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{url}">'),
         (r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{e(name)}">'),
         (r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{e(desc)}">'),
-        (r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{img}">'
-         '\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">'
-         f'\n<meta property="og:image:alt" content="{e(("Ofsted report card for " if r.get("rc_only") else "Ofsted report card and Attainment 8 for ") + name)}">'
-         f'\n<meta property="og:url" content="{url}">'),
+        (r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{url}">'),
+        (r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{img}">'),
+        (r'<meta property="og:image:width" content="[^"]*">',
+         f'<meta property="og:image:width" content="{1200 if has_card else 1600}">'),
+        (r'<meta property="og:image:height" content="[^"]*">',
+         f'<meta property="og:image:height" content="{630 if has_card else 900}">'),
     ]
+    if has_card:
+        subs.append((r'<meta property="og:image:alt" content="[^"]*">',
+                     f'<meta property="og:image:alt" content="{e(("Ofsted report card for " if r.get("rc_only") else "Ofsted report card and Attainment 8 for ") + name)}">'))
     for pat, rep in subs:
         h, n = re.subn(pat, lambda m: rep, h, count=1)
         if n != 1:
