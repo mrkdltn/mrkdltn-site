@@ -1,7 +1,8 @@
-"""Share cards and social metadata for the main site (standard 9 in docs/site-standards.md).
+"""Share cards, social metadata, structured data, the feed and the sitemap for the main site
+(standards 3, 9 and 10 in docs/site-standards.md).
 
-    python3 scripts/site_meta.py --write    rewrite the social tags in each page's <head> (commit the result)
-    python3 scripts/site_meta.py            render the share cards into site/assets/cards/ (run by the build)
+    python3 scripts/site_meta.py --write    rewrite the social tags, feed link and JSON-LD in each page's <head> (commit the result)
+    python3 scripts/site_meta.py            render the share cards, feed.xml and sitemap.xml (run by the build)
 
 PAGES is the one record of each page's share card, type and dates. Titles and descriptions are
 read from the page itself (<title>, og:title, meta description), so the head stays the source for
@@ -10,13 +11,20 @@ those unless an entry below overrides them.
 Cards are 1200 x 630 JPG: the page's illustration, with its title set in Libre Caslon Display on a
 midnight band. Never WebP: LinkedIn will not show it. The Explorer keeps its own data image
 (no generated imagery on data pages, CLAUDE.md rule 7), but gets the same full set of tags.
+
+The Atom feed (/feed.xml) carries the full text of every article. The sitemap lists the pages that
+exist in site/, each dated by the last git commit that changed it; school pages take the date of the
+data and template they are built from.
 """
 import html
+import json
 import os
 import re
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.normpath(os.path.join(HERE, '..'))
 SITE = os.path.normpath(os.path.join(HERE, '..', 'site'))
 FONTS = os.path.join(HERE, 'fonts')
 ORIGIN = 'https://mrkdltn.com'
@@ -61,7 +69,17 @@ PAGES = [
     dict(file='explorer/updates/index.html', image=EXPLORER_IMG),
 ]
 
-SOCIAL = re.compile(r'[ \t]*<meta (?:property|name)="(?:og:[^"]*|twitter:[^"]*|article:[^"]*)" content="[^"]*">\n')
+SOCIAL = re.compile(r'[ \t]*(?:<meta (?:property|name)="(?:og:[^"]*|twitter:[^"]*|article:[^"]*)" content="[^"]*">'
+                    r'|<link rel="alternate" type="application/atom\+xml"[^>]*>'
+                    r'|<script type="application/ld\+json">.*?</script>)\n', re.S)
+
+AUTHOR = 'Mark Dalton'
+LINKEDIN = 'https://www.linkedin.com/in/mrkdltn'
+PERSON_ID = ORIGIN + '/#person'
+FEED_TITLE = 'Mark Dalton: writing'
+FEED_LINK = f'<link rel="alternate" type="application/atom+xml" title="{FEED_TITLE}" href="/feed.xml">'
+# what the school pages are built from: their sitemap date is the latest change to any of these
+SCHOOL_SOURCES = ['data/raw', 'site/explorer/index.html', 'scripts/build_pages.py']
 
 
 def e(s):
@@ -123,7 +141,40 @@ def head_block(p, h):
         tags += [('property', 'article:published_time', p['published']),
                  ('property', 'article:modified_time', p['modified'])]
     tags.append(('name', 'twitter:card', 'summary_large_image' if not is404 else 'summary'))
-    return ''.join(f'<meta {a}="{n}" content="{e(v)}">\n' for a, n, v in tags)
+    out = ''.join(f'<meta {a}="{n}" content="{e(v)}">\n' for a, n, v in tags) + FEED_LINK + '\n'
+    ld = json_ld(p, title, desc, img if not is404 else None)
+    if ld:
+        out += '<script type="application/ld+json">' + json.dumps(ld, ensure_ascii=False).replace('</', '<\\/') + '</script>\n'
+    return out
+
+
+def person(full=True):
+    p = {'@type': 'Person', '@id': PERSON_ID, 'name': AUTHOR, 'url': ORIGIN + '/', 'sameAs': [LINKEDIN]}
+    if full:
+        p = {'@context': 'https://schema.org', **p,
+             'jobTitle': 'Secondary school principal',
+             'honorificSuffix': 'FRSA, FCCT',
+             'description': 'Secondary school principal in the West Midlands, writing on school accountability, '
+                            'disadvantage, curriculum and the teaching workforce in England.',
+             'image': ORIGIN + '/assets/img/mark-dalton.webp',
+             'knowsAbout': ['School accountability', 'Ofsted inspection', 'Educational disadvantage',
+                            'Curriculum', 'Teacher workforce']}
+    return p
+
+
+def json_ld(p, title, desc, img):
+    """Person on the home page; Article on every article."""
+    if p.get('slug') == 'home':
+        return person()
+    if p.get('type') != 'article':
+        return None
+    url = ORIGIN + url_path(p['file'])
+    return {'@context': 'https://schema.org', '@type': 'Article', '@id': url + '#article',
+            'headline': title, 'description': desc, 'url': url, 'mainEntityOfPage': url,
+            'datePublished': p['published'], 'dateModified': p['modified'],
+            'inLanguage': 'en-GB', 'isAccessibleForFree': True,
+            'author': person(False), 'publisher': person(False),
+            'image': {'@type': 'ImageObject', 'url': ORIGIN + img[0], 'width': img[1], 'height': img[2]}}
 
 
 def write_heads():
@@ -245,9 +296,170 @@ def preview_images():
     print('preview: og:image points at', host)
 
 
+# ---------- feed ----------
+
+def chart_text(inner):
+    """A chart drawn in HTML and CSS reads as text in a feed reader: title, the values row by row, the source."""
+    out, rows = [], []
+
+    def flush():
+        if rows:
+            out.append('<ul>' + ''.join(f'<li>{r}</li>' for r in rows) + '</ul>')
+            rows.clear()
+    tok = re.compile(r'(?s)<p class="ct">(?P<ct>.*?)</p>|<p class="cs">(?P<cs>.*?)</p>'
+                     r'|<p class="hgroup"[^>]*>(?P<hg>.*?)</p>'
+                     r'|<div class="hrow"><span class="lab">(?P<lab>.*?)</span>.*?<b[^>]*>(?P<val>.*?)</b>'
+                     r'|<svg[^>]*?aria-label="(?P<svg>[^"]*)"[^>]*>.*?</svg>'
+                     r'|(?P<table><table>.*?</table>)|<figcaption>(?P<cap>.*?)</figcaption>')
+    for m in tok.finditer(inner):
+        g = m.groupdict()
+        if g['lab'] is not None:
+            rows.append(f'{g["lab"]}: {g["val"]}')
+            continue
+        flush()
+        if g['ct'] is not None:
+            out.append(f'<p><strong>{g["ct"]}</strong></p>')
+        elif g['cs'] is not None:
+            out.append(f'<p>{g["cs"]}</p>')
+        elif g['hg'] is not None:
+            out.append(f'<p>{g["hg"]}</p>')
+        elif g['svg'] is not None:
+            out.append(f'<p><em>Chart: {g["svg"]}</em></p>')
+        elif g['table'] is not None:
+            out.append(g['table'])
+        elif g['cap'] is not None:
+            out.append(f'<p><small>{g["cap"]}</small></p>')
+    flush()
+    return '<figure>' + ''.join(out) + '</figure>'
+
+
+def article_html(p):
+    """The article's full text, cleaned for a feed reader: absolute links, no scripts, styles or buttons."""
+    h = read(p['file'])
+    url = ORIGIN + url_path(p['file'])
+    stand = re.search(r'(?s)<p class="standfirst">(.*?)</p>', h)
+    body = re.search(r'(?s)<article[^>]*>(.*)</article>', h).group(1)
+    body = re.sub(r'(?s)<figure class="chart"[^>]*>(.*?)</figure>', lambda m: chart_text(m.group(1)), body)
+    body = re.sub(r'(?s)<span class="mnote cite"><b>(.*?)</b>(.*?)</span>', r'<p><small>\1: \2</small></p>', body)
+    body = re.sub(r'(?s)<span class="mnote"><b>\d+</b>(.*?)</span>', r' <small>(\1)</small>', body)
+    body = re.sub(r'(?s)<(script|button|style)\b.*?</\1>', '', body)
+    body = re.sub(r'\s(?:style|class|role|loading|fetchpriority|decoding|onclick)="[^"]*"', '', body)
+
+    def absolute(m):
+        attr, v = m.group(1), m.group(2)
+        if re.match(r'^(?:https?:|mailto:|data:)', v):
+            return m.group(0)
+        if v.startswith('/'):
+            v = ORIGIN + v
+        elif v.startswith('#'):
+            v = url + v
+        else:
+            v = url + v
+        return f'{attr}="{v}"'
+    body = re.sub(r'\b(href|src)="([^"]*)"', absolute, body)
+    lead = f'<p><em>{stand.group(1)}</em></p>' if stand else ''
+    return lead + body.strip()
+
+
+def feed_date(d):
+    return d if 'T' in d else d + 'T00:00:00Z'
+
+
+def write_feed():
+    arts = sorted((p for p in PAGES if p.get('type') == 'article'), key=lambda p: p['published'], reverse=True)
+    updated = max(feed_date(p['modified']) for p in arts)
+    x = lambda s: html.escape(s, quote=False)
+    out = ['<?xml version="1.0" encoding="utf-8"?>',
+           '<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-GB">',
+           f'<title>{x(FEED_TITLE)}</title>',
+           '<subtitle>School accountability, disadvantage, curriculum and the teaching workforce in England.</subtitle>',
+           f'<link rel="alternate" type="text/html" href="{ORIGIN}/writing/"/>',
+           f'<link rel="self" type="application/atom+xml" href="{ORIGIN}/feed.xml"/>',
+           f'<id>{ORIGIN}/feed.xml</id>',
+           f'<updated>{updated}</updated>',
+           f'<author><name>{AUTHOR}</name><uri>{ORIGIN}/</uri></author>',
+           f'<rights>© {updated[:4]} {AUTHOR}</rights>']
+    for p in arts:
+        h = read(p['file'])
+        url = ORIGIN + url_path(p['file'])
+        title = meta(h, 'property', 'og:title')
+        desc = meta(h, 'name', 'description')
+        out += ['<entry>',
+                f'<title>{x(title)}</title>',
+                f'<link rel="alternate" type="text/html" href="{url}"/>',
+                f'<id>{url}</id>',
+                f'<published>{feed_date(p["published"])}</published>',
+                f'<updated>{feed_date(p["modified"])}</updated>',
+                f'<summary>{x(desc)}</summary>',
+                f'<content type="html">{x(article_html(p))}</content>',
+                '</entry>']
+    out.append('</feed>')
+    with open(os.path.join(SITE, 'feed.xml'), 'w', encoding='utf-8', newline='\n') as f:
+        f.write('\n'.join(out) + '\n')
+    print('feed:', len(arts), 'articles, updated', updated)
+
+
+# ---------- sitemap ----------
+
+def git(*args):
+    r = subprocess.run(['git', *args], cwd=ROOT, capture_output=True, text=True, timeout=180)
+    return r.stdout.strip() if r.returncode == 0 else ''
+
+
+def git_dates():
+    """Last commit date of every tracked file under site/ and of the school pages' sources.
+    A shallow clone would date every file to the last commit, so deepen it first."""
+    if git('rev-parse', '--is-shallow-repository') == 'true':
+        try:
+            git('fetch', '--unshallow', '--quiet')
+        except Exception as ex:
+            print('sitemap: could not unshallow the clone (', ex, ')')
+        if git('rev-parse', '--is-shallow-repository') == 'true':
+            print('sitemap: WARNING the clone is shallow, so dates may all be the last commit')
+    dates = {}
+    for path in ['site'] + SCHOOL_SOURCES:
+        for line in git('ls-files', path).splitlines():
+            if line.endswith('.html') or not line.startswith('site/'):
+                d = git('log', '-1', '--format=%cs', '--', line)
+                if d:
+                    dates[line] = d
+    return dates
+
+
+def write_sitemap():
+    dates = git_dates()
+    school = max((d for k, d in dates.items() if any(k == s or k.startswith(s + '/') for s in SCHOOL_SOURCES)),
+                 default=None)
+    urls, n_school, undated = [], 0, []
+    for root, dirs, files in os.walk(SITE):
+        dirs.sort(key=lambda d: (d.isdigit(), int(d) if d.isdigit() else 0, d))
+        if 'index.html' not in files:
+            continue
+        rel = os.path.relpath(os.path.join(root, 'index.html'), SITE).replace(os.sep, '/')
+        is_school = rel.startswith('explorer/school/')
+        if not is_school:
+            with open(os.path.join(SITE, rel), encoding='utf-8') as f:
+                if re.search(r'<meta name="robots" content="[^"]*noindex', f.read(8000)):
+                    continue
+        d = school if is_school else dates.get('site/' + rel)
+        if not d:
+            undated.append(rel)
+        n_school += is_school
+        urls.append((ORIGIN + url_path(rel), d))
+    with open(os.path.join(SITE, 'sitemap.xml'), 'w', encoding='utf-8', newline='\n') as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+        for u, d in urls:
+            f.write(f'<url><loc>{u}</loc>' + (f'<lastmod>{d}</lastmod>' if d else '') + '</url>\n')
+        f.write('</urlset>\n')
+    print(f'sitemap: {len(urls) - n_school} pages and {n_school} school pages, school pages dated {school}'
+          + (f'; no git date for {", ".join(undated[:5])}' if undated else ''))
+
+
 def build():
     render_cards()
     preview_images()
+    write_feed()
+    write_sitemap()
 
 
 if __name__ == '__main__':

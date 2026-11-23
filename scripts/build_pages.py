@@ -3,7 +3,6 @@
   site/explorer/school/<URN>/index.html   the Explorer, opening on that school, with its own
                                           title, description, canonical address and share image
   site/explorer/school/<URN>/card.png     1200 x 630 share image
-  site/sitemap.xml                        the site's pages plus every school page
 
 Called from build_data.py once the rows are merged, so the pages always match the data.
 The images need Pillow; if it is missing the pages are still built and share the Explorer's image.
@@ -28,9 +27,6 @@ AREAS = [('g_ach', 'Achievement'), ('g_ct', 'Curriculum and teaching'), ('g_ab',
 GRADE_COLOUR = {'Exceptional': '#0176E0', 'Strong standard': '#33903C', 'Expected standard': '#5CD168',
                 'Needs attention': '#FF8341', 'Urgent improvement': '#CE1E02'}
 GROUND, PANEL, INK, MUTED, LINE, BRASS = '#0B1A2E', '#13263F', '#F5F1E8', '#A8B5C8', '#2B3C55', '#C9A24B'
-
-STATIC_PAGES = ['/', '/explorer/', '/explorer/areas/', '/explorer/updates/', '/writing/', '/writing/ofsted-report-cards/', '/writing/progress-8/',
-                '/writing/curriculum-review/', '/colophon/']
 
 
 def fnum(v):
@@ -273,13 +269,7 @@ def main(rows, rc_rows=(), only=None):
         with ProcessPoolExecutor(max_workers=os.cpu_count() or 2) as ex:
             n_img = sum(ex.map(_draw, jobs, chunksize=64))
 
-    today = datetime.date.today().isoformat()
-    urls = [ORIGIN + p for p in STATIC_PAGES] + [f'{ORIGIN}/explorer/school/{r["urn"]}/' for r in rows]
-    with open(os.path.join(SITE, 'sitemap.xml'), 'w') as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
-        for u in urls:
-            f.write(f'<url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n')
-        f.write('</urlset>\n')
+    # sitemap.xml is written by site_meta.py from the pages that exist, with git dates
     print(f'school pages: {n_pages} pages ({len(extra)} without results), {n_img} share images, England A8 mean {nat_mean}')
 
 
