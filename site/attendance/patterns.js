@@ -1,5 +1,5 @@
 /* Attendance Explorer: patterns across all schools.
-   Data: patterns.json (free school meal groups, yearly distributions, regions, the model), dist_<phase>.json (every school),
+   Data: patterns.json (free school meal groups, yearly counts of schools by band of absence, regions, the match weights), dist_<phase>.json (every school),
    bench.json (periods and sources). Pooled values are [overall, unauthorised, persistent]; rates in hundredths of a point. */
 (function () {
   const INK = '#0B1A2E', MUTED = '#55627A', VERD = '#2F6F66', GRID = '#EEF1F5', SOFT = '#C9D0DB';
@@ -68,59 +68,124 @@
     $('px-scat-r').innerHTML = `In the twentieth of ${PH[phase]} with the fewest pupils ${XN[xf]}, the middle school had ${MN[meas]} of <b>${pc(bins[0].v)}</b>; in the twentieth with the most, <b>${pc(bins[19].v)}</b>.`;
   }
 
-  function ridges() {
+  /* A percentile from counts of schools in equal bands of absence, by interpolation within the band it falls in.
+     The top band is open-ended, so a percentile that lands there is given as that band's lower edge. */
+  const quant = (Y, step, f) => { const t = f * Y.n, last = Y.bins.length - 1; let c = 0;
+    for (let k = 0; k <= last; k++) { const v = Y.bins[k]; if (v && c + v >= t) return k === last ? k * step : (k + (t - c) / v) * step; c += v; } return null; };
+  /* place labels at their values, then push apart any closer than 13px */
+  const spreadOut = (ys, lo, hi) => { const o = ys.map((v, k) => ({v, k})).sort((p, q) => p.v - q.v); for (let j = 1; j < o.length; j++) o[j].v = Math.max(o[j].v, o[j - 1].v + 13);
+    const over = o.length ? o[o.length - 1].v - hi : 0; if (over > 0) o.forEach((d) => { d.v -= over; }); for (let j = o.length - 2; j >= 0; j--) o[j].v = Math.min(o[j].v, o[j + 1].v - 13);
+    const out = []; o.forEach((d) => { out[d.k] = Math.max(lo, d.v); }); return out; };
+
+  function spread() {
     const el = $('px-ridge'), R = P.ridges[phase]; el.innerHTML = '';
-    const yrs = P.fy.slice().reverse(), W = width(el), rh = W < 480 ? 26 : 32, m = {t: 40, r: 14, b: 30, l: 60}, H = m.t + yrs.length * rh + m.b, s = svg(el, W, H, 'Distribution of overall absence by year');
-    const nb = R.years[yrs[0]].bins.length, x = d3.scaleLinear([0, nb * R.step], [m.l, W - m.r]), mx = d3.max(yrs, (p) => d3.max(R.years[p].bins) / R.years[p].n), h = d3.scaleLinear([0, mx], [0, rh * 2.2]);
-    x.ticks(W < 480 ? 5 : 8).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t - 20).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', H - 8).attr('text-anchor', 'middle').text((t / 100) + '%'); });
-    yrs.slice().reverse().forEach((p) => { const i = yrs.indexOf(p), y0 = m.t + (i + 1) * rh, Y = R.years[p], pts2 = Y.bins.map((n, k) => [x((k + 0.5) * R.step), y0 - h(n / Y.n)]);
-      const area = d3.area().x((d) => d[0]).y0(y0).y1((d) => d[1]).curve(d3.curveBasis)(pts2);
-      s.append('path').attr('d', area).attr('fill', p >= '2020' ? '#D5DBE5' : '#E9EDF3').attr('fill-opacity', 0.9).attr('stroke', p >= '2020' ? INK : MUTED).attr('stroke-width', 1.2);
-      s.append('line').attr('x1', x(Y.median)).attr('x2', x(Y.median)).attr('y1', y0).attr('y2', y0 - 9).attr('stroke', '#7A5C14').attr('stroke-width', 2);
-      s.append('text').attr('x', m.l - 8).attr('y', y0 - 3).attr('text-anchor', 'end').attr('class', 'strong').text(ay(p)); });
-    key(el, [`<i style="background:#E9EDF3;border:1px solid ${MUTED}"></i>Before the pandemic`, `<i style="background:#D5DBE5;border:1px solid ${INK}"></i>Since`, `<i style="background:#7A5C14;width:2px;height:12px"></i>The middle school`]);
-    const a = R.years['2018'], b = R.years[P.fy[P.fy.length - 1]];
-    $('px-ridge-r').innerHTML = `The middle school among ${PH[phase]} had overall absence of <b>${pc(a.median)}</b> in 2018/19 and <b>${pc(b.median)}</b> in ${ay(P.fy[P.fy.length - 1])}.`;
+    const yrs = years(), last = P.fy[P.fy.length - 1], base = R.years['2018'] ? '2018' : P.fy[0], Q = {};
+    P.fy.forEach((p) => { const Y = R.years[p]; if (Y && Y.n) Q[p] = {n: Y.n, q: [0.1, 0.25, 0.5, 0.75, 0.9].map((f, k) => (k === 2 && Y.median != null ? Y.median : quant(Y, R.step, f)))}; });
+    const W = width(el), narrow = W < 560, H = Math.round(Math.min(420, Math.max(300, W * 0.42))), m = {t: 14, r: narrow ? 44 : 176, b: 30, l: 42};
+    const s = svg(el, W, H, 'How ' + PH[phase] + ' were spread by overall absence in each full school year');
+    const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([0, d3.max(P.fy, (p) => (Q[p] ? Q[p].q[4] : 0)) * 1.05], [H - m.b, m.t]).nice(5), st = x.step();
+    y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
+    yrs.filter((p) => !Q[p]).forEach((p) => { s.append('rect').attr('x', x(p) - st * 0.38).attr('width', st * 0.76).attr('y', m.t).attr('height', H - m.b - m.t).attr('fill', '#F4F5F8');
+      if (st >= 70) s.append('text').attr('x', x(p)).attr('y', m.t + 15).attr('text-anchor', 'middle').text('No figures'); });
+    yrs.forEach((p) => { const k = +last - +p; if (st >= 56 || k % (st < 30 ? 3 : 2) === 0) s.append('text').attr('x', x(p)).attr('y', H - 8).attr('text-anchor', 'middle').attr('class', p === base || p === last ? 'strong' : null).text(st < 44 ? "'" + ay(p).slice(2) : ay(p)); });
+    const d = yrs.map((p) => (Q[p] ? {p, q: Q[p].q, n: Q[p].n} : null)), band = (a, b) => d3.area().defined((k) => k != null).x((k) => x(k.p)).y0((k) => y(k.q[a])).y1((k) => y(k.q[b]))(d);
+    s.append('path').attr('d', band(0, 4)).attr('fill', '#E9EDF3');
+    s.append('path').attr('d', band(1, 3)).attr('fill', '#C9D0DB');
+    s.append('path').attr('d', d3.line().defined((k) => k != null).x((k) => x(k.p)).y((k) => y(k.q[2]))(d)).attr('fill', 'none').attr('stroke', INK).attr('stroke-width', 2.5).attr('stroke-linejoin', 'round');
+    const got = d.filter(Boolean);
+    s.append('g').selectAll('circle').data(got).join('circle').attr('cx', (k) => x(k.p)).attr('cy', (k) => y(k.q[2])).attr('r', (k) => (k.p === base || k.p === last ? 4.5 : 3)).attr('fill', INK).attr('stroke', '#fff').attr('stroke-width', 1);
+    /* values at the newest year (all five) and at 2018/19 (the middle half and the middle school) */
+    const words = ['one in ten below', 'a quarter below', 'the middle school', 'three quarters below', 'nine in ten below'];
+    const label = (p, ks, dx, short) => { if (!Q[p]) return; const q = Q[p].q, ys = spreadOut(ks.map((k) => y(q[k]) + 4), m.t + 10, H - m.b - 2);
+      ks.forEach((k, j) => { const t = s.append('text').attr('x', x(p) + dx).attr('y', ys[j]); t.append('tspan').attr('class', k === 2 ? 'strong' : 'px-val').text(short ? (q[k] / 100).toFixed(1) : pc(q[k]));
+        if (!short && !narrow && p === last) t.append('tspan').attr('class', k === 2 ? 'strong' : null).text(' ' + words[k]); }); };
+    label(last, [0, 1, 2, 3, 4], 10, false);
+    if (base !== last && !Q[String(+base + 1)]) label(base, [1, 2, 3], 9, st < 30);
+    tipOn(s.append('g').selectAll('rect').data(got).join('rect').attr('x', (k) => x(k.p) - st / 2).attr('width', st).attr('y', m.t).attr('height', H - m.b - m.t).attr('fill', 'transparent'),
+      (k) => `<b>${ay(k.p)}</b> · ${k.n.toLocaleString('en-GB')} ${PH[phase]}<br>The middle school: <b>${pc(k.q[2])}</b><br>The middle half: ${pc(k.q[1])} to ${pc(k.q[3])}<br>The middle eight in ten: ${pc(k.q[0])} to ${pc(k.q[4])}`);
+    key(el, [`<i class="ln" style="border-color:${INK}"></i>The middle school`, `<i style="background:#C9D0DB"></i>The middle half of schools`, `<i style="background:#E9EDF3"></i>The middle eight in ten`, `<i style="background:#F4F5F8;border:1px solid #D5DBE5"></i>${yrs.filter((p) => !Q[p]).map(ay).join(', ')}: no figures published`]);
+    const a = Q[base].q, b = Q[last].q, sa = gap(a[3], a[1]), sb = gap(b[3], b[1]);
+    $('px-ridge-h').textContent = sb > sa ? 'Schools are further apart than in ' + ay(base) : 'How schools are spread, year by year';
+    $('px-ridge-r').innerHTML = `In ${ay(last)} the middle half of ${PH[phase]} had overall absence between <b>${pc(b[1])}</b> and <b>${pc(b[3])}</b>, a spread of <b>${pts(sb)}</b> points. In ${ay(base)} the spread was <b>${pts(sa)}</b> points, from ${pc(a[1])} to ${pc(a[3])}. The middle school moved from <b>${pc(a[2])}</b> to <b>${pc(b[2])}</b>.`;
   }
 
+  const the = (n) => (/^(North|South|East|West) /.test(n) ? 'the ' + n : n), list = (ns) => (ns.length > 1 ? ns.slice(0, -1).map(the).join(', ') + ' and ' + the(ns[ns.length - 1]) : the(ns[0]));
+  const signed = (t) => (t > 0 ? '+' : t < 0 ? '−' : '') + pts(t);
+  let rview = 'now';
   function regions() {
-    const el = $('px-reg'), R = P.regions[phase], i = MI[meas], yrs = years(); el.innerHTML = '';
-    const val = (n, p) => { const k = P.fy.indexOf(p), v = k < 0 ? null : R[n][k]; return v ? v[i] : null; }, names = Object.keys(R).filter((n) => n !== 'England').sort();
-    const mx = d3.max(names.concat(['England']).flatMap((n) => yrs.map((p) => val(n, p))).filter((v) => v != null)), W = 220, H = 130, m = {t: 6, r: 6, b: 18, l: 30};
-    const x = d3.scalePoint(yrs, [m.l, W - m.r]), y = d3.scaleLinear([0, mx * 1.05], [H - m.b, m.t]).nice(3), line = d3.line().defined((d) => d.v != null).x((d) => x(d.p)).y((d) => y(d.v));
-    names.forEach((n) => { const box = el.appendChild(document.createElement('div')); box.className = 'ax-chart'; const last = P.fy[P.fy.length - 1]; box.innerHTML = `<h3>${n}</h3>`;
-      const s = svg(box, W, H, n + ': ' + MN[meas] + ' by year');
-      y.ticks(3).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 4).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
-      [yrs[0], last].forEach((p, k) => s.append('text').attr('x', x(p)).attr('y', H - 4).attr('text-anchor', k ? 'end' : 'start').text(ay(p)));
-      s.append('path').attr('d', line(yrs.map((p) => ({p, v: val('England', p)})))).attr('fill', 'none').attr('stroke', MUTED).attr('stroke-width', 1.5);
-      s.append('path').attr('d', line(yrs.map((p) => ({p, v: val(n, p)})))).attr('fill', 'none').attr('stroke', INK).attr('stroke-width', 2.5);
-      s.append('text').attr('class', 'strong').attr('x', W - m.r).attr('y', Math.max(12, y(val(n, last)) - 7)).attr('text-anchor', 'end').text(pc(val(n, last))); });
+    const el = $('px-reg'), R = P.regions[phase], i = MI[meas], last = P.fy[P.fy.length - 1], base = '2018'; el.innerHTML = '';
+    const val = (n, p) => { const k = P.fy.indexOf(p), v = k < 0 ? null : R[n][k]; return v ? v[i] : null; };
+    /* everything in tenths of a point, rounded first, so every gap agrees with the figures as printed */
+    const now = (n) => Math.round(val(n, last) / 10), chg = (n) => gap(val(n, last), val(n, base));
+    const names = Object.keys(R).filter((n) => n !== 'England' && val(n, last) != null && val(n, base) != null).sort((p, q) => val(p, last) - val(q, last) || p.localeCompare(q));
+    const W = width(el), wide = W >= 720, seg = $('px-rview'); seg.hidden = wide;
+    seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === rview)));
+    const V = {now: {f: now, fmt: (t) => (t / 10).toFixed(1) + '%', title: ay(last), tick: (t) => (t / 10) + '%'},
+      chg: {f: chg, fmt: signed, title: 'Change since ' + ay(base) + ', percentage points', tick: (t) => signed(t).replace('.0', '')}};
+    const views = wide ? ['now', 'chg'] : [rview], nw = wide ? 190 : 0, gut = 44, pw = (W - nw - gut * (views.length - 1)) / views.length, rh = wide ? 30 : 42, top = 50, H = top + names.length * rh + 26;
+    const s = svg(el, W, H, MN[meas] + ' in ' + PH[phase] + ' by region in ' + ay(last) + ', and the change since ' + ay(base) + ', each against England');
+    const rowY = (k) => top + k * rh + (wide ? rh / 2 : 29);
+    names.forEach((n, k) => { if (wide && k % 2 === 0) s.append('rect').attr('x', 0).attr('width', W).attr('y', top + k * rh).attr('height', rh).attr('fill', '#F7F8FA');
+      if (!wide && k) s.append('line').attr('x1', 0).attr('x2', W).attr('y1', top + k * rh - 1).attr('y2', top + k * rh - 1).attr('stroke', GRID);
+      s.append('text').attr('class', 'px-name').attr('x', wide ? 8 : 0).attr('y', wide ? rowY(k) + 4 : top + k * rh + 14).text(n); });
+    views.forEach((v, j) => { const D = V[v], x0 = nw + j * (pw + gut), e = D.f('England'), vals = names.map(D.f), lo = Math.min(e, d3.min(vals)), hi = Math.max(e, d3.max(vals)), pad = Math.max(1, (hi - lo) * 0.06);
+      const x = d3.scaleLinear([lo - pad, hi + pad], [x0 + 46, x0 + pw - 46]);
+      s.append('text').attr('class', 'strong').attr('x', x0).attr('y', 12).text(D.title);
+      x.ticks(pw < 380 ? 3 : 5).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', top).attr('y2', H - 24).attr('stroke', wide ? '#E3E7EE' : GRID); s.append('text').attr('x', x(t)).attr('y', H - 8).attr('text-anchor', 'middle').text(D.tick(t)); });
+      s.append('line').attr('x1', x(e)).attr('x2', x(e)).attr('y1', top - 8).attr('y2', H - 24).attr('stroke', MUTED).attr('stroke-width', 1.5);
+      const et = 'England ' + D.fmt(e), ew = et.length * 6.4; s.append('text').attr('x', Math.max(x0 + ew / 2, Math.min(x0 + pw - ew / 2, x(e)))).attr('y', top - 14).attr('text-anchor', 'middle').attr('fill', MUTED).text(et);
+      names.forEach((n, k) => { const t = D.f(n), dlt = t - e, col = AXc.gap(dlt), yy = rowY(k);
+        if (dlt) s.append('line').attr('x1', x(e)).attr('x2', x(t)).attr('y1', yy).attr('y2', yy).attr('stroke', col).attr('stroke-width', 4);
+        s.append('circle').attr('cx', x(t)).attr('cy', yy).attr('r', 5.5).attr('fill', col).attr('stroke', '#fff').attr('stroke-width', 1);
+        s.append('text').attr('class', 'strong').attr('x', x(t) + (dlt < 0 ? -10 : 10)).attr('y', yy + 4).attr('text-anchor', dlt < 0 ? 'end' : 'start').text(D.fmt(t)); }); });
+    const rel = (t, than) => (t === 0 ? 'the same as ' + than : pts(t) + ' points ' + (t < 0 ? 'lower' : 'higher') + ' than ' + than);
+    tipOn(s.append('g').selectAll('rect').data(names).join('rect').attr('x', 0).attr('width', W).attr('y', (n, k) => top + k * rh).attr('height', rh).attr('fill', 'transparent'),
+      (n) => `<b>${n}</b><br>${ay(last)}: ${MN[meas]} ${V.now.fmt(now(n))}, ${rel(now(n) - now('England'), 'England')} (${V.now.fmt(now('England'))})<br>${ay(base)}: ${pc(val(n, base))}<br>Change: ${signed(chg(n))} points; England ${signed(chg('England'))}`);
+    key(el, [`<i style="background:${AXc.VERD}"></i>Below England`, `<i style="background:${AXc.RUST}"></i>Above England`, `<i style="background:${MUTED};width:2px;height:12px;vertical-align:-2px"></i>England`]);
+    const ends = (f) => { const a = d3.min(names, f), b = d3.max(names, f); return {lo: a, hi: b, los: names.filter((n) => f(n) === a).sort(), his: names.filter((n) => f(n) === b).sort()}; };
+    const A = ends(now), C = ends(chg), ce = chg('England'), allUp = ce > 0 && C.lo > 0, allDown = ce < 0 && C.hi < 0;
+    $('px-reg-s').textContent = `Today’s schools in each region pooled for the full school year ${ay(last)}, in order of ${MN[meas]}, each set against England. The change since ${ay(base)} is in percentage points and is set against England’s change.`;
+    $('px-reg-r').innerHTML = `In ${ay(last)}, ${MN[meas]} in ${PH[phase]} was lowest in ${list(A.los)} (<b>${V.now.fmt(A.lo)}</b>) and highest in ${list(A.his)} (<b>${V.now.fmt(A.hi)}</b>), against <b>${V.now.fmt(now('England'))}</b> across England. ` +
+      (allUp ? `Since ${ay(base)} it has risen by <b>${pts(ce)}</b> points across England. The rise was smallest in ${list(C.los)} (${pts(C.lo)} points) and largest in ${list(C.his)} (${pts(C.hi)} points).`
+        : allDown ? `Since ${ay(base)} it has fallen by <b>${pts(ce)}</b> points across England. The fall was largest in ${list(C.los)} (${pts(C.lo)} points) and smallest in ${list(C.his)} (${pts(C.hi)} points).`
+        : `Since ${ay(base)} the change across England was <b>${signed(ce)}</b> points. Among regions it ran from ${signed(C.lo)} points in ${list(C.los)} to ${signed(C.hi)} points in ${list(C.his)}.`);
   }
 
   function model() {
-    const card = $('px-model-c'), M = P.model && P.model.phases[phase]; card.hidden = !M; if (!M) return;
-    $('px-model-s').textContent = `Each of the ${M.n.toLocaleString('en-GB')} ${PH[phase]} is matched to the 20 schools nearest to it on these factors. A factor counts for more where it goes more strongly with overall absence across schools in the autumn and spring terms ${ay(P.model.period)}.`;
+    const M = P.model && P.model.phases[phase]; $('px-model-w').hidden = !M; $('px-model-s').hidden = !M; $('px-model-x').hidden = !!M; if (!M) return;
+    $('px-model-s').textContent = `Each of the ${M.n.toLocaleString('en-GB')} ${PH[phase]} is matched to the ${P.model.k || 20} schools nearest to it on these factors. A factor counts for more where it goes more strongly with overall absence across schools in the autumn and spring terms ${ay(P.model.period)}.`;
     $('px-model').innerHTML = '<thead><tr><th>Factor</th><th class="n">Average school</th><th class="n">Weight in the match</th></tr></thead><tbody>' + M.factors.map((f, k) =>
       `<tr><td>${M.labels[k]}</td><td class="n">${f === 'log_pupils' ? Math.round(Math.exp(M.mean[k])) + ' pupils' : f === 'rural' || f === 'selective' ? Math.round(M.mean[k] * 100) + '% of schools' : M.mean[k].toFixed(1) + '%'}</td><td class="n">${Math.round(M.weights[k] * 100)}%</td></tr>`).join('') + '</tbody>';
   }
+
+  /* method tabs: arrow keys, Home and End move between tabs, as in the Ofsted Explorer */
+  const tabs = [...document.querySelectorAll('.px-tabs [role=tab]')];
+  const showTab = (t, focus) => { tabs.forEach((b) => { const on = b === t; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; const pnl = $(b.getAttribute('aria-controls')); if (pnl) pnl.hidden = !on; });
+    const bar = t.parentNode; if (bar.scrollWidth > bar.clientWidth) bar.scrollLeft = Math.max(0, t.offsetLeft - bar.offsetLeft - 24); if (focus) t.focus({preventScroll: true}); };
+  tabs.forEach((t, k) => { t.addEventListener('click', () => showTab(t));
+    t.addEventListener('keydown', (e) => { const c = e.key; if (c === 'ArrowRight' || c === 'ArrowLeft' || c === 'Home' || c === 'End') { e.preventDefault();
+      showTab(tabs[c === 'Home' ? 0 : c === 'End' ? tabs.length - 1 : (k + (c === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length], true); } }); });
 
   let token = 0;
   function draw() {
     document.querySelectorAll('#px-phase button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === phase)));
     document.querySelectorAll('#px-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === meas)));
-    const q = new URLSearchParams(); if (phase !== 'S') q.set('phase', phase); if (meas !== 'abs') q.set('m', meas); if (xf !== 'fsm') q.set('x', xf);
+    const q = new URLSearchParams(); if (phase !== 'S') q.set('phase', phase); if (meas !== 'abs') q.set('m', meas); if (xf !== 'fsm') q.set('x', xf); if (rview !== 'now') q.set('rv', rview);
     history.replaceState(null, '', location.pathname + (q.toString() ? '#' + q : ''));
-    gradient(); ridges(); regions(); model();
+    gradient(); spread(); regions(); model();
     const t = ++token; getDist(phase).then((D) => { if (t === token) scatter(D); });
   }
 
   Promise.all([d3.json('/attendance/data/bench.json'), d3.json('/attendance/data/patterns.json')]).then(([b, p]) => {
-    B = b; P = p; const q = new URLSearchParams(location.hash.slice(1)); if (PH[q.get('phase')]) phase = q.get('phase'); if (q.get('m') === 'pa') meas = 'pa'; if (XN[q.get('x')]) xf = q.get('x');
+    B = b; P = p; const q = new URLSearchParams(location.hash.slice(1)); if (PH[q.get('phase')]) phase = q.get('phase'); if (q.get('m') === 'pa') meas = 'pa'; if (XN[q.get('x')]) xf = q.get('x'); if (q.get('rv') === 'chg') rview = 'chg';
     $('px-x').value = xf; $('px-x').addEventListener('change', () => { xf = $('px-x').value; draw(); });
     $('px-phase').addEventListener('click', (e) => { const k = e.target.closest('button'); if (k) { phase = k.dataset.p; draw(); } });
+    $('px-rview').addEventListener('click', (e) => { const k = e.target.closest('button'); if (k) { rview = k.dataset.v; draw(); } });
     $('px-meas').addEventListener('click', (e) => { const k = e.target.closest('button'); if (k) { meas = k.dataset.m; draw(); } });
     $('px-date').textContent = `Full school years to ${ay(B.fy_last)}; school by school for the autumn and spring terms ${ay(B.latest)}. Published by the DfE on ${date(B.release.full_year.published)} and ${date(B.release.autumn_spring.published)}.`;
-    $('px-src').textContent = `published ${date(B.release.full_year.published)} and ${date(B.release.autumn_spring.published)}`;
+    $('px-src-fy').textContent = `full school years ${ay(P.fy[0])} to ${ay(B.fy_last)}, published ${date(B.release.full_year.published)}`;
+    $('px-src-as').textContent = `autumn and spring terms ${ay(B.latest)}, published ${date(B.release.autumn_spring.published)}`;
+    document.querySelectorAll('.px-latest').forEach((n) => { n.textContent = ay(B.latest); }); document.querySelectorAll('.px-fylast').forEach((n) => { n.textContent = ay(B.fy_last); });
     let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } });
     draw();
   }).catch((e) => { console.error(e); $('px-date').textContent = 'The data could not be loaded. Please try again shortly.'; });
