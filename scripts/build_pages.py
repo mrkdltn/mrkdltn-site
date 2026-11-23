@@ -85,9 +85,10 @@ def page(template, r, has_card):
         h, n = re.subn(pat, lambda m: rep, h, count=1)
         if n != 1:
             raise SystemExit(f'school page template: no match for {pat}')
-    h = h.replace('<script src="/explorer/dash.js', f'<script>window.OE_URN="{urn}";</script>\n<script src="/explorer/dash.js', 1)
-    if 'window.OE_URN' not in h:
-        raise SystemExit('school page template: dash.js must be loaded from /explorer/dash.js')
+    # the school is named in a meta tag that dash.js reads, so the page needs no inline script (CSP)
+    h = h.replace('<link rel="canonical"', f'<meta name="oe-urn" content="{e(urn)}">\n<link rel="canonical"', 1)
+    if 'name="oe-urn"' not in h:
+        raise SystemExit('school page template: no canonical link to put the school URN beside')
     return h
 
 

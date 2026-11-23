@@ -44,7 +44,14 @@
   const expand = (j) => { const rows = new Array(j.n); const cols = j.cols;
     for (let i = 0; i < j.n; i++) { const o = {}; for (const c of cols) { const v = j.data[c][i]; o[c] = v === null || v === undefined ? '' : (j.codes[c] ? j.codes[c][v] : String(v)); } rows[i] = o; }
     return rows; };
-  const loadSource = (url) => (/\.json$/.test(url) ? d3.json(url).then(expand) : d3.csv(url));
+  // CSV rows parsed without d3.csvParse, which builds its row converter with new Function (blocked by the CSP)
+  const csvRows = (text) => {
+    const rows = d3.csvParseRows(text), cols = rows.shift() || [];
+    const out = rows.map((r) => { const o = {}; cols.forEach((c, i) => { o[c] = r[i] || ''; }); return o; });
+    out.columns = cols;
+    return out;
+  };
+  const loadSource = (url) => (/\.json$/.test(url) ? d3.json(url).then(expand) : d3.text(url).then(csvRows));
   // The 50 similar schools are fetched per school (nn/<urn % 32>.json) and written back as the space-separated
   // 'nn' string the code expects. Every row in the shard is filled, so nearby lookups are often free.
   const nnShards = new Map();
@@ -94,7 +101,9 @@
     },
     onData: (f) => { onDataFns.push(f); },
     start: (defs) => {
-      defaults = defs || {}; state = Object.assign({}, defaults, window.OE_URN ? {urn: String(window.OE_URN)} : {}, readHash());
+      // a school page names its school in <meta name="oe-urn"> (no inline script, for the CSP)
+      const urnMeta = document.querySelector('meta[name="oe-urn"]');
+      defaults = defs || {}; state = Object.assign({}, defaults, urnMeta ? {urn: urnMeta.content} : {}, readHash());
       window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
         // other view settings in the address (measure, chart options) also apply when only they change
         const ch = {}; ['x', 'area', 'phase', 'area2', 'meas'].forEach((k) => { const v = h[k] || defaults[k]; if (v !== undefined && v !== state[k]) ch[k] = v; }); if (Object.keys(ch).length) window.dash.setParams(ch); });

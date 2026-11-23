@@ -1,4 +1,19 @@
 # Browsers revalidate on every visit, so a new deploy is seen at once.
 # Unchanged files come back as 304 Not Modified, which costs a round trip, not a download.
+# Security headers: standard 15 in docs/site-standards.md. HSTS starts at one day (86400);
+# lengthen it after a clean week. The CSP is report-only until a week passes with no reports;
+# it allows the cookieless Cloudflare Web Analytics beacon and nothing else from another host.
 /*
   Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=86400
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), browsing-topics=()
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'
+
+# Fingerprinted files (scripts/fingerprint.py): a new name whenever the content changes, so cache for a year.
+/static/*
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable

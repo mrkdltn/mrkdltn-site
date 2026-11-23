@@ -275,7 +275,11 @@ def main():
     # share cards for the main site, then fail the build if any page lacks its share tags
     import site_meta
     import check_meta
+    import fingerprint
     site_meta.build()
+    # long-lived assets get hashed names under /static/ (Cloudflare builds only, or FINGERPRINT=1)
+    if fingerprint.main():
+        raise SystemExit('fingerprint failed: see the list above')
     if check_meta.main():
         raise SystemExit('metadata check failed: see the list above')
 

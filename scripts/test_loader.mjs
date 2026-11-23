@@ -1,10 +1,11 @@
-import fs from 'fs'; import vm from 'vm'; import {csvParse} from 'd3-dsv';
+import fs from 'fs'; import vm from 'vm'; import {csvParse, csvParseRows} from 'd3-dsv';
 const root = 'site/explorer/';
 const listeners = {}; const classes = new Set();
 const ctx = { console, Promise, Map, Set, Object, String, Number, Array, setTimeout, clearTimeout, URLSearchParams,
   location: {hash: '#urn=145120', pathname: '/explorer/', search: ''}, history: {replaceState(){}},
-  window: null, document: { documentElement: {classList: {add: (c) => classes.add(c), toggle(){}}}, querySelectorAll: () => [] },
-  d3: { json: (u) => Promise.resolve(JSON.parse(fs.readFileSync(root + u, 'utf8'))), csv: (u) => Promise.resolve(csvParse(fs.readFileSync(root + u, 'utf8'))) } };
+  window: null, document: { documentElement: {classList: {add: (c) => classes.add(c), toggle(){}}}, querySelectorAll: () => [], querySelector: () => null },
+  d3: { json: (u) => Promise.resolve(JSON.parse(fs.readFileSync(root + u, 'utf8'))), csv: (u) => Promise.resolve(csvParse(fs.readFileSync(root + u, 'utf8'))),
+        text: (u) => Promise.resolve(fs.readFileSync(root + u, 'utf8')), csvParseRows } };
 ctx.window = ctx; ctx.window.addEventListener = (e, f) => { listeners[e] = f; }; ctx.window.innerWidth = 1200;
 vm.createContext(ctx); vm.runInContext(fs.readFileSync(root + 'dash.js', 'utf8'), ctx);
 const dash = ctx.dash;
