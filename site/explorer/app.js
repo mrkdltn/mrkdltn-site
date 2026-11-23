@@ -13,6 +13,7 @@
   const P = () => Object.assign({urn: '', q: '', x: 'dis_pct', area: 'g_ach', phase: 'Secondary', area2: 'g_ach', idsr: '', meas: 'a8'}, dash.params());
   // Text on a grade colour: at least 4.5:1 on each (the grade colours themselves never change).
   // Expected and Needs attention take midnight; Strong standard a deeper midnight (#0B1A2E gives 4.3:1, #08131F 4.7:1).
+  // Exceptional keeps white (4.49:1, as on Ofsted's own report cards): Mark's decision, 23 November 2026. Only black passes there.
   const gradeInk = (g) => (g === 'Expected standard' || g === 'Needs attention' || g === 'Strong standard' ? '#08131F' : '#fff');
   const OE = window.OE = {GC, GORDER, BANDC, num, f1, fs, P, motion, smooth, gradeInk, active: 0, matches: []};
 
