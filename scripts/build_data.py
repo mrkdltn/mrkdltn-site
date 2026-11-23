@@ -273,6 +273,7 @@ def main():
     build_pages.main(ks4, rc)
     import build_attendance   # the Attendance Explorer's data (site/attendance/data)
     build_attendance.main()
+    build_attendance.schools()
 
 
 if __name__ == '__main__':

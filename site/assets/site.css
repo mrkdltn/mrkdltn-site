@@ -77,7 +77,7 @@ body.stone{background:var(--stone)}
 @media(prefers-reduced-motion:reduce){.js .chart .hrow .tr i,.js .chart .hrow .tr b,.js .chart .units .hit{transition:none!important;transform:none;opacity:1}}
 @media print{body.stone{background:#fff}.band{background:none;color:#0B1A2E;--ink:#0B1A2E;--ink-2:#33405A;--ink-muted:#55627A;--line:#D8DDE5;--brass-text:#7A5C14}.article-band{padding-bottom:12px;border-bottom:1px solid #999}.article-band .article-head{padding-top:14px}.stone .article{margin-top:14px;padding:0;max-width:none}.stone .mnote{margin-right:0;float:none;width:auto;display:block;margin:4px 0 10px}.article figure.bleed,.article figure.bleed:first-child{margin:0 0 14px}.update{background:none;border:1px solid #999}.chart,.update,table{break-inside:avoid}.js .chart .hrow .tr i{transform:none!important}.js .chart .hrow .tr b,.js .chart .units .hit{opacity:1!important}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 /* phones (16 November 2026): keep the site header to one row so pages start higher */
-@media (max-width:480px){.site-head .wrap{flex-wrap:nowrap;align-items:center;gap:0 12px;padding-top:4px;padding-bottom:4px}.brand{font-size:20px;padding:6px 0}.nav{flex-wrap:nowrap;gap:0 14px;font-size:14px}.nav a{padding:10px 0}}
+@media (max-width:480px){.site-head .wrap{flex-wrap:nowrap;align-items:center;gap:0 12px;padding-top:4px;padding-bottom:4px}.brand{font-size:20px;padding:6px 0}.nav{flex-wrap:nowrap;gap:0 12px;font-size:14px}.nav-x,.nav .nav-li{display:none}.nav a{padding:10px 0}}
 /* LinkedIn in the header (17 November 2026) */
 .nav{align-items:center}
 .nav-li{display:inline-flex;align-items:center;padding:8px 0!important}
@@ -95,3 +95,6 @@ body.explorer .oe-hero #pick .oe-btn{display:inline-flex;align-items:center;just
 .card.has-img>span:last-child{padding:28px 32px 30px 0}
 @media(max-width:700px){.card.has-img{grid-template-columns:1fr}.card.has-img img{aspect-ratio:16/9;height:auto}.card.has-img>span:last-child{padding:0 20px 24px}}
 .card.has-img .when{display:block;margin-bottom:8px}
+/* five header links on small phones */
+@media (max-width:400px){.site-head .nav{font-size:13px;gap:0 9px}.site-head .brand{font-size:18px}}
+@media (max-width:340px){.site-head .wrap{flex-wrap:wrap}}

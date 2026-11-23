@@ -277,7 +277,7 @@ def page():
 <a class="skip" href="#main">Skip to the content</a>
 <header class="site-head over"><div class="wrap">
   <a class="brand" href="/">Mark Dalton</a>
-  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted Explorer</a><a href="#about">About</a><a class="nav-li" href="%s" aria-label="Mark Dalton on LinkedIn">%s</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/">Attendance</a><a href="#about">About</a><a class="nav-li" href="%s" aria-label="Mark Dalton on LinkedIn">%s</a></nav>
 </div></header>
 <main id="main">
 <div class="day" id="day">

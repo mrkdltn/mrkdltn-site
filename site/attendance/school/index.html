@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School attendance · Attendance Explorer · Mark Dalton</title>
+<meta name="description" content="School attendance in England, day by day: every local authority and region read against England and against last year. Built from the DfE's fortnightly attendance data.">
+<link rel="canonical" href="https://mrkdltn.com/attendance/school/">
+<meta property="og:title" content="Attendance Explorer">
+<meta property="og:description" content="School attendance in every local authority in England, day by day, against England and last year. Free, built from public data.">
+<meta property="og:url" content="https://mrkdltn.com/attendance/school/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/attendance/attendance.css">
+</head>
+<body class="explorer">
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+
+<main class="ax">
+  <header class="ax-top">
+    <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · Schools</p>
+    <h1 id="sx-name">Find a school</h1>
+    <p class="ax-date" id="sx-meta">Absence at every state-funded primary, secondary and special school in England, from the DfE’s termly statistics.</p>
+  </header>
+
+  <section class="ax-controls" aria-label="Find a school">
+    <label class="ax-field ax-find"><span>School name, town or postcode</span>
+      <input id="sx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Start typing a school name" role="combobox" aria-expanded="false" aria-controls="sx-list" aria-autocomplete="list">
+      <ul id="sx-list" class="ax-pop" role="listbox" hidden></ul></label>
+  </section>
+
+  <div id="sx-body" hidden>
+  <section class="ax-card">
+    <h2 id="sx-period"></h2>
+    <p class="ax-reading" id="sx-reading"></p>
+    <div class="ax-kpis" id="sx-kpis"></div>
+    <p class="ax-sub ax-ofsted" id="sx-ofsted"></p>
+  </section>
+
+  <section class="ax-card">
+    <h2>Where it sits among <span id="sx-phase-n"></span></h2>
+    <p class="ax-sub">Every school of the same phase in England, by <span class="sx-meas-n"></span>. The marks beneath are the other schools in the same local authority. This is a position in a distribution, not a judgement of the school.</p>
+    <div class="ax-seg sx-meas" role="group" aria-label="Measure"><button type="button" data-m="abs">Overall absence</button><button type="button" data-m="pa">Persistent absence</button></div>
+    <div id="sx-dist" class="ax-chart"></div>
+    <p class="ax-reading" id="sx-dist-r"></p>
+  </section>
+
+  <section class="ax-card">
+    <h2>Year by year</h2>
+    <p class="ax-sub">Full school years from 2013/14. No figures were published for 2019/20. Add up to four schools to compare.</p>
+    <div id="sx-hist" class="ax-chart"></div>
+    <p class="ax-reading" id="sx-hist-r"></p>
+    <div class="ax-compare"><label class="ax-field ax-find"><span>Compare with another school</span>
+      <input id="sx-q2" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Add a school" role="combobox" aria-expanded="false" aria-controls="sx-list2" aria-autocomplete="list">
+      <ul id="sx-list2" class="ax-pop" role="listbox" hidden></ul></label><div id="sx-chips" class="ax-chips"></div></div>
+  </section>
+
+  <section class="ax-card">
+    <h2>Since before the pandemic</h2>
+    <p class="ax-sub">The change in overall absence between <span id="sx-base-n"></span>, set against the change at every other school of the same phase.</p>
+    <div id="sx-chg" class="ax-chart"></div>
+    <p class="ax-reading" id="sx-chg-r"></p>
+  </section>
+  </div>
+
+  <section class="ax-card ax-method">
+    <h2>Sources and method</h2>
+    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>: <span id="sx-src"></span>. Accredited official statistics from the school census. School details from Get Information about Schools. Open Government Licence v3.0.</p>
+    <p><b>Measures.</b> Overall absence is the share of possible sessions missed. Persistent absence is the share of pupils who missed 10% or more of their own possible sessions. Figures cover pupils aged 5 to 15.</p>
+    <p><b>Two kinds of period.</b> The newest figures cover the autumn and spring terms only and are compared with the same two terms a year earlier. The long run uses full school years. The two are never mixed on one chart.</p>
+    <p><b>England and the local authority.</b> These are pooled across schools of the same phase in the DfE’s school-level file: sessions missed over sessions possible, and persistent absentees over enrolments.</p>
+    <p><b>Schools that changed.</b> Where a school has exactly one predecessor, for example before becoming an academy, the earlier years come from the predecessor and the chart marks the join. Schools formed by merging others start at the merger.</p>
+    <p><b>What is not shown.</b> Rates only, never counts of pupils. No figures for a school with fewer than 10 enrolments. Severe absence (missing half or more of sessions) is not shown for single schools because it is usually a handful of children. The DfE publishes no breakdown by pupil group for individual schools, so none appears here.</p>
+    <p><b>Small schools.</b> In a school of 100 pupils one child is a full percentage point of persistent absence. Read small differences accordingly.</p>
+    <p><b>Ofsted.</b> The attendance and behaviour grade is taken from the school’s most recent report card and is shown as published, with its date.</p>
+  </section>
+</main>
+
+
+<footer class="site-foot noprint"><div class="wrap">
+  <span>© 2026 Mark Dalton. Built from public DfE and Ofsted data. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<div class="ax-tip" id="ax-tip" role="status" hidden></div>
+<script src="/assets/d3.min.js"></script>
+<script src="/attendance/search.js"></script>
+<script src="/attendance/school.js"></script>
+</body>
+</html>

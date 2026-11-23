@@ -107,8 +107,8 @@ Design at 375 px before desktop. One chart per screen, each legible without pinc
 | Phase | What | Outcome |
 | --- | --- | --- |
 | 0. Recon (done 23 Nov) | Files opened; columns, markers, coverage, joins and counts checked | `docs/attendance-data-note.md` and this corrected plan |
-| 1. Pulse | Year ribbon, weekly lines, reasons, authority hex map and slopes; the fetch Action | First preview; the fortnightly habit starts here |
-| 2. Schools | School view, history, recovery, beeswarm, compare, search, the Pages Function | Every school has a page |
+| 1. Pulse (built 23 Nov, preview) | Year ribbon, weekly lines, reasons, authority hex map and slopes; the fetch Action | First preview; the fortnightly habit starts here |
+| 2. Schools (built 23 Nov, preview; similar schools and the contextual reading follow in Phase 4) | School view, history, recovery, beeswarm, compare, search, the Pages Function | Every school has a page |
 | 3. Trusts and constituencies | Pooled rates, strip plots, constituency hex and boundary maps | Group and political geography |
 | 4. Models | Similar schools for all phases, contextual expected, funnel, Patterns | The analytical core |
 | 5. Small areas | Wards with vector tiles; ceremonial counties | The full geographic set |

@@ -147,5 +147,124 @@ def main():
                 assert v is None or all(0 <= x <= 10000 for x in v.values()), (c, y, p)
 
 
+# ---------------------------------------------------------------- schools (termly and full-year census statistics)
+SHARDS = 64
+MIN_ENROL = 10          # no rate is shown for a school with fewer than 10 enrolments
+SCOLS = ['enrol', 'abs', 'unauth', 'pa', 'ill', 'hol_u']
+OFSTED = ['Exceptional', 'Strong standard', 'Expected standard', 'Needs attention', 'Urgent improvement']
+
+
+def schools():
+    apath = os.path.join(RAW, 'school_absence.csv')
+    if not os.path.exists(apath):
+        print('attendance: no school data, school view not built'); return
+    I = lambda v: int(v) if v != '' else None
+    rows = {}
+    for r in csv.DictReader(open(apath, encoding='utf-8')):
+        rows.setdefault(r['urn'], {})[r['period']] = [I(r['enrol']), I(r['poss'])] + [I(r[c]) for c in SCOLS[1:]]
+    meta = {r['urn']: r for r in csv.DictReader(open(os.path.join(RAW, 'schools.csv'), encoding='utf-8'))}
+    periods = sorted({p for h in rows.values() for p in h})
+    fy = [p for p in periods if not p.endswith('AS')]
+    terms = [p for p in periods if p.endswith('AS')]
+    latest, fy_last = terms[-1], fy[-1]
+    release = json.load(open(os.path.join(RAW, 'schools_release.json')))
+
+    # Ofsted's attendance and behaviour grade, newest report card per school (stated as a fact, with its date)
+    grade = {}
+    for name in ('ofsted_rc.csv', 'reports_daily.csv'):
+        path = os.path.join('data/raw', name)
+        if os.path.exists(path):
+            for r in csv.DictReader(open(path, encoding='utf-8')):
+                if r.get('g_ab') in OFSTED and (r['urn'] not in grade or (r.get('insp_date') or '') > grade[r['urn']][1]):
+                    grade[r['urn']] = (OFSTED.index(r['g_ab']), r.get('insp_date') or '')
+
+    # benchmarks: pooled rates for England and each local authority, by phase and period
+    def pool(urns_periods):
+        e = po = ab = un = pa = 0
+        for v in urns_periods:
+            if v[0] is None or v[1] is None or v[2] is None:
+                continue
+            e += v[0]; po += v[1]; ab += v[2] * v[1]; un += (v[3] or 0) * v[1]; pa += (v[4] or 0) * v[0]
+        return None if not po or e < MIN_ENROL else [round(ab / po), round(un / po), round(pa / e)]
+    groups = {}
+    for u, h in rows.items():
+        m = meta[u]
+        for p, v in h.items():
+            groups.setdefault(('E', m['phase'], p), []).append(v)
+            groups.setdefault((m['la'], m['phase'], p), []).append(v)
+            groups.setdefault(('E', 'A', p), []).append(v)
+    bench = {}
+    for (a, ph, p), vs in groups.items():
+        bench.setdefault(a, {}).setdefault(ph, {})[p] = pool(vs)
+    eng = bench['E']['A'][latest]
+    print(f"attendance schools: England {latest}: overall {eng[0] / 100:.2f}%, persistent absence {eng[2] / 100:.2f}%")
+
+    def shown(v):
+        """A school's figures for one period, or None where withheld."""
+        return None if v is None or v[0] is None or v[0] < MIN_ENROL or v[2] is None else [v[0]] + v[2:]
+
+    def history(u):
+        """Full-year history under this URN, extended back through single predecessors. Returns ({period: values}, join)."""
+        out, join, seen, cur = {}, None, {u}, u
+        for p, v in rows[u].items():
+            out[p] = shown(v)
+        while True:
+            pr = meta.get(cur, {}).get('pred')
+            if not pr or pr in seen or pr not in rows:
+                break
+            seen.add(pr)
+            first = min([p for p in out if not p.endswith('AS')] or ['9999'])
+            add = {p: shown(v) for p, v in rows[pr].items() if not p.endswith('AS') and p < first}
+            if add:
+                join = join or first
+                out.update(add)
+            cur = pr
+        return out, join
+
+    current = sorted((u for u in rows if latest in rows[u] or fy_last in rows[u]), key=int)
+    current = [u for u in current if latest in rows[u]]            # the newest release defines who is listed
+    out = os.path.join(OUT, 'sch')
+    os.makedirs(out, exist_ok=True)
+    shards = [dict() for _ in range(SHARDS)]
+    las = sorted({meta[u]['la'] for u in current})
+    index = {k: [] for k in ('urn', 'name', 'town', 'pc', 'la', 'ph')}
+    dist = {ph: {k: [] for k in ('urn', 'la', 'enrol', 'abs', 'pa', 'chg')} for ph in 'PSX'}
+    base = '2018'
+    for u in current:
+        m = meta[u]
+        h, join = history(u)
+        rec = {'n': m['name'], 'ph': m['phase'], 'la': m['la'], 'town': m['town'], 'pc': m['postcode'], 'trust': m['trust'],
+               'ward': m['ward'], 'pcon': m['pcon'], 'h': {p: v for p, v in h.items() if v}}
+        if join:
+            rec['join'] = join
+        if u in grade:
+            rec['g'] = list(grade[u])
+        shards[int(u) % SHARDS][u] = rec
+        for k, v in (('urn', int(u)), ('name', m['name']), ('town', m['town']), ('pc', m['postcode']), ('la', las.index(m['la'])), ('ph', m['phase'])):
+            index[k].append(v)
+        now = h.get(latest)
+        if now and m['phase'] in dist:
+            d = dist[m['phase']]
+            a, b = h.get(fy_last), h.get(base)
+            d['urn'].append(int(u)); d['la'].append(las.index(m['la'])); d['enrol'].append(now[0]); d['abs'].append(now[1]); d['pa'].append(now[3])
+            d['chg'].append(a[1] - b[1] if a and b else None)
+    for i, sh in enumerate(shards):
+        json.dump(sh, open(os.path.join(out, f'{i}.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    json.dump({'n': len(current), 'las': las, 'data': index}, open(os.path.join(OUT, 'schools.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    for ph, d in dist.items():
+        json.dump(d, open(os.path.join(OUT, f'dist_{ph}.json'), 'w'), separators=(',', ':'))
+    names = {a['code']: a['name'] for a in csv.DictReader(open(os.path.join(RAW, 'areas.csv'), encoding='utf-8'))}
+    json.dump({'release': release, 'periods': periods, 'fy': fy, 'latest': latest, 'fy_last': fy_last, 'base': base, 'shards': SHARDS,
+               'min_enrol': MIN_ENROL, 'cols': SCOLS, 'la_names': {c: names.get(c, c) for c in las}, 'bench': bench},
+              open(os.path.join(OUT, 'bench.json'), 'w'), separators=(',', ':'))
+    withheld = sum(1 for u in current if not shown(rows[u][latest]))
+    print(f'attendance schools: {len(current)} schools in {SHARDS} shards; {withheld} withheld (under {MIN_ENROL} enrolments); '
+          f"{sum(1 for sh in shards for r in sh.values() if 'join' in r)} with a predecessor's history joined; "
+          f"{sum(1 for u in current if u in grade)} with an Ofsted attendance and behaviour grade")
+    for d in dist.values():
+        assert all(0 <= x <= 10000 for x in d['abs'] + d['pa'])
+
+
 if __name__ == '__main__':
     main()
+    schools()
