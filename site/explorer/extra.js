@@ -213,6 +213,8 @@
       return (sc && sc.urn ? location.origin + '/explorer/school/' + sc.urn + '/' : location.origin + location.pathname) + (t ? '#' + t : ''); };
     const insp = () => { const sc = S(); return (sc && sc.insp_date) || ''; };
     OEshare.button(document.getElementById('oe-copy'), {url: schoolUrl, insp, title: () => { const sc = S(); return sc ? sc.name + ' · Ofsted Explorer' : document.title; }});
+    // Compare: opens with this school, ready to add others
+    const cmp = document.getElementById('oe-cmp'); if (cmp) dash.onData(() => { const sc = S(); cmp.hidden = !(sc && !sc.rc_only && sc.a8 !== ''); if (sc) cmp.href = '/explorer/compare/#u=' + sc.urn; });
     let checked = false; dash.onData(() => { if (checked || !S()) return; checked = true; OEshare.check({insp, host: '#school'}); }); }
   // section nav highlight; on phones the sticky menu scrolls sideways to keep the current section's link in view
   const phone = window.matchMedia('(max-width: 640px)');

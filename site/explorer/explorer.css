@@ -374,3 +374,7 @@ html:not(.loaded) body.explorer #school h2,html:not(.loaded) body.explorer #scho
 /* the second journey (item 6): from a measure, one tap from the Explorer's home */
 body.explorer .oe-hero .oe-alt{margin:10px 0 0;font-size:14.5px}
 body.explorer .oe-hero .oe-alt a{color:#F5F1E8;text-decoration-color:#C9A24B;text-underline-offset:3px}
+
+/* Compare (item 8): a link styled as the buttons beside it */
+body.explorer a.oe-btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;color:inherit}
+body.explorer a.oe-btn[hidden]{display:none}
