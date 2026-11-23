@@ -7,7 +7,7 @@
     const d = j.data; idx = d.urn.map((u, i) => ({urn: u, name: d.name[i], town: d.town[i], pc: d.pc[i], ph: d.ph[i],
       key: (d.name[i] + ' ' + d.town[i] + ' ' + d.pc[i] + ' ' + d.pc[i].replace(' ', '')).toLowerCase()})); return idx; }));
   const PH = {P: 'Primary', S: 'Secondary', X: 'Special'};
-  const findG = (t) => grp.filter((r) => t.every((w) => r.key.includes(w))).sort((a, b) => (b.key.startsWith(t[0]) - a.key.startsWith(t[0])) || b.n - a.n).slice(0, 3);
+  const findG = (t) => grp.filter((r) => t.every((w) => r.key.includes(w))).sort((a, b) => (b.key.startsWith(t[0]) - a.key.startsWith(t[0])) || ((b.kind !== 'w') - (a.kind !== 'w')) || b.n - a.n).slice(0, 4);
   const find = (q, groups) => { const t = q.toLowerCase().split(/\s+/).filter(Boolean); if (!t.length) return [];
     if (groups) { const g = findG(t); return g.concat(findS(t).slice(0, 8 - g.length)); } return findS(t); };
   const findS = (t) => {
@@ -20,7 +20,7 @@
     const render = () => { list.innerHTML = '';
       if (!res.length) { const li = document.createElement('li'); li.className = 'none'; li.textContent = groups ? 'Nothing matches. Try a school’s town or postcode.' : 'No school matches. Try the town or postcode.'; list.appendChild(li); }
       res.forEach((r, i) => { const li = document.createElement('li'); li.setAttribute('role', 'option'); li.setAttribute('aria-selected', String(i === sel));
-        li.textContent = r.name; const s = document.createElement('small'); s.textContent = r.kind ? (r.kind === 't' ? 'Trust' : 'Constituency') + ' · ' + r.n + ' schools' : [PH[r.ph], r.town, r.pc].filter(Boolean).join(' · '); li.appendChild(s);
+        li.textContent = r.name; const s = document.createElement('small'); s.textContent = r.kind ? ({t: 'Trust', c: 'Constituency', w: 'Ward', y: 'County'}[r.kind]) + ' · ' + r.n + (r.n === 1 ? ' school' : ' schools') : [PH[r.ph], r.town, r.pc].filter(Boolean).join(' · '); li.appendChild(s);
         li.addEventListener('pointerdown', (e) => { e.preventDefault(); pick(r); }); list.appendChild(li); });
       list.hidden = false; input.setAttribute('aria-expanded', 'true'); };
     const pick = (r) => { input.value = ''; close(); input.blur(); onPick(r); };

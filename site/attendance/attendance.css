@@ -87,3 +87,35 @@
 .ax-multi h3{font-size:13px;font-weight:600;margin:0 0 2px}
 .ax-coef td,.ax-coef th{font-variant-numeric:tabular-nums}
 @media (max-width:480px){#px-body{gap:16px}.ax-nav{gap:4px 14px;font-size:13px;margin-top:-6px}}
+
+/* ---- Colour and layout pass, 23 November 2026: lessons carried over from the Ofsted Explorer.
+   Stone ground, data on white sheets, a midnight header with a brass rule; colour only where it encodes something. */
+body.explorer{background:#ECE9E1}
+.ax{gap:18px}
+.ax-top{background:#0B1A2E;color:#F5F1E8;padding:28px 32px 26px;border-bottom:2px solid #C9A24B;margin-top:-8px}
+.ax-top h1{color:#F5F1E8}
+.ax-top .ax-label,.ax-top .ax-label a{color:#C9A24B}
+.ax-top .ax-lede{color:#D9DEE8}
+.ax-top .ax-date,.ax-top .ax-date a{color:#A8B5C8}
+.ax-nav{margin:0 0 -6px}
+.ax-nav a{padding:10px 0;min-height:24px}
+.ax-card{border:0;border-radius:2px}
+.ax-kpi{border-radius:2px;border-color:var(--line);border-left:3px solid var(--line)}
+.ax-kpi.lo{border-left-color:#2F6F66}.ax-kpi.hi{border-left-color:#A3402B}.ax-kpi.me{border-left-color:#0B1A2E}
+.ax-kpi .d b{font-weight:600}
+.ax-controls{background:#ECE9E1;border-bottom:0;padding:8px 0}
+.ax-select,.ax-seg{border-radius:2px}
+.ax-seg button{min-height:44px}
+.ax-select{min-height:44px}
+.ax-pill{display:inline-block;color:#fff;font:500 13px/1.2 var(--sans);padding:4px 9px;border-radius:2px;white-space:nowrap;vertical-align:1px}
+.ax-pills{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.ax-reading{border-left:2px solid #C9A24B;padding-left:14px}
+.ax-head-row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-top:14px}
+.ax-btn{font:inherit;font-size:15px;min-height:44px;padding:0 14px;border:1px solid var(--muted);border-radius:2px;background:#fff;color:var(--ink);cursor:pointer}
+.ax-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ax-top .ax-btn{background:transparent;color:#F5F1E8;border-color:#A8B5C8}
+.ax-notice{background:#fff;border-left:3px solid #C9A24B;padding:12px 16px;font-size:15px;border-radius:2px}
+.ax-more{margin-top:12px}
+.ax-map path{stroke:#fff;stroke-width:1;cursor:pointer}
+.ax-map path.me{stroke:#0B1A2E;stroke-width:2.5}
+@media (max-width:480px){.ax-top{padding:20px 16px;margin:-8px -16px 0}.ax{gap:14px}.ax-nav a{padding:8px 0}}

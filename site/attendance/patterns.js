@@ -3,7 +3,7 @@
    bench.json (periods and sources). Pooled values are [overall, unauthorised, persistent]; rates in hundredths of a point. */
 (function () {
   const INK = '#0B1A2E', MUTED = '#55627A', VERD = '#2F6F66', GRID = '#EEF1F5', SOFT = '#C9D0DB';
-  const SHADES = ['#B9C2D0', '#8C99AE', '#62728C', '#3A4B69', INK];
+  const SHADES = ['#1E544D', '#6FA299', '#9AA3B2', '#C98672', '#7A2617'];
   const PH = {P: 'primary schools', S: 'secondary schools', X: 'special schools'}, MI = {abs: 0, pa: 2}, MN = {abs: 'overall absence', pa: 'persistent absence'};
   const XN = {fsm: 'eligible for free school meals', sen: 'with SEN support', ehcp: 'with an education, health and care plan', eal: 'with a first language other than English'};
   const XF = {fsm: 'fsm_pct', sen: 'sen_pct', ehcp: 'ehcp_pct', eal: 'eal_pct'};
@@ -95,7 +95,7 @@
       const s = svg(box, W, H, n + ': ' + MN[meas] + ' by year');
       y.ticks(3).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 4).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
       [yrs[0], last].forEach((p, k) => s.append('text').attr('x', x(p)).attr('y', H - 4).attr('text-anchor', k ? 'end' : 'start').text(ay(p)));
-      s.append('path').attr('d', line(yrs.map((p) => ({p, v: val('England', p)})))).attr('fill', 'none').attr('stroke', VERD).attr('stroke-width', 1.5);
+      s.append('path').attr('d', line(yrs.map((p) => ({p, v: val('England', p)})))).attr('fill', 'none').attr('stroke', MUTED).attr('stroke-width', 1.5);
       s.append('path').attr('d', line(yrs.map((p) => ({p, v: val(n, p)})))).attr('fill', 'none').attr('stroke', INK).attr('stroke-width', 2.5);
       s.append('text').attr('class', 'strong').attr('x', W - m.r).attr('y', Math.max(12, y(val(n, last)) - 7)).attr('text-anchor', 'end').text(pc(val(n, last))); });
   }

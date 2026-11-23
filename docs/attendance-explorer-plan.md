@@ -111,8 +111,8 @@ Design at 375 px before desktop. One chart per screen, each legible without pinc
 | 2. Schools (built 23 Nov, preview; similar schools and the contextual reading follow in Phase 4) | School view, history, recovery, beeswarm, compare, search, the Pages Function | Every school has a page |
 | 3. Trusts and constituencies (built 23 Nov, preview; hex map only, boundary map to follow) | Pooled rates, strip plots, constituency hex and boundary maps | Group and political geography |
 | 4. Models (built 23 Nov, preview; special schools not modelled) | Similar schools for all phases, contextual expected, funnel, Patterns | The analytical core |
-| 5. Small areas | Wards with vector tiles; ceremonial counties | The full geographic set |
-| 6. Returning | Pinned places, "since you were last here", slides, share cards, fortnightly readings | The reason to come back |
+| 5. Small areas (built 23 Nov, preview; SVG ward maps by district, not vector tiles) | Wards with vector tiles; ceremonial counties | The full geographic set |
+| 6. Returning (built 23 Nov, preview; fortnightly readings and CSV downloads still to do) | Pinned places, "since you were last here", slides, share cards, fortnightly readings | The reason to come back |
 
 Each phase is its own branch and preview, and none goes to production without Mark's "Go".
 

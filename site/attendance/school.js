@@ -29,7 +29,7 @@
   const tipOn = (sel, html) => sel.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); showTip(ev, html(d)); });
   document.addEventListener('click', hideTip); addEventListener('scroll', hideTip, {passive: true});
 
-  let B, S, urn, meas = 'abs', vs = [], dist = null;
+  let B, S, urn, meas = 'abs', vs = [], dist = null, random = false;
   const shards = new Map(), dists = new Map();
   const school = (u) => { const k = (+u) % B.shards; if (!shards.has(k)) shards.set(k, d3.json('/attendance/data/sch/' + k + '.json')); return shards.get(k).then((j) => j[u] || null); };
   const getDist = (ph) => { if (!dists.has(ph)) dists.set(ph, d3.json('/attendance/data/dist_' + ph + '.json')); return dists.get(ph); };
@@ -39,6 +39,8 @@
     const L = B.latest, prevP = B.periods.filter((p) => p.endsWith('AS') && p < L).pop(), now = S.h[L], was = prevP && S.h[prevP];
     const la = B.la_names[S.la] || '', e = bench('E', S.ph, L), l = bench(S.la, S.ph, L);
     $('sx-name').textContent = S.n;
+    if (window.AXtools) AXtools.setPlace({kind: 'school', id: urn, name: S.n, href: AXsearch.href(urn)});
+    $('sx-hint').hidden = !random;
     const link = (t, k, id) => (id ? `<a href="${AXsearch.ghref(k, id)}">${esc(t)}</a>` : esc(t));
     $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
     document.title = S.n + ': attendance · Attendance Explorer · Mark Dalton';
@@ -53,7 +55,7 @@
       t += '.';
       if (e) { const d = gap(now[1], e[0]); t += ` Across England’s ${PH[S.ph]} the figure was ${pc(e[0])}` + (d === 0 ? '.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
       t += ` <b>${pc(now[3])}</b> of pupils were persistently absent, missing a tenth or more of their sessions` + (e ? `; in England’s ${PH[S.ph]} it was ${pc(e[2])}.` : '.');
-      R.innerHTML = t;
+      R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[1], was[1]), 'a year earlier') : '') + (e ? AXc.pill(gap(now[1], e[0]), 'England') : '') + (l ? AXc.pill(gap(now[1], l[0]), la) : '') + '</span>';
       const k = [['Overall absence', pc(now[1]), was ? 'a year earlier ' + pc(was[1]) : ''], ['Persistent absence', pc(now[3]), was ? 'a year earlier ' + pc(was[3]) : ''],
         ['Unauthorised absence', pc(now[2]), e ? 'England ' + pc(e[1]) : ''], [la + ' ' + PH[S.ph], l ? pc(l[0]) : '–', l ? 'persistent ' + pc(l[2]) : ''], ['England ' + PH[S.ph], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) : '']];
       K.innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${esc(x[0])}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');
@@ -78,12 +80,12 @@
     rows.forEach((r, i) => { const y = m.t + i * rh + (narrow ? 40 : rh / 2), d = mine - r[1], rd = r[2] ? reading(d, band) : null;
       s.append('text').attr('x', narrow ? m.l : lab).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'start' : 'end').attr('class', 'strong').text(r[0] + (narrow ? ': ' + pc(r[1]) : ''));
       if (r[3]) s.append('rect').attr('x', x(r[1] - band)).attr('width', x(r[1] + band) - x(r[1] - band)).attr('y', y - 11).attr('height', 22).attr('fill', '#E6EAF0');
-      s.append('line').attr('x1', x(r[1])).attr('x2', x(mine)).attr('y1', y).attr('y2', y).attr('stroke', rd ? rd[1] : SOFT).attr('stroke-width', 3);
-      s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', VERD).attr('stroke-width', 3);
+      s.append('line').attr('x1', x(r[1])).attr('x2', x(mine)).attr('y1', y).attr('y2', y).attr('stroke', rd ? rd[1] : AXc.gap(gap(mine, r[1]))).attr('stroke-width', 3);
+      s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', i < 2 ? MUTED : VERD).attr('stroke-width', 3);
       s.append('path').attr('d', d3.symbol(d3.symbolDiamond, 110)()).attr('transform', `translate(${x(mine)},${y})`).attr('fill', INK);
       const g = gap(mine, r[1]), t = (narrow ? '' : pc(r[1]) + ' · ') + (g === 0 ? 'the same' : pts(g) + ' points ' + (g < 0 ? 'lower' : 'higher')) + (rd ? ', ' + rd[0] + ' expected' : '');
       s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').attr('fill', rd ? rd[1] : null).style('fill', rd ? rd[1] : null).text(narrow ? (g === 0 ? 'same' : (g < 0 ? '−' : '+') + pts(g)) + (rd ? ', ' + rd[0] : '') : t); });
-    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${VERD};width:3px;height:14px"></i>The comparison`, `<i style="background:#E6EAF0"></i>Close to expected (within ${(band / 100).toFixed(1)} points)`]);
+    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>England and the local authority`, `<i style="background:${VERD};width:3px;height:14px"></i>Schools like it`, `<i style="background:${AXc.VERD}"></i>Lower absence here`, `<i style="background:${AXc.RUST}"></i>Higher`, `<i style="background:#E6EAF0"></i>Close to expected (within ${(band / 100).toFixed(1)} points)`]);
     const dx = mine - S.exp[x0], rx = reading(dx, band), gs = S.sim ? gap(mine, S.sim[M.b]) : null, gx = gap(mine, S.exp[x0]);
     $('sx-read-r').innerHTML = `Given its circumstances, the model expects ${M.n} of <b>${pc(S.exp[x0])}</b> at a school like this. The school’s ${pc(mine)} is ` + (gx === 0 ? 'the same' : `<b>${pts(gx)}</b> points ${gx < 0 ? 'lower' : 'higher'}`) + `, which for a school of its size counts as <b style="color:${rx[1]}">${rx[0]} expected</b>.` + (gs == null ? '' : ` The 20 schools most like it had ${pc(S.sim[M.b])} between them.`);
     const c = S.ctx; $('sx-ctx').textContent = c ? `Its circumstances, January 2026 census: ${c[4].toLocaleString('en-GB')} pupils; ${c[0].toFixed(1)}% eligible for free school meals; ${c[2].toFixed(1)}% with SEN support; ${c[3].toFixed(1)}% with an education, health and care plan; ${c[1].toFixed(1)}% with a first language other than English; ${c[5] ? 'rural' : 'urban'}.` : '';
@@ -131,7 +133,7 @@
     const el = $('sx-hist'), M = MEAS[meas], W = width(el), H = Math.round(Math.min(380, Math.max(240, W * 0.5))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const ser = (h, i) => yrs.map((p) => ({p, v: h[p] ? h[p][i] : null}));
-    const lines = [{d: yrs.map((p) => ({p, v: (bench('E', S.ph, p) || [])[M.b]})), c: VERD, w: 2, n: 'England ' + PH[S.ph]},
+    const lines = [{d: yrs.map((p) => ({p, v: (bench('E', S.ph, p) || [])[M.b]})), c: MUTED, w: 2, n: 'England ' + PH[S.ph]},
       {d: yrs.map((p) => ({p, v: (bench(S.la, S.ph, p) || [])[M.b]})), c: SOFT, w: 2, n: (B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph]}]
       .concat(others.map((o, i) => ({d: ser(o.s.h, M.i), c: OTHERS[i % 4], w: 2, n: o.s.n})), [{d: ser(S.h, M.i), c: INK, w: 3, n: S.n, me: true}]);
     const vals = lines.flatMap((l) => l.d.map((p) => p.v)).filter((v) => v != null); if (!vals.length) { el.textContent = 'No full-year figures are published for this school yet.'; $('sx-hist-r').textContent = ''; return; }
@@ -175,10 +177,10 @@
     Promise.all(vs.map((u) => school(u).then((s) => (s ? {u, s} : null)))).then((o) => { if (t !== token) return; const others = o.filter(Boolean);
       head(); readings(); position(); history(others); changed(); chips(others); });
   }
-  function go() { const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); draw(); }
+  function go() { random = false; const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); draw(); }
   function open(u, push) {
     school(u).then((s) => { if (!s) { $('sx-name').textContent = 'School not found'; $('sx-meta').textContent = 'No school with that number appears in the newest release. It may have closed or changed. Search for it by name below.'; $('sx-body').hidden = true; return; }
-      urn = String(u); S = s; vs = vs.filter((x) => x !== urn); $('sx-body').hidden = false; dist = null;
+      urn = String(u); S = s; if (push) random = false; vs = vs.filter((x) => x !== urn); $('sx-body').hidden = false; dist = null;
       if (push) history.pushState(null, '', AXsearch.href(urn, vs.length ? '#vs=' + vs.join(',') : ''));
       draw(); getDist(S.ph).then((d) => { if (urn === String(u)) { dist = d; position(); changed(); } }); });
   }
@@ -191,6 +193,9 @@
     document.querySelector('.sx-meas').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { meas = b.dataset.m; draw(); } });
     let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; if (S) draw(); } });
     addEventListener('popstate', () => { const p = AXsearch.urn(); if (p) open(p, false); });
-    if (u) open(u, false);
+    // with no school chosen, open on a secondary picked at random, as the Ofsted Explorer does; the address stays unchanged until someone chooses
+    const another = () => getDist('S').then((d) => { random = true; vs = []; open(d.urn[Math.floor(Math.random() * d.urn.length)], false); });
+    $('sx-another').addEventListener('click', another);
+    if (u) open(u, false); else another();
   }).catch((e) => { console.error(e); $('sx-meta').textContent = 'The school data could not be loaded. Please try again shortly.'; });
 })();

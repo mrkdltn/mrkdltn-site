@@ -60,6 +60,7 @@
     const w = P.weekly[a.c][cur][ph].abs; let li = w.length - 1; while (li >= 0 && w[li] == null) li--;
     const first = P.days[cur][0], last = P.days[cur][P.days[cur].length - 1];
     $('ax-name').textContent = a.n + (ph === 'A' ? '' : ': ' + PHASE[ph]);
+    if (window.AXtools) AXtools.setPlace({kind: 'area', id: a.c, name: a.n, href: '/attendance/#area=' + a.c});
     const el = $('ax-reading');
     if (!y) { el.textContent = 'The DfE’s release has no figures for ' + PHASE[ph] + ' in ' + a.n + ', or too few pupils to show a rate.'; $('ax-kpis').innerHTML = ''; return; }
     let t = `Pupils in ${PHASE[ph]} ${a.l === 'national' ? 'in England' : 'in ' + a.n} missed <b>${pc(y.abs)}</b> of sessions between ${fmtD(first, {day: 'numeric', month: 'long'})} and ${fmtD(last, {day: 'numeric', month: 'long', year: 'numeric'})}`;
@@ -67,6 +68,8 @@
     t += '.';
     if (a.l !== 'national' && e) { const d = gap(y.abs, e.abs); t += d === 0 ? ` That matches England.` : ` England stands at ${pc(e.abs)}, so absence here is ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`; }
     el.innerHTML = t;
+    const dl = yl ? gap(y.abs, yl.abs) : null, de = a.l !== 'national' && e ? gap(y.abs, e.abs) : null;
+    el.innerHTML += '<span class="ax-pills">' + (dl == null ? '' : AXc.pill(dl, 'this point last year')) + (de == null ? '' : AXc.pill(de, 'England')) + '</span>';
     const k = [
       ['Overall absence since September', pc(y.abs), yl ? 'last year ' + pc(yl.abs) : ''],
       ['Latest week, from ' + (li >= 0 ? fmtD(P.weeks[cur][li], {day: 'numeric', month: 'short'}) : ''), li >= 0 ? pc(w[li]) : '–', a.l !== 'national' ? 'England ' + pc(P.weekly[eng][cur][ph].abs[li]) : ''],
@@ -82,7 +85,8 @@
     const years = [cur, prev].filter((y) => y && D[y]);
     const eng = P.england, all = []; P.years.forEach((y) => (eng[y][ph].abs || []).forEach((v) => v != null && all.push(v)));
     all.sort(d3.ascending); const lo = d3.quantile(all, 0.03), hi = d3.quantile(all, 0.97);
-    const col = (v) => ramp(Math.max(0, Math.min(1, (v - lo) / (hi - lo || 1))));
+    const mid = (P.ytd[P.areas[0].c][cur][ph] || {}).abs || d3.median(all), span = Math.max(hi - mid, mid - lo);
+    const col = (v) => AXc.div(v, mid, span);
     const nW = 47, left = narrow ? 30 : 64, cw = (W - left) / nW, chh = narrow ? 13 : Math.min(18, cw), gap = Math.min(2, cw * 0.18);
     const blockH = chh * 5, top = 36, pitch = blockH + 48, H = top + years.length * pitch - 12;
     const s = svg(el, W, H, 'Calendar of overall absence, one square per school day');
@@ -100,7 +104,7 @@
         .attr('width', cw - gap).attr('height', chh - gap).attr('fill', (c) => col(c.v));
       tipOn(r, (c) => `<b>${fmtD(c.iso)}</b><br>Overall absence ${pc(c.v)}<br>Authorised ${pc(c.au)} · unauthorised ${pc(c.un)}`);
     });
-    key(el, [`${pc(lo)} or less<i class="ramp" style="background:linear-gradient(90deg,${ramp(0)},${ramp(1)})"></i>${pc(hi)} or more`, 'Shading is set from England’s days, so areas can be compared']);
+    key(el, [AXc.legend(mid, span, 'England so far this year'), 'Green days ran below England’s average for the year, rust days above']);
     const v = D[cur][ph].abs.filter((x) => x != null);
     const i = D[cur][ph].abs.indexOf(d3.max(v));
     $('ax-ribbon-r').innerHTML = v.length ? `The highest absence so far this year was on <b>${fmtD(P.days[cur][i], {weekday: 'long', day: 'numeric', month: 'long'})}</b>, at <b>${pc(D[cur][ph].abs[i])}</b>.` : '';
@@ -180,17 +184,18 @@
     const path = d3.range(6).map((i) => { const t = Math.PI / 180 * (60 * i - 30); return [Math.cos(t) * (size - 1), Math.sin(t) * (size - 1)]; });
     const dpath = 'M' + path.map((p) => p.map((n) => n.toFixed(2)).join(',')).join('L') + 'Z';
     const vals = las.map((d) => d.v).filter((v) => v != null).sort(d3.ascending), lo = d3.quantile(vals, 0.03), hi = d3.quantile(vals, 0.97);
+    const mid = (P.ytd[P.areas[0].c][cur][ph] || {}).abs || d3.median(vals), span = Math.max(hi - mid, mid - lo);
     const s = svg(el, Math.ceil((qs[1] - qs[0] + 1) * Math.sqrt(3) * size + 4), H, 'Map of local authorities shaded by overall absence');
     s.style('max-width', '520px').style('margin', '0 auto');
     const g = s.append('g').attr('class', 'ax-hexes').selectAll('path').data(las).join('path').attr('d', dpath).attr('transform', (d) => `translate(${px(d)},${py(d)})`)
-      .attr('fill', (d) => (d.v == null ? UNLIT : ramp(Math.max(0, Math.min(1, (d.v - lo) / (hi - lo || 1))))))
+      .attr('fill', (d) => AXc.div(d.v, mid, span))
       .attr('tabindex', 0).attr('role', 'button').attr('aria-label', (d) => `${d.a.n}: ${pc(d.v)}`);
     g.on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${d.a.n}</b><br>Overall absence ${pc(d.v)}`)).on('pointerleave', hideTip)
       .on('click', (ev, d) => { ev.stopPropagation(); pick(d.a.c); showTip(ev, `<b>${d.a.n}</b><br>Overall absence ${pc(d.v)}`); })
       .on('keydown', (ev, d) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pick(d.a.c); } });
     const me = las.find((d) => d.a.c === state.area);
     if (me) s.append('path').attr('d', dpath).attr('transform', `translate(${px(me)},${py(me)}) scale(1.12)`).attr('fill', 'none').attr('stroke', '#C9A24B').attr('stroke-width', 3).attr('pointer-events', 'none');
-    key(el, [`${pc(lo)} or less<i class="ramp" style="background:linear-gradient(90deg,${ramp(0)},${ramp(1)})"></i>${pc(hi)} or more`, me ? `<i style="background:none;border:2px solid #C9A24B"></i>${me.a.n}` : 'Shading is set within these schools']);
+    key(el, [AXc.legend(mid, span, 'England'), me ? `<i style="background:none;border:2px solid #C9A24B"></i>${me.a.n}` : 'Green is lower absence than England, rust higher']);
   }
 
   // ---- this year against last
@@ -243,6 +248,8 @@
     let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } });
     addEventListener('hashchange', () => { readHash(); sel.value = state.area; draw(); });
     draw();
+    if (window.AXtools) { AXtools.renderPins($('ax-places')); const was = AXtools.seen('pulse', P.release.published);
+      if (was && was !== P.release.published) { const n = $('ax-new'); n.hidden = false; n.textContent = `New since your last visit: the DfE published figures to ${fmtD(last, {day: 'numeric', month: 'long'})} on ${fmtD(P.release.published, {day: 'numeric', month: 'long'})}.`; } }
     if (window.AXsearch) AXsearch($('ax-q'), $('ax-qlist'), AXsearch.go, true);
   }).catch((e) => { console.error(e); $('ax-date').textContent = 'The attendance data could not be loaded. Please try again shortly.'; });
 })();

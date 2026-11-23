@@ -10,12 +10,17 @@
 <meta property="og:description" content="School attendance in every local authority in England, day by day, against England and last year. Free, built from public data.">
 <meta property="og:url" content="https://mrkdltn.com/attendance/group/">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://mrkdltn.com/attendance/data/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Attendance Explorer: overall absence in England so far this school year, with a calendar of school days coloured against the average.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/assets/site.css">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/attendance/attendance.css">
+<link rel="stylesheet" href="/attendance/tools.css">
 </head>
-<body class="explorer">
+<body class="explorer" data-ax-source="Source: Department for Education, Pupil absence in schools in England. A reading of the data, not a judgement.">
 <header class="site-head"><div class="wrap">
   <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
   <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
@@ -25,12 +30,13 @@
   <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/">The pulse</a><a href="/attendance/school/">Schools</a><a href="/attendance/group/" aria-current="page">Trusts and constituencies</a><a href="/attendance/patterns/">Patterns</a></nav>
   <header class="ax-top">
     <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · <span id="gx-kind">Trusts and constituencies</span></p>
-    <h1 id="gx-name">Find a trust or constituency</h1>
-    <p class="ax-date" id="gx-meta">Absence across the schools of any academy trust or parliamentary constituency in England, built from the DfE’s school-level statistics.</p>
+    <h1 id="gx-name">Trusts, constituencies, wards and counties</h1>
+    <p class="ax-date" id="gx-meta">Absence across the schools of any trust, parliamentary constituency, ward or county in England, built from the DfE’s school-level statistics.</p>
+    <div class="ax-head-row"><div id="ax-pin"></div><button type="button" class="ax-btn" id="gx-another">Show me another</button></div>
   </header>
 
   <section class="ax-controls" aria-label="Search">
-    <label class="ax-field ax-find"><span>Trust, constituency or school</span>
+    <label class="ax-field ax-find"><span>Trust, constituency, ward, county or school</span>
       <input id="gx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Start typing a name" role="combobox" aria-expanded="false" aria-controls="gx-list" aria-autocomplete="list">
       <ul id="gx-list" class="ax-pop" role="listbox" hidden></ul></label>
     <div class="ax-field" id="gx-phase-f" hidden><span id="gx-phase-l">Schools</span>
@@ -67,9 +73,10 @@
   </section>
 
   <section class="ax-card">
-    <h2>The schools</h2>
+    <h2 id="gx-table-h">The schools</h2>
     <p class="ax-sub">In alphabetical order, for the <span id="gx-table-p"></span>. A dash means no rate is shown.</p>
     <div class="ax-tablewrap"><table class="ax-table" id="gx-table"></table></div>
+    <button type="button" class="ax-btn ax-more" id="gx-more" hidden></button>
   </section>
   </div>
 
@@ -80,6 +87,8 @@
     <p><b>When a pooled rate is shown.</b> Only where at least three schools of the phase contribute, and for a trust only where it has five or more schools in all. Smaller groups list their schools without a pooled figure.</p>
     <p><b>Trusts are as they stand today.</b> A trust’s earlier years are the earlier years of the schools it holds now, including years before they joined, and including a predecessor school where there was exactly one. They describe these schools, not the trust’s record. The list includes the trusts of some maintained foundation schools, as recorded by the DfE.</p>
     <p><b>Constituencies.</b> 2024 boundaries. A figure describes the schools located in the constituency, not the children who live there; many pupils cross boundaries to school.</p>
+    <p><b>Wards.</b> May 2026 wards, with boundaries from the Office for National Statistics (Open Government Licence v3.0; contains OS data © Crown copyright and database right 2026). Only primary schools are pooled, and only where a ward has three or more: secondary pupils travel too far for a ward figure to mean much, and about 44% of wards with a school carry a figure. As with constituencies, a figure describes the schools in the ward, not its children.</p>
+    <p><b>Counties.</b> The 48 ceremonial counties, each made up of whole local authorities. Stockton-on-Tees, which straddles two, is counted with County Durham. Local authority figures on county pages are pooled from schools and so differ slightly from the DfE’s own authority figures, which include other settings.</p>
     <p><b>The funnel.</b> Each trust’s rate is set against its number of pupils. The curved bands show where about 95% and 99.8% of trusts of a given size fall, widened to match the spread actually seen between trusts. Small trusts vary more by chance alone, so position within the band says little.</p>
     <p><b>Maps.</b> Hexagon layout from <a href="https://github.com/odileeds/hexmaps">Open Innovations</a> (MIT licence), one hexagon per constituency.</p>
   </section>
@@ -92,6 +101,8 @@
 </div></footer>
 <div class="ax-tip" id="ax-tip" role="status" hidden></div>
 <script src="/assets/d3.min.js"></script>
+<script src="/attendance/colour.js"></script>
+<script src="/attendance/tools.js"></script>
 <script src="/attendance/search.js"></script>
 <script src="/attendance/group.js"></script>
 </body>

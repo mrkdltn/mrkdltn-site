@@ -1,0 +1,154 @@
+la,la_name,county
+E06000055,Bedford,Bedfordshire
+E06000056,Central Bedfordshire,Bedfordshire
+E06000032,Luton,Bedfordshire
+E06000036,Bracknell Forest,Berkshire
+E06000037,West Berkshire,Berkshire
+E06000038,Reading,Berkshire
+E06000039,Slough,Berkshire
+E06000040,Windsor and Maidenhead,Berkshire
+E06000041,Wokingham,Berkshire
+E06000023,"Bristol, City of",Bristol
+E06000060,Buckinghamshire,Buckinghamshire
+E06000042,Milton Keynes,Buckinghamshire
+E10000003,Cambridgeshire,Cambridgeshire
+E06000031,Peterborough,Cambridgeshire
+E06000049,Cheshire East,Cheshire
+E06000050,Cheshire West and Chester,Cheshire
+E06000006,Halton,Cheshire
+E06000007,Warrington,Cheshire
+E09000001,City of London,City of London
+E06000052,Cornwall,Cornwall
+E06000053,Isles of Scilly,Cornwall
+E06000047,County Durham,County Durham
+E06000005,Darlington,County Durham
+E06000001,Hartlepool,County Durham
+E06000004,Stockton-on-Tees,County Durham
+E06000063,Cumberland,Cumbria
+E06000064,Westmorland and Furness,Cumbria
+E10000007,Derbyshire,Derbyshire
+E06000015,Derby,Derbyshire
+E10000008,Devon,Devon
+E06000026,Plymouth,Devon
+E06000027,Torbay,Devon
+E06000059,Dorset,Dorset
+E06000058,"Bournemouth, Christchurch and Poole",Dorset
+E06000011,East Riding of Yorkshire,East Riding of Yorkshire
+E06000010,"Kingston upon Hull, City of",East Riding of Yorkshire
+E10000011,East Sussex,East Sussex
+E06000043,Brighton and Hove,East Sussex
+E10000012,Essex,Essex
+E06000033,Southend-on-Sea,Essex
+E06000034,Thurrock,Essex
+E10000013,Gloucestershire,Gloucestershire
+E06000025,South Gloucestershire,Gloucestershire
+E09000002,Barking and Dagenham,Greater London
+E09000003,Barnet,Greater London
+E09000004,Bexley,Greater London
+E09000005,Brent,Greater London
+E09000006,Bromley,Greater London
+E09000007,Camden,Greater London
+E09000008,Croydon,Greater London
+E09000009,Ealing,Greater London
+E09000010,Enfield,Greater London
+E09000011,Greenwich,Greater London
+E09000012,Hackney,Greater London
+E09000013,Hammersmith and Fulham,Greater London
+E09000014,Haringey,Greater London
+E09000015,Harrow,Greater London
+E09000016,Havering,Greater London
+E09000017,Hillingdon,Greater London
+E09000018,Hounslow,Greater London
+E09000019,Islington,Greater London
+E09000020,Kensington and Chelsea,Greater London
+E09000021,Kingston upon Thames,Greater London
+E09000022,Lambeth,Greater London
+E09000023,Lewisham,Greater London
+E09000024,Merton,Greater London
+E09000025,Newham,Greater London
+E09000026,Redbridge,Greater London
+E09000027,Richmond upon Thames,Greater London
+E09000028,Southwark,Greater London
+E09000029,Sutton,Greater London
+E09000030,Tower Hamlets,Greater London
+E09000031,Waltham Forest,Greater London
+E09000032,Wandsworth,Greater London
+E09000033,Westminster,Greater London
+E08000001,Bolton,Greater Manchester
+E08000002,Bury,Greater Manchester
+E08000003,Manchester,Greater Manchester
+E08000004,Oldham,Greater Manchester
+E08000005,Rochdale,Greater Manchester
+E08000006,Salford,Greater Manchester
+E08000007,Stockport,Greater Manchester
+E08000008,Tameside,Greater Manchester
+E08000009,Trafford,Greater Manchester
+E08000010,Wigan,Greater Manchester
+E10000014,Hampshire,Hampshire
+E06000044,Portsmouth,Hampshire
+E06000045,Southampton,Hampshire
+E06000019,"Herefordshire, County of",Herefordshire
+E10000015,Hertfordshire,Hertfordshire
+E06000046,Isle of Wight,Isle of Wight
+E10000016,Kent,Kent
+E06000035,Medway,Kent
+E10000017,Lancashire,Lancashire
+E06000008,Blackburn with Darwen,Lancashire
+E06000009,Blackpool,Lancashire
+E10000018,Leicestershire,Leicestershire
+E06000016,Leicester,Leicestershire
+E10000019,Lincolnshire,Lincolnshire
+E06000013,North Lincolnshire,Lincolnshire
+E06000012,North East Lincolnshire,Lincolnshire
+E08000011,Knowsley,Merseyside
+E08000012,Liverpool,Merseyside
+E08000013,St. Helens,Merseyside
+E08000014,Sefton,Merseyside
+E08000015,Wirral,Merseyside
+E10000020,Norfolk,Norfolk
+E06000065,North Yorkshire,North Yorkshire
+E06000014,York,North Yorkshire
+E06000002,Middlesbrough,North Yorkshire
+E06000003,Redcar and Cleveland,North Yorkshire
+E06000061,North Northamptonshire,Northamptonshire
+E06000062,West Northamptonshire,Northamptonshire
+E06000057,Northumberland,Northumberland
+E10000024,Nottinghamshire,Nottinghamshire
+E06000018,Nottingham,Nottinghamshire
+E10000025,Oxfordshire,Oxfordshire
+E06000017,Rutland,Rutland
+E06000051,Shropshire,Shropshire
+E06000020,Telford and Wrekin,Shropshire
+E06000066,Somerset,Somerset
+E06000022,Bath and North East Somerset,Somerset
+E06000024,North Somerset,Somerset
+E08000016,Barnsley,South Yorkshire
+E08000017,Doncaster,South Yorkshire
+E08000018,Rotherham,South Yorkshire
+E08000019,Sheffield,South Yorkshire
+E10000028,Staffordshire,Staffordshire
+E06000021,Stoke-on-Trent,Staffordshire
+E10000029,Suffolk,Suffolk
+E10000030,Surrey,Surrey
+E08000021,Newcastle upon Tyne,Tyne and Wear
+E08000022,North Tyneside,Tyne and Wear
+E08000023,South Tyneside,Tyne and Wear
+E08000024,Sunderland,Tyne and Wear
+E08000037,Gateshead,Tyne and Wear
+E10000031,Warwickshire,Warwickshire
+E08000025,Birmingham,West Midlands
+E08000026,Coventry,West Midlands
+E08000027,Dudley,West Midlands
+E08000028,Sandwell,West Midlands
+E08000029,Solihull,West Midlands
+E08000030,Walsall,West Midlands
+E08000031,Wolverhampton,West Midlands
+E10000032,West Sussex,West Sussex
+E08000032,Bradford,West Yorkshire
+E08000033,Calderdale,West Yorkshire
+E08000034,Kirklees,West Yorkshire
+E08000035,Leeds,West Yorkshire
+E08000036,Wakefield,West Yorkshire
+E06000054,Wiltshire,Wiltshire
+E06000030,Swindon,Wiltshire
+E10000034,Worcestershire,Worcestershire

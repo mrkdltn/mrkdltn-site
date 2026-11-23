@@ -140,11 +140,45 @@ def main():
     e = pulse['ytd'][eng][str(cur)]['A']
     print(f'attendance: {path} {os.path.getsize(path) // 1024} KB, {n} area files; England {cur}/{cur % 100 + 1} to {last}: '
           f"overall absence {e['abs'] / 100:.2f}%")
+    share_card(pulse, eng, cur, last)
     # models of percentages stay within 0-100%
     for c in pulse['ytd']:
         for y in pulse['ytd'][c]:
             for p, v in pulse['ytd'][c][y].items():
                 assert v is None or all(0 <= x <= 10000 for x in v.values()), (c, y, p)
+
+
+def share_card(pulse, eng, cur, last):
+    """The image shown when an Attendance Explorer link is shared: 1200 x 630 PNG, drawn from the newest figures."""
+    try:
+        from PIL import Image, ImageDraw
+        import build_pages
+        disp, sans = build_pages.load_fonts()
+    except Exception as e:                      # no Pillow: the pages still work, links just share without an image
+        print('attendance: share card not drawn:', e); return
+    W, H, M = 1200, 630, 64
+    GROUND, INK, MUTED, BRASS, VERD, RUST = '#0B1A2E', '#F5F1E8', '#A8B5C8', '#C9A24B', '#6FA299', '#C98672'
+    im = Image.new('RGB', (W, H), GROUND); d = ImageDraw.Draw(im)
+    d.text((M, 56), 'ATTENDANCE EXPLORER', font=sans(22, 600), fill=BRASS)
+    d.text((M, 96), 'School attendance,', font=disp(68), fill=INK); d.text((M, 172), 'day by day', font=disp(68), fill=INK)
+    y = pulse['ytd'][eng][str(cur)]['A']; prev = pulse['ytd'][eng].get(str(cur - 1), {}).get('A')
+    day = datetime.date.fromisoformat(last)
+    d.text((M, 286), f"{y['abs'] / 100:.1f}%", font=sans(96, 600), fill=INK)
+    d.text((M + 300, 306), 'of sessions missed in England', font=sans(28), fill=INK)
+    d.text((M + 300, 346), f"since September, to {day.day} {day.strftime('%B %Y')}" + (f"; {prev['abs'] / 100:.1f}% a year earlier" if prev else ''), font=sans(28), fill=MUTED)
+    # the year so far: one square a day, green below the average for the year and rust above
+    days, vals = pulse['days'][str(cur)], pulse['england'][str(cur)]['A']['abs']
+    base = datetime.date(cur, 9, 1); base -= datetime.timedelta(days=base.weekday())
+    cw, x0, y0 = 22, M, 430
+    for iso, v in zip(days, vals):
+        if v is None:
+            continue
+        dt = datetime.date.fromisoformat(iso); wk, dow = (dt - base).days // 7, dt.weekday()
+        d.rectangle([x0 + wk * cw, y0 + dow * cw, x0 + wk * cw + cw - 4, y0 + dow * cw + cw - 4], fill=VERD if v < y['abs'] else RUST)
+    d.line([(M, H - 54), (W - M, H - 54)], fill=BRASS, width=2)
+    d.text((M, H - 42), 'Every local authority, school, trust, constituency and ward. Source: Department for Education.', font=sans(20), fill=MUTED)
+    d.text((W - M, H - 42), 'mrkdltn.com/attendance', font=sans(20, 600), fill=INK, anchor='ra')
+    im.save(os.path.join(OUT, 'card.png'), optimize=True)
 
 
 # ---------------------------------------------------------------- schools (termly and full-year census statistics)
@@ -295,7 +329,7 @@ def schools():
           f"{sum(1 for u in current if u in grade)} with an Ofsted attendance and behaviour grade")
     for d in dist.values():
         assert all(0 <= x <= 10000 for x in d['abs'] + d['pa'])
-    groups_build(current, meta, rows, raw_history, shown, pool, periods, latest)
+    groups_build(current, meta, rows, raw_history, shown, pool, periods, latest, bench, names)
     patterns_build(current, meta, rows, raw_history, pool, fy, ctx, model, bench, names)
 
 
@@ -320,7 +354,15 @@ def tidy(name):
     return ' '.join(out)
 
 
-def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest):
+G_KIND_SHARDS = {'t': 16, 'c': 16, 'w': 64, 'y': 1}
+
+
+def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest, bench=None, la_names=None):
+    """Trusts (t), constituencies (c), wards (w, primary schools only) and ceremonial counties (y)."""
+    county = {r['la']: r['county'] for r in csv.DictReader(open(os.path.join(RAW, 'counties.csv'), encoding='utf-8'))}
+    geo = json.load(open(os.path.join(RAW, 'ward_geo.json'))) if os.path.exists(os.path.join(RAW, 'ward_geo.json')) else {'districts': {}}
+    ward_lad = {w: d for d, v in geo['districts'].items() for w in v['wards']}
+    slug = lambda t: ''.join(ch if ch.isalnum() else '-' for ch in t.lower()).strip('-')
     members = {}
     for u in current:
         m = meta[u]
@@ -328,20 +370,27 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest)
             members.setdefault(('t', m['trust_id']), []).append(u)
         if m['pcon_code'].startswith('E14'):
             members.setdefault(('c', m['pcon_code']), []).append(u)
+        if m['ward_code'].startswith('E05'):
+            members.setdefault(('w', m['ward_code']), []).append(u)
+        if m['la'] in county:
+            members.setdefault(('y', slug(county[m['la']])), []).append(u)
     hexes = json.load(open(os.path.join(RAW, 'pcon_hex.json')))
-    shards = {k: [dict() for _ in range(G_SHARDS)] for k in 'tc'}
+    shards = {k: [dict() for _ in range(n)] for k, n in G_KIND_SHARDS.items()}
     index = {k: [] for k in ('k', 'id', 'name', 'n')}
-    overview = {'t': [], 'c': []}
+    overview = {k: [] for k in G_KIND_SHARDS}
+    ward_val = {}
     hist = {u: raw_history(u)[0] for u in current}
-    key = lambda g: sum(ord(c) for c in g) % G_SHARDS
+    key = lambda kind, g: sum(ord(c) for c in g) % G_KIND_SHARDS[kind]
     for (kind, gid), us in sorted(members.items()):
         if kind == 't' and len(us) < 2:
             continue
-        name = tidy(meta[us[0]]['trust']) if kind == 't' else meta[us[0]]['pcon']
-        big = kind == 'c' or len(us) >= MIN_TRUST
+        m0 = meta[us[0]]
+        name = {'t': lambda: tidy(m0['trust']), 'c': lambda: m0['pcon'], 'y': lambda: county[m0['la']],
+                'w': lambda: m0['ward'] + ', ' + (geo['districts'].get(ward_lad.get(gid), {}).get('name') or (la_names or {}).get(m0['la'], ''))}[kind]()
+        big = kind != 't' or len(us) >= MIN_TRUST
         rec = {'name': name, 'n': len(us), 'pooled': big, 'bench': {}, 'schools': []}
         row = {'id': gid, 'name': name, 'n': len(us)}
-        for ph in 'PSX':
+        for ph in ('P' if kind == 'w' else 'PSX'):      # secondary pupils travel too far for a ward figure to mean much
             ms = [u for u in us if meta[u]['phase'] == ph]
             if big and len(ms) >= MIN_SCHOOLS:
                 b = {}
@@ -354,24 +403,37 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest)
                 rec['bench'][ph] = b
                 if latest in b:
                     row[ph] = [len(ms), sum(rows[u][latest][0] or 0 for u in ms if latest in rows[u])] + b[latest][:3]
-        for u in sorted(us, key=lambda u: meta[u]['name']):
+        if kind == 'y':
+            rec['las'] = [[la, (la_names or {}).get(la, la), {ph: (bench[la].get(ph, {}).get(latest) if bench and la in bench else None) for ph in 'PSX'}]
+                          for la in sorted({meta[u]['la'] for u in us}, key=lambda c: (la_names or {}).get(c, c))]
+        if kind == 'w':
+            rec['lad'] = ward_lad.get(gid)
+            ward_val[gid] = [len(us)] + (rec['bench'].get('P', {}).get(latest, [None, None, None])[:3])
+        for u in ([] if kind == 'y' else sorted(us, key=lambda u: meta[u]['name'])):
             v = shown(rows[u].get(latest))
             rec['schools'].append([int(u), meta[u]['name'], meta[u]['phase'], meta[u]['town']] + (v[:2] + [v[3]] if v else [None, None, None]))
-        shards[kind][key(gid)][gid] = rec
+        shards[kind][key(kind, gid)][gid] = rec
         for k, v in (('k', kind), ('id', gid), ('name', name), ('n', len(us))):
             index[k].append(v)
-        if kind == 'c' or big:
+        if kind != 'w' and (kind != 't' or big):
             if kind == 'c':
                 row.update(hexes['hexes'].get(gid, {}))
             overview[kind].append(row)
     out = os.path.join(OUT, 'grp')
     os.makedirs(out, exist_ok=True)
-    for kind in 'tc':
+    for kind in G_KIND_SHARDS:
         for i, sh in enumerate(shards[kind]):
             json.dump(sh, open(os.path.join(out, f'{kind}{i}.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
         json.dump(overview[kind], open(os.path.join(out, f'{kind}_all.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
-    json.dump({'shards': G_SHARDS, 'data': index}, open(os.path.join(OUT, 'groups.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
-    print(f"attendance groups: {index['k'].count('c')} constituencies, {index['k'].count('t')} trusts with two or more schools "
+    # ward maps: one file per district, each ward with its outline and its primary schools' pooled rate where shown
+    gdir = os.path.join(OUT, 'geo')
+    os.makedirs(gdir, exist_ok=True)
+    for code, d in geo['districts'].items():
+        json.dump({'name': d['name'], 'w': d['w'], 'h': d['h'], 'wards': [{'c': w, 'n': v['n'], 'p': v['p'], 'v': ward_val.get(w)} for w, v in d['wards'].items()]},
+                  open(os.path.join(gdir, code + '.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    nomap = sum(1 for (k, g) in members if k == 'w' and g not in ward_lad)
+    json.dump({'shards': G_KIND_SHARDS, 'data': index}, open(os.path.join(OUT, 'groups.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
+    print(f"attendance groups: {index['k'].count('y')} counties, {index['k'].count('w')} wards ({sum(1 for v in ward_val.values() if v[1] is not None)} with a pooled primary rate, {nomap} without an outline), {index['k'].count('c')} constituencies, {index['k'].count('t')} trusts with two or more schools "
           f"({len(overview['t'])} with {MIN_TRUST} or more, which get pooled figures)")
 
 
