@@ -257,24 +257,12 @@
     vids.forEach(function (v) { near.observe(v); seen.observe(v); });
   } else vids.forEach(function (v) { v.remove(); });
 
-  // Cards and figures arrive once.
-  function count(el) {
-    var raw = el.dataset.count, n = parseFloat(raw), dec = (raw.split('.')[1] || '').replace('%', '').length, t0 = null;
-    var pct = raw.indexOf('%') > -1;
-    if (reduce) return;
-    requestAnimationFrame(function step(t) {
-      if (t0 === null) t0 = t;
-      var k = Math.min(1, (t - t0) / 1100), ev = 1 - Math.pow(1 - k, 3);
-      el.textContent = (n * ev).toFixed(dec) + (pct ? '%' : '');
-      if (k < 1) requestAnimationFrame(step);
-    });
-  }
+  // Cards and their figures are on the page from the start (standard 12); arrival only lights the Explorer grid.
   if ('IntersectionObserver' in window && !reduce) {
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
         if (!e.isIntersecting) return;
         e.target.classList.add('in');
-        e.target.querySelectorAll('[data-count]').forEach(count);
         if (e.target.classList.contains('explorer')) e.target.querySelectorAll('g.grid').forEach(light);
         io.unobserve(e.target);
       });
