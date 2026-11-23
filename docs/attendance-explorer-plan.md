@@ -2,7 +2,7 @@
 
 Written 22 November 2026. A plan only; nothing here is built. `CLAUDE.md` wins where the two differ.
 
-**Verification status.** The research for this plan could not open the DfE, GIAS or ONS sites directly from the cloud session (the hosts are outside its network allowance), so the data facts below come from search summaries of the primary pages, not the pages themselves. They are marked *(to confirm)* where it matters. Phase 0 exists to confirm every one of them against the files before any design is fixed.
+**Verification status.** The first draft rested on search summaries. On 23 November the recon phase downloaded the DfE and GIAS files and checked them; the results are in `docs/attendance-data-note.md` and this plan has been corrected to match. Boundary files, licence wording and the future of the fortnightly cadence remain to confirm.
 
 ## The finding that shapes everything
 
@@ -17,7 +17,7 @@ The DfE publishes attendance at two speeds, and no single view can serve both.
 | Lowest level | Local authority | School |
 | Measures | Attendance and absence by day, week and year to date; persistent absence year to date; reasons | Overall, authorised and unauthorised absence; persistent absence (10% or more); severe absence (50% or more); reasons; 2013/14 onwards |
 
-Nothing official is published openly for wards, constituencies or trusts, and the DfE's own similar-schools attendance reports (median of 20 similar schools, with an improvement expectation to 2028/29) sit behind a sign-in. Those are the gaps a public tool can fill. School-level figures have no pupil-characteristic breakdowns *(to confirm)*, so the tool cannot show, say, disadvantaged pupils' absence for one school, and should say so plainly.
+Nothing official is published openly for wards, constituencies or trusts, and the DfE's own similar-schools attendance reports (median of 20 similar schools, with an improvement expectation to 2028/29) sit behind a sign-in. Those are the gaps a public tool can fill. School-level figures have no pupil-characteristic breakdowns, so the tool cannot show, say, disadvantaged pupils' absence for one school, and should say so plainly. Characteristics are published at local authority level and can appear on authority pages. Alternative provision is published only to authority level.
 
 The consequence for "returning every couple of weeks": the fortnightly reason to return is the local authority pulse. School, trust, ward and constituency views change three times a year. The tool should be honest about that on every page, with the date of the data and the date of the next release.
 
@@ -32,13 +32,13 @@ The tool lives at `/attendance/`, a sibling of the Ofsted Explorer with the same
 **1. Pulse** (national, region, local authority; fortnightly).
 - *The year ribbon*: a calendar of the school year, one cell per day, shaded by attendance, with last year's ribbon beneath it. Term structure, the Friday dip and the run-in to holidays show at a glance.
 - *This year against the last three*: weekly line, earlier years as quiet threads.
-- *Day of the week* and *reasons for absence* (illness, holiday, other unauthorised) as small stacked bars *(day-level and reason detail to confirm)*.
+- *Day of the week* and *reasons for absence* (illness, holiday, other unauthorised) as small stacked bars. The files carry every register code for every authority, each day, by phase.
 - *Local authority hex map*, each authority one hexagon, so London is not lost and Northumberland does not dominate. Tap for the authority's own pulse.
 - *Since the same week last year*: a slope chart of all authorities, the chosen one marked with the midnight diamond.
 
 **2. School** (about 21,000 state-funded primary, secondary and special schools).
 - Overall absence, persistent absence and severe absence, each read four ways as in the Ofsted Explorer: against national for the phase, the local authority, similar schools and a contextual expected rate.
-- *Twelve years on one line*, 2013/14 to the latest, with the pandemic years drawn as a marked gap, not interpolated.
+- *Twelve years on one line*, 2013/14 to the latest, with 2019/20 (never published) drawn as a marked gap, not interpolated. Only 13,411 of 21,262 schools have the full run under their present URN, so predecessor schools are joined through GIAS and the line marks where a school converted.
 - *Recovery*: the school's change since 2018/19 set against the distribution of changes nationally.
 - *Where it sits*: a beeswarm of every school in the phase, comparison group in verdigris.
 - Authorised and unauthorised split, and reasons where published.
@@ -48,7 +48,7 @@ The tool lives at `/attendance/`, a sibling of the Ofsted Explorer with the same
 
 **4. Areas.** Region, local authority, constituency and ward, each with a pooled rate (weighted by enrolments), the spread of its schools, its trajectory and a map. Details and cautions in the geography section.
 
-**5. Trusts.** Pooled absence across the trust's schools by phase; a strip plot showing every school in the trust against its own expected rate; trajectory; the trust's schools on the national funnel. Membership is taken from GIAS as it stands today, and the page says so, because a school that joined last year brings a history the trust did not shape. A later refinement can show "since joining".
+**5. Trusts.** Pooled absence across the trust's schools by phase; a strip plot showing every school in the trust against its own expected rate; trajectory; the trust's schools on the national funnel. A pooled reading is given for the 746 trusts with five or more schools; smaller trusts get a list of their schools. Membership is taken from GIAS as it stands today, and the page says so, because a school that joined last year brings a history the trust did not shape. A later refinement can show "since joining".
 
 **6. Patterns.** The modelling brought forward for those who want to explore:
 - *Funnel plot*: persistent absence against school size with control limits, which separates unusual schools from small ones.
@@ -59,12 +59,12 @@ The tool lives at `/attendance/`, a sibling of the Ofsted Explorer with the same
 
 ## Geography, with the cautions stated
 
-GIAS carries ward, constituency (2024 boundaries *(to confirm)*), district, local authority, region and coordinates for every school, so all aggregation can be built from the school file.
+GIAS carries ward, constituency (2024 boundaries, confirmed), district, local authority, region and coordinates for every school, so all aggregation can be built from the school file.
 
 - **Local authority** is the primary unit: the 153 upper-tier authorities, matching how DfE publishes. It is the only level where the fortnightly pulse and the school-level depth meet.
 - **"County"** is ambiguous. Recommended: label the primary unit "local authority", and offer the 48 ceremonial counties as an optional grouping built from a lookup, for readers who think in Lancashire or Kent. Local government reorganisation is unsettled (Surrey splits on 1 April 2027; other areas were paused for review in September 2026), so every area is keyed on its official code with a vintage, never on its name.
 - **Constituency** (543 in England) works well: about 40 schools each, around six of them secondary. Hex map and boundary map.
-- **Ward** (about 6,800) needs care. The average ward has three schools; many have one or none, and most have no secondary. Three rules follow. A ward figure describes schools located in the ward, not children who live there, and the page says so. A pooled ward rate is shown only where three or more schools contribute; otherwise the page lists the schools. Secondary absence is not mapped by ward at all. If Mark wants a truer small-area picture, MSOA (larger, steadier units) is the better statistical choice and could replace or sit beside wards.
+- **Ward** needs care. 6,575 wards contain a school; 1,218 have one, 1,518 have two and 3,839 have three or more. Only 2,801 contain a secondary. Three rules follow. A ward figure describes schools located in the ward, not children who live there, and the page says so. A pooled ward rate is shown only where three or more schools contribute (58% of wards); otherwise the page lists the schools. Secondary absence is not mapped by ward at all. MSOAs were tested as an alternative and are no steadier (62% would carry a figure), so wards stay.
 - **Maps**: hex cartograms (Open Innovations layouts, MIT) and simplified ONS boundaries drawn as SVG for regions, authorities and constituencies. Wards need vector tiles served as one static file (MapLibre with PMTiles); no paid map service and no third-party tiles.
 
 ## Models
@@ -90,39 +90,39 @@ Design at 375 px before desktop. One chart per screen, each legible without pinc
 
 - No ranked lists of schools by absence, and no "worst" or "best" tables. Tables of schools sort by name by default. Areas may be ordered; trusts are shown on the funnel and against expected, not as a league table.
 - Commentary reads the data and never judges a school. Attendance uses the readings scale with plain wording ("lower than", "close to", "higher than" expected); Ofsted grade colours appear only on the Ofsted grade itself.
-- DfE suppression is carried through untouched, and nothing is derived that could recover a suppressed figure. No figure for fewer than 10 pupils.
+- The DfE does not suppress small numbers in the school-level files, so the protection is ours. Proposed: rates only, never pupil counts; no school shown with fewer than 10 enrolments (eight schools); severe absence shown for areas, trusts and phases but not for single schools, where it is usually a handful of pupils. Decision 4 below.
 - In-year and census figures are never mixed on one chart: they differ in source, coverage and definition.
 - Every school appears on the same terms, as in the Ofsted Explorer.
 
 ## How it would be built
 
 - `site/attendance/` with its own modules, reusing the `dash.js` runtime (URL state, draw registry, column-major JSON) and `slide.js`. Shared pieces move to a common folder so the two tools cannot drift.
-- `scripts/fetch_attendance.py` reads the DfE files (the statistics API where a data set is exposed, the catalogue files otherwise) and writes slim CSVs to `data/raw/attendance/`; the full school-level file is some 230,000 rows and is not committed. `scripts/build_attendance.py`, called from `build_data.py`, writes per-school history in shards, one file per area level, trust tables and the model.
+- `scripts/fetch_attendance.py` reads the DfE files (the statistics API where a data set is exposed, the catalogue files otherwise) and writes slim CSVs to `data/raw/attendance/`; the school-level files are 80 to 120 MB each and are not committed. Catalogue ids change with each release, so the fetcher asks the DfE for the latest files every time. The build tests that school rows sum to the published national figures (they do: 6.60%, 17.50% and 2.32% for autumn and spring 2025/26). `scripts/build_attendance.py`, called from `build_data.py`, writes per-school history in shards, one file per area level, trust tables and the model.
 - A GitHub Action checks twice a week for a new release. Whether it may commit to `main` unattended, as the daily report-card reader does, is Mark's call.
 - **File limit.** A static page per school is not possible: about 13,100 files deploy now and Cloudflare's limit is 20,000. School pages for this tool need a Pages Function that writes the title and share tags on request. This is the same decision already pending for primary schools, and one Function can serve both tools.
-- Sources and licences: DfE statistics, GIAS and ONS boundaries are Open Government Licence v3.0 *(wording to confirm)*, with the ONS and Ordnance Survey attribution lines on any map.
+- Sources and licences: DfE statistics, GIAS and ONS boundaries are Open Government Licence v3.0 (wording still to confirm), with the ONS and Ordnance Survey attribution lines on any map.
 
 ## Phases
 
 | Phase | What | Outcome |
 | --- | --- | --- |
-| 0. Recon | Open the files; confirm columns, suppression, coverage and licences; count wards by number of schools and trusts by size; decide ward or MSOA on the evidence | A short data note and a corrected version of this plan |
+| 0. Recon (done 23 Nov) | Files opened; columns, markers, coverage, joins and counts checked | `docs/attendance-data-note.md` and this corrected plan |
 | 1. Pulse | Year ribbon, weekly lines, reasons, authority hex map and slopes; the fetch Action | First preview; the fortnightly habit starts here |
 | 2. Schools | School view, history, recovery, beeswarm, compare, search, the Pages Function | Every school has a page |
 | 3. Trusts and constituencies | Pooled rates, strip plots, constituency hex and boundary maps | Group and political geography |
 | 4. Models | Similar schools for all phases, contextual expected, funnel, Patterns | The analytical core |
-| 5. Small areas | Wards or MSOAs with vector tiles; ceremonial counties | The full geographic set |
+| 5. Small areas | Wards with vector tiles; ceremonial counties | The full geographic set |
 | 6. Returning | Pinned places, "since you were last here", slides, share cards, fortnightly readings | The reason to come back |
 
 Each phase is its own branch and preview, and none goes to production without Mark's "Go".
 
 ## Decisions for Mark
 
-1. **Shape.** Accept the two-speed design (fortnightly pulse at authority level; schools, trusts and small areas three times a year)? Recommended: yes; it is what the data allows.
-2. **School comparisons.** No ranked school lists, trusts on a funnel instead of a league table. Recommended: yes.
-3. **County.** Local authority as the unit, ceremonial county as an optional grouping. Recommended: yes.
-4. **Small areas.** Wards with the three-school rule, MSOAs, or both. Recommended: decide after Phase 0 shows how many wards would carry a figure.
-5. **Contextual expected attendance.** Include it, knowing some will read it as excusing absence? Recommended: yes, in Phase 4, framed as a reading and never as a target.
-6. **School pages by Pages Function**, settling the pending primary-schools question at the same time. Recommended: yes.
-7. **Unattended data commits to `main`** for new DfE releases. Recommended: yes for data only, once Phase 1 has run cleanly by hand twice.
-8. **Network access for the build session.** Phase 0 needs the DfE statistics, GIAS and ONS geography hosts allowed in the cloud environment, or the recon run from Mark's PC.
+Settled: the two-speed shape (Mark, 23 November); wards over MSOAs (on the recon evidence); network access (a separate `mrkdltn-site` cloud environment now allows the DfE, GIAS and ONS hosts).
+
+1. **School comparisons.** No ranked school lists, trusts on a funnel instead of a league table. Recommended: yes.
+2. **County.** Local authority as the unit, ceremonial county as an optional grouping. Recommended: yes.
+3. **Contextual expected attendance.** Include it, knowing some will read it as excusing absence? Recommended: yes, in Phase 4, framed as a reading and never as a target.
+4. **Small numbers at school level.** The DfE publishes them unsuppressed. Recommended: rates only, no school under 10 enrolments, and severe absence kept to areas, trusts and phases.
+5. **School pages by Pages Function**, settling the pending primary-schools question at the same time. Recommended: yes.
+6. **Unattended data commits to `main`** for new DfE releases. Recommended: yes for data only, once Phase 1 has run cleanly by hand twice.
