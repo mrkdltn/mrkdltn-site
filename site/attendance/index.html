@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Attendance Explorer · Mark Dalton</title>
+<title>Attendance by area · Attendance Explorer · Mark Dalton</title>
 <meta name="description" content="School attendance in England, day by day: every local authority and region read against England and against last year. Built from the DfE's fortnightly attendance data.">
 <link rel="canonical" href="https://mrkdltn.com/attendance/">
 <meta property="og:title" content="Attendance Explorer">
@@ -26,19 +26,25 @@
   <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
 </div></header>
 
-<main class="ax">
-  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/" aria-current="page">The pulse</a><a href="/attendance/school/">Schools</a><a href="/attendance/group/">Trusts and constituencies</a><a href="/attendance/patterns/">Patterns</a></nav>
+<div class="ax-hero"><div class="ax-hero-in">
+  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/" data-v="areas" aria-current="page">Areas</a><a href="/attendance/school/" data-v="schools">Schools</a><a href="/attendance/group/?k=t" data-v="trusts">Trusts</a><a href="/attendance/patterns/" data-v="patterns">Patterns</a></nav>
   <header class="ax-top">
-    <p class="ax-label">Attendance Explorer · The pulse</p>
-    <h1>School attendance, day by day</h1>
-    <p class="ax-lede">Every local authority and region in England, read against the country and against the same point last year. Updated after each fortnightly release from the Department for Education.</p>
+    <p class="ax-label">Attendance Explorer · Areas</p>
+    <h1>Attendance by area</h1>
+    <p class="ax-lede">England, every region and every local authority, day by day through this school year, read against the country and against last year. Counties, constituencies and wards are one step away.</p>
     <p class="ax-date" id="ax-date">Loading the latest figures…</p>
   </header>
-
-  <section class="ax-controls" aria-label="Choose what to show">
-    <label class="ax-field ax-find"><span>Find a school, trust or constituency</span>
+  <nav class="ax-kinds" id="ax-kinds" aria-label="Kind of area"><a href="/attendance/" data-k="e" aria-current="page">This year, week by week</a><a href="/attendance/group/?k=a" data-k="a">Local authorities</a><a href="/attendance/group/?k=y" data-k="y">Counties</a><a href="/attendance/group/?k=c" data-k="c">Constituencies</a><a href="/attendance/group/?k=w" data-k="w">Wards</a></nav>
+    <div class="ax-hero-search">
+    <label class="ax-field ax-find"><span>Find an area, school or trust</span>
       <input id="ax-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Name, town or postcode" role="combobox" aria-expanded="false" aria-controls="ax-qlist" aria-autocomplete="list">
       <ul id="ax-qlist" class="ax-pop" role="listbox" hidden></ul></label>
+    </div>
+</div></div>
+<nav class="ax-secnav noprint" aria-label="Sections"><div class="in" id="ax-secnav"></div></nav>
+<main class="ax">
+
+  <section class="ax-controls" aria-label="Choose what to show">
     <label class="ax-field"><span>Area</span>
       <select id="ax-area" class="ax-select"></select></label>
     <div class="ax-field"><span id="ax-phase-l">Schools</span>
@@ -50,13 +56,13 @@
   <p class="ax-notice" id="ax-new" hidden></p>
   <div id="ax-places"></div>
 
-  <section class="ax-card" id="ax-head">
+  <section data-nav="Summary" class="ax-card" id="ax-head">
     <div class="ax-head-row" style="margin-top:0"><h2 id="ax-name"></h2><div id="ax-pin"></div></div>
     <p class="ax-reading" id="ax-reading"></p>
     <div class="ax-kpis" id="ax-kpis"></div>
   </section>
 
-  <section class="ax-card">
+  <section data-nav="Day by day" class="ax-card">
     <h2>The year so far, one square a day</h2>
     <p class="ax-sub">Each square is a school day: green where fewer sessions were missed than England’s average for the year, rust where more. Rows run Monday to Friday; last year sits beneath for comparison. Blank squares are holidays, or days when under 80% of the usual pupils were due in.</p>
     <div id="ax-ribbon" class="ax-chart"></div>
@@ -64,12 +70,12 @@
   </section>
 
   <div class="ax-two">
-    <section class="ax-card">
+    <section data-nav="Week by week" class="ax-card">
       <h2>Week by week</h2>
       <p class="ax-sub">Overall absence each week of the school year.</p>
       <div id="ax-weeks" class="ax-chart"></div>
     </section>
-    <section class="ax-card">
+    <section data-nav="Weekdays" class="ax-card">
       <h2>By day of the week</h2>
       <p class="ax-sub">Average absence on each weekday this year, authorised and unauthorised.</p>
       <div id="ax-dow" class="ax-chart"></div>
@@ -77,19 +83,19 @@
     </section>
   </div>
 
-  <section class="ax-card">
+  <section data-nav="Reasons" class="ax-card">
     <h2>What the absence was</h2>
     <p class="ax-sub">Sessions missed since September, by the reason recorded in the register, as a share of all possible sessions.</p>
     <div id="ax-reasons" class="ax-chart"></div>
   </section>
 
   <div class="ax-two">
-    <section class="ax-card">
+    <section data-nav="Map" class="ax-card">
       <h2>Every local authority</h2>
       <p class="ax-sub">One hexagon for each of the 153 authorities, placed roughly where it sits, coloured by overall absence since September against England. Tap one to read it.</p>
       <div id="ax-hex" class="ax-chart"></div>
     </section>
-    <section class="ax-card">
+    <section data-nav="Against last year" class="ax-card">
       <h2>Against the same point last year</h2>
       <p class="ax-sub">Each dot is a local authority. Dots below the line have lower absence than at this point last year; dots above have higher.</p>
       <div id="ax-change" class="ax-chart"></div>
@@ -97,7 +103,7 @@
     </section>
   </div>
 
-  <section class="ax-card ax-method">
+  <section data-nav="Method" class="ax-card ax-method">
     <h2>Sources and method</h2>
     <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-attendance-in-schools">Pupil attendance in schools</a>, data set “Reasons for absence and attendance”, <span id="ax-src"></span>. Official statistics drawn from the registers that state-funded schools share with the DfE each day. Open Government Licence v3.0.</p>
     <p><b>What is counted.</b> Absence is the share of possible sessions (mornings and afternoons) that pupils missed. “All” schools is primary, secondary and special together. The figures cover pupils of compulsory school age and can be revised by the DfE in later releases.</p>
@@ -116,7 +122,9 @@
 <script src="/assets/d3.min.js"></script>
 <script src="/attendance/colour.js"></script>
 <script src="/attendance/tools.js"></script>
+<script src="/attendance/chrome.js"></script>
 <script src="/attendance/search.js"></script>
 <script src="/attendance/pulse.js"></script>
+<script src="/attendance/places.js"></script>
 </body>
 </html>

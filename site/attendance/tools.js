@@ -8,7 +8,7 @@
   const DISPLAY = '"Libre Caslon Display", Georgia, serif';
   const W = 800, PAD = 40, CW = W - PAD * 2, SCALE = 2, MAX_H = 8000;
   const PIN_KEY = 'ax-pins', SEEN_KEY = 'ax-seen', PIN_MAX = 12;
-  const KIND = {school: 'School', group: 'Trust or area', area: 'Area'};
+  const KIND = {school: 'School', group: 'Area or trust', area: 'Area, week by week'};
 
   /* ---------- small helpers ---------- */
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -292,7 +292,7 @@
     if (!btn) { host.textContent = ''; btn = el('button', 'ax-pinbtn'); btn.type = 'button';
       btn.appendChild(el('i', 'ax-pinmark')).setAttribute('aria-hidden', 'true'); btn.appendChild(el('span'));
       btn.addEventListener('click', () => { if (place) toggle(place); }); host.appendChild(btn); }
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false'); btn.lastChild.textContent = on ? 'Pinned' : 'Pin this place';
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false'); btn.lastChild.textContent = on ? 'Saved to your places' : 'Save to your places';
     btn.title = on ? 'Remove ' + place.name + ' from your places' : 'Keep ' + place.name + ' in your places on this device';
   }
   function setPlace(item) { place = item == null ? null : norm(item); renderPinButton(); }
@@ -301,7 +301,7 @@
   function fillPins(host) {
     const list = pins(), wrap = el('div', 'ax-places'), id = host._axId || (host._axId = 'ax-places-t' + (++uid));
     const t = el('p', 'ax-places-t', 'Your places'); t.id = id; wrap.appendChild(t);
-    if (!list.length) wrap.appendChild(el('p', 'ax-places-none', 'Pin a school, trust or area to keep it here. Pins are stored only on this device.'));
+    if (!list.length) wrap.appendChild(el('p', 'ax-places-none', 'Save a school, trust or area and it is kept here with its latest figure, ready to open or compare each time you come back. Saved only on this device.'));
     else { const ul = el('ul'); ul.setAttribute('aria-labelledby', id);
       list.forEach((p) => { const li = el('li'), a = el('a'); a.href = p.href; a.appendChild(el('span', 'ax-places-n', p.name)); a.appendChild(el('small', null, KIND[p.kind]));
         const rm = el('button', 'ax-places-x'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove ' + p.name + ' from your places'); rm.appendChild(el('span', null, '×')).setAttribute('aria-hidden', 'true');

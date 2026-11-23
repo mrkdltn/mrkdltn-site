@@ -26,14 +26,17 @@
   <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
 </div></header>
 
-<main class="ax">
-  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/">The pulse</a><a href="/attendance/school/">Schools</a><a href="/attendance/group/">Trusts and constituencies</a><a href="/attendance/patterns/" aria-current="page">Patterns</a></nav>
+<div class="ax-hero"><div class="ax-hero-in">
+  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/" data-v="areas">Areas</a><a href="/attendance/school/" data-v="schools">Schools</a><a href="/attendance/group/?k=t" data-v="trusts">Trusts</a><a href="/attendance/patterns/" data-v="patterns" aria-current="page">Patterns</a></nav>
   <header class="ax-top">
     <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · Patterns</p>
     <h1>What goes with absence, and how it has changed</h1>
     <p class="ax-lede">Every state-funded school in England at once: how absence varies with the circumstances of a school, how the whole distribution has moved since 2013/14, and where the gaps have opened.</p>
     <p class="ax-date" id="px-date">Loading…</p>
   </header>
+</div></div>
+<nav class="ax-secnav noprint" aria-label="Sections"><div class="in" id="ax-secnav"></div></nav>
+<main class="ax">
 
   <section class="ax-controls" aria-label="Choose what to show">
     <div class="ax-field"><span id="px-phase-l">Schools</span>
@@ -43,14 +46,14 @@
   </section>
 
   <div id="px-body">
-  <section class="ax-card" id="px-grad-c">
+  <section data-nav="Free school meals" class="ax-card" id="px-grad-c">
     <h2 id="px-grad-h">The gap by free school meals</h2>
     <p class="ax-sub">Schools in five equal groups by the share of pupils eligible for free school meals (January 2026 census), each group pooled for every full school year. No figures were published for 2019/20.</p>
     <div id="px-grad" class="ax-chart"></div>
     <p class="ax-reading" id="px-grad-r"></p>
   </section>
 
-  <section class="ax-card" id="px-scat-c">
+  <section data-nav="Circumstances" class="ax-card" id="px-scat-c">
     <h2>School by school, against its circumstances</h2>
     <p class="ax-sub">Each dot is a school. The green line joins the middle school of each twentieth of schools along the axis.</p>
     <label class="ax-field" style="max-width:340px"><span>Across the page</span>
@@ -59,27 +62,27 @@
     <p class="ax-reading" id="px-scat-r"></p>
   </section>
 
-  <section class="ax-card">
+  <section data-nav="Distribution" class="ax-card">
     <h2>The whole distribution, year by year</h2>
     <p class="ax-sub">One outline per full school year showing how schools were spread by overall absence, with the middle school marked.</p>
     <div id="px-ridge" class="ax-chart"></div>
     <p class="ax-reading" id="px-ridge-r"></p>
   </section>
 
-  <section class="ax-card">
+  <section data-nav="Regions" class="ax-card">
     <h2>Region by region</h2>
     <p class="ax-sub">Each region’s schools pooled for every full school year, on the same scale, with England as the grey thread.</p>
     <div id="px-reg" class="ax-multi"></div>
   </section>
 
-  <section class="ax-card" id="px-model-c">
+  <section data-nav="Similar schools" class="ax-card" id="px-model-c">
     <h2>How similar schools are matched</h2>
     <p class="ax-sub" id="px-model-s"></p>
     <div class="ax-tablewrap"><table class="ax-table ax-coef" id="px-model"></table></div>
   </section>
   </div>
 
-  <section class="ax-card ax-method">
+  <section data-nav="Method" class="ax-card ax-method">
     <h2>Sources and method</h2>
     <p><b>Sources.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files (<span id="px-src"></span>); <a href="https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-their-characteristics">Schools, pupils and their characteristics</a> and <a href="https://explore-education-statistics.service.gov.uk/find-statistics/special-educational-needs-in-england">Special educational needs in England</a>, school-level files for January 2026 (published June 2026). Open Government Licence v3.0.</p>
     <p><b>Association, not cause.</b> These charts show what goes with absence across schools. They do not show that any circumstance causes it, and they describe schools, not pupils: a pattern across schools need not hold for the children within them.</p>
@@ -98,6 +101,7 @@
 <script src="/assets/d3.min.js"></script>
 <script src="/attendance/colour.js"></script>
 <script src="/attendance/tools.js"></script>
+<script src="/attendance/chrome.js"></script>
 <script src="/attendance/patterns.js"></script>
 </body>
 </html>

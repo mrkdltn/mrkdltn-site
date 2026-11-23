@@ -124,3 +124,39 @@ body.explorer{background:#ECE9E1}
 #gx-view button{padding-left:10px;padding-right:10px}
 .ax-more-link{display:block;margin-top:10px;font:15px/1.4 var(--sans)}
 .ax-more-link a{color:var(--ink)}
+
+/* ---- Header pass, 24 November 2026: the same shape as the Ofsted Explorer. A full-width midnight hero with the
+   search inside it, then a section menu that stays at the top while scrolling, then white sheets on stone. */
+.ax-hero{background:#0B1A2E;color:#F5F1E8;border-bottom:2px solid #C9A24B}
+.ax-hero-in{max-width:1180px;margin:0 auto;padding:18px 24px 30px}
+.ax-hero .ax-top{background:none;border:0;padding:0;margin:26px 0 0}
+.ax-hero .ax-top h1{font-size:clamp(34px,5vw,58px);line-height:1.06;margin:10px 0 12px}
+.ax-hero .ax-lede{font-size:19px;max-width:58ch}
+.ax-hero .ax-nav{margin:0;gap:4px 22px;border-bottom:1px solid #2B3C55}
+.ax-hero .ax-nav a{color:#A8B5C8;font-size:15px;padding:10px 0 9px}
+.ax-hero .ax-nav a:hover{color:#F5F1E8}
+.ax-hero .ax-nav a[aria-current=page]{color:#F5F1E8;border-bottom-color:#C9A24B}
+.ax-kinds{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.ax-kinds a{font-size:14px;color:#D9DEE8;text-decoration:none;border:1px solid #55627A;border-radius:2px;padding:8px 12px;min-height:22px}
+.ax-kinds a:hover{border-color:#F5F1E8;color:#F5F1E8}
+.ax-kinds a[aria-current=page]{background:#F5F1E8;color:#0B1A2E;border-color:#F5F1E8;font-weight:600}
+.ax-hero-search{margin:20px 0 0;max-width:680px}
+.ax-hero-search .ax-field{color:#A8B5C8;max-width:none}
+.ax-hero-search .ax-select{min-height:54px;font-size:17px;padding:0 16px;border-color:#F5F1E8;color:#0B1A2E;background:#fff}
+.ax-hero .ax-pop{color:#0B1A2E;z-index:40}
+.ax-hero .ax-head-row{margin-top:18px;justify-content:flex-start}
+.ax-secnav{position:sticky;top:0;z-index:25;background:rgba(236,233,225,.96);backdrop-filter:blur(8px);border-bottom:1px solid #D9D4C8}
+.ax-secnav .in{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.ax-secnav .in::-webkit-scrollbar{display:none}
+.ax-secnav a{flex:none;padding:13px 10px 11px;font:14px/1.2 var(--sans);color:#55627A;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.ax-secnav a:first-child{padding-left:0}
+.ax-secnav a:hover{color:#0B1A2E}
+.ax-secnav a.on{color:#0B1A2E;border-bottom-color:#C9A24B;font-weight:600}
+.ax section[data-nav]{scroll-margin-top:58px}
+.ax{padding-top:22px}
+.ax-controls{position:static}
+.ax-places-v{color:var(--muted);font-weight:400}
+.ax-places-cmp{margin:10px 0 0;font:15px/1.4 var(--sans)}
+.ax-places-cmp a{color:var(--ink)}
+@media (max-width:480px){.ax-hero-in{padding:10px 16px 22px}.ax-hero .ax-top{margin:18px 0 0}.ax-hero .ax-lede{font-size:17px}.ax-secnav .in{padding:0 16px}.ax-kinds a{padding:8px 10px}.ax-top{margin:0}}
+@media print{.ax-secnav{display:none}}

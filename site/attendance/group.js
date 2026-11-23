@@ -291,8 +291,14 @@
   d3.json('/attendance/data/bench.json').then((j) => {
     B = j; const q = new URLSearchParams(location.search); kind = SH[q.get('k')] ? q.get('k') : 'c'; id = q.get('id') || '';
     AXsearch($('gx-q'), $('gx-list'), AXsearch.go, true);
-    $('gx-another').addEventListener('click', () => { location.href = '/attendance/group/'; });
-    const start = id ? Promise.resolve() : d3.json('/attendance/data/grp/c_all.json').then((all) => { random = true; kind = 'c'; id = all[Math.floor(Math.random() * all.length)].id; });
+    $('gx-another').addEventListener('click', () => { location.href = '/attendance/group/?k=' + kind; });
+    // which part of the Explorer this is: trusts stand apart; every other kind is an area
+    const nv = document.querySelector(`.ax-nav a[data-v="${kind === 't' ? 'trusts' : 'areas'}"]`); if (nv) nv.setAttribute('aria-current', 'page');
+    const ks = $('ax-kinds'); if (ks && kind !== 't') { ks.hidden = false; const a = ks.querySelector(`a[data-k="${kind}"]`); if (a) a.setAttribute('aria-current', 'page'); }
+    // with no place chosen, open on one of that kind picked at random
+    const pick = (list) => { random = true; id = list[Math.floor(Math.random() * list.length)]; };
+    const start = id ? Promise.resolve() : kind === 'w' ? d3.json('/attendance/data/groups.json').then((g) => pick(g.data.id.filter((x, i) => g.data.k[i] === 'w' && g.data.n[i] >= 3)))
+      : d3.json(`/attendance/data/grp/${kind}_all.json`).then((all) => pick(all.map((r) => r.id)));
     return start.then(() => { const shard = [...id].reduce((a, c) => a + c.charCodeAt(0), 0) % SH[kind];
       return d3.json(`/attendance/data/grp/${kind}${shard}.json`); }).then((sh) => { G = sh[id];
       const extra = !G ? null : kind === 'w' ? (G.lad ? d3.json(`/attendance/data/geo/${G.lad}.json`).catch(() => null) : null) : d3.json(`/attendance/data/grp/${kind}_all.json`);

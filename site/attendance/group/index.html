@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Trusts and constituencies · Attendance Explorer · Mark Dalton</title>
+<title>Areas and trusts · Attendance Explorer · Mark Dalton</title>
 <meta name="description" content="School attendance in England, day by day: every local authority and region read against England and against last year. Built from the DfE's fortnightly attendance data.">
 <link rel="canonical" href="https://mrkdltn.com/attendance/group/">
 <meta property="og:title" content="Attendance Explorer">
@@ -26,19 +26,25 @@
   <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
 </div></header>
 
-<main class="ax">
-  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/">The pulse</a><a href="/attendance/school/">Schools</a><a href="/attendance/group/" aria-current="page">Trusts and constituencies</a><a href="/attendance/patterns/">Patterns</a></nav>
+<div class="ax-hero"><div class="ax-hero-in">
+  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/" data-v="areas">Areas</a><a href="/attendance/school/" data-v="schools">Schools</a><a href="/attendance/group/?k=t" data-v="trusts">Trusts</a><a href="/attendance/patterns/" data-v="patterns">Patterns</a></nav>
   <header class="ax-top">
-    <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · <span id="gx-kind">Trusts and constituencies</span></p>
-    <h1 id="gx-name">Trusts, constituencies, wards and counties</h1>
+    <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · <span id="gx-kind">Areas</span></p>
+    <h1 id="gx-name">Areas and trusts</h1>
     <p class="ax-date" id="gx-meta">Absence across the schools of any trust, parliamentary constituency, ward or county in England, built from the DfE’s school-level statistics.</p>
     <div class="ax-head-row"><div id="ax-pin"></div><button type="button" class="ax-btn" id="gx-another">Show me another</button></div>
   </header>
-
-  <section class="ax-controls" aria-label="Search">
+  <nav class="ax-kinds" id="ax-kinds" aria-label="Kind of area" hidden><a href="/attendance/" data-k="e">This year, week by week</a><a href="/attendance/group/?k=a" data-k="a">Local authorities</a><a href="/attendance/group/?k=y" data-k="y">Counties</a><a href="/attendance/group/?k=c" data-k="c">Constituencies</a><a href="/attendance/group/?k=w" data-k="w">Wards</a></nav>
+    <div class="ax-hero-search">
     <label class="ax-field ax-find"><span>Local authority, trust, constituency, ward, county or school</span>
       <input id="gx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Start typing a name" role="combobox" aria-expanded="false" aria-controls="gx-list" aria-autocomplete="list">
       <ul id="gx-list" class="ax-pop" role="listbox" hidden></ul></label>
+    </div>
+</div></div>
+<nav class="ax-secnav noprint" aria-label="Sections"><div class="in" id="ax-secnav"></div></nav>
+<main class="ax">
+
+  <section class="ax-controls" aria-label="Search">
     <div class="ax-field" id="gx-phase-f" hidden><span id="gx-phase-l">Schools</span>
       <div class="ax-seg" id="gx-phase" role="group" aria-labelledby="gx-phase-l"></div></div>
     <div class="ax-field" id="gx-view-f" hidden><span id="gx-view-l">Compare by</span>
@@ -48,13 +54,13 @@
   </section>
 
   <div id="gx-body" hidden>
-  <section class="ax-card">
+  <section data-nav="Summary" class="ax-card">
     <h2 id="gx-period"></h2>
     <p class="ax-reading" id="gx-reading"></p>
     <div class="ax-kpis" id="gx-kpis"></div>
   </section>
 
-  <section class="ax-card" id="gx-cmp-c" hidden>
+  <section data-nav="Side by side" class="ax-card" id="gx-cmp-c" hidden>
     <h2>Side by side</h2>
     <p class="ax-sub" id="gx-cmp-s"></p>
     <div class="ax-tablewrap"><table class="ax-table ax-cmp" id="gx-cmp"></table></div>
@@ -63,35 +69,35 @@
       <ul id="gx-list2" class="ax-pop" role="listbox" hidden></ul></label><div id="gx-chips" class="ax-chips"></div></div>
   </section>
 
-  <section class="ax-card" id="gx-pg-c" hidden>
+  <section data-nav="Pupil groups" class="ax-card" id="gx-pg-c" hidden>
     <h2>By pupil group</h2>
     <p class="ax-sub" id="gx-pg-s"></p>
     <div id="gx-pg" class="ax-chart"></div>
     <p class="ax-reading" id="gx-pg-r"></p>
   </section>
 
-  <section class="ax-card" id="gx-strip-c">
+  <section data-nav="School by school" class="ax-card" id="gx-strip-c">
     <h2>School by school</h2>
     <p class="ax-sub">Each circle is one of its <span class="gx-phase-n"></span>, sized by the number of pupils and placed by <span class="gx-meas-n"></span>. Tap a circle for the school.</p>
     <div id="gx-strip" class="ax-chart"></div>
     <p class="ax-reading" id="gx-strip-r"></p>
   </section>
 
-  <section class="ax-card" id="gx-hist-c">
+  <section data-nav="Year by year" class="ax-card" id="gx-hist-c">
     <h2>Year by year</h2>
     <p class="ax-sub" id="gx-hist-s"></p>
     <div id="gx-hist" class="ax-chart"></div>
     <p class="ax-reading" id="gx-hist-r" hidden></p>
   </section>
 
-  <section class="ax-card" id="gx-over-c">
+  <section data-nav="Compared" class="ax-card" id="gx-over-c">
     <h2 id="gx-over-h"></h2>
     <p class="ax-sub" id="gx-over-s"></p>
     <div id="gx-over" class="ax-chart"></div>
     <p class="ax-reading" id="gx-over-r"></p>
   </section>
 
-  <section class="ax-card">
+  <section data-nav="The schools" class="ax-card">
     <h2 id="gx-table-h">The schools</h2>
     <p class="ax-sub">In alphabetical order, for the <span id="gx-table-p"></span>. A dash means no rate is shown.</p>
     <div class="ax-tablewrap"><table class="ax-table" id="gx-table"></table></div>
@@ -99,7 +105,7 @@
   </section>
   </div>
 
-  <section class="ax-card ax-method">
+  <section data-nav="Method" class="ax-card ax-method">
     <h2>Sources and method</h2>
     <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files: <span id="gx-src"></span>. Trust and constituency of each school from Get Information about Schools. Open Government Licence v3.0. The DfE publishes no absence figures for trusts or constituencies; these are built from its school figures.</p>
     <p><b>Pooled rates.</b> Sessions missed across the schools over sessions possible, and persistent absentees over pupils on roll. Phases are kept apart because primary, secondary and special schools differ so much that a single figure would mostly describe the mix.</p>
@@ -125,6 +131,7 @@
 <script src="/assets/d3.min.js"></script>
 <script src="/attendance/colour.js"></script>
 <script src="/attendance/tools.js"></script>
+<script src="/attendance/chrome.js"></script>
 <script src="/attendance/search.js"></script>
 <script src="/attendance/group.js"></script>
 </body>
