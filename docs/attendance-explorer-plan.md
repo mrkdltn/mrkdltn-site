@@ -124,7 +124,7 @@ Settled: the two-speed shape (Mark, 23 November); wards over MSOAs (on the recon
 2. **County.** Local authority as the unit, ceremonial county as an optional grouping. Recommended: yes.
 3. **Contextual expected attendance.** Decided 23 November: no. The Explorer gives no expected rate; schools are set beside England, their local authority and their 20 similar schools.
 4. **Small numbers at school level.** Decided 23 November: apply them. Rates only, no school under 10 enrolments, severe absence kept to areas, trusts and phases, and no pupil group under 10.
-5. **School pages by Pages Function**, settling the pending primary-schools question at the same time. Recommended: yes.
+5. **School pages by Pages Function.** Decided 23 November: yes, for the Attendance Explorer. Moving the Ofsted Explorer's school pages the same way is a separate decision.
 6. **Unattended data commits to `main`** for new DfE releases. Recommended: yes for data only, once Phase 1 has run cleanly by hand twice.
 
 Also decided on 23 November: school pages keep the sentence giving the share of schools with higher and lower rates; trust histories keep earlier years and show which schools were in the trust at the time, with joining dates and transfers.
