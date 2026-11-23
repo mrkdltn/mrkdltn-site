@@ -80,7 +80,14 @@
   [['1', 'Least disadvantaged fifth'], ['2', 'Second fifth'], ['3', 'Middle fifth'], ['4', 'Fourth fifth'], ['5', 'Most disadvantaged fifth']].forEach(([k, t]) => { const o = document.createElement('option'); o.value = k; o.textContent = t; $('xm-dq').append(o); });
   dash.onData(() => { const k = dash.data('ks4'); const rs = $('xm-reg'); if (k.status === 'ok' && rs.options.length === 1) [...new Set(k.data.map((r) => r.region).filter(Boolean))].sort().forEach((g) => { const o = document.createElement('option'); o.value = g; o.textContent = g; rs.append(o); });
     const p = P(); sel.value = p.m; rs.value = p.reg; $('xm-dq').value = p.dq; if (document.activeElement !== $('xm-f')) $('xm-f').value = p.f; });
-  const set = (o) => { LIMIT = 100; dash.setParams(o); };
+  // Each measure, and each measure in a region, has its own address with a matching share image (build_explore_pages.py):
+  // /explorer/explore/<measure>/<region>/. The address bar is kept on that path; the other settings stay after '#'.
+  const slug = (t) => t.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
+  const vpath = (p) => '/explorer/explore/' + (p.m === 'a8' && !p.reg ? '' : p.m + '/' + (p.reg ? slug(p.reg) + '/' : ''));
+  const fixPath = () => { const p0 = P(); document.title = M[p0.m].lab.replace(/ \(%\)$/, '') + ': ' + (p0.reg ? 'secondary schools in ' + p0.reg + ', against England' : 'every secondary school in England') + ' · Ofsted Explorer';
+    const want = vpath(p0), h = new URLSearchParams(location.hash.slice(1)); ['m', 'reg', 'v'].forEach((k) => h.delete(k)); const t = h.toString();
+    if (location.pathname !== want || location.hash.slice(1) !== t) history.replaceState(null, '', want + location.search + (t ? '#' + t : '')); };
+  const set = (o) => { LIMIT = 100; dash.setParams(o); fixPath(); };
   sel.addEventListener('change', () => set({m: sel.value === 'a8' ? null : sel.value}));
   $('xm-reg').addEventListener('change', (e) => set({reg: e.target.value || null}));
   $('xm-dq').addEventListener('change', (e) => set({dq: e.target.value || null}));
@@ -89,9 +96,12 @@
     th.addEventListener('click', go); th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } }); });
   $('xm-more').addEventListener('click', () => { LIMIT += 100; dash.draw('xtable'); });
   $('xm-csv').addEventListener('click', () => { const r = dash.data('xrows'); if (r.status !== 'ok') return; const p = P();
-    const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     const head = ['urn', 'school', 'local_authority', 'region', p.m, 'gcse_cohort', 'source', 'data_version'];
     const body = [head].concat(r.data.map((x) => [x.urn, x.name, x.la, x.region, x[p.m], x.pupils, M[p.m].src, VER])).map((row) => row.map(q).join(',')).join('\n') + '\n';
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], {type: 'text/csv;charset=utf-8'})); a.download = 'ofsted-explorer-' + p.m + (p.reg ? '-' + p.reg.toLowerCase().replace(/[^a-z]+/g, '-') : '') + (VER ? '-' + VER : '') + '.csv'; document.body.append(a); a.click(); a.remove(); });
-  dash.start({});
+  if (window.OEshare) { OEshare.button($('xm-share'), {url: () => location.href, title: () => M[P().m].lab + (P().reg ? ', ' + P().reg : '') + ' · Ofsted Explorer'});
+    OEshare.check({host: '.xm'}); }
+  dash.start(Object.assign({}, window.OE_XVIEW || {}));
+  fixPath(); window.addEventListener('hashchange', () => setTimeout(fixPath, 0));
 })();

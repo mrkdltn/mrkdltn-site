@@ -8,3 +8,5 @@ node_modules/
 __pycache__/
 site/explorer/school/
 site/sitemap.xml
+site/explorer/explore/*/
+site/explorer/explore/card.png

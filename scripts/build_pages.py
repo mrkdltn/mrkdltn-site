@@ -268,8 +268,13 @@ def main(rows, rc_rows=(), only=None):
         with ProcessPoolExecutor(max_workers=os.cpu_count() or 2) as ex:
             n_img = sum(ex.map(_draw, jobs, chunksize=64))
 
+    explore = []
+    if not only:
+        import build_explore_pages
+        explore = build_explore_pages.main([r for r in rows if not r.get('rc_only')], fonts)
+
     today = datetime.date.today().isoformat()
-    urls = [ORIGIN + p for p in STATIC_PAGES] + [f'{ORIGIN}/explorer/school/{r["urn"]}/' for r in rows]
+    urls = [ORIGIN + p for p in STATIC_PAGES] + [ORIGIN + p for p in explore] + [f'{ORIGIN}/explorer/school/{r["urn"]}/' for r in rows]
     with open(os.path.join(SITE, 'sitemap.xml'), 'w') as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
         for u in urls:

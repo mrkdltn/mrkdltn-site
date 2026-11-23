@@ -68,9 +68,10 @@
       add('Three years', Math.abs(d2) < 1 ? 'Results have been **broadly stable**: ' + seq + ' from 2023/24 to 2025/26.' : 'Results have **' + (d2 > 0 ? 'risen' : 'fallen') + ' ' + f1(Math.abs(d2)) + ' points** in two years: ' + seq + ' from 2023/24 to 2025/26. This year’s figure is provisional.'); }
     else if (ok(r.a8_25)) add('Last year', 'Attainment 8 was ' + f1(+r.a8_25) + ' in 2024/25 and is ' + f1(+r.a8) + ' this year (provisional).');
     // disadvantaged pupils: no figures for groups under 10
-    if (ok(r.dis_a8) && ok(r.nondis_a8)) { const nDis = ok(r.pupils) && ok(r.dis_pct) ? Math.round(+r.pupils * +r.dis_pct / 100) : NaN;
-      if (ok(nDis) && nDis < 10) add('Disadvantaged pupils', 'Fewer than 10 disadvantaged pupils took GCSEs here. That is too few for their average to be read reliably, so it is not reported.');
-      else { const gap = r.nondis_a8 - r.dis_a8, dd = r.dis_a8 - st.dis_a8.mean;
+    // (the build blanks both averages when either group is under 10, so neither can be worked out from the other)
+    const nDis = ok(r.pupils) && ok(r.dis_pct) ? Math.round(+r.pupils * +r.dis_pct / 100) : NaN, nOth = ok(nDis) ? Math.round(+r.pupils * (100 - +r.dis_pct) / 100) : NaN;
+    if (ok(nDis) && (nDis < 10 || nOth < 10)) add('Disadvantaged pupils', 'Fewer than 10 ' + (nDis < 10 ? 'disadvantaged pupils' : 'pupils who were not disadvantaged') + ' took GCSEs here. That is too few for an average to be read reliably, so neither group’s average is reported.');
+    else if (ok(r.dis_a8) && ok(r.nondis_a8)) { { const gap = r.nondis_a8 - r.dis_a8, dd = r.dis_a8 - st.dis_a8.mean;
         let t = 'Disadvantaged pupils averaged **' + f1(+r.dis_a8) + '**, ' + (Math.abs(dd) < 1 ? 'in line with' : f1(Math.abs(dd)) + ' points ' + (dd > 0 ? 'above' : 'below')) + ' disadvantaged pupils in the average secondary (' + f1(st.dis_a8.mean) + '). ';
         t += gap < -0.05 ? 'Here they outscored other pupils in the school by **' + f1(-gap) + ' points**; in the average school other pupils lead by ' + f1(st.gap.mean) + '.' : Math.abs(gap) <= 0.05 ? 'They scored **level with** other pupils in the school, where the average school has a gap of ' + f1(st.gap.mean) + '.' : 'The gap to other pupils in the school is **' + f1(gap) + ' points**, against ' + f1(st.gap.mean) + ' in the average school.';
         if (ok(nDis) && nDis < 30) t += ' The group is small (about ' + nDis + ' pupils), so read this loosely.';
@@ -145,7 +146,7 @@
     let ver = ''; try { const b = await fetch('/explorer/data/build.json', {cache: 'no-cache'}).then((x) => x.json()); ver = b.version || (b.built || '').slice(0, 10); } catch (e) { ver = ''; }
     const cols = Object.keys(nb[0]).filter((c) => c !== 'nn' && c[0] !== '_');
     const order = String(r.nn || '').split(' '); const pos = (u) => order.indexOf(String(u)) + 1;
-    const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
     const rows = [['relation', 'list_position'].concat(cols, ['data_version'])];
     rows.push(['this school', ''].concat(cols.map((c) => r[c]), [ver]));
     nb.slice().sort((a, b) => pos(a.urn) - pos(b.urn)).forEach((x) => rows.push(['similar school', pos(x.urn) || ''].concat(cols.map((c) => x[c]), [ver])));
@@ -207,7 +208,12 @@
 
   // ---------- actions ----------
   const pr = document.getElementById('oe-print'); if (pr) pr.addEventListener('click', () => { const s = S(); const d = document.getElementById('oe-printdate'); if (d) d.textContent = (s ? s.name + ' · ' : '') + 'generated ' + d3.timeFormat('%-d %B %Y')(new Date()) + ' · mrkdltn.com/explorer/#urn=' + (s ? s.urn : ''); const t = document.title; if (s) document.title = 'Ofsted Explorer - ' + s.name; window.print(); document.title = t; });
-  const cp = document.getElementById('oe-copy'); if (cp) cp.addEventListener('click', async () => { try { const sc = S(); let u = location.href; if (sc && sc.urn) { const h = new URLSearchParams(location.hash.slice(1)); h.delete('urn'); const t = h.toString(); u = location.origin + '/explorer/school/' + sc.urn + '/' + (t ? '#' + t : ''); } await navigator.clipboard.writeText(u); cp.textContent = 'Link copied'; } catch (e) { cp.textContent = location.href; } setTimeout(() => { cp.textContent = 'Copy link'; }, 1800); });
+  // share this view: the school's own address (its share image) with the view settings and a data stamp (share.js)
+  if (window.OEshare) { const schoolUrl = () => { const sc = S(); const h = new URLSearchParams(location.hash.slice(1)); h.delete('urn'); h.delete('v'); const t = h.toString();
+      return (sc && sc.urn ? location.origin + '/explorer/school/' + sc.urn + '/' : location.origin + location.pathname) + (t ? '#' + t : ''); };
+    const insp = () => { const sc = S(); return (sc && sc.insp_date) || ''; };
+    OEshare.button(document.getElementById('oe-copy'), {url: schoolUrl, insp, title: () => { const sc = S(); return sc ? sc.name + ' · Ofsted Explorer' : document.title; }});
+    let checked = false; dash.onData(() => { if (checked || !S()) return; checked = true; OEshare.check({insp, host: '#school'}); }); }
   // section nav highlight; on phones the sticky menu scrolls sideways to keep the current section's link in view
   const phone = window.matchMedia('(max-width: 640px)');
   const links = [...document.querySelectorAll('.oe-nav a')]; if ('IntersectionObserver' in window && links.length) { const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => { const on = a.getAttribute('href') === '#' + e.target.id; a.classList.toggle('on', on); if (on && phone.matches) { const p = a.parentNode; p.scrollTo({left: p.scrollLeft + a.getBoundingClientRect().left - p.getBoundingClientRect().left - 16, behavior: 'smooth'}); }; }); }); }, {rootMargin: '-30% 0px -60% 0px'}); links.forEach((a) => { const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) io.observe(t); }); }

@@ -131,7 +131,7 @@ html.loaded .oe-loading{display:none}
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
   <div class="oe-schoolhead"><div><p class="oe-school" data-draw="sname" role="heading" aria-level="2">—</p><p class="oe-meta" data-draw="smeta">—</p></div>
-    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-slide" title="A 1920×1080 image (16:9) for PowerPoint, Keynote or Google Slides">Slide (PNG)</button><button type="button" class="oe-btn" id="oe-copy">Copy link</button></div></div>
+    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-slide" title="A 1920×1080 image (16:9) for PowerPoint, Keynote or Google Slides">Slide (PNG)</button><button type="button" class="oe-btn" id="oe-copy" title="A link to this school and view; on a phone, opens the share menu">Share this view</button></div></div>
   <div class="oe-kpis" data-draw="kpis"></div>
   <div class="oe-story" data-draw="story" data-source="school neigh stats"></div>
   <div class="oe-spinew"><h2>At a glance <span class="i" tabindex="0" data-tip="Each row is one results measure on its own scale. The grey bar is the spread across England's secondaries (5th to 95th percentile), with the middle half darker. The dark tick is England's average, the green tick the average of the 50 similar schools, the diamond this school. The reading against the similar schools is in colour only where the gap is larger than chance.">i</span></h2>
@@ -384,6 +384,7 @@ html.loaded .oe-loading{display:none}
 </div></footer>
 <script src="/assets/d3.min.js"></script>
 <script src="/explorer/dash.js"></script>
+<script src="/explorer/share.js"></script>
 <script>dash.source('ks4','/explorer/data/ks4.json',{nn:'/explorer/data/nn/'});dash.source('ofsted','/explorer/data/rc.json');dash.source('fig3','/explorer/data/fig3.csv');</script>
 <script src="/explorer/app.js"></script>
 <script src="/explorer/extra.js"></script>
