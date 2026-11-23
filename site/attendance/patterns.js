@@ -64,11 +64,8 @@
     const line = d3.line().x((d) => x(d.x)).y((d) => y(d.v));
     s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 5); s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', VERD).attr('stroke-width', 2.5);
     const M = P.model && P.model.phases[phase], items = [`<i style="background:${SOFT};border-radius:50%;width:8px;height:8px"></i>${idx.length.toLocaleString('en-GB')} ${PH[phase]}`, `<i class="ln" style="border-color:${VERD}"></i>Middle school of each twentieth`];
-    if (M) { const k = M.factors.indexOf(XF[xf]), b = M[meas].coef; const curve = d3.range(41).map((j) => { const xv = xd[0] + j * (xd[1] - xd[0]) / 40; return {x: xv, v: 10000 / (1 + Math.exp(-(b[0] + b[k + 1] * (xv - M.mean[k]) / M.sd[k])))}; });
-      s.append('path').attr('d', line(curve)).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 5); s.append('path').attr('d', line(curve)).attr('fill', 'none').attr('stroke', INK).attr('stroke-width', 2.5).attr('stroke-dasharray', '6 4');
-      items.push(`<i class="ln" style="border-color:${INK};border-top-style:dashed"></i>Model, other factors at their average`); }
     key(el, items);
-    $('px-scat-r').innerHTML = `In the twentieth of ${PH[phase]} with the fewest pupils ${XN[xf]}, the middle school had ${MN[meas]} of <b>${pc(bins[0].v)}</b>; in the twentieth with the most, <b>${pc(bins[19].v)}</b>.` + (M ? ` All the factors together account for about ${Math.round(M[meas].r2 * 100)}% of the differences between schools.` : '');
+    $('px-scat-r').innerHTML = `In the twentieth of ${PH[phase]} with the fewest pupils ${XN[xf]}, the middle school had ${MN[meas]} of <b>${pc(bins[0].v)}</b>; in the twentieth with the most, <b>${pc(bins[19].v)}</b>.`;
   }
 
   function ridges() {
@@ -102,9 +99,9 @@
 
   function model() {
     const card = $('px-model-c'), M = P.model && P.model.phases[phase]; card.hidden = !M; if (!M) return;
-    $('px-model-s').textContent = `Fitted to ${M.n.toLocaleString('en-GB')} ${PH[phase]} for the autumn and spring terms ${ay(P.model.period)}. It accounts for ${Math.round(M.abs.r2 * 100)}% of the differences between schools in overall absence and ${Math.round(M.pa.r2 * 100)}% in persistent absence. “Close to expected” is within ${M.abs.base} points for overall absence and ${M.pa.base} points for persistent absence at a school of median size (${Math.round(M.median_enrol)} pupils), wider for smaller schools.`;
-    $('px-model').innerHTML = '<thead><tr><th>Factor</th><th class="n">Average</th><th class="n">Overall absence</th><th class="n">Persistent absence</th><th class="n">Weight in the similar-schools match</th></tr></thead><tbody>' + M.factors.map((f, k) =>
-      `<tr><td>${M.labels[k]}</td><td class="n">${f === 'log_pupils' ? Math.round(Math.exp(M.mean[k])) + ' pupils' : f === 'rural' || f === 'selective' ? Math.round(M.mean[k] * 100) + '% of schools' : M.mean[k].toFixed(1) + '%'}</td><td class="n">${(M.abs.coef[k + 1] > 0 ? '+' : '') + M.abs.coef[k + 1].toFixed(3)}</td><td class="n">${(M.pa.coef[k + 1] > 0 ? '+' : '') + M.pa.coef[k + 1].toFixed(3)}</td><td class="n">${Math.round(M.weights[k] * 100)}%</td></tr>`).join('') + '</tbody>';
+    $('px-model-s').textContent = `Each of the ${M.n.toLocaleString('en-GB')} ${PH[phase]} is matched to the 20 schools nearest to it on these factors. A factor counts for more where it goes more strongly with overall absence across schools in the autumn and spring terms ${ay(P.model.period)}.`;
+    $('px-model').innerHTML = '<thead><tr><th>Factor</th><th class="n">Average school</th><th class="n">Weight in the match</th></tr></thead><tbody>' + M.factors.map((f, k) =>
+      `<tr><td>${M.labels[k]}</td><td class="n">${f === 'log_pupils' ? Math.round(Math.exp(M.mean[k])) + ' pupils' : f === 'rural' || f === 'selective' ? Math.round(M.mean[k] * 100) + '% of schools' : M.mean[k].toFixed(1) + '%'}</td><td class="n">${Math.round(M.weights[k] * 100)}%</td></tr>`).join('') + '</tbody>';
   }
 
   let token = 0;

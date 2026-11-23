@@ -257,7 +257,7 @@ def schools():
         raw, join = raw_history(u)
         return {p: shown(v) for p, v in raw.items()}, join
 
-    # context, expected rates and similar schools (scripts/model_attendance.py), where present
+    # context and similar schools (scripts/model_attendance.py), where present. No expected rate is published.
     ctx, mod, model = {}, {}, None
     if os.path.exists(os.path.join(RAW, 'school_model.csv')):
         F = lambda v: float(v) if v != '' else None
@@ -267,8 +267,7 @@ def schools():
         model = json.load(open(os.path.join(RAW, 'model.json')))
         model['release'] = json.load(open(os.path.join(RAW, 'context_release.json')))
         if model['period'] != latest:
-            print(f"attendance: the model was fitted on {model['period']} but the newest period is {latest}; expected rates left out")
-            mod = {}
+            print(f"attendance: similar schools were matched on {model['period']} but the newest period is {latest}; re-run scripts/model_attendance.py")
 
     current = sorted((u for u in rows if latest in rows[u] or fy_last in rows[u]), key=int)
     current = [u for u in current if latest in rows[u]]            # the newest release defines who is listed
@@ -277,7 +276,7 @@ def schools():
     shards = [dict() for _ in range(SHARDS)]
     las = sorted({meta[u]['la'] for u in current})
     index = {k: [] for k in ('urn', 'name', 'town', 'pc', 'la', 'ph')}
-    dist = {ph: {k: [] for k in ('urn', 'la', 'enrol', 'abs', 'pa', 'chg', 'fsm', 'eal', 'sen', 'ehcp', 'xabs', 'xpa')} for ph in 'PSX'}
+    dist = {ph: {k: [] for k in ('urn', 'la', 'enrol', 'abs', 'pa', 'chg', 'fsm', 'eal', 'sen', 'ehcp')} for ph in 'PSX'}
     base = '2018'
     trust_n = {}
     for u in current:
@@ -289,6 +288,10 @@ def schools():
                'ward': m['ward'], 'pcon': m['pcon'], 'pc_code': m['pcon_code'], 'h': {p: v for p, v in h.items() if v}}
         if m.get('trust_id'):
             rec['tname'] = tidy(m['trust']); rec['multi'] = trust_n[m['trust_id']] >= 2
+            if m.get('trust_joined'):
+                rec['tj'] = m['trust_joined'][:7]
+            if m.get('trust_before'):
+                rec['tprev'] = tidy(m['trust_before'])
         if join:
             rec['join'] = join
         if u in grade:
@@ -298,7 +301,6 @@ def schools():
         if u in mod and h.get(latest):
             k = mod[u]
             nn = [x for x in k['nn'].split() if latest in rows.get(x, {})]
-            rec['exp'] = [int(k['exp_abs']), int(k['exp_pa']), int(k['band_abs']), int(k['band_pa'])]
             rec['nn'] = [int(x) for x in nn]
             rec['sim'] = pool([rows[x][latest] for x in nn])
         shards[int(u) % SHARDS][u] = rec
@@ -313,7 +315,6 @@ def schools():
             c = ctx.get(u, [None] * 6)
             for i, k in enumerate(('fsm', 'eal', 'sen', 'ehcp')):
                 d[k].append(c[i])
-            d['xabs'].append(int(mod[u]['exp_abs']) if u in mod else None); d['xpa'].append(int(mod[u]['exp_pa']) if u in mod else None)
     for i, sh in enumerate(shards):
         json.dump(sh, open(os.path.join(out, f'{i}.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
     json.dump({'n': len(current), 'las': las, 'data': index}, open(os.path.join(OUT, 'schools.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
@@ -403,6 +404,19 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
                 rec['bench'][ph] = b
                 if latest in b:
                     row[ph] = [len(ms), sum(rows[u][latest][0] or 0 for u in ms if latest in rows[u])] + b[latest][:3]
+        if kind == 't' and big:
+            # the trust's own record: only schools that had joined by the end of December of each year, under their present URN
+            rec['bench_in'] = {}
+            for ph in 'PSX':
+                b = {}
+                for p in periods:
+                    vs = [rows[u][p] for u in us if meta[u]['phase'] == ph and p in rows[u] and meta[u].get('trust_joined') and meta[u]['trust_joined'] <= p[:4] + '-12-31']
+                    if len(vs) >= MIN_SCHOOLS:
+                        r = pool(vs)
+                        if r:
+                            b[p] = r + [len(vs)]
+                if b:
+                    rec['bench_in'][ph] = b
         if kind == 'y':
             rec['las'] = [[la, (la_names or {}).get(la, la), {ph: (bench[la].get(ph, {}).get(latest) if bench and la in bench else None) for ph in 'PSX'}]
                           for la in sorted({meta[u]['la'] for u in us}, key=lambda c: (la_names or {}).get(c, c))]
@@ -411,7 +425,8 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
             ward_val[gid] = [len(us)] + (rec['bench'].get('P', {}).get(latest, [None, None, None])[:3])
         for u in ([] if kind == 'y' else sorted(us, key=lambda u: meta[u]['name'])):
             v = shown(rows[u].get(latest))
-            rec['schools'].append([int(u), meta[u]['name'], meta[u]['phase'], meta[u]['town']] + (v[:2] + [v[3]] if v else [None, None, None]))
+            rec['schools'].append([int(u), meta[u]['name'], meta[u]['phase'], meta[u]['town']] + (v[:2] + [v[3]] if v else [None, None, None])
+                                  + ([meta[u].get('trust_joined', '')[:7] or None, tidy(meta[u]['trust_before']) if meta[u].get('trust_before') else None] if kind == 't' else []))
         shards[kind][key(kind, gid)][gid] = rec
         for k, v in (('k', kind), ('id', gid), ('name', name), ('n', len(us))):
             index[k].append(v)

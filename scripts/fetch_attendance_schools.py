@@ -13,7 +13,8 @@ Writes data/raw/attendance/:
   school_absence.csv   urn, period (2024 = full year 2024/25; 2025AS = autumn and spring 2025/26), enrolments, possible sessions, and
                        rates in hundredths of a percentage point: overall, unauthorised, persistent absence
                        (10% or more), illness, unauthorised holiday. Empty = not published for that year.
-  schools.csv          one row per school that appears in either file
+  schools.csv          one row per school that appears in either file, with the date it joined its present trust
+                       (GIAS) and, where the DfE recorded a different trust before that date, that trust's name
   schools_release.json what was read and when it was published
 The DfE files are 80 to 120 MB each and are read as a stream; they are never written to disk.
 """
@@ -63,7 +64,7 @@ def bp(v):
         return ''
 
 
-def read_absence(file_id, suffix, rows, names):
+def read_absence(file_id, suffix, rows, names, trusts=None):
     n = 0
     for r in csv.DictReader(io.TextIOWrapper(get(CSV.format(id=file_id)), encoding='utf-8-sig', newline='')):
         urn, per = r['school_urn'], r['time_period'][:4] + suffix
@@ -71,6 +72,8 @@ def read_absence(file_id, suffix, rows, names):
             continue
         rows[(urn, per)] = [r['enrolments'], r['sess_possible'], bp(r['sess_overall_percent']), bp(r['sess_unauthorised_percent']),
                             bp(r['enrolments_pa_10_exact_percent']), bp(r['sess_auth_illness_rate']), bp(r['sess_unauth_holiday_rate'])]
+        if trusts is not None and r.get('trust_name'):
+            trusts.setdefault(urn, {})[per[:4]] = r['trust_name']      # recorded by the DfE from 2020/21
         cur = names.get(urn)
         if cur is None or per[:4] >= cur[0]:
             names[urn] = (per[:4], r['school_name'], PHASE.get(r['education_phase'], ''), r['new_la_code'])
@@ -91,9 +94,9 @@ def gias(name):
 
 def main():
     files = newest()
-    rows, names = {}, {}
+    rows, names, trusts = {}, {}, {}
     for kind, suffix in (('fy', ''), ('as', 'AS')):
-        n = read_absence(files[kind]['id'], suffix, rows, names)
+        n = read_absence(files[kind]['id'], suffix, rows, names, trusts if kind == 'fy' else None)
         print(f"{files[kind]['title']} ({files[kind]['release']}, published {files[kind]['published']}): {n} rows")
     # keep autumn-and-spring rows only for the two newest years: the long run comes from full years
     as_years = sorted({p for _, p in rows if p.endswith('AS')})[-2:]
@@ -107,6 +110,21 @@ def main():
     for r in links:
         if r['LinkType'] == 'Predecessor' and r['URN'] in have and r['LinkURN'] in have:
             pred.setdefault(r['URN'], []).append(r['LinkURN'])
+    # when each academy joined its present trust (GIAS group links), and the trust the DfE recorded for it before then.
+    # A change of name alone is not a transfer: only a recorded trust from a year before the joining date counts.
+    _, gl = gias('grouplinks_edubaseallacademiesandfree')
+    joined = {}
+    for r in gl:
+        if r['Group Type'] in ('Multi-academy trust', 'Single-academy trust') and r['URN'] in have and r['Joined date']:
+            d, m, y = r['Joined date'].split('-')
+            joined[r['URN']] = (f'{y}-{m}-{d}', r['Linked UID'])
+    def before(u):
+        if u not in joined or u not in trusts:
+            return ''
+        y = int(joined[u][0][:4]) - (1 if joined[u][0][5:7] < '09' else 0)       # the school year in which it joined
+        cur = G.get(u, {}).get('Trusts (name)', '').strip().upper()
+        old = [n for p, n in sorted(trusts[u].items()) if int(p) < y and n.strip().upper() != cur]
+        return old[-1] if old else ''
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, 'school_absence.csv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f, lineterminator='\n')
@@ -115,14 +133,15 @@ def main():
             w.writerow(list(k) + rows[k])
     with open(os.path.join(OUT, 'schools.csv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f, lineterminator='\n')
-        w.writerow(['urn', 'name', 'phase', 'la', 'town', 'postcode', 'trust_id', 'trust', 'ward_code', 'ward', 'pcon_code', 'pcon', 'open', 'pred'])
+        w.writerow(['urn', 'name', 'phase', 'la', 'town', 'postcode', 'trust_id', 'trust', 'ward_code', 'ward', 'pcon_code', 'pcon', 'open', 'pred', 'trust_joined', 'trust_before'])
         for u in sorted(have, key=int):
             g, n = G.get(u, {}), names[u]
             p = pred.get(u, [])
             w.writerow([u, g.get('EstablishmentName') or n[1], n[2], n[3], g.get('Town', ''), g.get('Postcode', ''),
                         g.get('Trusts (code)', ''), g.get('Trusts (name)', ''), g.get('AdministrativeWard (code)', ''), g.get('AdministrativeWard (name)', ''),
                         g.get('ParliamentaryConstituency (code)', ''), g.get('ParliamentaryConstituency (name)', ''),
-                        '1' if g.get('EstablishmentStatus (name)', '').startswith('Open') else '0', p[0] if len(p) == 1 else ''])
+                        '1' if g.get('EstablishmentStatus (name)', '').startswith('Open') else '0', p[0] if len(p) == 1 else '',
+                        joined[u][0] if u in joined and joined[u][1] == g.get('Trusts (code)', '') else '', before(u)])
     json.dump({'full_year': files['fy'], 'autumn_spring': files['as'], 'gias': gdate},
               open(os.path.join(OUT, 'schools_release.json'), 'w'), indent=1)
     print(f'{len(rows)} school-period rows, {len(have)} schools, {sum(1 for u in have if len(pred.get(u, [])) == 1)} with one predecessor; GIAS {gdate}')

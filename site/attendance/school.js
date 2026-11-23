@@ -15,6 +15,7 @@
   const pts = (t) => (Math.abs(t) / 10).toFixed(1);
   const ay = (p) => { const y = +p.slice(0, 4); return y + '/' + String((y + 1) % 100).padStart(2, '0'); };
   const period = (p) => (p.endsWith('AS') ? 'autumn and spring terms ' + ay(p) : ay(p));
+  const month = (ym) => new Date(ym + '-15T12:00:00').toLocaleDateString('en-GB', {month: 'long', year: 'numeric'});
   const date = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
   const width = (el) => Math.max(280, Math.floor(el.getBoundingClientRect().width));
   const svg = (el, w, h, label) => { el.innerHTML = ''; return d3.select(el).append('svg').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', label); };
@@ -42,7 +43,7 @@
     if (window.AXtools) AXtools.setPlace({kind: 'school', id: urn, name: S.n, href: AXsearch.href(urn)});
     $('sx-hint').hidden = !random;
     const link = (t, k, id) => (id ? `<a href="${AXsearch.ghref(k, id)}">${esc(t)}</a>` : esc(t));
-    $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
+    $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') + (S.tj ? esc(', joined ' + month(S.tj) + (S.tprev ? ' from ' + S.tprev : '')) : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
     document.title = S.n + ': attendance · Attendance Explorer · Mark Dalton';
     $('sx-period').textContent = 'The ' + period(L);
     $('sx-phase-n').textContent = PH[S.ph]; $('sx-base-n').textContent = ay(B.base) + ' and ' + ay(B.fy_last);
@@ -65,29 +66,25 @@
     else { O.hidden = true; O.innerHTML = ''; }
   }
 
-  // readings scale (the Explorer's own, never Ofsted's colours): lower absence than the comparison sits on the verdigris side
-  const READ = [['well below', '#1E544D'], ['below', '#2F6F66'], ['close to', '#55627A'], ['above', '#A3402B'], ['well above', '#7A2617']];
-  const reading = (d, band) => READ[d < -2 * band ? 0 : d < -band ? 1 : d <= band ? 2 : d <= 2 * band ? 3 : 4];
   let names = null;
+  // the school beside England, its local authority and the 20 schools most like it. No expected rate is given.
   function readings() {
-    const card = $('sx-read-c'), el = $('sx-read'), M = MEAS[meas], L = B.latest, now = S.h[L]; card.hidden = !(now && S.exp); if (card.hidden) return;
-    const mine = now[M.i], x0 = meas === 'abs' ? 0 : 1, band = S.exp[x0 + 2], e = bench('E', S.ph, L), l = bench(S.la, S.ph, L);
-    const rows = [['England ' + PH[S.ph], e && e[M.b]], [(B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], l && l[M.b]], ['The 20 similar schools', S.sim && S.sim[M.b]], ['Expected for its circumstances', S.exp[x0], true, true]].filter((r) => r[1] != null);
-    const W = width(el), narrow = W < 560, rh = narrow ? 62 : 46, lab = narrow ? 0 : 250, m = {l: lab + 8, r: narrow ? 12 : 270, t: 8, b: 26}, H = m.t + rows.length * rh + m.b, s = svg(el, W, H, 'The school beside four comparisons');
-    const all = rows.map((r) => r[1]).concat([mine, S.exp[x0] - 2 * band, S.exp[x0] + 2 * band]), pad = (d3.max(all) - d3.min(all)) * 0.12 + 20;
+    const card = $('sx-read-c'), el = $('sx-read'), M = MEAS[meas], L = B.latest, now = S.h[L]; card.hidden = !(now && S.sim); if (card.hidden) return;
+    const mine = now[M.i], e = bench('E', S.ph, L), l = bench(S.la, S.ph, L);
+    const rows = [['England ' + PH[S.ph], e && e[M.b]], [(B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], l && l[M.b]], ['The 20 similar schools', S.sim[M.b], true]].filter((r) => r[1] != null);
+    const W = width(el), narrow = W < 560, rh = narrow ? 62 : 46, lab = narrow ? 0 : 250, m = {l: lab + 8, r: narrow ? 12 : 200, t: 8, b: 26}, H = m.t + rows.length * rh + m.b, s = svg(el, W, H, 'The school beside three comparisons');
+    const all = rows.map((r) => r[1]).concat([mine]), pad = (d3.max(all) - d3.min(all)) * 0.15 + 30;
     const x = d3.scaleLinear([Math.max(0, d3.min(all) - pad), d3.max(all) + pad], [m.l, W - m.r]);
     x.ticks(narrow ? 4 : 6).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', H - 8).attr('text-anchor', 'middle').text((t / 100) + '%'); });
-    rows.forEach((r, i) => { const y = m.t + i * rh + (narrow ? 40 : rh / 2), d = mine - r[1], rd = r[2] ? reading(d, band) : null;
+    rows.forEach((r, i) => { const y = m.t + i * rh + (narrow ? 40 : rh / 2), g = gap(mine, r[1]), col = AXc.gap(g);
       s.append('text').attr('x', narrow ? m.l : lab).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'start' : 'end').attr('class', 'strong').text(r[0] + (narrow ? ': ' + pc(r[1]) : ''));
-      if (r[3]) s.append('rect').attr('x', x(r[1] - band)).attr('width', x(r[1] + band) - x(r[1] - band)).attr('y', y - 11).attr('height', 22).attr('fill', '#E6EAF0');
-      s.append('line').attr('x1', x(r[1])).attr('x2', x(mine)).attr('y1', y).attr('y2', y).attr('stroke', rd ? rd[1] : AXc.gap(gap(mine, r[1]))).attr('stroke-width', 3);
-      s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', i < 2 ? MUTED : VERD).attr('stroke-width', 3);
+      s.append('line').attr('x1', x(r[1])).attr('x2', x(mine)).attr('y1', y).attr('y2', y).attr('stroke', col).attr('stroke-width', 3);
+      s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', r[2] ? VERD : MUTED).attr('stroke-width', 3);
       s.append('path').attr('d', d3.symbol(d3.symbolDiamond, 110)()).attr('transform', `translate(${x(mine)},${y})`).attr('fill', INK);
-      const g = gap(mine, r[1]), t = (narrow ? '' : pc(r[1]) + ' · ') + (g === 0 ? 'the same' : pts(g) + ' points ' + (g < 0 ? 'lower' : 'higher')) + (rd ? ', ' + rd[0] + ' expected' : '');
-      s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').attr('fill', rd ? rd[1] : null).style('fill', rd ? rd[1] : null).text(narrow ? (g === 0 ? 'same' : (g < 0 ? '−' : '+') + pts(g)) + (rd ? ', ' + rd[0] : '') : t); });
-    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>England and the local authority`, `<i style="background:${VERD};width:3px;height:14px"></i>Schools like it`, `<i style="background:${AXc.VERD}"></i>Lower absence here`, `<i style="background:${AXc.RUST}"></i>Higher`, `<i style="background:#E6EAF0"></i>Close to expected (within ${(band / 100).toFixed(1)} points)`]);
-    const dx = mine - S.exp[x0], rx = reading(dx, band), gs = S.sim ? gap(mine, S.sim[M.b]) : null, gx = gap(mine, S.exp[x0]);
-    $('sx-read-r').innerHTML = `Given its circumstances, the model expects ${M.n} of <b>${pc(S.exp[x0])}</b> at a school like this. The school’s ${pc(mine)} is ` + (gx === 0 ? 'the same' : `<b>${pts(gx)}</b> points ${gx < 0 ? 'lower' : 'higher'}`) + `, which for a school of its size counts as <b style="color:${rx[1]}">${rx[0]} expected</b>.` + (gs == null ? '' : ` The 20 schools most like it had ${pc(S.sim[M.b])} between them.`);
+      s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').style('fill', col).text(narrow ? (g === 0 ? 'same' : (g < 0 ? '−' : '+') + pts(g)) : pc(r[1]) + ' · ' + (g === 0 ? 'the same' : pts(g) + ' points ' + (g < 0 ? 'lower' : 'higher'))); });
+    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>England and the local authority`, `<i style="background:${VERD};width:3px;height:14px"></i>Schools like it`, `<i style="background:${AXc.VERD}"></i>Lower absence here`, `<i style="background:${AXc.RUST}"></i>Higher`]);
+    const gs = gap(mine, S.sim[M.b]);
+    $('sx-read-r').innerHTML = `Across the 20 schools most like it, ${M.n} was <b>${pc(S.sim[M.b])}</b>. The school’s ${pc(mine)} is ` + (gs === 0 ? 'the same.' : `<b>${pts(gs)}</b> points ${gs < 0 ? 'lower' : 'higher'}.`) + (now[0] < 200 ? ` With ${now[0]} pupils on roll, one pupil is about ${(100 / now[0]).toFixed(1)} points of persistent absence, so small gaps mean little.` : '');
     const c = S.ctx; $('sx-ctx').textContent = c ? `Its circumstances, January 2026 census: ${c[4].toLocaleString('en-GB')} pupils; ${c[0].toFixed(1)}% eligible for free school meals; ${c[2].toFixed(1)}% with SEN support; ${c[3].toFixed(1)}% with an education, health and care plan; ${c[1].toFixed(1)}% with a first language other than English; ${c[5] ? 'rural' : 'urban'}.` : '';
     const ul = $('sx-sim'), fill = () => { ul.innerHTML = S.nn.map((u) => names.get(u)).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name)).map((r) => `<li><a href="${AXsearch.href(r.urn)}">${esc(r.name)}</a> <small>${esc(r.town)}</small></li>`).join(''); };
     ul.innerHTML = ''; $('sx-sim-d').ontoggle = () => { if (!$('sx-sim-d').open) return; if (names) { fill(); return; } ul.textContent = 'Loading…';
@@ -146,8 +143,11 @@
     lines.forEach((l) => { s.append('path').attr('d', line(l.d)).attr('fill', 'none').attr('stroke', l.c).attr('stroke-width', l.w).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
       const pt = s.append('g').selectAll('circle').data(l.d.filter((p) => p.v != null)).join('circle').attr('cx', (p) => x(p.p)).attr('cy', (p) => y(p.v)).attr('r', l.me ? 3.5 : 8).attr('fill', l.me ? l.c : 'transparent');
       tipOn(pt, (p) => `<b>${esc(l.n)}</b><br>${ay(p.p)}: ${M.n} ${pc(p.v)}`); });
+    const ty = S.tj ? String(+S.tj.slice(0, 4) - (S.tj.slice(5) < '09' ? 1 : 0)) : null;      // the school year in which it joined its trust
+    if (ty && x(ty) != null) { const tx = x(ty) - x.step() / 2 + (S.join === ty ? 3 : 0); s.append('line').attr('x1', tx).attr('x2', tx).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', '#C9A24B').attr('stroke-width', 2);
+      s.append('text').attr('x', tx > W * 0.6 ? tx - 5 : tx + 5).attr('text-anchor', tx > W * 0.6 ? 'end' : 'start').attr('y', H - m.b - 6).attr('class', 'strong').text(W < 520 ? 'Joined trust' : 'Joined ' + (S.tname || 'its trust').slice(0, 34)); }
     if (S.join && x(S.join) != null) { const jx = x(S.join) - x.step() / 2; s.append('line').attr('x1', jx).attr('x2', jx).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', '#C9A24B').attr('stroke-width', 1.5).attr('stroke-dasharray', '2 3'); }
-    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}"></i>${esc(l.n)}`).concat(S.join ? ['<i class="ln" style="border-color:#C9A24B;border-top-style:dotted"></i>Earlier years are the predecessor school'] : []));
+    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}"></i>${esc(l.n)}`).concat(S.join ? ['<i class="ln" style="border-color:#C9A24B;border-top-style:dotted"></i>Earlier years are the predecessor school'] : [], ty && x(ty) != null ? [`<i class="ln" style="border-color:#C9A24B"></i>Joined ${esc(S.tname || 'its trust')}, ${month(S.tj)}` + (S.tprev ? `, from ${esc(S.tprev)}` : '')] : []));
     const a = S.h[B.base], b = S.h[B.fy_last]; let t = '';
     if (b) { t = `In ${ay(B.fy_last)}, ${M.n} was <b>${pc(b[M.i])}</b>`; if (a) { const d = gap(b[M.i], a[M.i]); t += d === 0 ? `, the same as in ${ay(B.base)}, the last full year before the pandemic.` : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in ${ay(B.base)}, the last full year before the pandemic (${pc(a[M.i])}).`; } else t += '.'; }
     $('sx-hist-r').innerHTML = t;

@@ -18,6 +18,7 @@
   const period = (p) => (p.endsWith('AS') ? 'autumn and spring terms ' + ay(p) : ay(p));
   const num = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
   const count = (n) => (n < 10 ? num[n] : n.toLocaleString('en-GB'));
+  const month = (ym) => new Date(ym + '-15T12:00:00').toLocaleDateString('en-GB', {month: 'long', year: 'numeric'});
   const date = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
   const width = (el) => Math.max(280, Math.floor(el.getBoundingClientRect().width));
   const svg = (el, w, h, label) => { el.innerHTML = ''; return d3.select(el).append('svg').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', label); };
@@ -85,20 +86,28 @@
 
   function hist() {
     const card = $('gx-hist-c'), el = $('gx-hist'), M = MEAS[meas]; card.hidden = !(phase && G.bench[phase]); if (card.hidden) return;
-    $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' ? 'Its schools pooled for each full school year.' : kind === 't' ? 'The schools the trust holds today, pooled for each full school year, including years before they joined it.' : 'The schools located in the constituency, pooled for each full school year.') + ' No figures were published for 2019/20.';
+    $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' ? 'Its schools pooled for each full school year.' : kind === 't' ? 'The solid line pools only the schools that were in the trust in each year: the trust’s own record. The dashed line pools all the schools it holds today in every year, including years before they joined.' : 'The schools located in the constituency, pooled for each full school year.') + ' No figures were published for 2019/20.';
     const W = width(el), H = Math.round(Math.min(360, Math.max(230, W * 0.46))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
-    const lines = [{d: yrs.map((p) => ({p, v: (eng(phase, p) || [])[M.b]})), c: MUTED, w: 2, n: 'England ' + PH[phase]}, {d: yrs.map((p) => ({p, v: (mine(p) || [])[M.b], k: (mine(p) || [])[3]})), c: INK, w: 3, n: G.name, me: true}];
+    const inT = kind === 't' && G.bench_in && G.bench_in[phase], at = (p) => (inT && inT[p]) || null;
+    const lines = [{d: yrs.map((p) => ({p, v: (eng(phase, p) || [])[M.b]})), c: MUTED, w: 2, n: 'England ' + PH[phase]},
+      {d: yrs.map((p) => ({p, v: (mine(p) || [])[M.b], k: (mine(p) || [])[3]})), c: INK, w: inT ? 2 : 3, n: inT ? 'The schools it holds today, in every year' : G.name, me: !inT, dash: inT ? '5 4' : null}]
+      .concat(inT ? [{d: yrs.map((p) => ({p, v: (at(p) || [])[M.b], k: (at(p) || [])[3], of: (mine(p) || [])[3]})), c: INK, w: 3, n: 'Schools in the trust at the time', me: true}] : []);
     const vals = lines.flatMap((l) => l.d.map((p) => p.v)).filter((v) => v != null);
     const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([0, d3.max(vals) * 1.08], [H - m.b, m.t]).nice(5);
     y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
     const gx = x('2019'); s.append('rect').attr('x', gx - x.step() * 0.38).attr('width', x.step() * 0.76).attr('y', m.t).attr('height', H - m.b - m.t).attr('fill', '#F4F5F8');
     yrs.forEach((p, i) => { if (W >= 640 || i % 2 === 0) s.append('text').attr('x', x(p)).attr('y', H - 8).attr('text-anchor', 'middle').text(W < 640 ? "'" + ay(p).slice(2) : ay(p)); });
     const line = d3.line().defined((p) => p.v != null).x((p) => x(p.p)).y((p) => y(p.v));
-    lines.forEach((l) => { s.append('path').attr('d', line(l.d)).attr('fill', 'none').attr('stroke', l.c).attr('stroke-width', l.w).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+    lines.forEach((l) => { s.append('path').attr('d', line(l.d)).attr('fill', 'none').attr('stroke', l.c).attr('stroke-width', l.w).attr('stroke-dasharray', l.dash || null).attr('stroke-linejoin', 'round').attr('stroke-linecap', l.dash ? 'butt' : 'round');
       tipOn(s.append('g').selectAll('circle').data(l.d.filter((p) => p.v != null)).join('circle').attr('cx', (p) => x(p.p)).attr('cy', (p) => y(p.v)).attr('r', l.me ? 3.5 : 8).attr('fill', l.me ? l.c : 'transparent'),
-        (p) => `<b>${esc(l.n)}</b><br>${ay(p.p)}: ${M.n} ${pc(p.v)}` + (p.k ? `<br>${p.k} schools with figures` : '')); });
-    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}"></i>${esc(l.n)}`));
+        (p) => `<b>${esc(l.n)}</b><br>${ay(p.p)}: ${M.n} ${pc(p.v)}` + (p.of ? `<br>${p.k} of today’s ${p.of} schools were in the trust` : p.k ? `<br>${p.k} schools with figures` : '')); });
+    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}${l.dash ? ';border-top-style:dashed' : ''}"></i>${esc(l.n)}`));
+    const first = inT ? yrs.find((p) => at(p)) : null, r = $('gx-hist-r');
+    r.hidden = !(kind === 't'); if (kind !== 't') return;
+    const jn = G.schools.filter((s) => s[2] === phase && s[7]).map((s) => s[7]).sort(), nj = G.schools.filter((s) => s[2] === phase).length, mv = G.schools.filter((s) => s[2] === phase && s[8]).length;
+    r.innerHTML = !jn.length ? 'No joining dates are recorded for these schools, so the line shows the schools it holds today in every year.'
+      : `Its ${count(nj)} ${PH[phase]} joined between <b>${month(jn[0])}</b> and <b>${month(jn[jn.length - 1])}</b>` + (mv ? `; ${count(mv)} came from another trust` : '') + '. ' + (first ? `The solid line starts in ${ay(first)}, the first year with three of them in the trust.` : 'Fewer than three were in the trust in any year with figures, so only the dashed line is drawn.');
   }
 
   // constituencies: a hex map. Trusts: a funnel of rate against pupils.
@@ -189,7 +198,7 @@
     const list = showAll ? G.schools : G.schools.slice(0, 10);
     if (G.schools.length > 10) { const m = $('gx-more'); m.hidden = false; m.textContent = showAll ? 'Show the first 10' : `Show all ${G.schools.length} schools`; m.onclick = () => { showAll = !showAll; table(); }; }
     list.forEach((s) => { const tr = b.appendChild(document.createElement('tr'));
-      tr.innerHTML = `<td><a href="${AXsearch.href(s[0])}">${esc(s[1])}</a><small>${esc([PH1[s[2]], s[3]].filter(Boolean).join(' · '))}</small></td><td class="n">${pc(s[5])}</td><td class="n">${pc(s[6])}</td>`; });
+      tr.innerHTML = `<td><a href="${AXsearch.href(s[0])}">${esc(s[1])}</a><small>${esc([PH1[s[2]], s[3], s[7] ? 'joined ' + month(s[7]) + (s[8] ? ' from ' + s[8] : '') : ''].filter(Boolean).join(' · '))}</small></td><td class="n">${pc(s[5])}</td><td class="n">${pc(s[6])}</td>`; });
   }
 
   function draw() {

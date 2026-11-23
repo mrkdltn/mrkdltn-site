@@ -1,25 +1,22 @@
 #!/usr/bin/env python3
-"""Fit the Attendance Explorer's contextual model and find each school's similar schools. Needs numpy.
+"""Find each school's 20 similar schools for the Attendance Explorer. Needs numpy.
 
 Run by hand after a new school-level absence release or a new census (not part of the Cloudflare build):
   python3 scripts/model_attendance.py
 Reads data/raw/attendance/{school_absence,schools,school_context}.csv; writes school_model.csv and model.json there.
 
 Primary and secondary schools only. Special schools are left out: what a special school provides for shapes its
-attendance far more than the context measured here, so an expected rate would mislead.
+attendance far more than the context measured here.
 
-Expected rate: a fractional logit (logit link, fitted by iteratively reweighted least squares), one per phase and
-measure, of the school's rate in the newest autumn-and-spring period on: free school meal eligibility, first language
-other than English, SEN support, education, health and care plans, school size (log pupils), rural setting and, for
-secondaries, selective admissions. Bounded between 0 and 100% by construction. Region is left out so that regional
-differences stay visible. Ethnicity is never used.
+Similar schools: the 20 nearest schools of the same phase by weighted squared distance over: free school meal
+eligibility, first language other than English, SEN support, education, health and care plans, school size (log
+pupils), rural setting and, for secondaries, selective admissions. Each factor is standardised by its standard
+deviation and weighted by how strongly it goes with overall absence across schools (the size of its standardised
+coefficient in a fractional logit of the newest autumn-and-spring rates). Region and ethnicity are never used.
+This is our own match, not the DfE's.
 
-"In line" band: base x sqrt(median enrolments / enrolments), the scaling held between 0.6 and 2. The base is set so
-that half of schools fall inside their band.
-
-Similar schools: the 20 nearest schools of the same phase by weighted squared distance over the same factors, each
-standardised by its standard deviation and weighted by the size of its standardised coefficient in the overall
-absence model, so the factors that matter most for absence count most. This is our own match, not the DfE's.
+No expected rate is published (Mark, 23 November 2026): the regression is used only to set the weights, and its
+predictions are not written out.
 """
 import csv, json, os
 import numpy as np
@@ -67,18 +64,10 @@ def main():
         mean, sd = F.mean(0), F.std(0)
         Z = (F - mean) / sd
         X = np.column_stack([np.ones(len(Z)), Z])
-        med = float(np.median(n)); scale = np.clip(np.sqrt(med / n), 0.6, 2.0)
-        res = {}
-        for m in ('abs', 'pa'):
-            y = np.array([int(A[u][m]) for u in urns]) / 10000
-            b = fraclogit(X, y)
-            mu = 1 / (1 + np.exp(-X @ b))
-            assert mu.min() >= 0 and mu.max() <= 1
-            r = (y - mu) * 100
-            base = float(np.median(np.abs(r) / scale))
-            res[m] = {'b': b, 'mu': mu, 'band': base * scale, 'base': base,
-                      'r2': float(1 - np.sum((y - mu) ** 2) / np.sum((y - y.mean()) ** 2)), 'resid_sd': float(r.std())}
-        w = np.abs(res['abs']['b'][1:]); w = w / w.sum()
+        med = float(np.median(n))
+        y = np.array([int(A[u]['abs']) for u in urns]) / 10000
+        b = fraclogit(X, y)
+        w = np.abs(b[1:]); w = w / w.sum()
         Zw = Z * np.sqrt(w)
         nn = []
         for i in range(0, len(Zw), 500):
@@ -86,17 +75,14 @@ def main():
             d[np.arange(d.shape[0]), np.arange(i, i + d.shape[0])] = np.inf
             nn.extend(np.argpartition(d, K, axis=1)[:, :K].tolist())
         for i, u in enumerate(urns):
-            out.append([u, round(res['abs']['mu'][i] * 10000), round(res['pa']['mu'][i] * 10000), round(res['abs']['band'][i] * 100),
-                        round(res['pa']['band'][i] * 100), ' '.join(sorted((urns[j] for j in nn[i]), key=int))])
+            out.append([u, ' '.join(sorted((urns[j] for j in nn[i]), key=int))])
         model['phases'][ph] = {'n': len(urns), 'median_enrol': med, 'factors': fac, 'labels': [LABELS[f] for f in fac],
-                               'mean': mean.round(4).tolist(), 'sd': sd.round(4).tolist(), 'weights': w.round(3).tolist(),
-                               **{m: {'coef': res[m]['b'].round(5).tolist(), 'base': round(res[m]['base'], 2), 'r2': round(res[m]['r2'], 3),
-                                      'resid_sd': round(res[m]['resid_sd'], 2)} for m in ('abs', 'pa')}}
-        print(ph, len(urns), 'schools;', {m: (model['phases'][ph][m]['r2'], model['phases'][ph][m]['base']) for m in ('abs', 'pa')},
-              'weights', dict(zip(fac, w.round(2))))
+                               'mean': mean.round(4).tolist(), 'weights': w.round(3).tolist()
+                               }
+        print(ph, len(urns), 'schools; weights', dict(zip(fac, [float(x) for x in w.round(2)])))
     with open(os.path.join(RAW, 'school_model.csv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f, lineterminator='\n')
-        w.writerow(['urn', 'exp_abs', 'exp_pa', 'band_abs', 'band_pa', 'nn'])
+        w.writerow(['urn', 'nn'])
         w.writerows(sorted(out, key=lambda r: int(r[0])))
     json.dump(model, open(os.path.join(RAW, 'model.json'), 'w'), indent=1)
 

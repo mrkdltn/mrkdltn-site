@@ -70,7 +70,7 @@ GIAS carries ward, constituency (2024 boundaries, confirmed), district, local au
 ## Models
 
 - **Similar schools.** For secondaries, reuse the existing 50 similar schools. For primary and special schools, a new match on context (free school meals, SEN support, EHC plans, English as an additional language, deprivation, size, urban or rural, within phase). It will be described as our own match, not a replica of the DfE's 20-school comparison, whose full method is not public.
-- **Contextual expected rate.** Fractional logit, as already used for English and maths 5+, so expected rates stay within 0 to 100%. Fitted by phase for overall absence and persistent absence. Region is left out, so regional differences remain visible instead of being adjusted away. Ethnicity is never used, as now, and the method note will say that this is a choice and what it costs in fit.
+- **No expected rate** (Mark, 23 November). A regression of absence on context is used only to weight the similar-schools match.
 - **Uncertainty.** The "in line" band widens for small schools, as `OE.ctxThr` does. Persistent absence in a school of 60 pupils moves by 1.7 points with one child; the funnel plot and the band exist to stop that being over-read.
 - **What is not modelled.** No forecasts of a school's future attendance, and no attempt to reproduce the DfE's improvement expectations.
 
@@ -122,7 +122,9 @@ Settled: the two-speed shape (Mark, 23 November); wards over MSOAs (on the recon
 
 1. **School comparisons.** No ranked school lists, trusts on a funnel instead of a league table. Recommended: yes.
 2. **County.** Local authority as the unit, ceremonial county as an optional grouping. Recommended: yes.
-3. **Contextual expected attendance.** Include it, knowing some will read it as excusing absence? Recommended: yes, in Phase 4, framed as a reading and never as a target.
+3. **Contextual expected attendance.** Decided 23 November: no. The Explorer gives no expected rate; schools are set beside England, their local authority and their 20 similar schools.
 4. **Small numbers at school level.** The DfE publishes them unsuppressed. Recommended: rates only, no school under 10 enrolments, and severe absence kept to areas, trusts and phases.
 5. **School pages by Pages Function**, settling the pending primary-schools question at the same time. Recommended: yes.
 6. **Unattended data commits to `main`** for new DfE releases. Recommended: yes for data only, once Phase 1 has run cleanly by hand twice.
+
+Also decided on 23 November: school pages keep the sentence giving the share of schools with higher and lower rates; trust histories keep earlier years and show which schools were in the trust at the time, with joining dates and transfers.

@@ -52,7 +52,7 @@
 
   <section class="ax-card" id="px-scat-c">
     <h2>School by school, against its circumstances</h2>
-    <p class="ax-sub">Each dot is a school. The green line joins the middle school of each twentieth of schools along the axis; the dark line is the model’s expected rate with every other factor held at its average.</p>
+    <p class="ax-sub">Each dot is a school. The green line joins the middle school of each twentieth of schools along the axis.</p>
     <label class="ax-field" style="max-width:340px"><span>Across the page</span>
       <select id="px-x" class="ax-select"><option value="fsm">Eligible for free school meals</option><option value="sen">SEN support</option><option value="ehcp">Education, health and care plans</option><option value="eal">First language other than English</option></select></label>
     <div id="px-scat" class="ax-chart ax-pos"></div>
@@ -73,7 +73,7 @@
   </section>
 
   <section class="ax-card" id="px-model-c">
-    <h2>The model behind the expected rates</h2>
+    <h2>How similar schools are matched</h2>
     <p class="ax-sub" id="px-model-s"></p>
     <div class="ax-tablewrap"><table class="ax-table ax-coef" id="px-model"></table></div>
   </section>
@@ -84,7 +84,7 @@
     <p><b>Sources.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files (<span id="px-src"></span>); <a href="https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-their-characteristics">Schools, pupils and their characteristics</a> and <a href="https://explore-education-statistics.service.gov.uk/find-statistics/special-educational-needs-in-england">Special educational needs in England</a>, school-level files for January 2026 (published June 2026). Open Government Licence v3.0.</p>
     <p><b>Association, not cause.</b> These charts show what goes with absence across schools. They do not show that any circumstance causes it, and they describe schools, not pupils: a pattern across schools need not hold for the children within them.</p>
     <p><b>Groups by free school meals.</b> Schools are grouped by their newest census figure and keep that group in every year, so the lines follow the same schools back in time. Where a school has exactly one predecessor its earlier years are included.</p>
-    <p><b>The model.</b> A fractional logit fitted to each school’s rate in the newest autumn and spring terms, one for each phase and measure. Factors are standardised, so each coefficient is the change (in log-odds) for a school one standard deviation above average on that factor. Region is left out; ethnicity is never used. Special schools are not modelled.</p>
+    <p><b>Similar schools.</b> School pages set each primary and secondary beside its 20 nearest schools on the factors in the table above. The weights come from a regression of absence on those factors, used only to decide how much each factor should count; no expected rate is calculated for any school. Region is left out; ethnicity is never used. Special schools are not matched.</p>
     <p><b>Small numbers.</b> Schools with fewer than 10 pupils on roll are left out. Rates only.</p>
   </section>
 </main>
