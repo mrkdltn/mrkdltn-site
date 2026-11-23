@@ -39,6 +39,11 @@ MEASURES = [
 ]
 
 
+def the(region):
+    """'the North East', but 'London' and 'Yorkshire and The Humber', as explore.js writes them."""
+    return region if region == 'London' or region.startswith('Yorkshire') else 'the ' + region
+
+
 def slug(s):
     return re.sub(r'^-|-$', '', re.sub(r'[^a-z]+', '-', s.lower()))
 
@@ -96,7 +101,7 @@ def card(key, lab, fmt, src, allv, sel, region, fonts):
     for ln in lines[:2]:
         d.text((M, y), ln, font=f, fill=INK); y += int(size * 1.12)
     a, s = sorted(allv), sorted(sel)
-    sub = (f'{len(s):,} secondary schools in {region}, against England' if region
+    sub = (f'{len(s):,} secondary schools in {the(region)}, against England' if region
            else f'Every secondary school in England with a figure: {len(a):,}')
     d.text((M, y + 6), sub, font=sans(24, 450), fill=MUTED)
 
@@ -153,7 +158,7 @@ def page(template, key, lab, region, img):
     e = lambda s: html.escape(s, quote=True)
     path = f'/explorer/explore/{key}/' + (slug(region) + '/' if region else '')
     url = ORIGIN + path
-    where = f'secondary schools in {region}, against England' if region else 'every secondary school in England'
+    where = f'secondary schools in {the(region)}, against England' if region else 'every secondary school in England'
     title = f'{lab}: {where} · Ofsted Explorer'
     desc = f'{lab} across {where}: the spread, the median and a table of schools, each linked to its own page. Built from public data.'
     h = template

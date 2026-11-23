@@ -84,7 +84,7 @@
   // /explorer/explore/<measure>/<region>/. The address bar is kept on that path; the other settings stay after '#'.
   const slug = (t) => t.toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
   const vpath = (p) => '/explorer/explore/' + (p.m === 'a8' && !p.reg ? '' : p.m + '/' + (p.reg ? slug(p.reg) + '/' : ''));
-  const fixPath = () => { const p0 = P(); document.title = M[p0.m].lab.replace(/ \(%\)$/, '') + ': ' + (p0.reg ? 'secondary schools in ' + p0.reg + ', against England' : 'every secondary school in England') + ' · Ofsted Explorer';
+  const fixPath = () => { const p0 = P(); document.title = M[p0.m].lab.replace(/ \(%\)$/, '') + ': ' + (p0.reg ? 'secondary schools in ' + (p0.reg === 'London' || /^Yorkshire/.test(p0.reg) ? '' : 'the ') + p0.reg + ', against England' : 'every secondary school in England') + ' · Ofsted Explorer';
     const want = vpath(p0), h = new URLSearchParams(location.hash.slice(1)); ['m', 'reg', 'v'].forEach((k) => h.delete(k)); const t = h.toString();
     if (location.pathname !== want || location.hash.slice(1) !== t) history.replaceState(null, '', want + location.search + (t ? '#' + t : '')); };
   const set = (o) => { LIMIT = 100; dash.setParams(o); fixPath(); };
