@@ -17,7 +17,8 @@
   let ROWS = null, BY = null, NAT = {}, MED = 180, VER = '';
 
   const expand = (j) => { const rows = new Array(j.n); for (let i = 0; i < j.n; i++) { const o = {}; for (const c of j.cols) { const v = j.data[c][i]; o[c] = v === null || v === undefined ? '' : (j.codes[c] ? j.codes[c][v] : String(v)); } rows[i] = o; } return rows; };
-  const urns = () => { const u = new URLSearchParams(location.hash.slice(1)).get('u') || ''; return [...new Set(u.split(/[ ,]+/).filter((x) => /^\d+$/.test(x)))].slice(0, MAX); };
+  // only schools in the data count (a closed school or a primary in an old link is dropped), so three valid ones are the limit
+  const urns = () => { const u = new URLSearchParams(location.hash.slice(1)).get('u') || ''; return [...new Set(u.split(/[ ,]+/).filter((x) => /^\d+$/.test(x) && (!BY || BY.has(x))))].slice(0, MAX); };
   const setUrns = (list) => { const h = new URLSearchParams(location.hash.slice(1)); h.delete('v'); if (list.length) h.set('u', list.join(',')); else h.delete('u');
     const t = h.toString().replace(/%2C/g, ','); history.replaceState(null, '', location.pathname + (t ? '#' + t : '')); render(); };
 
@@ -26,7 +27,7 @@
   const fz = (v) => (v === 0 ? '0.0' : fs(v));
   const natRead = (g, h) => (Math.abs(g) <= h ? 'Close to national' : g > 0 ? 'Above national' : 'Below national');
   const ssRead = (g, se, sd) => (Math.abs(g) < 1.96 * se ? 'Close to' : g > 0 ? (g > sd ? 'Well above' : 'Above') : (-g > sd ? 'Well below' : 'Below'));
-  const p8Band = (s, lo, hi) => (!ok(lo) || !ok(hi) ? '' : lo > 0 ? (s >= 0.5 ? 'Well above average' : 'Above average') : hi < 0 ? (s < -0.5 ? 'Well below average' : 'Below average') : 'Close to average');
+  const p8Band = (s, lo, hi) => (!ok(lo) || !ok(hi) ? '' : lo > 0 ? (s >= 0.5 ? 'Well above average' : 'Above average') : hi < 0 ? (s < -0.5 ? 'Well below average' : 'Below average') : 'Average');  // DfE's bands, as OE.p8Band
   const ctxThr = (r, base) => (+r.pupils > 0 ? base * Math.sqrt(MED / +r.pupils) : base);
 
   // each row: label, note, and cell(r) giving {v, rg, rd} (value, likely range, reading) or null for a blank
@@ -104,7 +105,7 @@
   const shards = new Map();
   const suggest = (list) => { const box = $('cm-sugg'); box.replaceChildren(); q.disabled = list.length >= MAX; q.placeholder = list.length >= MAX ? 'Three schools chosen: remove one to add another' : 'Add a secondary school by name, town or local authority';
     if (!list.length || list.length >= MAX) { box.hidden = true; return; } const first = list[0], k = (+first.urn) % 32;
-    if (!shards.has(k)) shards.set(k, d3.json('/explorer/data/nn/' + k + '.json').catch(() => ({})));
+    if (!shards.has(k)) shards.set(k, d3.json('/explorer/data/nn/' + k + '.json').catch(() => { shards.delete(k); return {}; }));
     shards.get(k).then((m) => { if (urns()[0] !== first.urn) return; const have = urns(); const pick = (m[first.urn] || []).map(String).filter((u) => !have.includes(u) && BY.has(u)).slice(0, 4); box.replaceChildren(); if (!pick.length) { box.hidden = true; return; }
       box.append('Or add one of ' + first.name + '’s most similar schools:'); pick.forEach((u) => { const b = el('button', '', BY.get(u).name); b.type = 'button'; b.addEventListener('click', () => add(u)); box.append(b); }); box.hidden = false; }); };
 
@@ -127,5 +128,5 @@
     const wm = (k) => { let s = 0, n = 0; ROWS.forEach((r) => { if (ok(r[k]) && +r.pupils > 0) { s += +r[k] * +r.pupils; n += +r.pupils; } }); return n ? s / n : NaN; };
     NAT = {a8: wm('a8'), em5: wm('em5'), dis_pct: wm('dis_pct')};
     const p = ROWS.map((r) => +r.pupils).filter((x) => x > 0).sort((a, b) => a - b); MED = p.length ? p[Math.floor(p.length / 2)] : 180;
-    render(); }).catch(() => { $('cm-status').textContent = 'The school data could not be loaded. Please try again later.'; });
+    const raw = new URLSearchParams(location.hash.slice(1)).get('u'); if (raw && raw.split(/[ ,]+/).filter(Boolean).join(',') !== urns().join(',')) setUrns(urns()); else render(); }).catch(() => { $('cm-status').textContent = 'The school data could not be loaded. Please try again later.'; });
 })();

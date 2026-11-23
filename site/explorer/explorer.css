@@ -378,3 +378,7 @@ body.explorer .oe-hero .oe-alt a{color:#F5F1E8;text-decoration-color:#C9A24B;tex
 /* Compare (item 8): a link styled as the buttons beside it */
 body.explorer a.oe-btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;color:inherit}
 body.explorer a.oe-btn[hidden]{display:none}
+/* pre-rendered school pages (scripts/prerender.py): the buttons are there from the start, so the first finding never moves */
+html.oe-prd:not(.loaded) body.explorer #school .oe-actions{display:flex}
+@media(min-width:1024px){html.oe-pre:not(.loaded) body.explorer #school .oe-kpis{min-height:155px}}
+@media(max-width:640px){html.oe-pre:not(.loaded) body.explorer #school .oe-kpis{min-height:265px}}

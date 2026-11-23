@@ -193,14 +193,14 @@
       li.append(n, a, mt); li.addEventListener('pointerdown', (e) => { e.preventDefault(); OE.choose(r.urn); }); ul.append(li); });
   });
 
-  dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only);
+  dash.draw('sname', (el) => { const r = S(); if (!r) return el.dataset.pre ? null : dash_(el); if (el.textContent !== r.name) el.textContent = r.name; delete el.dataset.pre; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only);
     // secondary-results sections only make sense for secondaries; other phases keep the phase-specific deprivation chart
     const nonsec = (r.phase || 'Secondary') !== 'Secondary'; document.documentElement.classList.toggle('oe-nonsec', nonsec);
     const ms = document.getElementById('oe-more-s'); if (ms) ms.textContent = nonsec ? 'How ' + (PHL[r.phase] || 'schools') + ' across England are graded in each area, by pupils\' deprivation' : 'Every secondary on one chart, report card grades by deprivation, and how the replica checks out';
     if (OE._phaseFor !== r.urn) { OE._phaseFor = r.urn; const ph = r.phase || 'Secondary'; if (P().phase !== ph) setTimeout(() => dash.setParams({phase: ph}), 0); } if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
   // the school's details, with the URN linked to its official DfE record and the inspection to its Ofsted page
   const OFSTED_TYPE = {Nursery: 20, Primary: 21, 'Alternative provision': 22, Secondary: 23, Special: 25};
-  dash.draw('smeta', (el) => { const r = S(); if (!r) return dash_(el);
+  dash.draw('smeta', (el) => { const r = S(); if (!r) return el.dataset.pre ? null : dash_(el); delete el.dataset.pre;
     const date = r.insp_date ? d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : '';
     const parts = r.rc_only
       ? [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '']
@@ -211,7 +211,7 @@
     items.push(link('URN ' + r.urn, 'https://get-information-schools.service.gov.uk/Establishments/Establishment/Details/' + r.urn, 'This school\'s official record on the DfE\'s Get Information about Schools (opens in a new tab)'));
     items.push(date ? link('Inspected ' + date, ofsted, 'This school\'s inspection reports on the Ofsted website (opens in a new tab)')
       : link('No report card inspection yet', ofsted, 'This school\'s earlier inspection reports on the Ofsted website (opens in a new tab)'));
-    el.replaceChildren(); items.forEach((n, k) => { if (k) el.append(' · '); el.append(n); }); });
+    const tmp = document.createElement('p'); items.forEach((n, k) => { if (k) tmp.append(' · '); tmp.append(n); }); if (tmp.innerHTML !== el.innerHTML) el.replaceChildren(...tmp.childNodes); });  // the same as the pre-rendered line: left as it is
 
   dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
     const nat = dash.data('national').data;

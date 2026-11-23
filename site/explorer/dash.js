@@ -98,7 +98,7 @@
     keep: (ks) => { ks.forEach((k) => { if (!KEEP.includes(k)) KEEP.push(k); }); },
     start: (defs) => {
       defaults = defs || {}; state = Object.assign({}, defaults, window.OE_URN ? {urn: String(window.OE_URN)} : {}, readHash());
-      window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
+      window.addEventListener('hashchange', () => { if (!location.hash.includes('=')) return; /* a jump link such as #main is not a view */ const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
         // other view settings in the address (measure, chart options) also apply when only they change
         const ch = {}; KEEP.filter((k) => k !== 'urn').forEach((k) => { const v = k in h ? h[k] : (defaults[k] ?? null); if ((v ?? null) !== (state[k] ?? null)) ch[k] = v; /* a key taken out of the address clears it */ }); if (Object.keys(ch).length) window.dash.setParams(ch); });
       let t, lastW = window.innerWidth;

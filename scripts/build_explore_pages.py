@@ -149,14 +149,13 @@ def card(key, lab, fmt, src, allv, sel, region, fonts):
     return im.quantize(colors=48, method=2, dither=0)
 
 
-def page(template, key, lab, region, has_card):
+def page(template, key, lab, region, img):
     e = lambda s: html.escape(s, quote=True)
     path = f'/explorer/explore/{key}/' + (slug(region) + '/' if region else '')
     url = ORIGIN + path
     where = f'secondary schools in {region}, against England' if region else 'every secondary school in England'
     title = f'{lab}: {where} · Ofsted Explorer'
     desc = f'{lab} across {where}: the spread, the median and a table of schools, each linked to its own page. Built from public data.'
-    img = url + 'card.png'
     h = template
     subs = [
         (r'<title>.*?</title>', f'<title>{e(title)}</title>'),
@@ -174,9 +173,9 @@ def page(template, key, lab, region, has_card):
                      (r'<meta property="og:image:alt" content="[^"]*">', f'<meta property="og:image:alt" content="{e("The spread of " + lab + " across " + where)}">'),
                      (r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{url}">')]:
         h, k = re.subn(pat, lambda m: rep, h, count=1)
-        if k != 1 or not has_card:
-            raise SystemExit(f'explore page template: no match for {pat}, or no share image')
-    view = json.dumps({'m': key, 'reg': region} if region else {'m': key})
+        if k != 1:
+            raise SystemExit(f'explore page template: no match for {pat}')
+    view = json.dumps({'m': key, 'reg': region} if region else {'m': key}).replace('</', '<\\/')
     h = h.replace('<script src="/explorer/dash.js', f'<script>window.OE_XVIEW={view};</script>\n<script src="/explorer/dash.js', 1)
     if 'window.OE_XVIEW' not in h:
         raise SystemExit('explore page template: dash.js must be loaded from /explorer/dash.js')
@@ -200,16 +199,18 @@ def main(rows, fonts):
                     n_img += 1
                 continue
             sel = allv if not region else [v for v in (num(r.get(key)) for r in rows if r.get('region') == region) if v is not None]
-            if region and len(sel) < 10:
-                continue
-            if not fonts:  # no Pillow: the pages would promise an image that is not there
-                continue
-            path, h = page(template, key, lab, region, True)
+            # every view the page can reach gets an address, so a link never 404s; a region with fewer than 10 schools
+            # (or a build without Pillow) borrows a broader image rather than drawing a spread from too few
+            own = bool(fonts) and len(sel) >= 10
+            path = f'/explorer/explore/{key}/' + (slug(region) + '/' if region else '')
+            img = (ORIGIN + path + 'card.png' if own else ORIGIN + ('/explorer/explore/card.png' if key == 'a8' else f'/explorer/explore/{key}/card.png') if fonts
+                   else ORIGIN + '/writing/ofsted-report-cards/img/explorer-card.png')
+            path, h = page(template, key, lab, region, img)
             d = os.path.join(EXPLORE, *path.strip('/').split('/')[2:])
             os.makedirs(d, exist_ok=True)
             with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f:
                 f.write(h)
-            if fonts:
+            if own:
                 card(key, lab, fmt, src, allv, sel, region, fonts).save(os.path.join(d, 'card.png'), optimize=True)
                 n_img += 1
             paths.append(path)

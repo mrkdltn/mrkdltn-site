@@ -21,12 +21,18 @@
 
   // ---------- the data picture (v3 wording, 15 November 2026) ----------
   dash.draw('story', (box) => {
-    const r = S(), st = ST(), nb = N(); box.replaceChildren();
+    const r = S(), st = ST(), nb = N();
+    // the headline may be pre-rendered into the page (scripts/prerender.py): keep it until the data are in, and keep the
+    // same node when the script's own headline matches it, so the first finding never moves or repaints
+    if (box.dataset.pre && (!r || (!r.rc_only && !st))) return;
+    const keep = box.dataset.pre && r && box.dataset.pre === r.urn ? box.firstElementChild : null; delete box.dataset.pre;
+    [...box.childNodes].forEach((n) => { if (n !== keep) n.remove(); });
+    const put = (lead) => { if (keep && keep.outerHTML === lead.outerHTML) return; if (keep) keep.remove(); box.prepend(lead); };
     if (r && r.rc_only) { const ph = (OE.PHL && OE.PHL[r.phase]) || 'schools'; const lead = el('div', 'oe-verdict');
       lead.append(el('h3', '', 'The report card, beside comparable schools.'));
       const why = r.phase === 'Secondary' ? 'No 2025/26 GCSE results are published for this school, so this profile shows its report card on its own.' : 'The Explorer reads results for secondary schools only so far, so this profile shows the report card on its own.';
       lead.append(rich(el('p'), why + ' Below, each graded area is set beside other ' + ph + ' in England' + (r.idaci_q ? ' and those whose pupils come from similarly deprived areas' : '') + '.'));
-      box.append(lead); return; }
+      put(lead); return; }
     if (!r || !st || !ok(r.a8)) return;
     const nat = +r.nat_diff, ssd = +r.ss_diff, cva = +r.cva_res, band = String(r.ss_band || '');
     const up = /above/i.test(band), down = /below/i.test(band);
@@ -49,7 +55,7 @@
       else if (!up && !down) body += ' The contextual model is a little more ' + (cva > 0 ? 'positive' : 'negative') + ' (' + cv + '), so read “in line” as approximate.';
       else body += ' The contextual model points the other way (' + cv + '), so the two readings disagree and the direction is uncertain.'; }
     if (ok(r.pupils) && +r.pupils < 30) body += ' With only **' + Math.round(+r.pupils) + ' pupils** in the cohort, a few results move these figures a long way.';
-    const lead = el('div', 'oe-verdict'); lead.append(el('h3', '', head)); lead.append(rich(el('p'), body)); box.append(lead);
+    const lead = el('div', 'oe-verdict'); lead.append(el('h3', '', head)); lead.append(rich(el('p'), body)); put(lead);
 
     const list = el('div', 'oe-points'); box.append(list);
     const add = (tag, text) => { const d = el('div', 'oe-point rise'); d.append(el('span', 'tag', tag)); d.append(rich(el('p'), text)); list.append(d); };
@@ -209,12 +215,12 @@
   // ---------- actions ----------
   const pr = document.getElementById('oe-print'); if (pr) pr.addEventListener('click', () => { const s = S(); const d = document.getElementById('oe-printdate'); if (d) d.textContent = (s ? s.name + ' · ' : '') + 'generated ' + d3.timeFormat('%-d %B %Y')(new Date()) + ' · mrkdltn.com/explorer/#urn=' + (s ? s.urn : ''); const t = document.title; if (s) document.title = 'Ofsted Explorer - ' + s.name; window.print(); document.title = t; });
   // share this view: the school's own address (its share image) with the view settings and a data stamp (share.js)
+  { const cmp = document.getElementById('oe-cmp'); if (cmp) dash.onData(() => { const sc = S(); cmp.hidden = !(sc && !sc.rc_only && sc.a8 !== ''); if (sc) cmp.href = '/explorer/compare/#u=' + sc.urn; }); }  // Compare opens with this school
   if (window.OEshare) { const schoolUrl = () => { const sc = S(); const h = new URLSearchParams(location.hash.slice(1)); h.delete('urn'); h.delete('v'); const t = h.toString();
       return (sc && sc.urn ? location.origin + '/explorer/school/' + sc.urn + '/' : location.origin + location.pathname) + (t ? '#' + t : ''); };
     const insp = () => { const sc = S(); return (sc && sc.insp_date) || ''; };
     OEshare.button(document.getElementById('oe-copy'), {url: schoolUrl, insp, title: () => { const sc = S(); return sc ? sc.name + ' · Ofsted Explorer' : document.title; }});
     // Compare: opens with this school, ready to add others
-    const cmp = document.getElementById('oe-cmp'); if (cmp) dash.onData(() => { const sc = S(); cmp.hidden = !(sc && !sc.rc_only && sc.a8 !== ''); if (sc) cmp.href = '/explorer/compare/#u=' + sc.urn; });
     let checked = false; dash.onData(() => { if (checked || !S()) return; checked = true; OEshare.check({insp, host: '#school'}); }); }
   // section nav highlight; on phones the sticky menu scrolls sideways to keep the current section's link in view
   const phone = window.matchMedia('(max-width: 640px)');

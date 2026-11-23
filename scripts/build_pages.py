@@ -253,6 +253,13 @@ def main(rows, rc_rows=(), only=None):
         only = {r['urn'] for r in rows[:sample]}
     out = os.path.join(EXPLORER, 'school')
     jobs, n_pages = [], 0
+    # the name, details and first finding written into each page (prerender.py), from the data the browser loads
+    import prerender
+    try:
+        pre = prerender.Rows()
+    except FileNotFoundError:
+        pre = None
+        print('school pages: no built data yet, so no first finding in the pages')
     for r in rows:
         if only and r['urn'] not in only:
             continue
@@ -260,7 +267,9 @@ def main(rows, rc_rows=(), only=None):
         if fonts:
             jobs.append((r, nat_mean, os.path.join(d, 'card.png')))
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f:
-            f.write(page(template, r, bool(fonts)))
+            h = page(template, r, bool(fonts))
+            row = pre.school(r['urn']) if pre else None
+            f.write(prerender.fill(h, row, pre.med) if row else h)
         n_pages += 1
     n_img = 0
     if jobs:
