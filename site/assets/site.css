@@ -95,3 +95,19 @@ body.explorer .oe-hero #pick .oe-btn{display:inline-flex;align-items:center;just
 .card.has-img>span:last-child{padding:28px 32px 30px 0}
 @media(max-width:700px){.card.has-img{grid-template-columns:1fr}.card.has-img img{aspect-ratio:16/9;height:auto}.card.has-img>span:last-child{padding:0 20px 24px}}
 .card.has-img .when{display:block;margin-bottom:8px}
+
+/* contact form (23 November 2026) */
+.cform{margin:28px 0 0;max-width:560px}
+.crow{display:flex;flex-direction:column;gap:6px;margin:0 0 16px}
+.crow label{font:600 15px/1.4 var(--sans);color:var(--ink)}
+.crow .opt{font-weight:400;color:var(--ink-muted)}
+.cform input,.cform select,.cform textarea{font:400 16px/1.4 var(--sans);color:var(--ink);background:#fff;border:1px solid var(--line-control);border-radius:2px;padding:10px 12px;width:100%;box-sizing:border-box;min-height:44px}
+.cform textarea{resize:vertical;min-height:150px}
+.cform input:focus,.cform select:focus,.cform textarea:focus{outline:2px solid var(--focus);outline-offset:1px}
+.chp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+.cnote{font:400 14px/1.5 var(--sans)!important;color:var(--ink-muted);margin:4px 0 16px!important}
+.cact{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#c-status{font:400 15px/1.4 var(--sans);color:var(--verdigris)}
+#c-status.bad{color:#A3402B}
+/* phones: the header stays one row with Contact in it (23 November 2026). About is on the home page, which the name links to. */
+@media (max-width:480px){.nav .nav-long,.nav a[href$="#about"]{display:none}}

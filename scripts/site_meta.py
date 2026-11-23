@@ -60,6 +60,9 @@ PAGES = [
          card_title='How this site is made',
          description='How mrkdltn.com is made: a static site with no cookies, set in open typefaces, with charts in '
                      "Ofsted's own colours and every figure linked to its primary source."),
+    dict(file='contact/index.html', slug='contact', art='assets/plates/01-corridor.webp', focus=0.5,
+         shows='a long school corridor in morning sun, a few pupils far down it seen from behind',
+         card_title='Contact', card_sub='Speaking, press, research and anything else'),
     dict(file='404.html', slug=None,
          description='There is no page at this address on mrkdltn.com. Go to the home page, read the writing '
                      'or open the Ofsted Explorer.'),

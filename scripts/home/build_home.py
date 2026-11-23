@@ -199,7 +199,7 @@ def card(st):
 
 def hero(st):
     return ('<section class="stop hero" data-ground="%s" style="--th:%s">%s'
-            '<div class="hero-copy"><h1><span>Leading schools.</span> <span>Challenging assumptions.</span> <span>Building what comes next.</span></h1></div>'
+            '<div class="hero-copy"><h1><span>Leading schools.</span> <span>Challenging assumptions.</span> <span>Building what comes next.</span></h1><p class="role">Secondary principal in the West Midlands</p></div>'
             '</div>'
             '<div class="hero-cards">'
             '<div class="pc left day intro"><p>I lead a secondary school in the West Midlands, and write about fair accountability, disadvantage and building teachers: national measures read through the practice of a school, with every figure linked to its source.</p>'
@@ -277,7 +277,7 @@ def page():
 <a class="skip" href="#main">Skip to the content</a>
 <header class="site-head over"><div class="wrap">
   <a class="brand" href="/">Mark Dalton</a>
-  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted Explorer</a><a href="#about">About</a><a class="nav-li" href="%s" aria-label="Mark Dalton on LinkedIn">%s</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/"><span class="nav-long">Ofsted </span>Explorer</a><a href="#about">About</a><a href="/contact/">Contact</a><a class="nav-li" href="%s" aria-label="Mark Dalton on LinkedIn">%s</a></nav>
 </div></header>
 <main id="main">
 <div class="day" id="day">

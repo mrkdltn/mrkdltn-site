@@ -68,6 +68,7 @@ html:not(.js) .bds{display:none}
 .hero-copy{position:absolute;left:0;right:0;top:0;z-index:5;padding:118px var(--page-margin) 0;max-width:var(--width-page);margin:0 auto}
 .hero h1{font-size:clamp(40px,5.6vw,80px);line-height:1.02;letter-spacing:-.012em;color:#0B1A2E;max-width:15ch;text-shadow:0 1px 18px rgba(255,248,238,.55)}
 .hero h1 span{display:block}
+.hero .role{font:500 clamp(17px,1.45vw,21px)/1.35 var(--sans);color:#33405A;margin:16px 0 0;text-shadow:0 1px 14px rgba(255,248,238,.7)}
 .hero-cards{position:absolute;left:0;right:0;bottom:calc(56px + 5vh);z-index:6;pointer-events:none}
 .hero-cards .pc{position:absolute;bottom:0;pointer-events:auto}
 .hero-cards .intro p{font-size:18.5px;margin:0 0 14px}

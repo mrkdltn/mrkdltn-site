@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Contact · Mark Dalton</title>
+<meta name="description" content="Contact Mark Dalton about speaking, press, research or anything else. Messages go to a private inbox on this site, and your email address is used only to reply.">
+<link rel="canonical" href="https://mrkdltn.com/contact/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mark Dalton">
+<meta property="og:title" content="Contact · Mark Dalton">
+<meta property="og:description" content="Contact Mark Dalton about speaking, press, research or anything else. Messages go to a private inbox on this site, and your email address is used only to reply.">
+<meta property="og:url" content="https://mrkdltn.com/contact/">
+<meta property="og:image" content="https://mrkdltn.com/assets/cards/contact.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Illustration: a long school corridor in morning sun, a few pupils far down it seen from behind. Title: Contact.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="Mark Dalton: writing" href="/feed.xml">
+<meta name="theme-color" content="#0B1A2E">
+<link rel="preload" href="/assets/fonts/libre-caslon-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+</head>
+<body class="stone">
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-head band midnight"><div class="wrap">
+  <a class="brand" href="/">Mark Dalton</a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/"><span class="nav-long">Ofsted </span>Explorer</a><a href="/#about">About</a><a href="/contact/" aria-current="page">Contact</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+<main id="main">
+<div class="band midnight article-band"><div class="wrap"><header class="article-head"><p class="label">Contact</p><h1>Get in touch</h1></header></div></div>
+<div class="wrap"><div class="prose prose-sheet">
+<p>For speaking, press, research or anything else, write here. Messages come to a private inbox on this site, and I read every one.</p>
+<form class="cform" id="contact" method="post" action="/api/feedback">
+  <input type="hidden" name="kind" value="contact">
+  <div class="crow"><label for="c-name">Your name</label><input id="c-name" name="name" autocomplete="name" maxlength="120" required></div>
+  <div class="crow"><label for="c-email">Email address</label><input id="c-email" name="email" type="email" autocomplete="email" maxlength="200" required></div>
+  <div class="crow"><label for="c-org">Organisation <span class="opt">(optional)</span></label><input id="c-org" name="organisation" autocomplete="organization" maxlength="200"></div>
+  <div class="crow"><label for="c-reason">What is it about?</label><select id="c-reason" name="reason"><option value="speaking">Speaking</option><option value="press">Press</option><option value="research">Research</option><option value="other">Something else</option></select></div>
+  <div class="crow"><label for="c-msg">Your message</label><textarea id="c-msg" name="message" rows="7" maxlength="4000" required></textarea></div>
+  <div class="crow chp" aria-hidden="true"><label for="c-web">Leave this empty</label><input id="c-web" name="website" tabindex="-1" autocomplete="off"></div>
+  <p class="cnote">Your message is stored privately on this site&rsquo;s hosting and read only by me. Your email address is used only to reply and is deleted within 12 months. Please do not include details about individual pupils or staff.</p>
+  <p class="cact"><button type="submit" class="btn">Send</button> <span id="c-status" role="status" aria-live="polite"></span></p>
+</form>
+</div></div>
+</main>
+<footer class="site-foot"><div class="wrap">
+  <span>© 2026 Mark Dalton. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/writing/">Writing</a> · <a href="/explorer/">Ofsted Explorer</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<script src="/assets/contact.js" defer></script>
+</body>
+</html>
