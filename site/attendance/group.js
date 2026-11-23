@@ -8,7 +8,8 @@
   const ramp = d3.interpolateRgb('#E9EDF3', INK);
   const PH = {P: 'primary schools', S: 'secondary schools', X: 'special schools'}, PH1 = {P: 'Primary', S: 'Secondary', X: 'Special'};
   // b: index in a pooled value; s: in a school row; o: in an overview row [schools, pupils, overall, unauthorised, persistent]
-  const MEAS = {abs: {b: 0, s: 5, o: 2, n: 'overall absence'}, pa: {b: 2, s: 6, o: 4, n: 'persistent absence'}};
+  // Severe absence (half or more of sessions missed) is pooled for areas, trusts and phases only: never for a single school.
+  const MEAS = {abs: {b: 0, s: 5, o: 2, n: 'overall absence'}, pa: {b: 2, s: 6, o: 4, n: 'persistent absence'}, sev: {b: 4, s: null, o: 11, n: 'severe absence'}};
   const KIND = {t: 'Trust', c: 'Parliamentary constituency', w: 'Ward', y: 'Ceremonial county', a: 'Local authority'}, KINDS = {t: 'Trusts', c: 'Constituencies', w: 'Wards', y: 'Counties', a: 'Local authorities'}, SH = {t: 16, c: 16, w: 64, y: 1, a: 8};
   const $ = (id) => document.getElementById(id);
   const pc = (v, dp) => (v == null ? '–' : (v / 100).toFixed(dp == null ? 1 : dp) + '%');
@@ -57,8 +58,9 @@
     if (was) { const d = gap(now[0], was[0]); t += d === 0 ? ', the same as in the same two terms a year earlier' : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in the same two terms a year earlier (${pc(was[0])})`; }
     t += '.'; if (e) { const d = gap(now[0], e[0]); t += ` Across England’s ${PH[phase]} the figure was ${pc(e[0])}` + (d === 0 ? '.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
     t += ` <b>${pc(now[2])}</b> of pupils were persistently absent` + (e ? `, against ${pc(e[2])} across England.` : '.');
+    if (now[4] != null) t += ` <b>${pc(now[4])}</b> were severely absent, missing half or more of their sessions` + (e && e[4] != null ? `; across England it was ${pc(e[4])}.` : '.');
     R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[0], was[0]), 'a year earlier') : '') + (e ? AXc.pill(gap(now[0], e[0]), 'England') : '') + '</span>';
-    const k = [['Overall absence', pc(now[0]), was ? 'a year earlier ' + pc(was[0]) : ''], ['Persistent absence', pc(now[2]), was ? 'a year earlier ' + pc(was[2]) : ''], ['Unauthorised absence', pc(now[1]), e ? 'England ' + pc(e[1]) : ''], ['England ' + PH[phase], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) : '']];
+    const k = [['Overall absence', pc(now[0]), was ? 'a year earlier ' + pc(was[0]) : ''], ['Persistent absence', pc(now[2]), was ? 'a year earlier ' + pc(was[2]) : ''], ['Severe absence', now[4] == null ? '–' : pc(now[4]), now[4] == null ? 'too few pupils to show' : was && was[4] != null ? 'a year earlier ' + pc(was[4]) : ''], ['Unauthorised absence', pc(now[1]), e ? 'England ' + pc(e[1]) : ''], ['England ' + PH[phase], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) + (e[4] != null ? ', severe ' + pc(e[4]) : '') : '']];
     K.innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${esc(x[0])}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');
   }
 
@@ -114,7 +116,7 @@
   }
 
   // ---- what is being compared: the newest rate, or its change
-  const VIEW = {now: 'Latest', yr: 'Change in a year', base: 'Change since 2018/19'}, CH = {abs: [5, 7, 8], pa: [6, 9, 10]};
+  const VIEW = {now: 'Latest', yr: 'Change in a year', base: 'Change since 2018/19'}, CH = {abs: [5, 7, 8], pa: [6, 9, 10], sev: [12, 13, 14]};
   const prevP = () => B.periods.filter((p) => p.endsWith('AS') && p < B.latest).pop();
   // from an overview row [schools, pupils, overall, unauthorised, persistent, year-earlier overall and persistent, newest full year and 2018/19 overall, then persistent]
   const val = (r) => { const c = CH[meas], d = (a, b) => (a == null || b == null ? null : a - b); return !r ? null : view === 'now' ? r[MEAS[meas].o] : view === 'yr' ? d(r[MEAS[meas].o], r[c[0]]) : d(r[c[1]], r[c[2]]); };
@@ -227,8 +229,8 @@
   const PGN = [['fsm', 'Eligible for free school meals'], ['nfsm', 'Not eligible for free school meals'], ['sen', 'SEN support'], ['ehcp', 'Education, health and care plan'], ['nosen', 'No identified SEN']];
   function groups() {
     const card = $('gx-pg-c'), el = $('gx-pg'); card.hidden = !(G.pg && PGE && phase && G.pg[phase]); if (card.hidden) return; el.innerHTML = '';
-    const i = meas === 'abs' ? 0 : 1, L = B.latest, P0 = view === 'yr' ? prevP() : view === 'base' ? B.base + 'AS' : null;
-    const get = (src, g) => { const ps = src && src[phase] && src[phase][g]; if (!ps || !ps[L]) return null; return P0 ? (ps[P0] ? ps[L][i] - ps[P0][i] : null) : ps[L][i]; };
+    const i = meas === 'abs' ? 0 : meas === 'pa' ? 1 : 2, L = B.latest, P0 = view === 'yr' ? prevP() : view === 'base' ? B.base + 'AS' : null;
+    const get = (src, g) => { const ps = src && src[phase] && src[phase][g]; if (!ps || !ps[L] || ps[L][i] == null) return null; return P0 ? (ps[P0] && ps[P0][i] != null ? ps[L][i] - ps[P0][i] : null) : ps[L][i]; };
     const R = PGN.map(([g, n]) => ({g, n, v: get(G.pg, g), e: get(PGE.england, g), all: view === 'now' && ALL ? ALL.map((r) => r.pg && r.pg[phase] && r.pg[phase][g] && r.pg[phase][g][i]).filter((v) => v != null) : []})).filter((r) => r.v != null);
     if (!R.length) { card.hidden = true; return; }
     $('gx-pg-s').textContent = `${cap(view === 'now' ? MEAS[meas].n : vname().replace(/between .*$/, 'since the autumn and spring terms 2018/19'))} for groups of pupils in its ${PH[phase]}, autumn and spring terms ${ay(L)}. ` + (view === 'now' ? `The faint marks are the other ${kind === 'a' ? 'local authorities' : 'counties'}. ` : '') + 'Published by the DfE for local authorities, not for single schools.';
@@ -254,12 +256,12 @@
   function compare() {
     const card = $('gx-cmp-c'); card.hidden = !phase; if (!phase) return;
     const L = B.latest, P1 = prevP(), row = (name, b, col, me) => { const g = (p, i) => (b && b[p] ? b[p][i] : null), d = (a, c) => (a == null || c == null ? null : a - c);
-      return {name, col, me, abs: g(L, 0), pa: g(L, 2), yr: d(g(L, 0), g(P1, 0)), base: d(g(B.fy_last, 0), g(B.base, 0)), yrp: d(g(L, 2), g(P1, 2))}; };
+      return {name, col, me, abs: g(L, 0), pa: g(L, 2), sev: g(L, 4), yr: d(g(L, 0), g(P1, 0)), base: d(g(B.fy_last, 0), g(B.base, 0)), yrp: d(g(L, 2), g(P1, 2))}; };
     const rows = [row(G.name, G.bench[phase], INK, true)].concat(VS.map((o, i) => row(o.g.name, o.g.bench[phase], OTHERS[i % 4]))).concat([row('England', B.bench.E[phase], MUTED)]);
     const e = rows[rows.length - 1], cell = (v, ref, f) => (v == null ? '<td class="n">–</td>' : `<td class="n" style="color:${ref == null || v === ref ? 'inherit' : AXc.gap(v - ref)}">${f(v)}</td>`), sp = (v) => sign(v);
-    $('gx-cmp-s').textContent = `${cap(PH[phase])}. The first two columns are the autumn and spring terms ${ay(L)}; “in a year” compares them with the same two terms a year earlier; “since 2018/19” compares full years ${ay(B.base)} and ${ay(B.fy_last)}. Figures are coloured against England.`;
-    $('gx-cmp').innerHTML = '<thead><tr><th>Place</th><th class="n">Overall absence</th><th class="n">Persistent absence</th><th class="n">Overall, in a year</th><th class="n">Persistent, in a year</th><th class="n">Overall, since 2018/19</th></tr></thead><tbody>' + rows.map((r) =>
-      `<tr><td><i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, r === e ? null : e.abs, pc)}${cell(r.pa, r === e ? null : e.pa, pc)}${cell(r.yr, r === e ? null : e.yr, sp)}${cell(r.yrp, r === e ? null : e.yrp, sp)}${cell(r.base, r === e ? null : e.base, sp)}</tr>`).join('') + '</tbody>';
+    $('gx-cmp-s').textContent = `${cap(PH[phase])}. The first three columns are the autumn and spring terms ${ay(L)}; “in a year” compares them with the same two terms a year earlier; “since 2018/19” compares full years ${ay(B.base)} and ${ay(B.fy_last)}. Figures are coloured against England.`;
+    $('gx-cmp').innerHTML = '<thead><tr><th>Place</th><th class="n">Overall absence</th><th class="n">Persistent absence</th><th class="n">Severe absence</th><th class="n">Overall, in a year</th><th class="n">Persistent, in a year</th><th class="n">Overall, since 2018/19</th></tr></thead><tbody>' + rows.map((r) =>
+      `<tr><td><i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, r === e ? null : e.abs, pc)}${cell(r.pa, r === e ? null : e.pa, pc)}${cell(r.sev, r === e ? null : e.sev, pc)}${cell(r.yr, r === e ? null : e.yr, sp)}${cell(r.yrp, r === e ? null : e.yrp, sp)}${cell(r.base, r === e ? null : e.base, sp)}</tr>`).join('') + '</tbody>';
     const c = $('gx-chips'); c.innerHTML = '';
     VS.forEach((o, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ax-chip'; b.innerHTML = `<i style="background:${OTHERS[i % 4]}"></i>${esc(o.g.name)} <span aria-hidden="true">×</span>`; b.setAttribute('aria-label', 'Remove ' + o.g.name);
       b.addEventListener('click', () => { VS = VS.filter((x) => x.id !== o.id); draw(); }); c.appendChild(b); });
@@ -305,7 +307,7 @@
       return Promise.all([sh, extra]); }).then(([sh, all]) => { if (!G) { $('gx-name').textContent = 'Not found'; $('gx-meta').textContent = 'No trust or constituency matches that address. Search for it by name below.'; return; }
       ALL = all; const phases = ['P', 'S', 'X'].filter((p) => G.bench[p] && G.bench[p][B.latest]);
       const pupils = (p) => d3.sum(G.schools.filter((s) => s[2] === p), (s) => s[4] || 0);
-      phase = phases.includes(q.get('phase')) ? q.get('phase') : phases.slice().sort((a, b) => pupils(b) - pupils(a))[0] || null; if (q.get('m') === 'pa') meas = 'pa';
+      phase = phases.includes(q.get('phase')) ? q.get('phase') : phases.slice().sort((a, b) => pupils(b) - pupils(a))[0] || null; if (MEAS[q.get('m')]) meas = q.get('m');
       $('gx-phase').innerHTML = phases.map((p) => `<button type="button" data-p="${p}">${PH1[p]}</button>`).join(''); $('gx-phase-f').hidden = phases.length < 2; $('gx-meas-f').hidden = false;
       $('gx-phase').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { phase = b.dataset.p; draw(); } });
       $('gx-meas').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { meas = b.dataset.m; draw(); } });

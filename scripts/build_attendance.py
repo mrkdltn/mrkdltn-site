@@ -195,7 +195,7 @@ def schools():
     I = lambda v: int(v) if v != '' else None
     rows = {}
     for r in csv.DictReader(open(apath, encoding='utf-8')):
-        rows.setdefault(r['urn'], {})[r['period']] = [I(r['enrol']), I(r['poss'])] + [I(r[c]) for c in SCOLS[1:]]
+        rows.setdefault(r['urn'], {})[r['period']] = [I(r['enrol']), I(r['poss'])] + [I(r[c]) for c in SCOLS[1:]] + [I(r.get('sev', ''))]
     meta = {r['urn']: r for r in csv.DictReader(open(os.path.join(RAW, 'schools.csv'), encoding='utf-8'))}
     periods = sorted({p for h in rows.values() for p in h})
     fy = [p for p in periods if not p.endswith('AS')]
@@ -220,6 +220,14 @@ def schools():
                 continue
             e += v[0]; po += v[1]; ab += v[2] * v[1]; un += (v[3] or 0) * v[1]; pa += (v[4] or 0) * v[0]
         return None if not po or e < MIN_ENROL else [round(ab / po), round(un / po), round(pa / e)]
+
+    def sev(urns_periods):
+        """Severe absence (half or more of sessions missed) pooled across schools, for areas, trusts and phases only.
+        Never given for a single school, nor where fewer than 10 pupils are severely absent."""
+        vs = [v for v in urns_periods if v[0] is not None and len(v) > 7 and v[7] is not None]
+        n, e = sum(v[7] for v in vs), sum(v[0] for v in vs)
+        return round(10000 * n / e) if n >= MIN_ENROL and e and len(vs) >= MIN_SCHOOLS else None
+    pool.sev = sev
     groups = {}
     for u, h in rows.items():
         m = meta[u]
@@ -229,13 +237,14 @@ def schools():
             groups.setdefault(('E', 'A', p), []).append(v)
     bench = {}
     for (a, ph, p), vs in groups.items():
-        bench.setdefault(a, {}).setdefault(ph, {})[p] = pool(vs)
+        r = pool(vs)
+        bench.setdefault(a, {}).setdefault(ph, {})[p] = r and r + [len(vs), sev(vs)]      # overall, unauthorised, persistent, schools, severe
     eng = bench['E']['A'][latest]
-    print(f"attendance schools: England {latest}: overall {eng[0] / 100:.2f}%, persistent absence {eng[2] / 100:.2f}%")
+    print(f"attendance schools: England {latest}: overall {eng[0] / 100:.2f}%, persistent absence {eng[2] / 100:.2f}%, severe absence {eng[4] / 100:.2f}%")
 
     def shown(v):
         """A school's figures for one period, or None where withheld."""
-        return None if v is None or v[0] is None or v[0] < MIN_ENROL or v[2] is None else [v[0]] + v[2:]
+        return None if v is None or v[0] is None or v[0] < MIN_ENROL or v[2] is None else [v[0]] + v[2:7]      # never the severe count
 
     def raw_history(u):
         """Every period under this URN, with full years extended back through single predecessors. ({period: raw}, join)."""
@@ -367,7 +376,8 @@ def pupil_groups():
     if os.path.exists(path):
         for r in csv.DictReader(open(path, encoding='utf-8')):
             if int(r['enrol']) >= MIN_ENROL:
-                out.setdefault(r['code'], {}).setdefault(r['phase'], {}).setdefault(r['group'], {})[r['period']] = [int(r['enrol']), int(r['poss']), int(r['abs']), int(r['pa'])]
+                out.setdefault(r['code'], {}).setdefault(r['phase'], {}).setdefault(r['group'], {})[r['period']] = [int(r['enrol']), int(r['poss']), int(r['abs']), int(r['pa']),
+                                                                                                                 int(r['sev']) if r.get('sev') not in ('', None) and int(r['sev']) * int(r['enrol']) >= 10 * 10000 else None]
     return out
 
 
@@ -378,9 +388,10 @@ def pg_pool(parts):
         for ph, gs in a.items():
             for g, ps in gs.items():
                 for p, v in ps.items():
-                    t = acc.setdefault(ph, {}).setdefault(g, {}).setdefault(p, [0, 0, 0, 0])
+                    t = acc.setdefault(ph, {}).setdefault(g, {}).setdefault(p, [0, 0, 0, 0, 0])
                     t[0] += v[0]; t[1] += v[1]; t[2] += v[2] * v[1]; t[3] += v[3] * v[0]
-    return {ph: {g: {p: [round(t[2] / t[1]), round(t[3] / t[0])] for p, t in ps.items() if t[0] >= MIN_ENROL and t[1]} for g, ps in gs.items()} for ph, gs in acc.items()}
+                    t[4] = None if t[4] is None or v[4] is None else t[4] + v[4] * v[0]
+    return {ph: {g: {p: [round(t[2] / t[1]), round(t[3] / t[0]), None if t[4] is None else round(t[4] / t[0])] for p, t in ps.items() if t[0] >= MIN_ENROL and t[1]} for g, ps in gs.items()} for ph, gs in acc.items()}
 
 
 def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest, bench=None, la_names=None):
@@ -431,13 +442,14 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
                     if len(vs) >= MIN_SCHOOLS:
                         r = pool(vs)
                         if r:
-                            b[p] = r + [len(vs)]
+                            b[p] = r + [len(vs), pool.sev(vs)]
                 rec['bench'][ph] = b
                 if latest in b:
                     g2 = lambda p, i: b[p][i] if p and p in b else None
                     # schools, pupils, overall, unauthorised, persistent; then the same two terms a year earlier (overall, persistent);
                     # then the newest full year and 2018/19 (overall, overall, persistent, persistent), for comparing change
-                    row[ph] = [len(ms), sum(rows[u][latest][0] or 0 for u in ms if latest in rows[u])] + b[latest][:3] + [g2(prev_as, 0), g2(prev_as, 2), g2(fy_last, 0), g2(base, 0), g2(fy_last, 2), g2(base, 2)]
+                    row[ph] = [len(ms), sum(rows[u][latest][0] or 0 for u in ms if latest in rows[u])] + b[latest][:3] + [g2(prev_as, 0), g2(prev_as, 2), g2(fy_last, 0), g2(base, 0), g2(fy_last, 2), g2(base, 2),
+                                                                                                                    g2(latest, 4), g2(prev_as, 4), g2(fy_last, 4), g2(base, 4)]       # then severe: newest, a year earlier, newest full year, 2018/19
         if kind == 't' and big:
             # the trust's own record: only schools that had joined by the end of December of each year, under their present URN
             rec['bench_in'] = {}
@@ -448,7 +460,7 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
                     if len(vs) >= MIN_SCHOOLS:
                         r = pool(vs)
                         if r:
-                            b[p] = r + [len(vs)]
+                            b[p] = r + [len(vs), pool.sev(vs)]
                 if b:
                     rec['bench_in'][ph] = b
         if kind == 'a' and gid in pg:
@@ -462,7 +474,7 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
                           for la in sorted({meta[u]['la'] for u in us}, key=lambda c: (la_names or {}).get(c, c))]
         if kind == 'w':
             rec['lad'] = ward_lad.get(gid)
-            ward_val[gid] = [len(us)] + (row['P'][2:] if 'P' in row else [None] * 9)
+            ward_val[gid] = [len(us)] + (row['P'][2:] if 'P' in row else [None] * 13)
         for u in ([] if kind == 'y' else sorted(us, key=lambda u: meta[u]['name'])):
             v = shown(rows[u].get(latest))
             rec['schools'].append([int(u), meta[u]['name'], meta[u]['phase'], meta[u]['town']] + (v[:2] + [v[3]] if v else [None, None, None])

@@ -13,7 +13,7 @@ From Mark's review of the preview on 24 November 2026. Not ready to go live; wor
 | 7 | The distribution year by year overlaps badly | Replace the overlapping outlines with a chart that cannot overlap | To do |
 | 8 | Region by region is cluttered | Redesign | To do |
 | 9 | How similar schools are matched: use the same approach to methodology and writing as before | A method section in the Ofsted Explorer's manner: tabs, a rules table, plain wording | To do |
-| 10 | Severe absence where appropriate, not only persistent | Add severe absence (50% or more missed) for areas, trusts, phases and pupil groups. Not for single schools, under the small-numbers rule Mark confirmed | To do; needs a refetch |
+| 10 | Severe absence where appropriate, not only persistent | Severe absence (half or more of sessions missed) is a third measure on every area and trust page, in the side-by-side table, the maps, the change views and the pupil groups. Never for a single school, and not where fewer than 10 pupils are severely absent | Done 24 Nov for areas and trusts; still to add to Patterns |
 | 11 | Group-based data and splits should be obvious and intuitive | Make pupil groups a visible choice wherever the DfE publishes them (local authority and above) | To do |
 | 12 | Pilot a guided way in: questions, a menu, a questionnaire flow, or a prompt | A guided flow that asks who you are and what you want to know, then assembles a short briefing. Rule-based first; a free-text prompt would need an AI service and is a separate decision | To do; design with Mark |
 | 13 | "The DfE squares for patterns data is important" | Unclear which squares: the day-by-day calendar, or something else. Ask Mark | Question open |

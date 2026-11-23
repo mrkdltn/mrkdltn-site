@@ -13,6 +13,8 @@ Writes data/raw/attendance/:
   school_absence.csv   urn, period (2024 = full year 2024/25; 2025AS = autumn and spring 2025/26), enrolments, possible sessions, and
                        rates in hundredths of a percentage point: overall, unauthorised, persistent absence
                        (10% or more), illness, unauthorised holiday. Empty = not published for that year.
+                       sev is the count of severely absent pupils (50% or more missed). It is kept only so that areas,
+                       trusts and phases can be pooled; it is never shown for a single school.
   schools.csv          one row per school that appears in either file, with the date it joined its present trust
                        (GIAS) and, where the DfE recorded a different trust before that date, that trust's name
   schools_release.json what was read and when it was published
@@ -71,7 +73,8 @@ def read_absence(file_id, suffix, rows, names, trusts=None):
         if not urn.isdigit() or not r['enrolments'].isdigit():
             continue
         rows[(urn, per)] = [r['enrolments'], r['sess_possible'], bp(r['sess_overall_percent']), bp(r['sess_unauthorised_percent']),
-                            bp(r['enrolments_pa_10_exact_percent']), bp(r['sess_auth_illness_rate']), bp(r['sess_unauth_holiday_rate'])]
+                            bp(r['enrolments_pa_10_exact_percent']), bp(r['sess_auth_illness_rate']), bp(r['sess_unauth_holiday_rate']),
+                            r.get('enrolments_pa_50_exact', '') if r.get('enrolments_pa_50_exact', '').isdigit() else '']
         if trusts is not None and r.get('trust_name'):
             trusts.setdefault(urn, {})[per[:4]] = r['trust_name']      # recorded by the DfE from 2020/21
         cur = names.get(urn)
@@ -128,7 +131,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, 'school_absence.csv'), 'w', newline='', encoding='utf-8') as f:
         w = csv.writer(f, lineterminator='\n')
-        w.writerow(['urn', 'period', 'enrol', 'poss', 'abs', 'unauth', 'pa', 'ill', 'hol_u'])
+        w.writerow(['urn', 'period', 'enrol', 'poss', 'abs', 'unauth', 'pa', 'ill', 'hol_u', 'sev'])
         for k in sorted(rows, key=lambda k: (int(k[0]), k[1])):
             w.writerow(list(k) + rows[k])
     with open(os.path.join(OUT, 'schools.csv'), 'w', newline='', encoding='utf-8') as f:

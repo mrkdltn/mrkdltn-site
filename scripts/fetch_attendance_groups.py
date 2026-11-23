@@ -9,7 +9,7 @@ down to local authority level only; there is no such breakdown for individual sc
 
 Writes data/raw/attendance/la_groups.csv: period (2025AS = autumn and spring 2025/26), area code, phase
 (A all, P primary, S secondary, X special), group (all, fsm, nfsm, sen, ehcp, nosen), enrolments, possible sessions,
-and overall and persistent absence in hundredths of a percentage point. Ethnicity is in the file and is not read.
+and overall, persistent (10% or more missed) and severe (50% or more missed) absence in hundredths of a percentage point. Ethnicity is in the file and is not read.
 """
 import csv, io, json, os, sys, urllib.request
 
@@ -44,13 +44,14 @@ def main():
         lvl = r['geographic_level']
         code = r['new_la_code'] if lvl == 'Local authority' else r['region_code'] if lvl == 'Regional' else r['country_code']
         try:
-            out.append([r['time_period'][:4] + 'AS', code, ph, g, int(float(r['enrolments'])), int(float(r['sess_possible'])), round(float(r['sess_overall_percent']) * 100), round(float(r['enrolments_pa_10_exact_percent']) * 100)])
+            out.append([r['time_period'][:4] + 'AS', code, ph, g, int(float(r['enrolments'])), int(float(r['sess_possible'])), round(float(r['sess_overall_percent']) * 100), round(float(r['enrolments_pa_10_exact_percent']) * 100),
+                        round(float(r['enrolments_pa_50_exact_percent']) * 100) if r.get('enrolments_pa_50_exact_percent', '').replace('.', '', 1).isdigit() else ''])
         except ValueError:
             continue
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, 'la_groups.csv'), 'w', newline='', encoding='utf-8') as fo:
         w = csv.writer(fo, lineterminator='\n')
-        w.writerow(['period', 'code', 'phase', 'group', 'enrol', 'poss', 'abs', 'pa'])
+        w.writerow(['period', 'code', 'phase', 'group', 'enrol', 'poss', 'abs', 'pa', 'sev'])
         w.writerows(sorted(out))
     if rel:
         json.dump(rel, open(os.path.join(OUT, 'groups_release.json'), 'w'), indent=1)
