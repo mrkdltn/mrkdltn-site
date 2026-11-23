@@ -60,7 +60,7 @@
   OE.ctxThr = (r, m) => { const base = OE.MEAS[m || 'a8'].thr, n = +(r && r.pupils); return n > 0 ? base * Math.sqrt(OE.medCohort() / n) : base; };
   // likely range around a gap (22 November 2026): the gap plus or minus the same half-width each reading already uses
   OE.PSD = 14.2; // pupil-level spread of Attainment 8, from 2023/24 Progress 8 confidence intervals
-  OE.rng = (g, h) => (isNaN(g) || isNaN(h) ? {} : {lo: Math.round((g - h) * 10) / 10 || 0, hi: Math.round((g + h) * 10) / 10 || 0});
+  OE.rng = (g, h) => (isNaN(g) || isNaN(h) ? {} : {lo: +(g - h).toFixed(1) || 0, hi: +(g + h).toFixed(1) || 0});
   OE.meas = () => { const m = String(dash.params().meas || 'a8'); return OE.MEAS[m] ? m : 'a8'; };
   OE.mfmt = (v, m) => (v === null || v === undefined || v === '' || isNaN(v) ? '—' : (+v).toFixed(1) + (OE.MEAS[m || OE.meas()].unit));
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
@@ -82,7 +82,7 @@
   dash.calc('lenses', {inputs: ['ks4', 'national', 'official'], title: 'Four lenses on the selected school', description: 'Published attainment, similar schools (replica and official), contextual model and last Progress 8.',
     fn: (ks4, national, official) => {
       const u = String(dash.params().urn || ''); const r = ks4.find((x) => x.urn === u); if (!r) return [];
-      const rd = (v) => (v === null || isNaN(v) ? null : Math.round(v * 10) / 10);
+      const rd = (v) => (v === null || isNaN(v) ? null : +(+v).toFixed(1)); // halves away from zero, as the headline figures round
       const m = OE.meas();
       if (m !== 'a8') {
         const M = OE.MEAS[m], v = +r[m], ok2 = (x) => x !== null && x !== '' && !isNaN(+x);
@@ -212,16 +212,21 @@
 
   dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
     const nat = dash.data('national').data;
+    // cohort size and likely ranges (benchmarks item 3): the same margins as the four readings
+    const n = +r.pupils, h = (v) => (isNaN(v) ? NaN : v), rg = (g, hw) => { const R = OE.rng(g, hw); if (R.lo === undefined) return ''; const z = (v) => (v === 0 ? '0.0' : fs(v)); return 'likely ' + z(R.lo) + ' to ' + z(R.hi); };
+    const hNat = n > 0 ? 1.96 * OE.PSD / Math.sqrt(n) : NaN, hSS = n > 0 ? 1.96 * Math.sqrt(OE.PSD * OE.PSD / n + (+r.ss_sd || 0) ** 2 / 50) : NaN, hCtx = OE.ctxThr(r, 'a8');
     const tiles = [
-      ['Attainment 8, 2025/26', +r.a8, f1, 'a8', isNaN(num(r.a8_25)) ? '' : '2024/25: ' + f1(+r.a8_25), 'Provisional 2025/26 result. The smaller figure is last year\'s final result for comparison.'],
-      ['Gap to national', +r.nat_diff, fs, 'nat_diff', nat ? 'National average ' + f1(nat) : '', 'School minus the national average. Mostly reflects intake.'],
-      ['Gap to similar schools', +r.ss_diff, fs, 'ss_diff', r.ss_band ? r.ss_band + ' (replica)' : '', 'School minus the average of its 50 similar schools in the open replica.'],
-      ['Gap to contextual model', +r.cva_res, fs, 'cva_res', 'Expected ' + f1(+r.cva_exp), 'School minus what schools with this intake typically achieve, from one national regression.']
+      ['Attainment 8, 2025/26', +r.a8, f1, 'a8', (n > 0 ? d3.format(',')(Math.round(n)) + ' pupils' : '') + (isNaN(num(r.a8_25)) ? '' : (n > 0 ? ' · ' : '') + '2024/25: ' + f1(+r.a8_25)), 'Provisional 2025/26 result for a GCSE year group of ' + (n > 0 ? d3.format(',')(Math.round(n)) + ' pupils' : 'unknown size') + '. Smaller year groups move more from year to year. The smaller figure is last year\'s final result.'],
+      ['Gap to national', +r.nat_diff, fs, 'nat_diff', nat ? 'National average ' + f1(nat) : '', 'School minus the national average. Mostly reflects intake. The likely range allows for chance variation in one year\'s pupils (95%).', rg(+r.nat_diff, h(hNat))],
+      ['Gap to similar schools', +r.ss_diff, fs, 'ss_diff', r.ss_band ? r.ss_band + ' (replica)' : '', 'School minus the average of its 50 similar schools in the open replica. The likely range is the margin the reading uses: 1.96 standard errors (95%).', rg(+r.ss_diff, h(hSS))],
+      ['Gap to contextual model', +r.cva_res, fs, 'cva_res', 'Expected ' + f1(+r.cva_exp), 'School minus what schools with this intake typically achieve, from one national regression. The likely range is the in-line band for a cohort of this size.', rg(+r.cva_res, h(hCtx))]
     ];
-    tiles.forEach(([lab, v, fmt, field, sm, tip]) => { const d = document.createElement('div'); d.className = 'oe-kpi rise'; d.setAttribute('data-tip', tip); d.tabIndex = 0;
+    tiles.forEach(([lab, v, fmt, field, sm, tip, rng]) => { const d = document.createElement('div'); d.className = 'oe-kpi rise'; d.setAttribute('data-tip', tip); d.tabIndex = 0;
       const s = document.createElement('span'); s.textContent = lab; const b = document.createElement('b'); mark(b, 'school', field);
       if (field !== 'a8' && !isNaN(v)) b.style.color = v >= 0 ? '#2F6F66' : '#A3402B';
-      const small = document.createElement('small'); small.textContent = sm; d.append(s, b, small); el.append(d); countUp(b, v, fmt); }); });
+      const small = document.createElement('small'); small.textContent = sm; d.append(s, b, small);
+      if (rng) { const rs = document.createElement('small'); rs.className = 'oe-krng'; rs.textContent = rng; d.append(rs); }
+      el.append(d); countUp(b, v, fmt); }); });
 
   dash.draw('sgrades', (el) => { const r = S(); el.replaceChildren(); if (!r) return;
     AREAS.forEach(([k, lab]) => { const v = r[k]; if (!v || v === 'Not applicable') return; const d = document.createElement('div'); d.className = 'oe-g rise' + (v === 'Expected standard' || v === 'Met' ? ' dark' : '');
@@ -287,7 +292,7 @@
 
   dash.draw('strip', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip); return {tip}; },
     update: (el, m) => { const r = S(), n = dash.data('neigh'); el.querySelectorAll('svg').forEach((s) => s.remove()); if (!r || n.status !== 'ok' || !n.data.length) return;
-      const mf = OE.meas(), MS = OE.MEAS[mf]; const ss = document.getElementById('oe-ssub'); if (ss) ss.textContent = MS.label + ', 2025/26. The shaded band is the middle half of the 50; dots are spread vertically only so they do not overlap.'; const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x[mf]).filter((v) => !isNaN(v)).concat([+r[mf]]);
+      const mf = OE.meas(), MS = OE.MEAS[mf]; const ss = document.getElementById('oe-ssub'); if (ss) ss.textContent = MS.label + ', 2025/26. The shaded band is the middle half of the 50; the bracket through the diamond is the likely range of this school\'s gap to the group (95%). Dots are spread vertically only so they do not overlap.'; const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x[mf]).filter((v) => !isNaN(v)).concat([+r[mf]]);
       const x = d3.scaleLinear().domain(d3.extent(vals)).nice().range([M.l, W - M.r]); const mean = mf === 'a8' ? +r.ss_mean : +r[mf + '_ss'];
       const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', MS.label + ' of the 50 similar schools with the selected school marked');
       svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${H - M.b})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor(W / 90))));
@@ -301,6 +306,13 @@
       const animate = motion();
       if (animate) dots.attr('cx', x(mean)).style('opacity', 0).transition().duration(650).delay((d, i) => i * 10).ease(d3.easeCubicOut).attr('cx', (d) => x(+d[mf])).style('opacity', 1);
       else dots.attr('cx', (d) => x(+d[mf]));
+      // likely range of this school's gap to the group (the same range as the similar-schools row in the four readings)
+      { const L = dash.data('lenses'); const row = L.status === 'ok' && L.data ? L.data.find((v) => /open replica/.test(v.lens)) : null;
+        if (row && row.lo !== undefined && row.lo !== null) { const cl = (v) => Math.max(M.l, Math.min(W - M.r, v)); const x1 = cl(x(mean + row.lo)), x2 = cl(x(mean + row.hi));
+          const br = svg.append('g').attr('class', 'oe-srng').attr('aria-hidden', 'true').style('opacity', animate ? 0 : 0.6);
+          br.append('line').attr('x1', x1).attr('x2', x2).attr('y1', 58).attr('y2', 58).style('stroke', '#0B1A2E').style('stroke-width', 1.5);
+          [x1, x2].forEach((xx) => br.append('line').attr('x1', xx).attr('x2', xx).attr('y1', 52).attr('y2', 64).style('stroke', '#0B1A2E').style('stroke-width', 1.5));
+          if (animate) br.transition().delay(1000).duration(400).style('opacity', 0.6); } }
       const sx = x(+r[mf]); const dia = svg.append('path').attr('d', d3.symbol(d3.symbolDiamond, 170)()).style('fill', '#0B1A2E').style('stroke', 'var(--color-bg)').style('stroke-width', 2);
       if (animate) dia.attr('transform', `translate(${x(mean)},58) scale(0.2)`).transition().delay(500).duration(600).ease(d3.easeBackOut).attr('transform', `translate(${sx},58) scale(1)`); else dia.attr('transform', `translate(${sx},58)`);
       svg.append('text').attr('x', sx).attr('y', 100 - 4).attr('text-anchor', sx > W - 80 ? 'end' : (sx < 80 ? 'start' : 'middle')).style('font-size', '12px').style('font-weight', 600).style('fill', '#0B1A2E').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', 4).text('This school ' + OE.mfmt(r[mf], mf));

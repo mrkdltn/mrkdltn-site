@@ -29,7 +29,7 @@
   // ---------- 1. the strip: where the school sits among its 50 ----------
   OE.exhibit({name: 'strip-50-similar-schools', host: q('#strip [data-draw="strip"]'),
     title: () => 'Where the school sits among its 50 similar schools: ' + OE.MEAS[OE.meas()].label + ', 2025/26',
-    key: () => 'Each dot is one similar school, coloured by its Achievement grade (grey: no report card yet). The diamond is this school, the line the group average, the shaded band the middle half of the 50. Dots are spread vertically only so they do not overlap.',
+    key: () => 'Each dot is one similar school, coloured by its Achievement grade (grey: no report card yet). The diamond is this school and the bracket through it the likely range of its gap to the group (95%); the line is the group average, the shaded band the middle half of the 50. Dots are spread vertically only so they do not overlap.',
     source: () => SRC_KS4 + '; ' + SRC_OF + '; ' + SRC_SIM + '.',
     svg: () => settled('#strip [data-draw="strip"]', 'strip'), onChart: () => dash.draw('strip'),
     table: () => { const r = S(), nb = N(); if (!r || !nb.length) return null; const m = OE.meas(), M = OE.MEAS[m];

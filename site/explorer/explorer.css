@@ -362,3 +362,4 @@ i.nm{background:#55627A;width:2px}
 @media screen and (max-width:640px){.oe-xseg button,.oe-xdl button{min-height:40px;font-size:14px}.oe-xdl button{padding:6px 9px}.oe-xbar{gap:6px 10px}}
 @media screen and (max-width:640px){.oe .oe-xsrc:not(.open){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}}
 .oe-xbar[hidden],.oe .oe-xsrc[hidden],.oe-xseg[hidden]{display:none!important}
+.oe-kpi small.oe-krng{display:block;margin-top:2px;color:#55627A;font-variant-numeric:tabular-nums}
