@@ -385,3 +385,9 @@ body.explorer a.oe-btn[hidden]{display:none}
 html.oe-prd:not(.loaded) body.explorer #school .oe-actions{display:flex}
 @media(min-width:1024px){html.oe-pre:not(.loaded) body.explorer #school .oe-kpis{min-height:155px}}
 @media(max-width:640px){html.oe-pre:not(.loaded) body.explorer #school .oe-kpis{min-height:265px}}
+/* the map's Chart/Table switch, table and source line sit under the map, in its column; the list of nearest schools
+   stays beside the map from the top (they were grid items of their own, which pushed the list below the map) */
+@media screen and (min-width:821px){.oe-mapgrid{gap:0 28px;grid-template-rows:auto auto auto 1fr}.oe-mapgrid>:not(.oe-geo){grid-column:1}.oe-mapgrid>.oe-geo{grid-column:2;grid-row:1/span 4}}
+/* report card tiles: the grade sits at the foot of each tile, so grades in a row line up when an area's name runs to two lines */
+body.explorer .oe-g{display:flex;flex-direction:column}
+body.explorer .oe-g b{margin-top:auto;padding-top:4px}
