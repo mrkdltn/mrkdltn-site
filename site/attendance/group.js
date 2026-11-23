@@ -34,7 +34,12 @@
   const tipOn = (sel, html) => sel.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); showTip(ev, html(d)); });
   document.addEventListener('click', hideTip); addEventListener('scroll', hideTip, {passive: true});
 
-  let B, G, ALL, PGE = null, VS = [], kind, id, phase, meas = 'abs', view = 'now', random = false;
+  let B, G, ALL, PGE = null, VS = [], kind, id, phase, meas = 'abs', view = 'now', pgsel = 'all', random = false;
+  // pupil groups can be chosen wherever the DfE publishes them: local authorities and counties
+  const PGL = {fsm: 'eligible for free school meals', sen: 'with SEN support', ehcp: 'with an education, health and care plan'};
+  const pgOn = () => pgsel !== 'all' && (kind === 'a' || kind === 'y'), pgi = () => (meas === 'abs' ? 0 : meas === 'pa' ? 1 : 2), sub = (a, b) => (a == null || b == null ? null : a - b);
+  const pgVal = (pg) => { const t = pg && pg[phase] && pg[phase][pgsel], i = pgi(), g = (k) => (t && t[k] ? t[k][i] : null); return view === 'now' ? g(0) : view === 'yr' ? sub(g(0), g(1)) : sub(g(0), g(2)); };
+  const pgEng = () => { const t = PGE && PGE.england[phase] && PGE.england[phase][pgsel], i = pgi(), g = (p) => (t && t[p] ? t[p][i] : null), L = B.latest; return view === 'now' ? g(L) : view === 'yr' ? sub(g(L), g(B.periods.filter((p) => p.endsWith('AS') && p < L).pop())) : sub(g(L), g(B.base + 'AS')); };
   const KINDA = {t: 'a trust', c: 'a constituency', w: 'a ward', y: 'a county', a: 'a local authority'};
   const recs = new Map(), rec = (k, i) => { const u = `/attendance/data/grp/${k}${[...i].reduce((a, c) => a + c.charCodeAt(0), 0) % SH[k]}.json`; if (!recs.has(u)) recs.set(u, d3.json(u)); return recs.get(u).then((j) => j[i] || null); };
   const eng = (ph, p) => (B.bench.E[ph] && B.bench.E[ph][p]) || null;
@@ -120,10 +125,12 @@
   const prevP = () => B.periods.filter((p) => p.endsWith('AS') && p < B.latest).pop();
   // from an overview row [schools, pupils, overall, unauthorised, persistent, year-earlier overall and persistent, newest full year and 2018/19 overall, then persistent]
   const val = (r) => { const c = CH[meas], d = (a, b) => (a == null || b == null ? null : a - b); return !r ? null : view === 'now' ? r[MEAS[meas].o] : view === 'yr' ? d(r[MEAS[meas].o], r[c[0]]) : d(r[c[1]], r[c[2]]); };
-  const engVal = (ph) => { const b = MEAS[meas].b, g = (p) => (eng(ph, p) || [])[b], d = (a, c) => (a == null || c == null ? null : a - c); return view === 'now' ? g(B.latest) : view === 'yr' ? d(g(B.latest), g(prevP())) : d(g(B.fy_last), g(B.base)); };
+  const engVal = (ph) => { if (pgOn()) return pgEng(); const b = MEAS[meas].b, g = (p) => (eng(ph, p) || [])[b], d = (a, c) => (a == null || c == null ? null : a - c); return view === 'now' ? g(B.latest) : view === 'yr' ? d(g(B.latest), g(prevP())) : d(g(B.fy_last), g(B.base)); };
   const sign = (v) => { const t = Math.round(v / 10); return (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 10).toFixed(1); };   // never '−0.0'
   const fv = (v) => (v == null ? '–' : view === 'now' ? pc(v) : sign(v) + ' points');
-  const vname = () => (view === 'now' ? MEAS[meas].n : view === 'yr' ? 'the change in ' + MEAS[meas].n + ' on the same two terms a year earlier' : `the change in ${MEAS[meas].n} between ${ay(B.base)} and ${ay(B.fy_last)}`);
+  // pupil groups are published for the autumn and spring terms only, so their change since 2018/19 compares those two terms
+  const vname = () => (pgOn() && view === 'base' ? `the change in ${MEAS[meas].n} between the autumn and spring terms of ${ay(B.base)} and ${ay(B.latest)}` : vname0()) + (pgOn() ? ' for pupils ' + PGL[pgsel] : '');
+  const vname0 = () => (view === 'now' ? MEAS[meas].n : view === 'yr' ? 'the change in ' + MEAS[meas].n + ' on the same two terms a year earlier' : `the change in ${MEAS[meas].n} between ${ay(B.base)} and ${ay(B.fy_last)}`);
   const vkey = () => (view === 'now' ? 'green lower, rust higher' : 'green fell or rose less than England, rust rose more');
   const cap = (t) => t.replace(/^./, (c) => c.toUpperCase());
 
@@ -131,7 +138,7 @@
   function over() {
     const card = $('gx-over-c'), el = $('gx-over'), M = MEAS[meas]; card.hidden = !(phase && ALL); if (card.hidden) return;
     if (kind === 'w') { wardMap(el, M); return; }
-    const rows = ALL.filter((r) => r[phase]).map((r) => ({r, n: r[phase][1], v: val(r[phase])})).filter((d) => d.v != null);
+    const rows = ALL.filter((r) => r[phase]).map((r) => ({r, n: r[phase][1], v: pgOn() ? pgVal(r.pg) : val(r[phase])})).filter((d) => d.v != null);
     if (kind === 'y') { ordered(el, rows); return; }
     if (kind === 'c' || kind === 'a') { hexMap(el, rows); return; }
     if (view === 'now') { funnel(el, M, rows); return; }
@@ -231,13 +238,14 @@
     const card = $('gx-pg-c'), el = $('gx-pg'); card.hidden = !(G.pg && PGE && phase && G.pg[phase]); if (card.hidden) return; el.innerHTML = '';
     const i = meas === 'abs' ? 0 : meas === 'pa' ? 1 : 2, L = B.latest, P0 = view === 'yr' ? prevP() : view === 'base' ? B.base + 'AS' : null;
     const get = (src, g) => { const ps = src && src[phase] && src[phase][g]; if (!ps || !ps[L] || ps[L][i] == null) return null; return P0 ? (ps[P0] && ps[P0][i] != null ? ps[L][i] - ps[P0][i] : null) : ps[L][i]; };
-    const R = PGN.map(([g, n]) => ({g, n, v: get(G.pg, g), e: get(PGE.england, g), all: view === 'now' && ALL ? ALL.map((r) => r.pg && r.pg[phase] && r.pg[phase][g] && r.pg[phase][g][i]).filter((v) => v != null) : []})).filter((r) => r.v != null);
+    const R = PGN.map(([g, n]) => ({g, n, v: get(G.pg, g), e: get(PGE.england, g), all: view === 'now' && ALL ? ALL.map((r) => r.pg && r.pg[phase] && r.pg[phase][g] && r.pg[phase][g][0] && r.pg[phase][g][0][i]).filter((v) => v != null) : []})).filter((r) => r.v != null);
     if (!R.length) { card.hidden = true; return; }
     $('gx-pg-s').textContent = `${cap(view === 'now' ? MEAS[meas].n : vname().replace(/between .*$/, 'since the autumn and spring terms 2018/19'))} for groups of pupils in its ${PH[phase]}, autumn and spring terms ${ay(L)}. ` + (view === 'now' ? `The faint marks are the other ${kind === 'a' ? 'local authorities' : 'counties'}. ` : '') + 'Published by the DfE for local authorities, not for single schools.';
     const W = width(el), narrow = W < 560, rh = narrow ? 58 : 44, lab = narrow ? 0 : 250, m = {l: lab + 10, r: narrow ? 12 : 150, t: 8, b: 26}, H = m.t + R.length * rh + m.b, s = svg(el, W, H, 'Absence by pupil group');
     const allv = R.flatMap((r) => [r.v, r.e].concat(r.all)).filter((v) => v != null), x = d3.scaleLinear(d3.extent(allv), [m.l + 6, W - m.r - 6]).nice();
     x.ticks(narrow ? 4 : 7).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', H - 8).attr('text-anchor', 'middle').text(view === 'now' ? (t / 100) + '%' : sign(t)); });
     R.forEach((r, k) => { const y = m.t + k * rh + (narrow ? 38 : rh / 2), col = r.e == null ? MUTED : AXc.gap(gap(r.v, r.e));
+      if (r.g === pgsel) s.append('rect').attr('x', 0).attr('y', y - rh / 2 + (narrow ? -10 : 2)).attr('width', W).attr('height', rh - 4).attr('fill', '#F6F3EC');
       s.append('text').attr('x', narrow ? m.l - 6 : lab).attr('y', narrow ? y - 20 : y + 4).attr('text-anchor', narrow ? 'start' : 'end').attr('class', 'strong').text(r.n);
       s.append('g').selectAll('line').data(r.all).join('line').attr('x1', (v) => x(v)).attr('x2', (v) => x(v)).attr('y1', y - 7).attr('y2', y + 7).attr('stroke', SOFT).attr('stroke-opacity', 0.7);
       if (r.e != null) { s.append('line').attr('x1', x(r.e)).attr('x2', x(r.v)).attr('y1', y).attr('y2', y).attr('stroke', col).attr('stroke-width', 3); s.append('line').attr('x1', x(r.e)).attr('x2', x(r.e)).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', MUTED).attr('stroke-width', 3); }
@@ -285,7 +293,8 @@
     document.querySelectorAll('#gx-phase button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === phase)));
     document.querySelectorAll('#gx-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === meas)));
     document.querySelectorAll('#gx-view button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
-    const p = new URLSearchParams({k: kind, id}); if (phase) p.set('phase', phase); if (meas !== 'abs') p.set('m', meas); if (view !== 'now') p.set('v', view); if (VS.length) p.set('vs', VS.map((o) => o.id).join(','));
+    document.querySelectorAll('#gx-pgs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.g === pgsel)));
+    const p = new URLSearchParams({k: kind, id}); if (phase) p.set('phase', phase); if (meas !== 'abs') p.set('m', meas); if (view !== 'now') p.set('v', view); if (pgOn()) p.set('g', pgsel); if (VS.length) p.set('vs', VS.map((o) => o.id).join(','));
     if (!random) history.replaceState(null, '', location.pathname + '?' + p.toString());
     head(); compare(); groups(); strip(); hist(); over(); table();
   }
@@ -316,7 +325,9 @@
       AXsearch($('gx-q2'), $('gx-list2'), (r) => { if (r.id === id || VS.some((o) => o.id === r.id) || VS.length >= 4) return; rec(kind, r.id).then((g) => { if (g) { VS.push({id: r.id, g}); random = false; draw(); } }); }, true, kind);
       const want = (q.get('vs') || '').split(',').filter((x) => x && x !== id).slice(0, 4);
       Promise.all(want.map((x) => rec(kind, x).then((g) => (g ? {id: x, g} : null)))).then((o) => { VS = o.filter(Boolean); if (VS.length) draw(); });
-      if (G.pg) d3.json('/attendance/data/pg.json').then((j) => { PGE = j; groups(); });
+      if (G.pg) { $('gx-pg-f').hidden = false; if (PGL[q.get('g')]) pgsel = q.get('g');
+        $('gx-pgs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { pgsel = b.dataset.g; draw(); } });
+        d3.json('/attendance/data/pg.json').then((j) => { PGE = j; draw(); }); }
       $('gx-body').hidden = false; draw();
       let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } });
     });

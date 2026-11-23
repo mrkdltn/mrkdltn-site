@@ -166,13 +166,32 @@
     t.addEventListener('keydown', (e) => { const c = e.key; if (c === 'ArrowRight' || c === 'ArrowLeft' || c === 'Home' || c === 'End') { e.preventDefault();
       showTab(tabs[c === 'Home' ? 0 : c === 'End' ? tabs.length - 1 : (k + (c === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length], true); } }); });
 
+  // severe absence (half or more of sessions missed), England by phase: pooled from schools, never shown for one school
+  function severe() {
+    const el = $('px-sev'), yrs = years(); el.innerHTML = '';
+    const get = (ph, p) => { const v = B.bench.E[ph] && B.bench.E[ph][p]; return v && v[4] != null ? v[4] : null; };
+    const W = width(el), H = Math.round(Math.min(380, Math.max(240, W * 0.44))), m = {t: 14, r: W < 560 ? 16 : 150, b: 30, l: 42}, s = svg(el, W, H, 'Severe absence by school year');
+    const phs = ['P', 'S', 'X'], all = phs.flatMap((ph) => yrs.map((p) => get(ph, p))).filter((v) => v != null);
+    const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([0, d3.max(all) * 1.06], [H - m.b, m.t]).nice(5);
+    axes(s, x, y, W, H, m, yrs);
+    const line = d3.line().defined((d) => d.v != null).x((d) => x(d.p)).y((d) => y(d.v));
+    phs.slice().sort((a, b) => (a === phase) - (b === phase)).forEach((ph) => { const d = yrs.map((p) => ({p, v: get(ph, p)})), on = ph === phase;
+      s.append('path').attr('d', line(d)).attr('fill', 'none').attr('stroke', on ? INK : SOFT).attr('stroke-width', on ? 3 : 2).attr('stroke-linejoin', 'round');
+      tipOn(s.append('g').selectAll('circle').data(d.filter((k) => k.v != null)).join('circle').attr('cx', (k) => x(k.p)).attr('cy', (k) => y(k.v)).attr('r', on ? 3.5 : 8).attr('fill', on ? INK : 'transparent'), (k) => `<b>${PH[ph].replace(/^./, (c) => c.toUpperCase())}</b><br>${ay(k.p)}: severe absence ${pc(k.v)}`);
+      const last = d.filter((k) => k.v != null).pop(); if (W >= 560 && last) s.append('text').attr('x', x(last.p) + 12).attr('y', y(last.v) + 4).attr('class', on ? 'strong' : null).text(PH[ph].replace(/^./, (c) => c.toUpperCase()).replace(' schools', '') + ' ' + pc(last.v)); });
+    key(el, [`<i class="ln" style="border-color:${INK}"></i>${PH[phase].replace(/^./, (c) => c.toUpperCase())}`, `<i class="ln" style="border-color:${SOFT}"></i>The other phases`]);
+    const a = get(phase, '2018'), last = P.fy[P.fy.length - 1], b = get(phase, last);
+    $('px-sev-h').textContent = a && b && b >= 2 * a ? 'Severe absence has more than doubled since 2018/19' : 'Severe absence, year by year';
+    $('px-sev-r').innerHTML = a == null || b == null ? '' : `In ${ay(last)}, <b>${pc(b)}</b> of pupils in ${PH[phase]} missed half or more of their sessions. In 2018/19 it was <b>${pc(a)}</b>, so the share is ${(b / a).toFixed(1)} times what it was.`;
+  }
+
   let token = 0;
   function draw() {
     document.querySelectorAll('#px-phase button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === phase)));
     document.querySelectorAll('#px-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === meas)));
     const q = new URLSearchParams(); if (phase !== 'S') q.set('phase', phase); if (meas !== 'abs') q.set('m', meas); if (xf !== 'fsm') q.set('x', xf); if (rview !== 'now') q.set('rv', rview);
     history.replaceState(null, '', location.pathname + (q.toString() ? '#' + q : ''));
-    gradient(); spread(); regions(); model();
+    gradient(); spread(); regions(); severe(); model();
     const t = ++token; getDist(phase).then((D) => { if (t === token) scatter(D); });
   }
 

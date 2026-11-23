@@ -468,7 +468,8 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
         if kind == 'y':
             rec['pg'] = pg_pool([pg[la] for la in {meta[u]['la'] for u in us} if la in pg])
         if kind in 'ay' and rec.get('pg'):
-            row['pg'] = {ph: {g: ps.get(latest) for g, ps in gs.items() if ps.get(latest)} for ph, gs in rec['pg'].items()}
+            # per group: the newest two terms, the same two terms a year earlier, and those of 2018/19, for maps and change by pupil group
+            row['pg'] = {ph: {g: [ps.get(latest), ps.get(prev_as), ps.get(base + 'AS')] for g, ps in gs.items() if ps.get(latest)} for ph, gs in rec['pg'].items()}
         if kind == 'y':
             rec['las'] = [[la, (la_names or {}).get(la, la), {ph: (bench[la].get(ph, {}).get(latest) if bench and la in bench else None) for ph in 'PSX'}]
                           for la in sorted({meta[u]['la'] for u in us}, key=lambda c: (la_names or {}).get(c, c))]

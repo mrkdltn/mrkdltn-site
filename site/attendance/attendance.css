@@ -160,3 +160,13 @@ body.explorer{background:#ECE9E1}
 .ax-places-cmp a{color:var(--ink)}
 @media (max-width:480px){.ax-hero-in{padding:10px 16px 22px}.ax-hero .ax-top{margin:18px 0 0}.ax-hero .ax-lede{font-size:17px}.ax-secnav .in{padding:0 16px}.ax-kinds a{padding:8px 10px}.ax-top{margin:0}}
 @media print{.ax-secnav{display:none}}
+
+/* method tabs (chrome.js), matching the Ofsted Explorer's method section */
+.ax-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--ink);margin:12px 0 16px}
+.ax-tabs::-webkit-scrollbar{display:none}
+.ax-tabs button{flex:none;font:inherit;font-size:15px;min-height:44px;padding:0 14px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted);cursor:pointer;white-space:nowrap}
+.ax-tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:#C9A24B}
+.ax-tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.ax-panel p:first-child{margin-top:0}
+.ax-method .ax-panel p{font-size:15px;max-width:80ch}
+@media print{.ax-tabs{display:none}.ax-panel[hidden]{display:block!important}.ax-panel::before{content:attr(data-title);display:block;font-weight:600;margin:14px 0 4px}}

@@ -171,11 +171,23 @@
     $('sx-q2').disabled = vs.length >= 4; $('sx-q2').placeholder = vs.length >= 4 ? 'Four schools added' : 'Add a school';
   }
 
+  // side by side: this school, any added, its local authority and England, set out as on area and trust pages
+  function side(others) {
+    const L = B.latest, P1 = B.periods.filter((p) => p.endsWith('AS') && p < L).pop(), d = (a, b) => (a == null || b == null ? null : a - b), sg = (v) => { const t = Math.round(v / 10); return (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 10).toFixed(1); };
+    const sch = (name, h, col, me) => { const g = (p, i) => (h && h[p] ? h[p][i] : null); return {name, col, me, abs: g(L, 1), pa: g(L, 3), yr: d(g(L, 1), g(P1, 1)), yrp: d(g(L, 3), g(P1, 3)), base: d(g(B.fy_last, 1), g(B.base, 1))}; };
+    const grp = (name, a) => { const g = (p, i) => (bench(a, S.ph, p) || [])[i]; return {name, col: MUTED, ref: true, abs: g(L, 0), pa: g(L, 2), yr: d(g(L, 0), g(P1, 0)), yrp: d(g(L, 2), g(P1, 2)), base: d(g(B.fy_last, 0), g(B.base, 0))}; };
+    const rows = [sch(S.n, S.h, INK, true)].concat(others.map((o, i) => sch(o.s.n, o.s.h, OTHERS[i % 4]))).concat([grp((B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], S.la), grp('England ' + PH[S.ph], 'E')]);
+    const e = rows[rows.length - 1], cell = (v, ref, f, r) => (v == null ? '<td class="n">–</td>' : `<td class="n">${f(v)}</td>`);      // no green or rust on a named school's figures (Mark, 23 November)
+    $('sx-cmp-s').textContent = `The first two columns are the autumn and spring terms ${ay(L)}; “in a year” compares them with the same two terms a year earlier; “since 2018/19” compares full years ${ay(B.base)} and ${ay(B.fy_last)}.`;
+    $('sx-cmp').innerHTML = '<thead><tr><th>School</th><th class="n">Overall absence</th><th class="n">Persistent absence</th><th class="n">Overall, in a year</th><th class="n">Persistent, in a year</th><th class="n">Overall, since 2018/19</th></tr></thead><tbody>' + rows.map((r) =>
+      `<tr><td><i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, e.abs, pc, r)}${cell(r.pa, e.pa, pc, r)}${cell(r.yr, e.yr, sg, r)}${cell(r.yrp, e.yrp, sg, r)}${cell(r.base, e.base, sg, r)}</tr>`).join('') + '</tbody>';
+  }
+
   let token = 0;
   function draw() {
     const t = ++token;
     Promise.all(vs.map((u) => school(u).then((s) => (s ? {u, s} : null)))).then((o) => { if (t !== token) return; const others = o.filter(Boolean);
-      head(); readings(); position(); history(others); changed(); chips(others); });
+      head(); side(others); readings(); position(); history(others); changed(); chips(others); });
   }
   function go() { random = false; const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); draw(); }
   function open(u, push) {
