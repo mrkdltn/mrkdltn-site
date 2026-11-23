@@ -167,3 +167,5 @@ html:not(.js) .bds{display:none}
 @media(max-width:1100px) and (orientation:landscape){.hero-cards .pc{width:min(420px,calc(36% / .92))}}
 @media(orientation:portrait){.hero-cards .pc.explorer{margin-top:14px}.hero-cards .ex-row{flex-direction:column}}
 @media(orientation:portrait) and (min-width:700px){.stop .pc{margin:-240px 0 0 44px;width:min(620px,74%);max-width:none}.hero-cards .pc.intro,.hero-cards .pc.explorer{margin-top:-200px}.hero-cards{align-items:start}}
+/* Phone portrait: the role line fell on the roofline, and the intro card's first sentence already says it; headline keeps to clear sky without an orphaned last word */
+@media(orientation:portrait) and (max-width:699px){.hero .role{display:none}.hero h1{max-width:none;text-wrap:balance}}
