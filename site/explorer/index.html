@@ -130,6 +130,7 @@ html.loaded .oe-loading{display:none}
       </div>
       <button class="oe-btn" id="oe-random" type="button" aria-label="Show me another school"><span class="oe-long">Show me another school</span><span class="oe-short" aria-hidden="true">Another</span></button>
     </div>
+    <p class="oe-alt"><a href="/explorer/explore/">Or start from a measure: every secondary school on one chart</a> &middot; <a href="/explorer/compare/">compare two or three schools</a></p>
     <p class="oe-hint">Opens on a school chosen at random. <span class="oe-fresh" hidden></span> <span class="oe-loading">Loading schools…</span></p>
   </div>
 </div>
@@ -137,10 +138,13 @@ html.loaded .oe-loading{display:none}
 <main class="oe-main"><div class="oe">
 <p class="print-only oe-printhead"><b>Ofsted Explorer</b> school profile · <span id="oe-printdate"></span></p>
 <section id="school" class="oe-card" data-source="school">
-  <div class="oe-schoolhead"><div><p class="oe-school" data-draw="sname">—</p><p class="oe-meta" data-draw="smeta">—</p></div>
-    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-slide" title="A 1920×1080 image (16:9) for PowerPoint, Keynote or Google Slides">Slide (PNG)</button><button type="button" class="oe-btn" id="oe-copy">Copy link</button></div></div>
+  <div class="oe-schoolhead"><div><p class="oe-school" data-draw="sname" role="heading" aria-level="2">—</p><p class="oe-meta" data-draw="smeta">—</p></div>
+    <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-slide" title="A 1920×1080 image (16:9) for PowerPoint, Keynote or Google Slides">Slide (PNG)</button><a class="oe-btn" id="oe-cmp" href="/explorer/compare/">Compare</a><button type="button" class="oe-btn" id="oe-copy" title="A link to this school and view; on a phone, opens the share menu">Share this view</button></div></div>
   <div class="oe-kpis" data-draw="kpis"></div>
   <div class="oe-story" data-draw="story" data-source="school neigh stats"></div>
+  <div class="oe-spinew"><h2>At a glance <span class="i" tabindex="0" data-tip="Each row is one results measure on its own scale. The grey bar is the spread across England's secondaries (5th to 95th percentile), with the middle half darker. The dark tick is England's average, the green tick the average of the 50 similar schools, the diamond this school. The reading against the similar schools is in colour only where the gap is larger than chance.">i</span></h2>
+    <p class="sub">Every results measure beside England and the 50 similar schools. Grey bar: the spread across England, middle half darker. Dark tick: England. Green tick: the 50 similar schools. Diamond: this school.</p>
+    <div class="oe-spine" data-draw="spine" data-source="school neigh"></div></div>
   <h2>Report card <span class="i" tabindex="0" data-tip="Ofsted's renewed framework (from November 2025) grades each evaluation area on five points: Exceptional, Strong standard, Expected standard, Needs attention and Urgent improvement. Safeguarding is Met or Not met. There is no overall grade.">i</span></h2>
   <div class="oe-grades" data-draw="sgrades"></div>
   <h2 class="oe-ks4h" style="margin-top:var(--cds-gap-lg)">Intake and context <span class="i" tabindex="0" data-tip="The public stand-ins for the factors in the DfE and Ofsted model. Prior attainment carries almost half the weight (0.46), then disadvantage (0.14). Hover over each for its weight and source.">i</span></h2>
@@ -183,6 +187,7 @@ html.loaded .oe-loading{display:none}
     <tbody data-draw="neigh"></tbody>
   </table></div>
   <p class="oe-nallp noprint"><button type="button" class="oe-btn" id="oe-nall" aria-controls="oe-ntable" aria-expanded="false" hidden>Show all 50</button></p>
+  <p class="oe-slidebtn noprint"><button type="button" class="oe-btn" id="oe-csv">Download CSV</button><span>This school and its 50 similar schools, every column. <a href="/explorer/data/">Get the data</a> has the full files and what each column means.</span></p>
 </section>
 <section id="map" class="oe-card">
   <h2>Where the similar schools are <span class="i" tabindex="0" data-tip="Locations come from school postcodes. Drag to move, use the buttons to zoom. Hover over a dot for the school, click to open it.">i</span></h2>
@@ -354,7 +359,7 @@ html.loaded .oe-loading{display:none}
     <p class="lead">If you use the Explorer in a report, a paper or a presentation, please cite it like this.</p>
     <p class="oe-cite" id="oe-cite">Dalton, M. (2026) <i>Ofsted Explorer</i>. Available at: https://mrkdltn.com/explorer/</p>
     <p><button type="button" class="oe-btn ghost" id="oe-cite-copy">Copy citation</button></p>
-    <p>Every change is listed, with dates, on <a href="/explorer/updates/">What&rsquo;s new in the Ofsted Explorer</a>.</p>
+    <p>Every change is listed, with dates, on <a href="/explorer/updates/">What&rsquo;s new in the Ofsted Explorer</a>. The data itself, with a dictionary of every column, its sources and checksums, is on <a href="/explorer/data/">Get the data</a>. How accessible the Explorer is, and its known problems, are on <a href="/explorer/accessibility/">Accessibility</a>.</p>
   </div>
 </section>
 <section id="feedback" class="oe-card oe-fb noprint">
@@ -372,7 +377,7 @@ html.loaded .oe-loading{display:none}
     <div class="oe-fbrow oe-fbhp" aria-hidden="true"><label for="oe-fb-web">Leave this empty</label><input id="oe-fb-web" name="website" tabindex="-1" autocomplete="off"></div>
     <div class="oe-fbrow">
       <label class="oe-fbchk"><input type="checkbox" id="oe-fb-consent"> I&rsquo;d like a reply. Keep my email address for that.</label>
-      <input type="email" id="oe-fb-email" name="email" placeholder="Email address (optional)" autocomplete="email" disabled>
+      <input type="email" id="oe-fb-email" name="email" placeholder="Email address (optional)" aria-label="Email address, optional, only if you would like a reply" autocomplete="email" disabled>
     </div>
     <p class="oe-fbnote">Messages are stored privately on this site&rsquo;s hosting and read only by Mark Dalton, to improve the Explorer. The page and school you were viewing are attached. Your email, if you give it, is used only to reply and is deleted within 12 months. Please do not include details about individual pupils or staff.</p>
     <p class="oe-fbact"><button type="submit" class="oe-btn primary">Send</button> <span id="oe-fb-status" role="status" aria-live="polite"></span></p>
@@ -387,12 +392,16 @@ html.loaded .oe-loading{display:none}
 </div></footer>
 <script src="/assets/d3.min.js"></script>
 <script src="/explorer/dash.js"></script>
+<script src="/explorer/share.js"></script>
 <script src="/explorer/sources.js"></script>
 <script src="/explorer/app.js"></script>
 <script src="/explorer/extra.js"></script>
 <script src="/explorer/slide.js"></script>
 <script src="/explorer/method.js"></script>
 <script src="/explorer/feedback.js"></script>
+<script src="/explorer/spine.js"></script>
+<script src="/explorer/exhibit.js"></script>
+<script src="/explorer/exhibits.js"></script>
 <script src="/explorer/start.js"></script>
 </body>
 </html>

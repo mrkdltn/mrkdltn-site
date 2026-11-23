@@ -10,6 +10,8 @@
   const sources = {}, calcs = {}, draws = {}, models = new Map(), onDataFns = [];
   let state = {}, cache = {}, loaded = false, defaults = {};
   let fresh = false, resizing = false, shown = null, rid = 0;
+  // view settings kept in the address; a page can add its own (dash.keep)
+  const KEEP = ['urn', 'x', 'area', 'phase', 'area2', 'meas'];
   const still = (on) => document.documentElement.classList.toggle('oe-still', on);
 
   const readHash = () => {
@@ -20,7 +22,7 @@
   // The school picked at random on /explorer/ stays in the hash, so the landing address is unchanged until someone chooses.
   const schoolPath = /^\/explorer\/school\/\d+\/?$/;
   const writeHash = () => {
-    const keep = {}; ['urn', 'x', 'area', 'phase', 'area2', 'meas'].forEach((k) => { if (state[k] && state[k] !== defaults[k]) keep[k] = state[k]; });
+    const keep = {}; KEEP.forEach((k) => { if (state[k] && state[k] !== defaults[k]) keep[k] = state[k]; });
     const usePath = state.urn && (schoolPath.test(location.pathname) || String(state.urn) !== String(window.OE_RANDOM || ''));
     if (usePath) delete keep.urn;
     const s = new URLSearchParams(keep).toString();
@@ -100,13 +102,14 @@
       render(changed.every((k) => k === 'q') ? ['results'] : null);
     },
     onData: (f) => { onDataFns.push(f); },
+    keep: (ks) => { ks.forEach((k) => { if (!KEEP.includes(k)) KEEP.push(k); }); },
     start: (defs) => {
       // a school page names its school in <meta name="oe-urn"> (no inline script, for the CSP)
       const urnMeta = document.querySelector('meta[name="oe-urn"]');
       defaults = defs || {}; state = Object.assign({}, defaults, urnMeta ? {urn: urnMeta.content} : {}, readHash());
-      window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
+      window.addEventListener('hashchange', () => { if (!location.hash.includes('=')) return; /* a jump link such as #main is not a view */ const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
         // other view settings in the address (measure, chart options) also apply when only they change
-        const ch = {}; ['x', 'area', 'phase', 'area2', 'meas'].forEach((k) => { const v = h[k] || defaults[k]; if (v !== undefined && v !== state[k]) ch[k] = v; }); if (Object.keys(ch).length) window.dash.setParams(ch); });
+        const ch = {}; KEEP.filter((k) => k !== 'urn').forEach((k) => { const v = k in h ? h[k] : (defaults[k] ?? null); if ((v ?? null) !== (state[k] ?? null)) ch[k] = v; /* a key taken out of the address clears it */ }); if (Object.keys(ch).length) window.dash.setParams(ch); });
       let t, lastW = window.innerWidth;
       window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { const w = window.innerWidth; if (w === lastW) return; lastW = w; render(null, 'resize'); }, 200); });
       render();

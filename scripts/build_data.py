@@ -35,11 +35,10 @@ NN_SHARDS = 32
 
 
 def sha(path):
-    h = hashlib.sha256()
+    """SHA-256 of an input file with line endings normalised to LF, so a Windows checkout (CRLF) gives the same
+    checksum as Linux and Cloudflare (LF); on an LF file this is the plain sha256sum."""
     with open(path, 'rb') as f:
-        for b in iter(lambda: f.read(1 << 16), b''):
-            h.update(b)
-    return h.hexdigest()
+        return hashlib.sha256(f.read().replace(b'\r\n', b'\n')).hexdigest()
 
 
 def num(v):
@@ -160,6 +159,7 @@ def write_model(ks4):
              'em5': {'form': 'logit', 'coef': b_em}}
     with open(os.path.join(OUT, 'model.json'), 'w') as f:
         json.dump(model, f, separators=(',', ':'))
+    return model
 
 
 def main():
@@ -203,9 +203,13 @@ def main():
                     if c in k and c in r:
                         k[c] = r[c]
 
+    # --- no figures for groups under 10 (before anything is written) ---
+    import data_downloads
+    suppressed = data_downloads.suppress_small_groups(ks4)
+
     # --- English and maths at grade 5+ and 4+: similar-schools averages and a contextual expectation ---
     enrich_em(ks4)
-    write_model(ks4)
+    model = write_model(ks4)
 
     # --- ks4 ---
     cols = [c for c in ks4[0].keys() if c not in KS4_DROP]
@@ -255,12 +259,28 @@ def main():
             json.dump(obj, f, ensure_ascii=False, separators=(',', ':'))
 
     rc_dates = sorted(r['insp_date'] for r in rc if r.get('insp_date'))
+    downloads = data_downloads.write(ks4, rc, rcols, model, OUT)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    sources = {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path) if os.path.exists(p)}
+    # data version: build date plus a short fingerprint of the inputs, so two builds from the same inputs share it
+    fp = hashlib.sha256(''.join(f'{k}{v}' for k, v in sorted(sources.items())).encode()).hexdigest()[:8]
+    commit = os.environ.get('CF_PAGES_COMMIT_SHA', '')
+    if not commit:
+        try:
+            import subprocess
+            commit = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True, timeout=10).stdout.strip()
+        except Exception:
+            commit = ''
     meta = {
-        'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'built': now.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'version': now.strftime('%Y-%m-%d') + '-' + fp,
+        'commit': commit or None,
+        'small_groups_suppressed': suppressed,
         'secondaries': len(ks4), 'report_cards': len(rc), 'daily_reports_merged': daily_added,
         'latest_inspection': rc_dates[-1] if rc_dates else None,
         'latest_published': latest_published,
-        'sources': {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path) if os.path.exists(p)},
+        'sources': sources,
+        'downloads': downloads,
     }
     with open(os.path.join(OUT, 'build.json'), 'w') as f:
         json.dump(meta, f, indent=1)

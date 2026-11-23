@@ -21,10 +21,12 @@ const same = (a, b) => a === b || (a !== '' && b !== '' && !isNaN(+a) && !isNaN(
 // Every school in the monthly files must come through unchanged, except report-card fields that a newer
 // daily read has legitimately replaced.
 const GRADEISH = /^g_|^insp_date$/;
+// No figures for groups under 10: the build blanks these two where the group is estimated under 10 pupils.
+const small = (r, c) => (c === 'dis_a8' || c === 'nondis_a8') && (Math.round(+r.pupils * +r.dis_pct / 100) < 10 || Math.round(+r.pupils * (100 - +r.dis_pct) / 100) < 10);
 const cmp = (A, B, skip) => { let bad = 0; const ex = []; const cols = Object.keys(B[0]).filter(c => !skip.includes(c));
   const byUrn = new Map(A.map(r => [r.urn, r]));
   for (const b of B) { const a = byUrn.get(b.urn); if (!a) { bad++; continue; }
-    for (const c of cols) { if (daily.has(b.urn) && GRADEISH.test(c)) continue; if (!same(a[c] ?? '', b[c])) { bad++; if (ex.length < 5) ex.push([b.urn, c, a[c], b[c]]); } } }
+    for (const c of cols) { if (daily.has(b.urn) && GRADEISH.test(c)) continue; if (small(b, c) && (a[c] ?? '') === '') continue; if (!same(a[c] ?? '', b[c])) { bad++; if (ex.length < 5) ex.push([b.urn, c, a[c], b[c]]); } } }
   return {rows: A.length + '/' + B.length, cols: cols.length, daily: daily.size, mismatches: bad, ex}; };
 console.log('ks4', JSON.stringify(cmp(ks, old, ['nn', 'relig', 'ss_z', 'ss_dist', 'ss_mean_25'])));
 console.log('rc ', JSON.stringify(cmp(rc, oldrc, [])));

@@ -3,6 +3,7 @@ site/explorer/data/ks4.json
 site/explorer/data/rc.json
 site/explorer/data/nn/
 site/explorer/data/build.json
+site/explorer/data/csv/
 node_modules/
 __pycache__/
 site/explorer/school/
@@ -10,3 +11,5 @@ site/sitemap.xml
 site/feed.xml
 site/static/
 site/assets/cards/
+site/explorer/explore/*/
+site/explorer/explore/card.png

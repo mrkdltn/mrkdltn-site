@@ -64,7 +64,7 @@
   OE.ctxThr = (r, m) => { const base = OE.MEAS[m || 'a8'].thr, n = +(r && r.pupils); return n > 0 ? base * Math.sqrt(OE.medCohort() / n) : base; };
   // likely range around a gap (22 November 2026): the gap plus or minus the same half-width each reading already uses
   OE.PSD = 14.2; // pupil-level spread of Attainment 8, from 2023/24 Progress 8 confidence intervals
-  OE.rng = (g, h) => (isNaN(g) || isNaN(h) ? {} : {lo: Math.round((g - h) * 10) / 10 || 0, hi: Math.round((g + h) * 10) / 10 || 0});
+  OE.rng = (g, h) => (isNaN(g) || isNaN(h) ? {} : {lo: +(g - h).toFixed(1) || 0, hi: +(g + h).toFixed(1) || 0});
   OE.meas = () => { const m = String(dash.params().meas || 'a8'); return OE.MEAS[m] ? m : 'a8'; };
   OE.mfmt = (v, m) => (v === null || v === undefined || v === '' || isNaN(v) ? '—' : (+v).toFixed(1) + (OE.MEAS[m || OE.meas()].unit));
   OE.pickRandom = (rows) => { const pool = rows.filter((r) => r.g_ach && r.a8 !== null && r.a8 !== ''); const src = pool.length ? pool : rows; return src[Math.floor(Math.random() * src.length)]; };
@@ -86,13 +86,14 @@
   dash.calc('lenses', {inputs: ['ks4', 'national', 'official'], title: 'Four lenses on the selected school', description: 'Published attainment, similar schools (replica and official), contextual model and last Progress 8.',
     fn: (ks4, national, official) => {
       const u = String(dash.params().urn || ''); const r = ks4.find((x) => x.urn === u); if (!r) return [];
-      const rd = (v) => (v === null || isNaN(v) ? null : Math.round(v * 10) / 10);
+      const rd = (v) => (v === null || isNaN(v) ? null : +(+v).toFixed(1)); // halves away from zero, as the headline figures round
+      const natRead = (g, h) => (Math.abs(g) <= h ? 'Close to national' : g > 0 ? 'Above national' : 'Below national');
       const m = OE.meas();
       if (m !== 'a8') {
         const M = OE.MEAS[m], v = +r[m], ok2 = (x) => x !== null && x !== '' && !isNaN(+x);
         let s = 0, n = 0; ks4.forEach((x) => { const p = +x.pupils; if (ok2(x[m]) && p > 0) { s += +x[m] * p; n += p; } }); const nat = n ? s / n : null;
         const pp0 = Math.min(99, Math.max(1, v)), seN = Math.sqrt(pp0 * (100 - pp0) / Math.max(+r.pupils, 1));
-        const out = [Object.assign({lens: 'Published attainment', comparator_label: 'National average', school: rd(v), comparator: rd(nat), gap: rd(v - nat), reading: v - nat >= 0 ? 'Above national' : 'Below national', unit: M.unit, scale: M.scale}, OE.rng(v - nat, 1.96 * seN))];
+        const out = [Object.assign({lens: 'Published attainment', comparator_label: 'National average', school: rd(v), comparator: rd(nat), gap: rd(v - nat), reading: natRead(v - nat, 1.96 * seN), unit: M.unit, scale: M.scale}, OE.rng(v - nat, 1.96 * seN))];
         if (ok2(r[m + '_ss'])) { const g = v - +r[m + '_ss'], sd = +r[m + '_ssd'], pp = Math.min(99, Math.max(1, v)), se = Math.sqrt(pp * (100 - pp) / Math.max(+r.pupils, 1) + sd * sd / 50);
           const band = Math.abs(g) < 1.96 * se ? 'Close to' : (g > 0 ? (g > sd ? 'Well above' : 'Above') : (-g > sd ? 'Well below' : 'Below'));
           out.push(Object.assign({lens: 'Similar schools (open replica)', comparator_label: 'Average of 50 similar schools', school: rd(v), comparator: rd(+r[m + '_ss']), gap: rd(g), reading: band, unit: M.unit, scale: M.scale}, OE.rng(g, 1.96 * se))); }
@@ -103,8 +104,10 @@
         return out;
       }
       const a8 = +r.a8;
+      // the same gap as the headline tile (nat_diff, from the unrounded national average), so the two ranges always agree
+      const gN = r.nat_diff !== '' && !isNaN(+r.nat_diff) ? +r.nat_diff : a8 - national, hN = 1.96 * OE.PSD / Math.sqrt(Math.max(+r.pupils, 1));
       const out = [
-        {lens: 'Published attainment', comparator_label: 'National average', school: rd(a8), comparator: national, gap: rd(a8 - national), reading: a8 - national >= 0 ? 'Above national' : 'Below national', ...OE.rng(a8 - national, 1.96 * OE.PSD / Math.sqrt(Math.max(+r.pupils, 1)))},
+        {lens: 'Published attainment', comparator_label: 'National average', school: rd(a8), comparator: national, gap: rd(gN), reading: natRead(gN, hN), ...OE.rng(gN, hN)},
         {lens: 'Similar schools (open replica)', comparator_label: 'Average of 50 similar schools', school: rd(a8), comparator: rd(+r.ss_mean), gap: rd(+r.ss_diff), reading: r.ss_band,
           prev: r.ss_band_25 && r.ss_diff_25 !== '' && r.ss_diff_25 !== null && !isNaN(+r.ss_diff_25) ? {year: '2024/25', reading: r.ss_band_25, gap: rd(+r.ss_diff_25)} : null,
           ...OE.rng(+r.ss_diff, 1.96 * Math.sqrt(OE.PSD * OE.PSD / Math.max(+r.pupils, 1) + (+r.ss_sd || 0) * (+r.ss_sd || 0) / 50))}
@@ -194,14 +197,14 @@
       li.append(n, a, mt); li.addEventListener('pointerdown', (e) => { e.preventDefault(); OE.choose(r.urn); }); ul.append(li); });
   });
 
-  dash.draw('sname', (el) => { const r = S(); if (!r) return dash_(el); el.textContent = r.name; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only);
+  dash.draw('sname', (el) => { const r = S(); if (!r) return el.dataset.pre ? null : dash_(el); if (el.textContent !== r.name) el.textContent = r.name; delete el.dataset.pre; mark(el, 'school', 'name'); document.documentElement.classList.toggle('oe-rconly', !!r.rc_only);
     // secondary-results sections only make sense for secondaries; other phases keep the phase-specific deprivation chart
     const nonsec = (r.phase || 'Secondary') !== 'Secondary'; document.documentElement.classList.toggle('oe-nonsec', nonsec);
     const ms = document.getElementById('oe-more-s'); if (ms) ms.textContent = nonsec ? 'How ' + (PHL[r.phase] || 'schools') + ' across England are graded in each area, by pupils\' deprivation' : 'Every secondary on one chart, report card grades by deprivation, and how the replica checks out';
     if (OE._phaseFor !== r.urn) { OE._phaseFor = r.urn; const ph = r.phase || 'Secondary'; if (P().phase !== ph) setTimeout(() => dash.setParams({phase: ph}), 0); } if (/^\/explorer\/school\//.test(location.pathname)) document.title = r.name + ' · Ofsted Explorer'; });
   // the school's details, with the URN linked to its official DfE record and the inspection to its Ofsted page
   const OFSTED_TYPE = {Nursery: 20, Primary: 21, 'Alternative provision': 22, Secondary: 23, Special: 25};
-  dash.draw('smeta', (el) => { const r = S(); if (!r) return dash_(el);
+  dash.draw('smeta', (el) => { const r = S(); if (!r) return el.dataset.pre ? null : dash_(el); delete el.dataset.pre;
     const date = r.insp_date ? d3.utcFormat('%-d %B %Y')(new Date(r.insp_date)) : '';
     const parts = r.rc_only
       ? [r.phase, r.town && r.town !== r.la && r.town !== 'London' ? r.town : '', r.la, r.region, r.postcode, r.mat ? r.mat : '']
@@ -212,20 +215,25 @@
     items.push(link('URN ' + r.urn, 'https://get-information-schools.service.gov.uk/Establishments/Establishment/Details/' + r.urn, 'This school\'s official record on the DfE\'s Get Information about Schools (opens in a new tab)'));
     items.push(date ? link('Inspected ' + date, ofsted, 'This school\'s inspection reports on the Ofsted website (opens in a new tab)')
       : link('No report card inspection yet', ofsted, 'This school\'s earlier inspection reports on the Ofsted website (opens in a new tab)'));
-    el.replaceChildren(); items.forEach((n, k) => { if (k) el.append(' · '); el.append(n); }); });
+    const tmp = document.createElement('p'); items.forEach((n, k) => { if (k) tmp.append(' · '); tmp.append(n); }); if (tmp.innerHTML !== el.innerHTML) el.replaceChildren(...tmp.childNodes); });  // the same as the pre-rendered line: left as it is
 
   dash.draw('kpis', (el) => { const r = S(); el.replaceChildren(); if (!r || r.rc_only) return;
     const nat = dash.data('national').data;
+    // cohort size and likely ranges (benchmarks item 3): the same margins as the four readings
+    const n = +r.pupils, h = (v) => (isNaN(v) ? NaN : v), rg = (g, hw) => { const R = OE.rng(g, hw); if (R.lo === undefined) return ''; const z = (v) => (v === 0 ? '0.0' : fs(v)); return 'likely ' + z(R.lo) + ' to ' + z(R.hi); };
+    const hNat = n > 0 ? 1.96 * OE.PSD / Math.sqrt(n) : NaN, hSS = n > 0 ? 1.96 * Math.sqrt(OE.PSD * OE.PSD / n + (+r.ss_sd || 0) ** 2 / 50) : NaN, hCtx = OE.ctxThr(r, 'a8');
     const tiles = [
-      ['Attainment 8, 2025/26', +r.a8, f1, 'a8', isNaN(num(r.a8_25)) ? '' : '2024/25: ' + f1(+r.a8_25), 'Provisional 2025/26 result. The smaller figure is last year\'s final result for comparison.'],
-      ['Gap to national', +r.nat_diff, fs, 'nat_diff', nat ? 'National average ' + f1(nat) : '', 'School minus the national average. Mostly reflects intake.'],
-      ['Gap to similar schools', +r.ss_diff, fs, 'ss_diff', r.ss_band ? r.ss_band + ' (replica)' : '', 'School minus the average of its 50 similar schools in the open replica.'],
-      ['Gap to contextual model', +r.cva_res, fs, 'cva_res', 'Expected ' + f1(+r.cva_exp), 'School minus what schools with this intake typically achieve, from one national regression.']
+      ['Attainment 8, 2025/26', +r.a8, f1, 'a8', (n > 0 ? d3.format(',')(Math.round(n)) + ' pupils' : '') + (isNaN(num(r.a8_25)) ? '' : (n > 0 ? ' · ' : '') + '2024/25: ' + f1(+r.a8_25)), 'Provisional 2025/26 result for a GCSE year group of ' + (n > 0 ? d3.format(',')(Math.round(n)) + ' pupils' : 'unknown size') + '. Smaller year groups move more from year to year. The smaller figure is last year\'s final result.'],
+      ['Gap to national', +r.nat_diff, fs, 'nat_diff', nat ? 'National average ' + f1(nat) : '', 'School minus the national average. Mostly reflects intake. The likely range allows for chance variation in one year\'s pupils (95%).', rg(+r.nat_diff, h(hNat))],
+      ['Gap to similar schools', +r.ss_diff, fs, 'ss_diff', r.ss_band ? r.ss_band + ' (replica)' : '', 'School minus the average of its 50 similar schools in the open replica. The likely range is the margin the reading uses: 1.96 standard errors (95%).', rg(+r.ss_diff, h(hSS))],
+      ['Gap to contextual model', +r.cva_res, fs, 'cva_res', 'Expected ' + f1(+r.cva_exp), 'School minus what schools with this intake typically achieve, from one national regression. The likely range is the in-line band for a cohort of this size.', rg(+r.cva_res, h(hCtx))]
     ];
-    tiles.forEach(([lab, v, fmt, field, sm, tip]) => { const d = document.createElement('div'); d.className = 'oe-kpi rise'; d.setAttribute('data-tip', tip); d.tabIndex = 0;
+    tiles.forEach(([lab, v, fmt, field, sm, tip, rng]) => { const d = document.createElement('div'); d.className = 'oe-kpi rise'; d.setAttribute('data-tip', tip); d.tabIndex = 0;
       const s = document.createElement('span'); s.textContent = lab; const b = document.createElement('b'); mark(b, 'school', field);
       if (field !== 'a8' && !isNaN(v)) b.style.color = v >= 0 ? '#2F6F66' : '#A3402B';
-      const small = document.createElement('small'); small.textContent = sm; d.append(s, b, small); el.append(d); countUp(b, v, fmt); }); });
+      const small = document.createElement('small'); small.textContent = sm; d.append(s, b, small);
+      if (rng) { const rs = document.createElement('small'); rs.className = 'oe-krng'; rs.textContent = rng; d.append(rs); }
+      el.append(d); countUp(b, v, fmt); }); });
 
   dash.draw('sgrades', (el) => { const r = S(); el.replaceChildren(); if (!r) return;
     AREAS.forEach(([k, lab]) => { const v = r[k]; if (!v || v === 'Not applicable') return; const d = document.createElement('div'); d.className = 'oe-g rise' + (v === 'Expected standard' || v === 'Met' ? ' dark' : '');
@@ -284,14 +292,14 @@
       const fin = () => { fill.style.left = (g >= 0 ? 50 : 50 - w) + '%'; fill.style.width = w + '%'; };
       if (animate) { fill.style.left = '50%'; fill.style.width = '0%'; } else fin();
       const td = document.createElement('td'); const sp = document.createElement('span'); sp.className = 'oe-band'; sp.textContent = r.reading;
-      sp.style.background = BANDC[r.reading] || BANDC[String(r.reading).replace(' average', '')] || (/well above/i.test(r.reading) ? '#1E544D' : /above/i.test(r.reading) ? '#2F6F66' : /well below/i.test(r.reading) ? '#7A2617' : /below/i.test(r.reading) ? '#A3402B' : '#55627A'); td.append(sp);
+      sp.style.background = BANDC[r.reading] || BANDC[String(r.reading).replace(/ (average|national)$/, '')] || (/well above/i.test(r.reading) ? '#1E544D' : /above/i.test(r.reading) ? '#2F6F66' : /well below/i.test(r.reading) ? '#7A2617' : /below/i.test(r.reading) ? '#A3402B' : '#55627A'); td.append(sp);
       if (r.prev) { const pv = document.createElement('small'); pv.className = 'oe-prev'; pv.textContent = r.prev.year + ': ' + r.prev.reading + ', ' + gfmt(r.prev.gap); td.append(pv); }
       tr.append(td); tb.append(tr);
       if (animate) requestAnimationFrame(() => requestAnimationFrame(fin)); }); });
 
   dash.draw('strip', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip); return {tip}; },
     update: (el, m) => { const r = S(), n = dash.data('neigh'); el.querySelectorAll('svg').forEach((s) => s.remove()); if (!r || n.status !== 'ok' || !n.data.length) return;
-      const mf = OE.meas(), MS = OE.MEAS[mf]; const ss = document.getElementById('oe-ssub'); if (ss) ss.textContent = MS.label + ', 2025/26. The shaded band is the middle half of the 50; dots are spread vertically only so they do not overlap.'; const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x[mf]).filter((v) => !isNaN(v)).concat([+r[mf]]);
+      const mf = OE.meas(), MS = OE.MEAS[mf]; const ss = document.getElementById('oe-ssub'); if (ss) ss.textContent = MS.label + ', 2025/26. The shaded band is the middle half of the 50; the bracket through the diamond is the likely range of this school\'s gap to the group (95%). Dots are spread vertically only so they do not overlap.'; const W = el.clientWidth || 600, H = 120, M = {l: 16, r: 16, b: 26}; const vals = n.data.map((x) => +x[mf]).filter((v) => !isNaN(v)).concat([+r[mf]]);
       const x = d3.scaleLinear().domain(d3.extent(vals)).nice().range([M.l, W - M.r]); const mean = mf === 'a8' ? +r.ss_mean : +r[mf + '_ss'];
       const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', MS.label + ' of the 50 similar schools with the selected school marked');
       svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${H - M.b})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor(W / 90))));
@@ -305,6 +313,13 @@
       const animate = motion();
       if (animate) dots.attr('cx', x(mean)).style('opacity', 0).transition().duration(650).delay((d, i) => i * 10).ease(d3.easeCubicOut).attr('cx', (d) => x(+d[mf])).style('opacity', 1);
       else dots.attr('cx', (d) => x(+d[mf]));
+      // likely range of this school's gap to the group (the same range as the similar-schools row in the four readings)
+      { const L = dash.data('lenses'); const row = L.status === 'ok' && L.data ? L.data.find((v) => /open replica/.test(v.lens)) : null;
+        if (row && row.lo !== undefined && row.lo !== null) { const cl = (v) => Math.max(M.l, Math.min(W - M.r, v)); const x1 = cl(x(mean + row.lo)), x2 = cl(x(mean + row.hi));
+          const br = svg.append('g').attr('class', 'oe-srng').attr('aria-hidden', 'true').style('opacity', animate ? 0 : 0.6);
+          br.append('line').attr('x1', x1).attr('x2', x2).attr('y1', 58).attr('y2', 58).style('stroke', '#0B1A2E').style('stroke-width', 1.5);
+          [x1, x2].forEach((xx) => br.append('line').attr('x1', xx).attr('x2', xx).attr('y1', 52).attr('y2', 64).style('stroke', '#0B1A2E').style('stroke-width', 1.5));
+          if (animate) br.transition().delay(1000).duration(400).style('opacity', 0.6); } }
       const sx = x(+r[mf]); const dia = svg.append('path').attr('d', d3.symbol(d3.symbolDiamond, 170)()).style('fill', '#0B1A2E').style('stroke', 'var(--color-bg)').style('stroke-width', 2);
       if (animate) dia.attr('transform', `translate(${x(mean)},58) scale(0.2)`).transition().delay(500).duration(600).ease(d3.easeBackOut).attr('transform', `translate(${sx},58) scale(1)`); else dia.attr('transform', `translate(${sx},58)`);
       svg.append('text').attr('x', sx).attr('y', 100 - 4).attr('text-anchor', sx > W - 80 ? 'end' : (sx < 80 ? 'start' : 'middle')).style('font-size', '12px').style('font-weight', 600).style('fill', '#0B1A2E').style('paint-order', 'stroke').style('stroke', 'var(--color-bg)').style('stroke-width', 4).text('This school ' + OE.mfmt(r[mf], mf));
@@ -395,7 +410,14 @@
     const p0 = d3.format('.0f');
     const DL = (q, c) => 'Same disadvantaged fifth: ' + (q === 1 ? 'least (under ' + p0(c[0]) + '%)' : q === 5 ? 'most (over ' + p0(c[3]) + '%)' : q + ' of 5 (' + p0(c[q - 2]) + '–' + p0(c[q - 1]) + '%)');
     // one area at a time: a picker shows every graded area with the school's grade colour
+    const groupsOf = (a) => { const groups = [[PH(a.phase) + ' in England', a.england, '']];
+      groups.push([a.quintile ? QL(a.quintile) : 'Same IDACI fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
+      if (a.dis !== undefined) groups.push([a.disq ? DL(a.disq, a.discuts) : 'Same disadvantaged fifth', a.dis, a.disq ? '' : 'No disadvantaged figure published']);
+      if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
+      return groups; };
     const keys = d.data.map((a) => a.key); if (!keys.includes(OE.areaSel)) OE.areaSel = keys.includes('g_ach') ? 'g_ach' : keys[0];
+    // for the table view and downloads (exhibit.js): every area, and the one on screen
+    OE.xd = OE.xd || {}; OE.xd.areas = {sel: OE.areaSel, all: d.data.map((a) => ({key: a.key, area: a.area, grade: a.grade, groups: groupsOf(a).map(([gl, dist, why]) => ({gl, dist, why}))}))};
     const pick = document.createElement('div'); pick.className = 'oe-apick'; pick.setAttribute('role', 'group'); pick.setAttribute('aria-label', 'Report card area shown');
     d.data.forEach((a) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-pressed', String(a.key === OE.areaSel));
       const dot = document.createElement('i'); dot.style.background = GC[a.grade]; dot.title = a.grade; b.append(dot, a.area);
@@ -408,10 +430,7 @@
       const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; chip.style.color = OE.gradeInk(a.grade);
       h.append(lab, chip); row.append(h);
       const gs = document.createElement('div'); gs.className = 'gs';
-      const groups = [[PH(a.phase) + ' in England', a.england, '']];
-      groups.push([a.quintile ? QL(a.quintile) : 'Same IDACI fifth', a.fifth, a.quintile ? '' : 'Not yet published for this school']);
-      if (a.dis !== undefined) groups.push([a.disq ? DL(a.disq, a.discuts) : 'Same disadvantaged fifth', a.dis, a.disq ? '' : 'No disadvantaged figure published']);
-      if (a.similar) groups.push(['Its 50 similar schools', a.similar, '']);
+      const groups = groupsOf(a);
       groups.forEach(([gl, dist, why]) => {
         const g = document.createElement('div'); g.className = 'g';
         const top = document.createElement('div'); top.className = 'gt';

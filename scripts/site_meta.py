@@ -70,6 +70,12 @@ PAGES = [
     dict(file='explorer/index.html', image=EXPLORER_IMG),
     dict(file='explorer/areas/index.html', image=EXPLORER_IMG),
     dict(file='explorer/updates/index.html', image=EXPLORER_IMG),
+    dict(file='explorer/data/index.html', image=EXPLORER_IMG),
+    dict(file='explorer/accessibility/index.html', image=EXPLORER_IMG),
+    dict(file='explorer/compare/index.html', image=EXPLORER_IMG),
+    # Explore a measure draws its own image of the spread (build_explore_pages.py); its per-view pages copy this head
+    dict(file='explorer/explore/index.html', image=('/explorer/explore/card.png', 1200, 630,
+         'The spread of Attainment 8, 2025/26 across every secondary school in England')),
 ]
 
 SOCIAL = re.compile(r'[ \t]*(?:<meta (?:property|name)="(?:og:[^"]*|twitter:[^"]*|article:[^"]*)" content="[^"]*">'
@@ -82,7 +88,7 @@ PERSON_ID = ORIGIN + '/#person'
 FEED_TITLE = 'Mark Dalton: writing'
 FEED_LINK = f'<link rel="alternate" type="application/atom+xml" title="{FEED_TITLE}" href="/feed.xml">'
 # what the school pages are built from: their sitemap date is the latest change to any of these
-SCHOOL_SOURCES = ['data/raw', 'site/explorer/index.html', 'scripts/build_pages.py']
+SCHOOL_SOURCES = ['data/raw', 'site/explorer/index.html', 'scripts/build_pages.py', 'scripts/prerender.py']
 
 
 def e(s):
@@ -444,7 +450,10 @@ def write_sitemap():
             with open(os.path.join(SITE, rel), encoding='utf-8') as f:
                 if re.search(r'<meta name="robots" content="[^"]*noindex', f.read(8000)):
                     continue
-        d = school if is_school else dates.get('site/' + rel)
+        # Explore a measure's per-view pages are built from the data too (build_explore_pages.py): dated like the schools,
+        # or by their template if that changed later
+        built = re.match(r'explorer/explore/[^/]+/', rel) is not None
+        d = school if is_school else max(filter(None, [school, dates.get('site/explorer/explore/index.html')]), default=None) if built else dates.get('site/' + rel)
         if not d:
             undated.append(rel)
         n_school += is_school
