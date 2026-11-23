@@ -56,7 +56,7 @@
       t += '.';
       if (e) { const d = gap(now[1], e[0]); t += ` Across England’s ${PH[S.ph]} the figure was ${pc(e[0])}` + (d === 0 ? '.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
       t += ` <b>${pc(now[3])}</b> of pupils were persistently absent, missing a tenth or more of their sessions` + (e ? `; in England’s ${PH[S.ph]} it was ${pc(e[2])}.` : '.');
-      R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[1], was[1]), 'a year earlier') : '') + (e ? AXc.pill(gap(now[1], e[0]), 'England') : '') + (l ? AXc.pill(gap(now[1], l[0]), la) : '') + '</span>';
+      R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[1], was[1]), 'a year earlier', true) : '') + (e ? AXc.pill(gap(now[1], e[0]), 'England', true) : '') + (l ? AXc.pill(gap(now[1], l[0]), la, true) : '') + '</span>';
       const k = [['Overall absence', pc(now[1]), was ? 'a year earlier ' + pc(was[1]) : ''], ['Persistent absence', pc(now[3]), was ? 'a year earlier ' + pc(was[3]) : ''],
         ['Unauthorised absence', pc(now[2]), e ? 'England ' + pc(e[1]) : ''], [la + ' ' + PH[S.ph], l ? pc(l[0]) : '–', l ? 'persistent ' + pc(l[2]) : ''], ['England ' + PH[S.ph], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) : '']];
       K.innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${esc(x[0])}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');

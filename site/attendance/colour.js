@@ -13,8 +13,9 @@
     legend(mid, span, centre, fmt) { const f = fmt || pc; return `${f(mid - span)} or less<i class="ramp" style="background:linear-gradient(90deg,#1E544D,#E7EFEC 49%,#F6E9E4 51%,#7A2617)"></i>${f(mid + span)} or more · centred on ${centre} (${f(mid)})`; },
     gap(d) { return d < 0 ? AXc.VERD : d > 0 ? AXc.RUST : AXc.SLATE; },
     // a solid pill for a difference in tenths of a point: "0.7 lower than England"
-    pill(tenths, than) { const t = tenths === 0 ? 'the same as ' + than : (Math.abs(tenths) / 10).toFixed(1) + ' points ' + (tenths < 0 ? 'lower' : 'higher') + ' than ' + than;
-      return `<span class="ax-pill" style="background:${AXc.gap(tenths)}">${t}</span>`; },
+    // On a single school's page the pill is slate whatever the direction (Mark, 23 November 2026): colour there stays on the charts.
+    pill(tenths, than, plain) { const t = tenths === 0 ? 'the same as ' + than : (Math.abs(tenths) / 10).toFixed(1) + ' points ' + (tenths < 0 ? 'lower' : 'higher') + ' than ' + than;
+      return `<span class="ax-pill" style="background:${plain ? AXc.SLATE : AXc.gap(tenths)}">${t}</span>`; },
   };
   window.AXc = AXc;
 })();
