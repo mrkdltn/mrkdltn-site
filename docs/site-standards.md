@@ -47,6 +47,8 @@ Each has a test. Run the tests before any preview goes to Mark.
 
 Met 0 · Partly met 10 · Not met 6. Re-score monthly.
 
+Updated 23 November 2026 as each "Now" item ships: Met 1 · Partly met 9 · Not met 6.
+
 | # | Standard | Status | Evidence |
 | --- | --- | --- | --- |
 | 1 | Identity in the first screen | Partly | Wordmark only, no role line; intro and Explorer cards below the fold on desktop |
@@ -57,7 +59,7 @@ Met 0 · Partly met 10 · Not met 6. Re-score monthly.
 | 6 | Citable | Partly | Cite as partial; no BibTeX, CSV or licence on the site |
 | 7 | Corrections | Not met | No log |
 | 8 | Body of work | Not met | No theme or record pages |
-| 9 | Shares well | Partly | Usable share image on 2 of 8 pages; home has none; Progress 8 and Curriculum Review have none; belonging uses WebP |
+| 9 | Shares well | Met (23 Nov) | 23 Nov: every page but 404 has a 1200 × 630 JPG card and full OG and Twitter tags, articles with dates; `scripts/check_meta.py` passes on all 6,642 pages and fails the build otherwise. Post Inspector check is Mark's to run (needs his sign-in) |
 | 10 | Findable | Not met | No JSON-LD; `STATIC_PAGES` in `scripts/build_pages.py` omits `/writing/belonging/`; every `lastmod` is the build date |
 | 11 | Honest imagery | Partly | Grade grid drawn inside a generated classroom; no label near figures |
 | 12 | Text before motion | Not met | `.js .pc{opacity:0}` in `home.css`; phone intro invisible until scrolled |
