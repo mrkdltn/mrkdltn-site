@@ -367,3 +367,7 @@ i.nm{background:#55627A;width:2px}
    below start out of view and do not jump when it fills (layout shift) */
 html:not(.loaded) body.explorer #school{min-height:100vh;min-height:100svh}
 html:not(.loaded) body.explorer #school h2,html:not(.loaded) body.explorer #school .oe-actions{display:none}
+/* at a glance: spine chart (item 5) */
+.oe-spinew{margin:0 0 var(--cds-gap-lg)}
+.oe-spine svg{display:block;font-family:var(--font-anthropic-sans)}
+.oe-rconly .oe-spinew,.oe-spinew[hidden]{display:none!important}

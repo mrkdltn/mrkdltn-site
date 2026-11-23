@@ -104,6 +104,19 @@
         csvCols: ['urn', 'school', 'local_authority', 'region', 'miles', 'a8', 'achievement_grade', 'lat', 'lng'], csv: d.map(([x, m]) => [x.urn, x.name, x.la, x.region, +m.toFixed(1), x.a8, x.g_ach || '', x.lat, x.lng])}; },
     onChart: () => dash.draw('map')});
 
+  // ---------- at a glance: the spine chart (item 5) ----------
+  OE.exhibit({name: 'at-a-glance', host: q('[data-draw="spine"]'),
+    title: () => 'At a glance: every results measure beside England and the 50 similar schools',
+    key: () => 'Each row has its own scale. Grey bar: the spread across England’s secondaries (5th to 95th percentile), middle half darker. Dark tick: England average. Green tick: the 50 similar schools. Diamond: this school. The reading is in colour only where the gap is larger than chance.',
+    source: () => SRC_KS4 + ', with 2024/25 final results and 2023/24 Progress 8; ' + SRC_SIM + '.',
+    svg: () => liveSvg(q('[data-draw="spine"]')), onChart: () => dash.draw('spine'),
+    table: () => { const rows = OE.spineRows ? OE.spineRows() : []; if (!rows.length) return null;
+      return {caption: 'Each results measure for this school, its 50 similar schools and England', cols: ['Measure', 'This school', '50 similar schools', 'England average', 'England middle half', 'Reading'], num: [0, 1, 1, 1, 1, 0],
+        rows: rows.map((x) => ({cells: [x.lab, x.fmt(x.v), x.sim === null ? '' : x.fmt(x.sim), x.eng === null ? '' : x.fmt(x.eng), x.fmt(x.d.p25) + ' to ' + x.fmt(x.d.p75), x.reading ? x.reading + (x.vsEngland ? ' national' : ' similar schools') : '']})),
+        note: 'England averages are weighted by GCSE cohort; none is shown for 2024/25, as the weights here are this year’s cohorts. Progress 8 is read against the national average using the DfE’s own confidence interval.',
+        csvCols: ['measure', 'this_school', 'similar_50_mean', 'england_mean', 'england_p05', 'england_p25', 'england_p75', 'england_p95', 'reading'],
+        csv: rows.map((x) => [x.lab, x.v, x.sim === null ? '' : +x.sim.toFixed(3), x.eng === null ? '' : +x.eng.toFixed(3), x.d.p05, x.d.p25, x.d.p75, x.d.p95, x.reading])}; }});
+
   // ================= 2b: the national picture and the method figures =================
   const optText = (id) => { const e = document.getElementById(id); return e && e.selectedIndex >= 0 ? e.options[e.selectedIndex].text : ''; };
   const XSRC = {dis_pct: SRC_KS4, pa_index: 'DfE, Key stage 4 performance 2023/24 (prior attainment)', ss_mean: SRC_SIM, cva_exp: 'the Explorer’s contextual model', sensup_pct: 'DfE, Special educational needs in England, January 2026', eal_school: 'DfE, Schools, pupils and their characteristics, January 2026'};

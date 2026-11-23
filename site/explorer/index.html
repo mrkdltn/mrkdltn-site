@@ -133,6 +133,9 @@ html.loaded .oe-loading{display:none}
     <div class="oe-actions noprint"><button type="button" class="oe-btn primary" id="oe-print">Download profile (PDF)</button><button type="button" class="oe-btn" id="oe-slide" title="A 1920×1080 image (16:9) for PowerPoint, Keynote or Google Slides">Slide (PNG)</button><button type="button" class="oe-btn" id="oe-copy">Copy link</button></div></div>
   <div class="oe-kpis" data-draw="kpis"></div>
   <div class="oe-story" data-draw="story" data-source="school neigh stats"></div>
+  <div class="oe-spinew"><h2>At a glance <span class="i" tabindex="0" data-tip="Each row is one results measure on its own scale. The grey bar is the spread across England's secondaries (5th to 95th percentile), with the middle half darker. The dark tick is England's average, the green tick the average of the 50 similar schools, the diamond this school. The reading against the similar schools is in colour only where the gap is larger than chance.">i</span></h2>
+    <p class="sub">Every results measure beside England and the 50 similar schools. Grey bar: the spread across England, middle half darker. Dark tick: England. Green tick: the 50 similar schools. Diamond: this school.</p>
+    <div class="oe-spine" data-draw="spine" data-source="school neigh"></div></div>
   <h2>Report card <span class="i" tabindex="0" data-tip="Ofsted's renewed framework (from November 2025) grades each evaluation area on five points: Exceptional, Strong standard, Expected standard, Needs attention and Urgent improvement. Safeguarding is Met or Not met. There is no overall grade.">i</span></h2>
   <div class="oe-grades" data-draw="sgrades"></div>
   <h2 class="oe-ks4h" style="margin-top:var(--cds-gap-lg)">Intake and context <span class="i" tabindex="0" data-tip="The public stand-ins for the factors in the DfE and Ofsted model. Prior attainment carries almost half the weight (0.46), then disadvantage (0.14). Hover over each for its weight and source.">i</span></h2>
@@ -386,6 +389,7 @@ html.loaded .oe-loading{display:none}
 <script src="/explorer/slide.js"></script>
 <script src="/explorer/method.js"></script>
 <script src="/explorer/feedback.js"></script>
+<script src="/explorer/spine.js"></script>
 <script src="/explorer/exhibit.js"></script>
 <script src="/explorer/exhibits.js"></script>
 <script>dash.start({x:'dis_pct',area:'g_ach',phase:'Secondary',area2:'g_ach',meas:'a8'});</script>
