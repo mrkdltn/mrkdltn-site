@@ -271,6 +271,8 @@ def main():
     # a page and share image per school
     import build_pages
     build_pages.main(ks4, rc)
+    import build_attendance   # the Attendance Explorer's data (site/attendance/data)
+    build_attendance.main()
 
 
 if __name__ == '__main__':

@@ -39,6 +39,8 @@ British English. Mark's voice: precise, evidence-led, warm, restrained. Lead wit
 | `data/raw/` | Inputs: `ks4_model_v3.csv`, `ofsted_rc.csv`, `reports_daily.csv`, `gias_slim.csv`, `fig3.csv` |
 | `scripts/build_data.py` | Builds `site/explorer/data/` (`ks4.json`, `rc.json`, `nn/` shards, `model.json`, `build.json`), then calls `build_pages.py` (a page and share image per school). Runs on every Cloudflare build |
 | `scripts/fetch_reports.py`, `fetch_gias.py` | Daily report-card reader and GIAS lookup (GitHub Action `daily-report-cards.yml`, 06:17 UTC, commits to `main`) |
+| `site/attendance/` | Attendance Explorer, Phase 1 (the Pulse): `index.html`, `pulse.js`, `attendance.css`. Preview only, not on `main` |
+| `scripts/fetch_attendance.py`, `build_attendance.py` | Fetch the DfE's fortnightly attendance data into `data/raw/attendance/` (run by hand after each release for now); build `site/attendance/data/` (called from `build_data.py`) |
 | `scripts/test_loader.mjs` | Checks the built data reproduces the inputs |
 
 Generated output is gitignored (data JSON, `site/explorer/school/`, `sitemap.xml`).
@@ -80,7 +82,7 @@ After a production push, check the live site, then add an entry to the What's ne
 ## Open work (as at 22 November 2026)
 
 - **Main site, from `docs/site-standards.md`:** the "Now" items (share cards, text before motion, contact, feed and structured data, headers and caching, portrait), each on its own branch. Five decisions for Mark are listed at the end of that file.
-- **Attendance Explorer (planned 22 Nov, nothing built):** `docs/attendance-explorer-plan.md` holds the plan, six open decisions for Mark and the phases; `docs/attendance-data-note.md` holds the Phase 0 recon (files checked 23 Nov). Mark accepted the two-speed shape. Phase 1 (the Pulse) is next. Cloud sessions need the `mrkdltn-site` environment, which allows the DfE, GIAS and ONS hosts.
+- **Attendance Explorer (planned 22 Nov, nothing built):** `docs/attendance-explorer-plan.md` holds the plan, six open decisions for Mark and the phases; `docs/attendance-data-note.md` holds the Phase 0 recon (files checked 23 Nov). Mark accepted the two-speed shape. Phase 1 (the Pulse) is built on branch `claude/happy-franklin-3x5ny9` and awaits Mark's review; it adds an "Attendance" link to the header on its own page only, and the phone header needs a decision before five links go site-wide. Cloud sessions need the `mrkdltn-site` environment, which allows the DfE, GIAS and ONS hosts.
 - **Parked by Mark (18 Nov): community lens** (disadvantaged pupils by school White British share). Branch `wb-lens`, unmerged; cut from `887d197`, rebase before any merge. Analysis and plan are in the claude.ai Project. Do not merge or revive without Mark.
 - **Header motion** (looping motion behind the Explorer header): undecided; the style guide currently says motion never loops.
 - **Primary schools:** decisions pending on a KS1 2022/23 prior-attainment proxy, and on moving school pages to a Pages Function to stay under Cloudflare's 20,000-file limit (about 13,100 files per deploy now). Recon scripts on branch `primary-data`.

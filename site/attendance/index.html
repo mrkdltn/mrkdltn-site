@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attendance Explorer · Mark Dalton</title>
+<meta name="description" content="School attendance in England, day by day: every local authority and region read against England and against last year. Built from the DfE's fortnightly attendance data.">
+<link rel="canonical" href="https://mrkdltn.com/attendance/">
+<meta property="og:title" content="Attendance Explorer">
+<meta property="og:description" content="School attendance in every local authority in England, day by day, against England and last year. Free, built from public data.">
+<meta property="og:url" content="https://mrkdltn.com/attendance/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/attendance/attendance.css">
+</head>
+<body class="explorer">
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted Explorer</a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+
+<main class="ax">
+  <header class="ax-top">
+    <p class="ax-label">Attendance Explorer · The pulse</p>
+    <h1>School attendance, day by day</h1>
+    <p class="ax-lede">Every local authority and region in England, read against the country and against the same point last year. Updated after each fortnightly release from the Department for Education.</p>
+    <p class="ax-date" id="ax-date">Loading the latest figures…</p>
+  </header>
+
+  <section class="ax-controls" aria-label="Choose what to show">
+    <label class="ax-field"><span>Area</span>
+      <select id="ax-area" class="ax-select"></select></label>
+    <div class="ax-field"><span id="ax-phase-l">Schools</span>
+      <div class="ax-seg" id="ax-phase" role="group" aria-labelledby="ax-phase-l">
+        <button type="button" data-p="A">All</button><button type="button" data-p="P">Primary</button><button type="button" data-p="S">Secondary</button><button type="button" data-p="X">Special</button>
+      </div></div>
+  </section>
+
+  <section class="ax-card" id="ax-head">
+    <h2 id="ax-name"></h2>
+    <p class="ax-reading" id="ax-reading"></p>
+    <div class="ax-kpis" id="ax-kpis"></div>
+  </section>
+
+  <section class="ax-card">
+    <h2>The year so far, one square a day</h2>
+    <p class="ax-sub">Each square is a school day, darker where more sessions were missed. Rows run Monday to Friday; last year sits beneath for comparison. Blank squares are holidays, or days when under 80% of the usual pupils were due in.</p>
+    <div id="ax-ribbon" class="ax-chart"></div>
+    <p class="ax-reading" id="ax-ribbon-r"></p>
+  </section>
+
+  <div class="ax-two">
+    <section class="ax-card">
+      <h2>Week by week</h2>
+      <p class="ax-sub">Overall absence each week of the school year.</p>
+      <div id="ax-weeks" class="ax-chart"></div>
+    </section>
+    <section class="ax-card">
+      <h2>By day of the week</h2>
+      <p class="ax-sub">Average absence on each weekday this year, authorised and unauthorised.</p>
+      <div id="ax-dow" class="ax-chart"></div>
+      <p class="ax-reading" id="ax-dow-r"></p>
+    </section>
+  </div>
+
+  <section class="ax-card">
+    <h2>What the absence was</h2>
+    <p class="ax-sub">Sessions missed since September, by the reason recorded in the register, as a share of all possible sessions.</p>
+    <div id="ax-reasons" class="ax-chart"></div>
+  </section>
+
+  <div class="ax-two">
+    <section class="ax-card">
+      <h2>Every local authority</h2>
+      <p class="ax-sub">One hexagon for each of the 153 authorities, placed roughly where it sits, shaded by overall absence since September. Tap one to read it.</p>
+      <div id="ax-hex" class="ax-chart"></div>
+    </section>
+    <section class="ax-card">
+      <h2>Against the same point last year</h2>
+      <p class="ax-sub">Each dot is a local authority. Dots below the line have lower absence than at this point last year; dots above have higher.</p>
+      <div id="ax-change" class="ax-chart"></div>
+      <p class="ax-reading" id="ax-change-r"></p>
+    </section>
+  </div>
+
+  <section class="ax-card ax-method">
+    <h2>Sources and method</h2>
+    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-attendance-in-schools">Pupil attendance in schools</a>, data set “Reasons for absence and attendance”, <span id="ax-src"></span>. Official statistics drawn from the registers that state-funded schools share with the DfE each day. Open Government Licence v3.0.</p>
+    <p><b>What is counted.</b> Absence is the share of possible sessions (mornings and afternoons) that pupils missed. “All” schools is primary, secondary and special together. The figures cover pupils of compulsory school age and can be revised by the DfE in later releases.</p>
+    <p><b>Last year.</b> “The same point last year” is the school year 2025/26 up to the same calendar date. Term dates differ between years and between areas, so small differences early in a term deserve caution.</p>
+    <p><b>What is withheld.</b> A day is left blank where an area had under 80% of its usual sessions, and a week where it had under 70%, because the pupils in school when holidays are staggered are not typical of the whole. Nothing is shown on fewer than 100 possible sessions. Rates are shown, never counts of pupils.</p>
+    <p><b>Not the termly statistics.</b> These in-year figures are not the same as the DfE’s termly absence statistics from the school census, which are the accredited record and the only source for individual schools. School, trust and smaller-area views will draw on those and are being built.</p>
+    <p><b>Map.</b> Hexagon layout adapted from <a href="https://github.com/odileeds/hexmaps">Open Innovations</a> (MIT licence), updated to the 153 authorities of 2026.</p>
+  </section>
+</main>
+
+<footer class="site-foot noprint"><div class="wrap">
+  <span>© 2026 Mark Dalton. Built from public DfE data. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<div class="ax-tip" id="ax-tip" role="status" hidden></div>
+<script src="/assets/d3.min.js"></script>
+<script src="/attendance/pulse.js"></script>
+</body>
+</html>
