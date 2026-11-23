@@ -11,7 +11,10 @@
   const motion = () => !reduced() && dash.fresh();
   const smooth = () => !reduced() && !dash.resizing();
   const P = () => Object.assign({urn: '', q: '', x: 'dis_pct', area: 'g_ach', phase: 'Secondary', area2: 'g_ach', idsr: '', meas: 'a8'}, dash.params());
-  const OE = window.OE = {GC, GORDER, BANDC, num, f1, fs, P, motion, smooth, active: 0, matches: []};
+  // Text on a grade colour: at least 4.5:1 on each (the grade colours themselves never change).
+  // Expected and Needs attention take midnight; Strong standard a deeper midnight (#0B1A2E gives 4.3:1, #08131F 4.7:1).
+  const gradeInk = (g) => (g === 'Expected standard' || g === 'Needs attention' || g === 'Strong standard' ? '#08131F' : '#fff');
+  const OE = window.OE = {GC, GORDER, BANDC, num, f1, fs, P, motion, smooth, gradeInk, active: 0, matches: []};
 
   // ---------- search ----------
   const norm = (s) => String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -225,7 +228,7 @@
 
   dash.draw('sgrades', (el) => { const r = S(); el.replaceChildren(); if (!r) return;
     AREAS.forEach(([k, lab]) => { const v = r[k]; if (!v || v === 'Not applicable') return; const d = document.createElement('div'); d.className = 'oe-g rise' + (v === 'Expected standard' || v === 'Met' ? ' dark' : '');
-      d.style.background = GC[v] || (v === 'Met' ? '#E6EBF2' : (v === 'Not met' ? '#CE1E02' : '#E6EBF2')); d.setAttribute('data-tip', lab + ': ' + v + '. ' + (GTIP[v] || '')); d.tabIndex = 0;
+      d.style.background = GC[v] || (v === 'Met' ? '#E6EBF2' : (v === 'Not met' ? '#CE1E02' : '#E6EBF2')); if (GC[v]) d.style.color = OE.gradeInk(v); d.setAttribute('data-tip', lab + ': ' + v + '. ' + (GTIP[v] || '')); d.tabIndex = 0;
       const s = document.createElement('span'); s.textContent = lab; const b = document.createElement('b'); b.textContent = v; mark(b, 'school', k); d.append(s, b); el.append(d); });
     if (!el.children.length) { const p = document.createElement('p'); p.className = 'oe-note'; p.textContent = 'This school has not yet had a report card inspection under the renewed framework.'; el.append(p); } });
 
@@ -317,7 +320,7 @@
     const ok = (v, f) => (v === null || v === '' || isNaN(+v) ? '—' : f(+v));
     n.data.forEach((r) => { const tr = document.createElement('tr'); tr.setAttribute('data-key', r.urn); tr.style.cursor = 'pointer'; tr.tabIndex = 0;
       [r.name, r.la, ok(r.a8, f1), ok(r.dis_pct, f1), ok(r.pa_index, fs), ok(r.ss_diff, fs)].forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; if (i >= 2) td.className = 'n'; tr.append(td); });
-      const td = document.createElement('td'); if (r.g_ach) { const sp = document.createElement('span'); sp.className = 'oe-band'; sp.textContent = r.g_ach; sp.style.background = GC[r.g_ach]; if (r.g_ach === 'Expected standard') sp.style.color = '#0B1A2E'; td.append(sp); } else td.textContent = '—'; tr.append(td);
+      const td = document.createElement('td'); if (r.g_ach) { const sp = document.createElement('span'); sp.className = 'oe-band'; sp.textContent = r.g_ach; sp.style.background = GC[r.g_ach]; sp.style.color = OE.gradeInk(r.g_ach); td.append(sp); } else td.textContent = '—'; tr.append(td);
       tr.addEventListener('click', () => OE.choose(r.urn)); tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') OE.choose(r.urn); }); tb.append(tr); }); });
 
   dash.draw('scatter', {mount: (el) => { el.replaceChildren(); const tip = document.createElement('div'); tip.className = 'oe-tip'; tip.hidden = true; el.append(tip);
@@ -382,7 +385,6 @@
   OE.PHL = PHL;
   dash.draw('areasub', (el) => { const r = S(); if (!r) { el.textContent = ''; return; } const ph = PHL[r.phase] || 'schools';
     el.textContent = 'Choose an area to see how ' + ph + ' are graded in it, from Urgent improvement on the left to Exceptional on the right. The marker shows this school\'s grade.'; });
-  const DARK_TEXT = new Set(['Expected standard', 'Needs attention']);
   dash.draw('areas', (box) => { const d = dash.data('areas'); box.replaceChildren(); if (d.status !== 'ok' || !d.data) return;
     const has = d.data.length > 0; const sec = document.getElementById('areas'); if (sec) sec.hidden = !has;
     document.documentElement.classList.toggle('oe-noareas', !has); if (!has) return;
@@ -402,7 +404,7 @@
       const row = document.createElement('div'); row.className = 'oe-ar';
       const h = document.createElement('div'); h.className = 'h';
       const lab = document.createElement('span'); lab.className = 'lab'; lab.textContent = a.area;
-      const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; if (DARK_TEXT.has(a.grade)) chip.style.color = '#0B1A2E';
+      const chip = document.createElement('span'); chip.className = 'oe-band'; chip.textContent = a.grade; chip.style.background = GC[a.grade]; chip.style.color = OE.gradeInk(a.grade);
       h.append(lab, chip); row.append(h);
       const gs = document.createElement('div'); gs.className = 'gs';
       const groups = [[PH(a.phase) + ' in England', a.england, '']];
@@ -422,7 +424,7 @@
         const bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('role', 'img');
         const parts = []; let acc = 0, mk = null;
         GORDER.forEach((G) => { const v = dist[G]; if (!v) return; const w = 100 * v / dist.n;
-          const seg = document.createElement('i'); seg.style.width = w + '%'; seg.style.background = GC[G]; seg.style.color = DARK_TEXT.has(G) ? '#0B1A2E' : '#fff';
+          const seg = document.createElement('i'); seg.style.width = w + '%'; seg.style.background = GC[G]; seg.style.color = OE.gradeInk(G);
           if (w >= 8) { const t = document.createElement('span'); t.textContent = pc(w) + '%'; seg.append(t); }
           if (G === a.grade) { seg.classList.add('own'); mk = acc + w / 2; }
           seg.setAttribute('data-tip', gl + ': ' + G + ', ' + cnt(v) + ' of ' + cnt(dist.n) + ' schools (' + pc(w) + '%)');

@@ -129,7 +129,7 @@
       const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [OE.mfmt(x[mf], mf), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(x.pupils, d3.format(',.0f')), 'n'], [o(gapOf(x), fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
       cells.forEach(([t, c]) => tr.append(el('td', c, String(t))));
       const td = el('td'); const gv = x[T.area];
-      if (GC[gv]) { const sp = el('span', 'oe-band', gv); sp.style.background = GC[gv]; if (gv === 'Expected standard' || gv === 'Needs attention') sp.style.color = '#0B1A2E'; td.append(sp); }
+      if (GC[gv]) { const sp = el('span', 'oe-band', gv); sp.style.background = GC[gv]; sp.style.color = OE.gradeInk(gv); td.append(sp); }
       else if (gv === 'Not met') { const sp = el('span', 'oe-band', 'Not met'); sp.style.background = '#CE1E02'; td.append(sp); }
       else if (gv === 'Met') td.textContent = 'Met';
       else { td.textContent = x.g_ach ? 'Not graded' : '—'; td.className = 'muted'; }
