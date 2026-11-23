@@ -25,7 +25,7 @@
     // the headline may be pre-rendered into the page (scripts/prerender.py): keep it until the data are in, and keep the
     // same node when the script's own headline matches it, so the first finding never moves or repaints
     if (box.dataset.pre && (!r || (!r.rc_only && !st))) return;
-    const keep = box.dataset.pre && r && box.dataset.pre === r.urn ? box.firstElementChild : null; delete box.dataset.pre;
+    const keep = box.dataset.pre && (!r || box.dataset.pre !== r.urn) ? null : box.firstElementChild; delete box.dataset.pre;  // on any redraw too: a new node is a new largest paint
     [...box.childNodes].forEach((n) => { if (n !== keep) n.remove(); });
     const put = (lead) => { if (keep && keep.outerHTML === lead.outerHTML) return; if (keep) keep.remove(); box.prepend(lead); };
     if (r && r.rc_only) { const ph = (OE.PHL && OE.PHL[r.phase]) || 'schools'; const lead = el('div', 'oe-verdict');

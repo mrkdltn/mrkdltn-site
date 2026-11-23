@@ -14,6 +14,7 @@ const opt = (k, d) => { const i = args.indexOf(k); if (i < 0) return d; const v 
 const flag = (k) => { const i = args.indexOf(k); if (i < 0) return false; args.splice(i, 1); return true; };
 const runs = +opt('--runs', 3);
 const desktop = flag('--desktop');
+const verbose = flag('--verbose');  // every shift, and every LCP candidate
 const chrome = opt('--chrome', process.platform === 'win32' ? 'C:/Program Files/Google/Chrome/Application/chrome.exe'
   : process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : 'google-chrome');
 const urls = args;
@@ -44,13 +45,13 @@ function client(ws) {
 
 // collected in the page: LCP (last candidate before input), CLS (session windows, as web-vitals), and what moved
 const OBSERVE = `(() => { const w = window.__oe = {lcp: 0, lcpEl: '', cls: 0, shifts: []};
-  const desc = (n) => n ? (n.id ? '#' + n.id : n.tagName.toLowerCase() + (n.className && typeof n.className === 'string' ? '.' + n.className.trim().split(/\\s+/).join('.') : '')) : '';
-  new PerformanceObserver((l) => { for (const e of l.getEntries()) { w.lcp = e.startTime; w.lcpEl = desc(e.element) + (e.url ? ' ' + e.url.split('/').pop() : ''); } }).observe({type: 'largest-contentful-paint', buffered: true});
+  const desc = (n) => n && n.nodeType !== 1 ? desc(n.parentElement) : n ? (n.id ? '#' + n.id : n.tagName.toLowerCase() + (n.className && typeof n.className === 'string' ? '.' + n.className.trim().split(/\\s+/).join('.') : (n.parentElement && n.parentElement !== document.body ? ' in ' + desc(n.parentElement) : ''))) : '';
+  new PerformanceObserver((l) => { for (const e of l.getEntries()) { w.lcp = e.startTime; w.lcpEl = desc(e.element) + (e.url ? ' ' + e.url.split('/').pop() : ''); (w.cands = w.cands || []).push(Math.round(e.startTime) + ' ms ' + e.size + 'px² ' + w.lcpEl + ' «' + ((e.element && e.element.textContent) || '').slice(0, 50) + '»'); } }).observe({type: 'largest-contentful-paint', buffered: true});
   let win = 0, first = 0, last = 0;
   new PerformanceObserver((l) => { for (const e of l.getEntries()) { if (e.hadRecentInput) continue;
     if (win && e.startTime - last < 1000 && e.startTime - first < 5000) { win += e.value; last = e.startTime; } else { win = e.value; first = last = e.startTime; }
     w.cls = Math.max(w.cls, win);
-    w.shifts.push({t: Math.round(e.startTime), v: +e.value.toFixed(4), from: (e.sources || []).map((s) => desc(s.node)).filter(Boolean).slice(0, 3).join(', ')}); } }).observe({type: 'layout-shift', buffered: true});
+    w.shifts.push({t: Math.round(e.startTime), v: +e.value.toFixed(4), from: (e.sources || []).map((s) => desc(s.node) + ' x ' + Math.round(s.previousRect.x) + '→' + Math.round(s.currentRect.x) + ' y ' + Math.round(s.previousRect.y) + '→' + Math.round(s.currentRect.y) + ' h ' + Math.round(s.previousRect.height) + '→' + Math.round(s.currentRect.height)).filter(Boolean).slice(0, 4).join(', ')}); } }).observe({type: 'layout-shift', buffered: true});
 })();`;
 
 async function run(url) {
@@ -88,7 +89,8 @@ try {
     for (let i = 0; i < runs; i++) {
       const r = await run(url); got.push(r);
       console.log(`${url}  run ${i + 1}: LCP ${(r.lcp / 1000).toFixed(2)} s (${r.lcpEl})  CLS ${r.cls.toFixed(3)}  ${(r.bytes / 1024).toFixed(0)} KB`);
-      for (const s of r.shifts.filter((s) => s.v >= 0.005)) console.log(`    shift ${s.v} at ${s.t} ms: ${s.from}`);
+      if (verbose) for (const c of r.cands || []) console.log('    LCP candidate ' + c);
+      for (const s of r.shifts.filter((s) => verbose || s.v >= 0.005)) console.log(`    shift ${s.v} at ${s.t} ms: ${s.from}`);
       if (i === 0) console.log('    largest: ' + r.top.map(([n, p]) => `${p} ${(n / 1024).toFixed(0)} KB`).join('; '));
     }
     const lcp = med(got.map((r) => r.lcp)) / 1000, cls = med(got.map((r) => r.cls)), kb = med(got.map((r) => r.bytes)) / 1024;
