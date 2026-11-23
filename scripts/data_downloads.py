@@ -11,7 +11,7 @@ Called from build_data.py after the data is merged and enriched. Writes to <out>
 and returns a summary (rows, bytes, SHA-256 per file) for build.json.
 
 Groups under 10 pupils: suppress_small_groups() blanks the disadvantaged and non-disadvantaged Attainment 8
-averages wherever the group is estimated at fewer than 10 pupils (GCSE cohort x share disadvantaged, rounded),
+averages, both of them, wherever either group is estimated at fewer than 10 pupils (GCSE cohort x share disadvantaged, rounded),
 the same rule the school page uses. It runs before anything is written, so the JSON the Explorer loads and
 the CSVs agree.
 """
@@ -55,8 +55,8 @@ COLUMNS = {
     'p8lo_24': ('Lower end of the DfE 95% confidence interval for p8_24', 'score', KS4_PREV),
     'p8hi_24': ('Upper end of the DfE 95% confidence interval for p8_24', 'score', KS4_PREV),
     'dis_pct': ('Share of the GCSE year group who are disadvantaged (free school meals in the last six years, looked after, or adopted from care)', '%', KS4),
-    'dis_a8': ('Attainment 8 of disadvantaged pupils. Blank where fewer than 10 disadvantaged pupils (estimated as pupils x dis_pct, rounded)', 'points', KS4),
-    'nondis_a8': ('Attainment 8 of other pupils. Blank where fewer than 10 such pupils', 'points', KS4),
+    'dis_a8': ('Attainment 8 of disadvantaged pupils. Blank where either the disadvantaged or the other pupils number fewer than 10 (estimated as pupils x dis_pct, rounded), so neither can be worked out from the other', 'points', KS4),
+    'nondis_a8': ('Attainment 8 of other pupils. Blank where either group numbers fewer than 10, as for dis_a8', 'points', KS4),
     'nonmob_pct': ('Pupil stability: share of the GCSE year group who joined the school at the usual time (non-mobile pupils)', '%', KS4),
     'eal_school': ('Share of pupils whose first language is known or believed to be other than English (whole school)', '%', CENSUS),
     'sensup_pct': ('Share of pupils on SEN support (whole school)', '%', SEN),
@@ -114,17 +114,20 @@ KS4_EXCLUDE = {'nn', 'ss_dist'}  # nn is in similar-schools.csv; ss_dist is an i
 
 
 def suppress_small_groups(ks4):
-    """No figures for groups under 10: blank dis_a8 / nondis_a8 where the group is estimated under 10 pupils."""
+    """No figures for groups under 10. Where either group (disadvantaged or other pupils) is estimated under 10,
+    both dis_a8 and nondis_a8 are blanked: with the school's a8, cohort and dis_pct published, the other group's
+    average would give the small group's back by subtraction (review, 23 November 2026)."""
     n = 0
     for r in ks4:
         try:
             p, d = float(r['pupils']), float(r['dis_pct'])
         except (KeyError, ValueError):
             continue
-        for col, size in (('dis_a8', round(p * d / 100)), ('nondis_a8', round(p * (100 - d) / 100))):
-            if r.get(col) not in ('', None) and size < 10:
-                r[col] = ''
-                n += 1
+        if round(p * d / 100) < 10 or round(p * (100 - d) / 100) < 10:
+            for col in ('dis_a8', 'nondis_a8'):
+                if r.get(col) not in ('', None):
+                    r[col] = ''
+                    n += 1
     return n
 
 

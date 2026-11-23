@@ -361,7 +361,7 @@ i.nm{background:#55627A;width:2px}
 .oe .oe-xsrc a{color:#7A5C14}
 @media screen and (max-width:640px){.oe-xseg button,.oe-xdl button{min-height:40px;font-size:14px}.oe-xdl button{padding:6px 9px}.oe-xbar{gap:6px 10px}}
 @media screen and (max-width:640px){.oe .oe-xsrc:not(.open){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}}
-.oe-xbar[hidden],.oe .oe-xsrc[hidden],.oe-xseg[hidden]{display:none!important}
+.oe-xbar[hidden],.oe .oe-xsrc[hidden],.oe-xseg[hidden],.oe-plegend[hidden],.oe-legend[hidden]{display:none!important}
 .oe-kpi small.oe-krng{display:block;margin-top:2px;color:#55627A;font-variant-numeric:tabular-nums}
 /* speed baseline (item 4): until the data arrives the school card holds a screen's height, so the sections
    below start out of view and do not jump when it fills (layout shift) */

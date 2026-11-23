@@ -34,11 +34,11 @@
     svg: () => settled('#strip [data-draw="strip"]', 'strip'), onChart: () => dash.draw('strip'),
     table: () => { const r = S(), nb = N(); if (!r || !nb.length) return null; const m = OE.meas(), M = OE.MEAS[m];
       const all = nb.concat([r]).filter((x) => ok(x[m])).sort((a, b) => +b[m] - +a[m]);
-      const rows = all.map((x, i) => ({self: x === r, cells: [i + 1, x === r ? x.name + ' (this school)' : x.name, x.la, OE.mfmt(x[m], m), x.g_ach || 'No report card yet']}));
-      return {caption: M.label + ' of the school and its 50 similar schools', cols: ['Rank', 'School', 'Local authority', M.short + ', 2025/26', 'Achievement grade'], num: [1, 0, 0, 1, 0], rows,
-        note: 'Ranked on ' + M.label + ' among the 50 similar schools and this school. The group average is ' + OE.mfmt(m === 'a8' ? r.ss_mean : r[m + '_ss'], m) + '.',
-        csvCols: ['rank', 'relation', 'urn', 'school', 'local_authority', m + '_2025_26', 'achievement_grade'],
-        csv: all.map((x, i) => [i + 1, x === r ? 'this school' : 'similar school', x.urn, x.name, x.la, x[m], x.g_ach || ''])}; }});
+      const rows = all.map((x) => ({self: x === r, cells: [x === r ? x.name + ' (this school)' : x.name, x.la, OE.mfmt(x[m], m), x.g_ach || 'No report card yet']}));
+      return {caption: M.label + ' of the school and its 50 similar schools', cols: ['School', 'Local authority', M.short + ', 2025/26', 'Achievement grade'], num: [0, 0, 1, 0], rows,
+        note: 'Listed from the highest ' + M.label + ' to the lowest, as the dots run along the chart; no rank is given, since one year of results is noisy. The group average is ' + OE.mfmt(m === 'a8' ? r.ss_mean : r[m + '_ss'], m) + '.',
+        csvCols: ['relation', 'urn', 'school', 'local_authority', m + '_2025_26', 'achievement_grade'],
+        csv: all.map((x) => [x === r ? 'this school' : 'similar school', x.urn, x.name, x.la, x[m], x.g_ach || ''])}; }});
 
   // ---------- 2. each report card area beside comparable schools ----------
   const grp = (g) => { const d = g.dist; if (!d || d.n < 10) return null; const p = {}; GORDER.forEach((G) => { p[G] = 100 * (d[G] || 0) / d.n; }); return {n: d.n, p, c: d}; };

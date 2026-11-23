@@ -93,10 +93,8 @@ for r in sec:
     p, d = f(r['pupils']), f(r['dis_pct'])
     if p is None or d is None:
         continue
-    if round(p * d / 100) < 10:
-        check(r['dis_a8'] == '', f"{r['urn']}: dis_a8 given for a group under 10")
-    if round(p * (100 - d) / 100) < 10:
-        check(r['nondis_a8'] == '', f"{r['urn']}: nondis_a8 given for a group under 10")
+    if round(p * d / 100) < 10 or round(p * (100 - d) / 100) < 10:  # both blank, so neither gives the other away
+        check(r['dis_a8'] == '' and r['nondis_a8'] == '', f"{r['urn']}: a group under 10 can be read or worked out")
 
 # 5. CSVs agree with what the Explorer loads
 def colmajor(n):

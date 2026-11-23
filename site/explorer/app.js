@@ -83,12 +83,13 @@
     fn: (ks4, national, official) => {
       const u = String(dash.params().urn || ''); const r = ks4.find((x) => x.urn === u); if (!r) return [];
       const rd = (v) => (v === null || isNaN(v) ? null : +(+v).toFixed(1)); // halves away from zero, as the headline figures round
+      const natRead = (g, h) => (Math.abs(g) <= h ? 'Close to national' : g > 0 ? 'Above national' : 'Below national');
       const m = OE.meas();
       if (m !== 'a8') {
         const M = OE.MEAS[m], v = +r[m], ok2 = (x) => x !== null && x !== '' && !isNaN(+x);
         let s = 0, n = 0; ks4.forEach((x) => { const p = +x.pupils; if (ok2(x[m]) && p > 0) { s += +x[m] * p; n += p; } }); const nat = n ? s / n : null;
         const pp0 = Math.min(99, Math.max(1, v)), seN = Math.sqrt(pp0 * (100 - pp0) / Math.max(+r.pupils, 1));
-        const out = [Object.assign({lens: 'Published attainment', comparator_label: 'National average', school: rd(v), comparator: rd(nat), gap: rd(v - nat), reading: v - nat >= 0 ? 'Above national' : 'Below national', unit: M.unit, scale: M.scale}, OE.rng(v - nat, 1.96 * seN))];
+        const out = [Object.assign({lens: 'Published attainment', comparator_label: 'National average', school: rd(v), comparator: rd(nat), gap: rd(v - nat), reading: natRead(v - nat, 1.96 * seN), unit: M.unit, scale: M.scale}, OE.rng(v - nat, 1.96 * seN))];
         if (ok2(r[m + '_ss'])) { const g = v - +r[m + '_ss'], sd = +r[m + '_ssd'], pp = Math.min(99, Math.max(1, v)), se = Math.sqrt(pp * (100 - pp) / Math.max(+r.pupils, 1) + sd * sd / 50);
           const band = Math.abs(g) < 1.96 * se ? 'Close to' : (g > 0 ? (g > sd ? 'Well above' : 'Above') : (-g > sd ? 'Well below' : 'Below'));
           out.push(Object.assign({lens: 'Similar schools (open replica)', comparator_label: 'Average of 50 similar schools', school: rd(v), comparator: rd(+r[m + '_ss']), gap: rd(g), reading: band, unit: M.unit, scale: M.scale}, OE.rng(g, 1.96 * se))); }
@@ -99,8 +100,10 @@
         return out;
       }
       const a8 = +r.a8;
+      // the same gap as the headline tile (nat_diff, from the unrounded national average), so the two ranges always agree
+      const gN = r.nat_diff !== '' && !isNaN(+r.nat_diff) ? +r.nat_diff : a8 - national, hN = 1.96 * OE.PSD / Math.sqrt(Math.max(+r.pupils, 1));
       const out = [
-        {lens: 'Published attainment', comparator_label: 'National average', school: rd(a8), comparator: national, gap: rd(a8 - national), reading: a8 - national >= 0 ? 'Above national' : 'Below national', ...OE.rng(a8 - national, 1.96 * OE.PSD / Math.sqrt(Math.max(+r.pupils, 1)))},
+        {lens: 'Published attainment', comparator_label: 'National average', school: rd(a8), comparator: national, gap: rd(gN), reading: natRead(gN, hN), ...OE.rng(gN, hN)},
         {lens: 'Similar schools (open replica)', comparator_label: 'Average of 50 similar schools', school: rd(a8), comparator: rd(+r.ss_mean), gap: rd(+r.ss_diff), reading: r.ss_band,
           prev: r.ss_band_25 && r.ss_diff_25 !== '' && r.ss_diff_25 !== null && !isNaN(+r.ss_diff_25) ? {year: '2024/25', reading: r.ss_band_25, gap: rd(+r.ss_diff_25)} : null,
           ...OE.rng(+r.ss_diff, 1.96 * Math.sqrt(OE.PSD * OE.PSD / Math.max(+r.pupils, 1) + (+r.ss_sd || 0) * (+r.ss_sd || 0) / 50))}
@@ -285,7 +288,7 @@
       const fin = () => { fill.style.left = (g >= 0 ? 50 : 50 - w) + '%'; fill.style.width = w + '%'; };
       if (animate) { fill.style.left = '50%'; fill.style.width = '0%'; } else fin();
       const td = document.createElement('td'); const sp = document.createElement('span'); sp.className = 'oe-band'; sp.textContent = r.reading;
-      sp.style.background = BANDC[r.reading] || BANDC[String(r.reading).replace(' average', '')] || (/well above/i.test(r.reading) ? '#1E544D' : /above/i.test(r.reading) ? '#2F6F66' : /well below/i.test(r.reading) ? '#7A2617' : /below/i.test(r.reading) ? '#A3402B' : '#55627A'); td.append(sp);
+      sp.style.background = BANDC[r.reading] || BANDC[String(r.reading).replace(/ (average|national)$/, '')] || (/well above/i.test(r.reading) ? '#1E544D' : /above/i.test(r.reading) ? '#2F6F66' : /well below/i.test(r.reading) ? '#7A2617' : /below/i.test(r.reading) ? '#A3402B' : '#55627A'); td.append(sp);
       if (r.prev) { const pv = document.createElement('small'); pv.className = 'oe-prev'; pv.textContent = r.prev.year + ': ' + r.prev.reading + ', ' + gfmt(r.prev.gap); td.append(pv); }
       tr.append(td); tb.append(tr);
       if (animate) requestAnimationFrame(() => requestAnimationFrame(fin)); }); });

@@ -21,7 +21,7 @@ const same = (a, b) => a === b || (a !== '' && b !== '' && !isNaN(+a) && !isNaN(
 // daily read has legitimately replaced.
 const GRADEISH = /^g_|^insp_date$/;
 // No figures for groups under 10: the build blanks these two where the group is estimated under 10 pupils.
-const small = (r, c) => (c === 'dis_a8' ? Math.round(+r.pupils * +r.dis_pct / 100) < 10 : c === 'nondis_a8' ? Math.round(+r.pupils * (100 - +r.dis_pct) / 100) < 10 : false);
+const small = (r, c) => (c === 'dis_a8' || c === 'nondis_a8') && (Math.round(+r.pupils * +r.dis_pct / 100) < 10 || Math.round(+r.pupils * (100 - +r.dis_pct) / 100) < 10);
 const cmp = (A, B, skip) => { let bad = 0; const ex = []; const cols = Object.keys(B[0]).filter(c => !skip.includes(c));
   const byUrn = new Map(A.map(r => [r.urn, r]));
   for (const b of B) { const a = byUrn.get(b.urn); if (!a) { bad++; continue; }
