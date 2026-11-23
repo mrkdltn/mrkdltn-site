@@ -76,8 +76,9 @@
   dash.draw('xsrc', (el) => { const p = P(); el.replaceChildren('Source: ' + M[p.m].src + '. ' + (VER ? 'Data version ' + VER + '. ' : '')); const a = document.createElement('a'); a.href = '/explorer/data/'; a.textContent = 'About this data'; el.append(a); });
 
   // controls
-  const sel = $('xm-m'); Object.entries(M).forEach(([k, v]) => { const o = document.createElement('option'); o.value = k; o.textContent = v.lab; sel.append(o); });
-  [['1', 'Least disadvantaged fifth'], ['2', 'Second fifth'], ['3', 'Middle fifth'], ['4', 'Fourth fifth'], ['5', 'Most disadvantaged fifth']].forEach(([k, t]) => { const o = document.createElement('option'); o.value = k; o.textContent = t; $('xm-dq').append(o); });
+  // the options are written into the page, so the controls keep their size as it loads; rebuilt only if the measures change
+  const sel = $('xm-m'); if ([...sel.options].map((o) => o.value).join() !== Object.keys(M).join()) { sel.replaceChildren(); Object.entries(M).forEach(([k, v]) => { const o = document.createElement('option'); o.value = k; o.textContent = v.lab; sel.append(o); }); }
+  if ($('xm-dq').options.length === 1) [['1', 'Least disadvantaged fifth'], ['2', 'Second fifth'], ['3', 'Middle fifth'], ['4', 'Fourth fifth'], ['5', 'Most disadvantaged fifth']].forEach(([k, t]) => { const o = document.createElement('option'); o.value = k; o.textContent = t; $('xm-dq').append(o); });
   dash.onData(() => { const k = dash.data('ks4'); const rs = $('xm-reg'); if (k.status === 'ok' && rs.options.length === 1) [...new Set(k.data.map((r) => r.region).filter(Boolean))].sort().forEach((g) => { const o = document.createElement('option'); o.value = g; o.textContent = g; rs.append(o); });
     const p = P(); sel.value = p.m; rs.value = p.reg; $('xm-dq').value = p.dq; if (document.activeElement !== $('xm-f')) $('xm-f').value = p.f; });
   // Each measure, and each measure in a region, has its own address with a matching share image (build_explore_pages.py):

@@ -32,7 +32,7 @@
 .xm input{min-width:220px}
 .xm .sum{font-size:15.5px;line-height:1.55;margin:0 0 10px}
 .xm .note{font-size:13.5px;color:var(--ink-muted);margin:6px 0 0}
-.xm .hist svg{display:block;width:100%}
+.xm .hist{min-height:170px}.xm .hist svg{display:block;width:100%}
 .xm .tw{overflow-x:auto;margin-top:8px}
 .xm table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
 .xm th{text-align:left;font-weight:600;color:var(--ink-muted);border-bottom:1px solid #55627A;padding:7px 8px;white-space:nowrap;cursor:pointer}
@@ -58,9 +58,9 @@
 <div class="band midnight article-band"><div class="wrap"><header class="article-head"><p class="label">Ofsted Explorer &middot; Explore a measure</p><h1>Every secondary school on one measure</h1><p class="standfirst">Choose a results measure to see how it spreads across England&rsquo;s secondary schools, narrow it by region or intake, and open any school to read it in context.</p></header></div></div>
 <div class="wrap"><div class="prose prose-sheet xm">
 <div class="ctl">
-  <label>Measure<select id="xm-m" aria-label="Measure"></select></label>
-  <label>Region<select id="xm-reg" aria-label="Region"><option value="">All of England</option></select></label>
-  <label>Disadvantaged pupils<select id="xm-dq" aria-label="Disadvantaged fifth"><option value="">All schools</option></select></label>
+  <label>Measure<select id="xm-m" aria-label="Measure"><option value="a8">Attainment 8, 2025/26</option><option value="em5">English and maths grade 5+, 2025/26 (%)</option><option value="em4">English and maths grade 4+, 2025/26 (%)</option><option value="ss_diff">Gap to the 50 similar schools, Attainment 8</option><option value="cva_res">Gap to the contextual model, Attainment 8</option><option value="a8_25">Attainment 8, 2024/25 (final)</option><option value="p8_24">Progress 8, 2023/24</option><option value="dis_a8">Attainment 8 of disadvantaged pupils, 2025/26</option><option value="dis_pct">Disadvantaged pupils in the GCSE year group (%)</option><option value="pa_index">Prior attainment index (key stage 2 profile)</option></select></label>
+  <label>Region<select id="xm-reg" aria-label="Region"><option value="">All of England</option><option value="East Midlands">East Midlands</option><option value="East of England">East of England</option><option value="London">London</option><option value="North East">North East</option><option value="North West">North West</option><option value="South East">South East</option><option value="South West">South West</option><option value="West Midlands">West Midlands</option><option value="Yorkshire and The Humber">Yorkshire and The Humber</option></select></label>
+  <label>Disadvantaged pupils<select id="xm-dq" aria-label="Disadvantaged fifth"><option value="">All schools</option><option value="1">Least disadvantaged fifth</option><option value="2">Second fifth</option><option value="3">Middle fifth</option><option value="4">Fourth fifth</option><option value="5">Most disadvantaged fifth</option></select></label>
   <label>School, area or trust<input id="xm-f" type="search" placeholder="Filter by name, area or trust" aria-label="Filter by school name, area or trust"></label>
 </div>
 <p class="sum" data-draw="xsum" aria-live="polite">Loading every secondary school&hellip;</p>

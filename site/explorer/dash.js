@@ -107,6 +107,14 @@
       // a school page names its school in <meta name="oe-urn"> (no inline script, for the CSP)
       const urnMeta = document.querySelector('meta[name="oe-urn"]');
       defaults = defs || {}; state = Object.assign({}, defaults, urnMeta ? {urn: urnMeta.content} : {}, readHash());
+      // the front page names the school the build chose for it in <meta name="oe-pick">, already written into the page;
+      // an address that names another school wins, and the written-in school is cleared so it never shows under it
+      const pick = document.querySelector('meta[name="oe-pick"]');
+      if (pick && !state.urn) { state.urn = pick.content; window.OE_RANDOM = pick.content; }
+      else if (pick && state.urn !== pick.content) {
+        document.documentElement.classList.remove('oe-prd', 'oe-pre', 'oe-rconly', 'oe-nonsec');
+        document.querySelectorAll('[data-pre]').forEach((el) => { delete el.dataset.pre; el.textContent = el.dataset.draw === 'story' ? '' : '—'; });
+      }
       window.addEventListener('hashchange', () => { if (!location.hash.includes('=')) return; /* a jump link such as #main is not a view */ const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
         // other view settings in the address (measure, chart options) also apply when only they change
         const ch = {}; KEEP.filter((k) => k !== 'urn').forEach((k) => { const v = k in h ? h[k] : (defaults[k] ?? null); if ((v ?? null) !== (state[k] ?? null)) ch[k] = v; /* a key taken out of the address clears it */ }); if (Object.keys(ch).length) window.dash.setParams(ch); });

@@ -235,6 +235,35 @@ def _draw(job):
     return 1
 
 
+def home_pick(template, pre):
+    """The Explorer's front page opens on a school chosen at random. Chosen in the browser, it can only be shown once
+    every school's data has loaded (5.5 s on a phone over 4G, 23 November 2026). So a production build chooses it,
+    from the same pool as OE.pickRandom (a report card and an Attainment 8), seeded by the date, and writes it into the
+    page as a school page's is written; "Show me another school" still picks in the browser. The page is rewritten in
+    place, so this runs on Cloudflare builds only, or with HOME_PICK=1 (then `git checkout -- site/explorer/index.html`)."""
+    import hashlib
+    import prerender
+    from datetime import datetime
+    pool = sorted((r for r in pre.ks4 if r.get('g_ach') and prerender.ok(r.get('a8'))), key=lambda r: int(r['urn']))
+    if not pool:
+        return
+    try:
+        from zoneinfo import ZoneInfo
+        day = datetime.now(ZoneInfo('Europe/London')).strftime('%Y-%m-%d')
+    except Exception:  # no time-zone database (Windows without tzdata): the UTC date
+        from datetime import timezone
+        day = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    r = pool[int(hashlib.sha256(day.encode()).hexdigest(), 16) % len(pool)]
+    h = prerender.fill(template, pre.school(r['urn']), pre.med)
+    # named in a meta tag that dash.js reads; unlike oe-urn, the address stays /explorer/ until someone chooses
+    h = h.replace('<link rel="canonical"', f'<meta name="oe-pick" content="{html.escape(r["urn"])}">\n<link rel="canonical"', 1)
+    if 'name="oe-pick"' not in h:
+        raise SystemExit('Explorer page: no canonical link to put the chosen school beside')
+    with open(os.path.join(EXPLORER, 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(h)
+    print(f'front page: opens on {r["urn"]} ({day})')
+
+
 def main(rows, rc_rows=(), only=None):
     have = {r['urn'] for r in rows}
     extra = [dict(r, rc_only='yes') for r in rc_rows if r['urn'] not in have]
@@ -278,6 +307,9 @@ def main(rows, rc_rows=(), only=None):
         from concurrent.futures import ProcessPoolExecutor
         with ProcessPoolExecutor(max_workers=os.cpu_count() or 2) as ex:
             n_img = sum(ex.map(_draw, jobs, chunksize=64))
+
+    if pre and not only and (os.environ.get('CF_PAGES') or os.environ.get('HOME_PICK')):
+        home_pick(template, pre)
 
     # sitemap.xml is written by site_meta.py from the pages that exist, with git dates
     if not only:
