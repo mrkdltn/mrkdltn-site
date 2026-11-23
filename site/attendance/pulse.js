@@ -60,6 +60,7 @@
     const w = P.weekly[a.c][cur][ph].abs; let li = w.length - 1; while (li >= 0 && w[li] == null) li--;
     const first = P.days[cur][0], last = P.days[cur][P.days[cur].length - 1];
     $('ax-name').textContent = a.n + (ph === 'A' ? '' : ': ' + PHASE[ph]);
+    document.body.dataset.axTitle = a.n + ': ' + PHASE[ph] + ', school attendance';   // the title on saved images
     if (window.AXtools) AXtools.setPlace({kind: 'area', id: a.c, name: a.n, href: '/attendance/#area=' + a.c});
     const el = $('ax-reading');
     if (!y) { el.textContent = 'The DfE’s release has no figures for ' + PHASE[ph] + ' in ' + a.n + ', or too few pupils to show a rate.'; $('ax-kpis').innerHTML = ''; return; }
