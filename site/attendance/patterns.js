@@ -3,7 +3,8 @@
    bench.json (periods and sources). Pooled values are [overall, unauthorised, persistent]; rates in hundredths of a point. */
 (function () {
   const INK = '#0B1A2E', MUTED = '#55627A', VERD = '#2F6F66', GRID = '#EEF1F5', SOFT = '#C9D0DB';
-  const SHADES = ['#1E544D', '#6FA299', '#9AA3B2', '#C98672', '#7A2617'];
+  // five groups in order, one navy ramp: these are categories, not readings, so they take no green or rust
+  const SHADES = ['#B4BDCB', '#8C99AE', '#62728C', '#3D4C68', '#0B1A2E'];
   const PH = {P: 'primary schools', S: 'secondary schools', X: 'special schools'}, MI = {abs: 0, pa: 2}, MN = {abs: 'overall absence', pa: 'persistent absence'};
   const XN = {fsm: 'eligible for free school meals', sen: 'with SEN support', ehcp: 'with an education, health and care plan', eal: 'with a first language other than English'};
   const XF = {fsm: 'fsm_pct', sen: 'sen_pct', ehcp: 'ehcp_pct', eal: 'eal_pct'};

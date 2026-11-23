@@ -52,7 +52,7 @@
 .st-also p{font:15px/1.4 var(--sans);color:#55627A;margin:0 0 8px}
 .st-also-a{display:inline-flex;align-items:center;text-decoration:none;margin:0 8px 8px 0;padding-top:8px;padding-bottom:8px;line-height:1.3}
 .st-foot{font:14px/1.5 var(--sans);color:#55627A;margin:0}
-.st-foot .st-link{color:#0B1A2E}
+.st-foot .st-link{color:#0B1A2E;display:block}
 
 @media (max-width:700px){.st-opts{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){

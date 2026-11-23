@@ -7,7 +7,11 @@
 (function () {
   const read = (s) => new URLSearchParams(s);
   let P = read(location.search);
-  if (P.get('brief') === null) { const h = read(location.hash.slice(1)); if (h.get('brief') === null) return; P = h; }
+  if (P.get('brief') === null) { const h = read(location.hash.slice(1)); if (h.get('brief') !== null) P = h; }
+  // a page may already have rewritten its address before this file ran: the address the page was opened with still says
+  if (P.get('brief') === null) { try { const n = performance.getEntriesByType('navigation')[0]; if (n && n.name) { const u = new URL(n.name);
+    if (u.origin === location.origin && u.pathname === location.pathname) P = read(u.search); } } catch (e) { /* no record: leave the page alone */ } }
+  if (P.get('brief') === null) return;
   const role = (P.get('brief') || '').toLowerCase();
   const showRaw = P.get('show') || '';
   const show = showRaw.split(',').map((s) => s.trim()).filter((s) => s && s !== 'Method');
@@ -72,9 +76,11 @@
 
     function apply() {
       const secs = [...main.querySelectorAll('section[data-nav]')];
+      // the chosen order is applied only where the kept sections sit together in one column of their own (school and group pages)
+      const homes = new Set(secs.filter((s) => show.includes(s.dataset.nav)).map((s) => s.parentElement)), sort = homes.size === 1 && !homes.has(main);
       secs.forEach((s) => { const n = s.dataset.nav, i = show.indexOf(n), off = show.length > 0 && n !== 'Method' && i < 0;
         s.classList.toggle('ax-brief-off', off);
-        const o = !show.length ? '' : n === 'Method' ? '98' : i >= 0 ? String(i + 1) : ''; if (s.style.order !== o) s.style.order = o; });
+        const o = sort && i >= 0 ? String(i + 1) : ''; if (s.style.order !== o) s.style.order = o; });
       const place = h1 ? h1.textContent.trim() : '';
       set(title, (TITLE[role] || 'A briefing') + (place ? ': ' + place : ''));
       set(meta, metaSrc ? metaSrc.textContent.trim() : '');
@@ -90,6 +96,7 @@
     let t = null; const later = () => { clearTimeout(t); t = setTimeout(apply, 60); };
     new MutationObserver(later).observe(main, {subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'aria-pressed']});
     const hero = document.querySelector('.ax-hero'); if (hero) new MutationObserver(later).observe(hero, {subtree: true, childList: true, characterData: true});
+    if (location.pathname + location.search + location.hash !== keep(location.href)) history.replaceState(history.state, '', location.href);
     apply();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

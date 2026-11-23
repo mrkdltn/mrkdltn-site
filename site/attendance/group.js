@@ -95,24 +95,26 @@
 
   function hist() {
     const card = $('gx-hist-c'), el = $('gx-hist'), M = MEAS[meas]; card.hidden = !(phase && G.bench[phase]); if (card.hidden) return;
-    $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' ? 'Its schools pooled for each full school year.' : kind === 't' ? 'The solid line pools only the schools that were in the trust in each year: the trust’s own record. The dashed line pools all the schools it holds today in every year, including years before they joined.' : 'The schools located in the constituency, pooled for each full school year.') + ' No figures were published for 2019/20.';
+    $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' || kind === 'a' ? 'Its schools pooled for each full school year.' : kind === 't' ? 'The solid line pools only the schools that were in the trust in each year: the trust’s own record. The dashed line pools all the schools it holds today in every year, including years before they joined.' : 'The schools located in the constituency, pooled for each full school year.') + ' No figures were published for 2019/20.';
     const W = width(el), H = Math.round(Math.min(360, Math.max(230, W * 0.46))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const inT = kind === 't' && G.bench_in && G.bench_in[phase], at = (p) => (inT && inT[p]) || null;
     const lines = [{d: yrs.map((p) => ({p, v: (eng(phase, p) || [])[M.b]})), c: MUTED, w: 2, n: 'England ' + PH[phase]},
       {d: yrs.map((p) => ({p, v: (mine(p) || [])[M.b], k: (mine(p) || [])[3]})), c: INK, w: inT ? 2 : 3, n: inT ? 'The schools it holds today, in every year' : G.name, me: !inT, dash: inT ? '5 4' : null}]
       .concat(inT ? [{d: yrs.map((p) => ({p, v: (at(p) || [])[M.b], k: (at(p) || [])[3], of: (mine(p) || [])[3]})), c: INK, w: 3, n: 'Schools in the trust at the time', me: true}] : []);
-    lines.splice(1, 0, ...VS.filter((o) => o.g.bench[phase]).map((o, i) => ({d: yrs.map((p) => ({p, v: (o.g.bench[phase][p] || [])[M.b]})), c: OTHERS[i % 4], w: 2, n: o.g.name})));
+    lines.splice(1, 0, ...VS.filter((o) => o.g.bench[phase]).map((o, i) => ({d: yrs.map((p) => ({p, v: (o.g.bench[phase][p] || [])[M.b]})), c: OTHERS[i % 4], w: 2, n: o.g.name, dash: ODASH[i % 4], tag: i + 1})));
     const vals = lines.flatMap((l) => l.d.map((p) => p.v)).filter((v) => v != null);
-    const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([0, d3.max(vals) * 1.08], [H - m.b, m.t]).nice(5);
+    const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([VS.length ? d3.min(vals) * 0.85 : 0, d3.max(vals) * 1.08], [H - m.b, m.t]).nice(5);      // with places added, the axis closes in so the lines separate
     y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
     const gx = x('2019'); s.append('rect').attr('x', gx - x.step() * 0.38).attr('width', x.step() * 0.76).attr('y', m.t).attr('height', H - m.b - m.t).attr('fill', '#F4F5F8');
     yrs.forEach((p, i) => { if (W >= 640 || i % 2 === 0) s.append('text').attr('x', x(p)).attr('y', H - 8).attr('text-anchor', 'middle').text(W < 640 ? "'" + ay(p).slice(2) : ay(p)); });
     const line = d3.line().defined((p) => p.v != null).x((p) => x(p.p)).y((p) => y(p.v));
-    lines.forEach((l) => { s.append('path').attr('d', line(l.d)).attr('fill', 'none').attr('stroke', l.c).attr('stroke-width', l.w).attr('stroke-dasharray', l.dash || null).attr('stroke-linejoin', 'round').attr('stroke-linecap', l.dash ? 'butt' : 'round');
+    lines.forEach((l) => { if (l.tag) { const z = l.d.filter((p) => p.v != null).pop(); if (z) s.append('text').attr('class', 'strong ax-tag').attr('x', x(z.p) + 7).attr('y', y(z.v) + 4).text(l.tag); }
+      s.append('path').attr('d', line(l.d)).attr('fill', 'none').attr('stroke', l.c).attr('stroke-width', l.w).attr('stroke-dasharray', l.dash || null).attr('stroke-linejoin', 'round').attr('stroke-linecap', l.dash ? 'butt' : 'round');
       tipOn(s.append('g').selectAll('circle').data(l.d.filter((p) => p.v != null)).join('circle').attr('cx', (p) => x(p.p)).attr('cy', (p) => y(p.v)).attr('r', l.me ? 3.5 : 8).attr('fill', l.me ? l.c : 'transparent'),
         (p) => `<b>${esc(l.n)}</b><br>${ay(p.p)}: ${M.n} ${pc(p.v)}` + (p.of ? `<br>${p.k} of today’s ${p.of} schools were in the trust` : p.k ? `<br>${p.k} schools with figures` : '')); });
-    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}${l.dash ? ';border-top-style:dashed' : ''}"></i>${esc(l.n)}`));
+    { const tg = s.selectAll('text.ax-tag').nodes().map((n) => ({n, y: +n.getAttribute('y')})).sort((a, b) => a.y - b.y); tg.forEach((t, i) => { if (i && t.y - tg[i - 1].y < 14) t.y = tg[i - 1].y + 14; t.n.setAttribute('y', t.y); }); }      // keep the numbers at the line ends apart
+    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}${l.dash ? ';border-top-style:dashed' : ''}"></i>${l.tag ? l.tag + ' ' : ''}${esc(l.n)}`));
     const first = inT ? yrs.find((p) => at(p)) : null, r = $('gx-hist-r');
     r.hidden = !(kind === 't'); if (kind !== 't') return;
     const jn = G.schools.filter((s) => s[2] === phase && s[7]).map((s) => s[7]).sort(), nj = G.schools.filter((s) => s[2] === phase).length, mv = G.schools.filter((s) => s[2] === phase && s[8]).length;
@@ -260,18 +262,19 @@
   }
 
   // ---- side by side: this place, up to four others of the same kind, and England
-  const OTHERS = ['#7A5C14', '#8A4B6B', '#3F6FA6', '#6B6F2A'];
+  // added places are slate lines told apart by dash and a number, never by extra hues
+  const OTHERS = ['#33405A', '#55627A', '#33405A', '#55627A'], ODASH = ['7 3', '2 3', '10 3 2 3', '1 4'];
   function compare() {
     const card = $('gx-cmp-c'); card.hidden = !phase; if (!phase) return;
     const L = B.latest, P1 = prevP(), row = (name, b, col, me) => { const g = (p, i) => (b && b[p] ? b[p][i] : null), d = (a, c) => (a == null || c == null ? null : a - c);
       return {name, col, me, abs: g(L, 0), pa: g(L, 2), sev: g(L, 4), yr: d(g(L, 0), g(P1, 0)), base: d(g(B.fy_last, 0), g(B.base, 0)), yrp: d(g(L, 2), g(P1, 2))}; };
-    const rows = [row(G.name, G.bench[phase], INK, true)].concat(VS.map((o, i) => row(o.g.name, o.g.bench[phase], OTHERS[i % 4]))).concat([row('England', B.bench.E[phase], MUTED)]);
+    const rows = [row(G.name, G.bench[phase], INK, true)].concat(VS.map((o, i) => Object.assign(row(o.g.name, o.g.bench[phase], OTHERS[i % 4]), {tag: i + 1}))).concat([row('England', B.bench.E[phase], MUTED)]);
     const e = rows[rows.length - 1], cell = (v, ref, f) => (v == null ? '<td class="n">–</td>' : `<td class="n" style="color:${ref == null || v === ref ? 'inherit' : AXc.gap(v - ref)}">${f(v)}</td>`), sp = (v) => sign(v);
     $('gx-cmp-s').textContent = `${cap(PH[phase])}. The first three columns are the autumn and spring terms ${ay(L)}; “in a year” compares them with the same two terms a year earlier; “since 2018/19” compares full years ${ay(B.base)} and ${ay(B.fy_last)}. Figures are coloured against England.`;
     $('gx-cmp').innerHTML = '<thead><tr><th>Place</th><th class="n">Overall absence</th><th class="n">Persistent absence</th><th class="n">Severe absence</th><th class="n">Overall, in a year</th><th class="n">Persistent, in a year</th><th class="n">Overall, since 2018/19</th></tr></thead><tbody>' + rows.map((r) =>
-      `<tr><td><i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, r === e ? null : e.abs, pc)}${cell(r.pa, r === e ? null : e.pa, pc)}${cell(r.sev, r === e ? null : e.sev, pc)}${cell(r.yr, r === e ? null : e.yr, sp)}${cell(r.yrp, r === e ? null : e.yrp, sp)}${cell(r.base, r === e ? null : e.base, sp)}</tr>`).join('') + '</tbody>';
+      `<tr><td>${r.tag ? '<span class="ax-num">' + r.tag + '</span>' : `<i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>`}${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, r === e ? null : e.abs, pc)}${cell(r.pa, r === e ? null : e.pa, pc)}${cell(r.sev, r === e ? null : e.sev, pc)}${cell(r.yr, r === e ? null : e.yr, sp)}${cell(r.yrp, r === e ? null : e.yrp, sp)}${cell(r.base, r === e ? null : e.base, sp)}</tr>`).join('') + '</tbody>';
     const c = $('gx-chips'); c.innerHTML = '';
-    VS.forEach((o, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ax-chip'; b.innerHTML = `<i style="background:${OTHERS[i % 4]}"></i>${esc(o.g.name)} <span aria-hidden="true">×</span>`; b.setAttribute('aria-label', 'Remove ' + o.g.name);
+    VS.forEach((o, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ax-chip'; b.innerHTML = `<span class="ax-num">${i + 1}</span>${esc(o.g.name)} <span aria-hidden="true">×</span>`; b.setAttribute('aria-label', 'Remove ' + o.g.name);
       b.addEventListener('click', () => { VS = VS.filter((x) => x.id !== o.id); draw(); }); c.appendChild(b); });
     $('gx-q2').disabled = VS.length >= 4; $('gx-q2').placeholder = VS.length >= 4 ? 'Four added' : 'Add ' + KINDA[kind];
   }

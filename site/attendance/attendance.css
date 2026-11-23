@@ -170,3 +170,4 @@ body.explorer{background:#ECE9E1}
 .ax-panel p:first-child{margin-top:0}
 .ax-method .ax-panel p{font-size:15px;max-width:80ch}
 @media print{.ax-tabs{display:none}.ax-panel[hidden]{display:block!important}.ax-panel::before{content:attr(data-title);display:block;font-weight:600;margin:14px 0 4px}}
+.ax-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1px solid var(--muted);border-radius:50%;font:600 12px/1 var(--sans);color:var(--ink);margin-right:8px;vertical-align:1px}

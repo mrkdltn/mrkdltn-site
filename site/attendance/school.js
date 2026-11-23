@@ -5,7 +5,8 @@
    benchmarks: [overall, unauthorised, persistent absence]. Nothing animates. */
 (function () {
   const INK = '#0B1A2E', MUTED = '#55627A', VERD = '#2F6F66', GRID = '#EEF1F5', SOFT = '#C9D0DB';
-  const OTHERS = ['#7A5C14', '#8A4B6B', '#3F6FA6', '#6B6F2A'];
+  // added schools are slate lines told apart by dash and a number, never by extra hues
+  const OTHERS = ['#33405A', '#55627A', '#33405A', '#55627A'], ODASH = ['7 3', '2 3', '10 3 2 3', '1 4'];
   const GRADES = [['Exceptional', '#0176E0', '#fff'], ['Strong standard', '#33903C', '#fff'], ['Expected standard', '#5CD168', '#0B1A2E'], ['Needs attention', '#FF8341', '#0B1A2E'], ['Urgent improvement', '#CE1E02', '#fff']];
   const PH = {P: 'primary schools', S: 'secondary schools', X: 'special schools'};
   const MEAS = {abs: {i: 1, b: 0, n: 'overall absence', step: 25}, pa: {i: 3, b: 2, n: 'persistent absence', step: 100}};
@@ -103,7 +104,7 @@
     s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', MUTED);
     x.ticks(W < 480 ? 5 : 9).forEach((t) => s.append('text').attr('x', x(t)).attr('y', H - 6).attr('text-anchor', 'middle').text(fmtTick(t)));
     if (zero) s.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', m.t).attr('y2', y(0)).attr('stroke', MUTED).attr('stroke-dasharray', '3 3');
-    s.append('g').selectAll('line').data(ticks.filter((t) => t != null)).join('line').attr('x1', (t) => x(clamp(t))).attr('x2', (t) => x(clamp(t))).attr('y1', y(0) + 4).attr('y2', y(0) + 14).attr('stroke', VERD).attr('stroke-width', 1.5).attr('stroke-opacity', 0.75);
+    s.append('g').selectAll('line').data(ticks.filter((t) => t != null)).join('line').attr('x1', (t) => x(clamp(t))).attr('x2', (t) => x(clamp(t))).attr('y1', y(0) + 4).attr('y2', y(0) + 14).attr('stroke', MUTED).attr('stroke-width', 1.5).attr('stroke-opacity', 0.75);
     if (mine != null) { const cx = x(clamp(mine));
       s.append('line').attr('x1', cx).attr('x2', cx).attr('y1', m.t - 4).attr('y2', y(0)).attr('stroke', INK).attr('stroke-width', 1.5);
       s.append('path').attr('d', d3.symbol(d3.symbolDiamond, 130)()).attr('transform', `translate(${cx},${m.t - 8})`).attr('fill', INK);
@@ -119,7 +120,7 @@
     const laIx = dist.la[dist.urn.indexOf(+urn)], ticks = dist[meas].filter((v, i) => dist.la[i] === laIx && dist.urn[i] !== +urn);
     const mine = now ? now[M.i] : null;
     const v = strip(el, dist[meas], mine, laIx == null ? [] : ticks, M.step, 'Distribution of ' + M.n + ' across ' + PH[S.ph], (t, own) => (own ? pc(t) : (t / 100) + '%'));
-    key(el, [`<i style="background:${SOFT}"></i>All ${PH[S.ph]} in England (${v.length.toLocaleString('en-GB')})`, `<i style="background:${VERD};width:2px;height:12px"></i>Others in ${esc(B.la_names[S.la] || 'the local authority')} (${ticks.length})`, `<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}`]);
+    key(el, [`<i style="background:${SOFT}"></i>All ${PH[S.ph]} in England (${v.length.toLocaleString('en-GB')})`, `<i style="background:${MUTED};width:2px;height:12px"></i>Others in ${esc(B.la_names[S.la] || 'the local authority')} (${ticks.length})`, `<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}`]);
     if (mine == null) { $('sx-dist-r').textContent = ''; return; }
     const lower = d3.bisectLeft(v, mine), share = Math.round(100 * (v.length - d3.bisectRight(v, mine)) / v.length), below = Math.round(100 * lower / v.length);
     const med = d3.median(v);
@@ -131,23 +132,25 @@
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const ser = (h, i) => yrs.map((p) => ({p, v: h[p] ? h[p][i] : null}));
     const lines = [{d: yrs.map((p) => ({p, v: (bench('E', S.ph, p) || [])[M.b]})), c: MUTED, w: 2, n: 'England ' + PH[S.ph]},
-      {d: yrs.map((p) => ({p, v: (bench(S.la, S.ph, p) || [])[M.b]})), c: SOFT, w: 2, n: (B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph]}]
-      .concat(others.map((o, i) => ({d: ser(o.s.h, M.i), c: OTHERS[i % 4], w: 2, n: o.s.n})), [{d: ser(S.h, M.i), c: INK, w: 3, n: S.n, me: true}]);
+      {d: yrs.map((p) => ({p, v: (bench(S.la, S.ph, p) || [])[M.b]})), c: MUTED, w: 2, dash: '2 3', n: (B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph]}]
+      .concat(others.map((o, i) => ({d: ser(o.s.h, M.i), c: OTHERS[i % 4], w: 2, n: o.s.n, dash: ODASH[i % 4], tag: i + 1})), [{d: ser(S.h, M.i), c: INK, w: 3, n: S.n, me: true}]);
     const vals = lines.flatMap((l) => l.d.map((p) => p.v)).filter((v) => v != null); if (!vals.length) { el.textContent = 'No full-year figures are published for this school yet.'; $('sx-hist-r').textContent = ''; return; }
-    const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([0, d3.max(vals) * 1.08], [H - m.b, m.t]).nice(5);
+    const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([others.length ? d3.min(vals) * 0.85 : 0, d3.max(vals) * 1.08], [H - m.b, m.t]).nice(5);      // with places added, the axis closes in so the lines separate
     y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
     const gx = x('2019'); s.append('rect').attr('x', gx - x.step() * 0.38).attr('width', x.step() * 0.76).attr('y', m.t).attr('height', H - m.b - m.t).attr('fill', '#F4F5F8');
     s.append('text').attr('x', gx).attr('y', m.t + 12).attr('text-anchor', 'middle').text(W < 520 ? 'none' : 'not published');
     yrs.forEach((p, i) => { if (W >= 640 || i % 2 === 0) s.append('text').attr('x', x(p)).attr('y', H - 8).attr('text-anchor', 'middle').text(W < 640 ? "'" + ay(p).slice(2) : ay(p)); });
     const line = d3.line().defined((p) => p.v != null).x((p) => x(p.p)).y((p) => y(p.v));
-    lines.forEach((l) => { s.append('path').attr('d', line(l.d)).attr('fill', 'none').attr('stroke', l.c).attr('stroke-width', l.w).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+    lines.forEach((l) => { if (l.tag) { const z = l.d.filter((p) => p.v != null).pop(); if (z) s.append('text').attr('class', 'strong ax-tag').attr('x', x(z.p) + 7).attr('y', y(z.v) + 4).text(l.tag); }
+      s.append('path').attr('d', line(l.d)).attr('fill', 'none').attr('stroke', l.c).attr('stroke-width', l.w).attr('stroke-dasharray', l.dash || null).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
       const pt = s.append('g').selectAll('circle').data(l.d.filter((p) => p.v != null)).join('circle').attr('cx', (p) => x(p.p)).attr('cy', (p) => y(p.v)).attr('r', l.me ? 3.5 : 8).attr('fill', l.me ? l.c : 'transparent');
       tipOn(pt, (p) => `<b>${esc(l.n)}</b><br>${ay(p.p)}: ${M.n} ${pc(p.v)}`); });
     const ty = S.tj ? String(+S.tj.slice(0, 4) - (S.tj.slice(5) < '09' ? 1 : 0)) : null;      // the school year in which it joined its trust
     if (ty && x(ty) != null) { const tx = x(ty) - x.step() / 2 + (S.join === ty ? 3 : 0); s.append('line').attr('x1', tx).attr('x2', tx).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', '#C9A24B').attr('stroke-width', 2);
       s.append('text').attr('x', tx > W * 0.6 ? tx - 5 : tx + 5).attr('text-anchor', tx > W * 0.6 ? 'end' : 'start').attr('y', H - m.b - 6).attr('class', 'strong').text(W < 520 ? 'Joined trust' : 'Joined ' + (S.tname || 'its trust').slice(0, 34)); }
     if (S.join && x(S.join) != null) { const jx = x(S.join) - x.step() / 2; s.append('line').attr('x1', jx).attr('x2', jx).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', '#C9A24B').attr('stroke-width', 1.5).attr('stroke-dasharray', '2 3'); }
-    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}"></i>${esc(l.n)}`).concat(S.join ? ['<i class="ln" style="border-color:#C9A24B;border-top-style:dotted"></i>Earlier years are the predecessor school'] : [], ty && x(ty) != null ? [`<i class="ln" style="border-color:#C9A24B"></i>Joined ${esc(S.tname || 'its trust')}, ${month(S.tj)}` + (S.tprev ? `, from ${esc(S.tprev)}` : '')] : []));
+    { const tg = s.selectAll('text.ax-tag').nodes().map((n) => ({n, y: +n.getAttribute('y')})).sort((a, b) => a.y - b.y); tg.forEach((t, i) => { if (i && t.y - tg[i - 1].y < 14) t.y = tg[i - 1].y + 14; t.n.setAttribute('y', t.y); }); }      // keep the numbers at the line ends apart
+    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}${l.dash ? ';border-top-style:dashed' : ''}"></i>${l.tag ? l.tag + ' ' : ''}${esc(l.n)}`).concat(S.join ? ['<i class="ln" style="border-color:#C9A24B;border-top-style:dotted"></i>Earlier years are the predecessor school'] : [], ty && x(ty) != null ? [`<i class="ln" style="border-color:#C9A24B"></i>Joined ${esc(S.tname || 'its trust')}, ${month(S.tj)}` + (S.tprev ? `, from ${esc(S.tprev)}` : '')] : []));
     const a = S.h[B.base], b = S.h[B.fy_last]; let t = '';
     if (b) { t = `In ${ay(B.fy_last)}, ${M.n} was <b>${pc(b[M.i])}</b>`; if (a) { const d = gap(b[M.i], a[M.i]); t += d === 0 ? `, the same as in ${ay(B.base)}, the last full year before the pandemic.` : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in ${ay(B.base)}, the last full year before the pandemic (${pc(a[M.i])}).`; } else t += '.'; }
     $('sx-hist-r').innerHTML = t;
@@ -158,7 +161,7 @@
     const a = S.h[B.base], b = S.h[B.fy_last], mine = a && b ? b[1] - a[1] : null;
     const laIx = dist.la[dist.urn.indexOf(+urn)], ticks = dist.chg.filter((v, i) => dist.la[i] === laIx && dist.urn[i] !== +urn);
     const v = strip(el, dist.chg, mine, ticks, 25, 'Change in overall absence since ' + ay(B.base), (t, own) => (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 100).toFixed(own ? 1 : (Math.abs(t) % 100 ? 1 : 0)) + (own ? ' points' : ''), true);
-    key(el, [`<i style="background:${SOFT}"></i>${PH[S.ph].replace(/^./, (c) => c.toUpperCase())} with figures for both years (${v.length.toLocaleString('en-GB')})`, `<i style="background:${VERD};width:2px;height:12px"></i>Others in the local authority`]);
+    key(el, [`<i style="background:${SOFT}"></i>${PH[S.ph].replace(/^./, (c) => c.toUpperCase())} with figures for both years (${v.length.toLocaleString('en-GB')})`, `<i style="background:${MUTED};width:2px;height:12px"></i>Others in the local authority`]);
     const med = d3.median(v), up = Math.round(100 * v.filter((x) => x > 0).length / v.length);
     $('sx-chg-r').innerHTML = (mine == null ? `This school has no figures for both years, so it is not marked. ` : `Overall absence here ${gap(b[1], a[1]) === 0 ? 'was unchanged' : (mine > 0 ? 'rose' : 'fell') + ` by <b>${pts(gap(b[1], a[1]))}</b> points`} between ${ay(B.base)} and ${ay(B.fy_last)}. `)
       + `Absence was higher in ${ay(B.fy_last)} than in ${ay(B.base)} at <b>${up}%</b> of ${PH[S.ph]}; the middle school rose by ${(med / 100).toFixed(1)} points.`;
@@ -166,7 +169,7 @@
 
   function chips(others) {
     const c = $('sx-chips'); c.innerHTML = '';
-    others.forEach((o, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ax-chip'; b.innerHTML = `<i style="background:${OTHERS[i % 4]}"></i>${esc(o.s.n)} <span aria-hidden="true">×</span>`; b.setAttribute('aria-label', 'Remove ' + o.s.n);
+    others.forEach((o, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ax-chip'; b.innerHTML = `<span class="ax-num">${i + 1}</span>${esc(o.s.n)} <span aria-hidden="true">×</span>`; b.setAttribute('aria-label', 'Remove ' + o.s.n);
       b.addEventListener('click', () => { vs = vs.filter((u) => u !== o.u); go(); }); c.appendChild(b); });
     $('sx-q2').disabled = vs.length >= 4; $('sx-q2').placeholder = vs.length >= 4 ? 'Four schools added' : 'Add a school';
   }
@@ -176,11 +179,11 @@
     const L = B.latest, P1 = B.periods.filter((p) => p.endsWith('AS') && p < L).pop(), d = (a, b) => (a == null || b == null ? null : a - b), sg = (v) => { const t = Math.round(v / 10); return (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 10).toFixed(1); };
     const sch = (name, h, col, me) => { const g = (p, i) => (h && h[p] ? h[p][i] : null); return {name, col, me, abs: g(L, 1), pa: g(L, 3), yr: d(g(L, 1), g(P1, 1)), yrp: d(g(L, 3), g(P1, 3)), base: d(g(B.fy_last, 1), g(B.base, 1))}; };
     const grp = (name, a) => { const g = (p, i) => (bench(a, S.ph, p) || [])[i]; return {name, col: MUTED, ref: true, abs: g(L, 0), pa: g(L, 2), yr: d(g(L, 0), g(P1, 0)), yrp: d(g(L, 2), g(P1, 2)), base: d(g(B.fy_last, 0), g(B.base, 0))}; };
-    const rows = [sch(S.n, S.h, INK, true)].concat(others.map((o, i) => sch(o.s.n, o.s.h, OTHERS[i % 4]))).concat([grp((B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], S.la), grp('England ' + PH[S.ph], 'E')]);
+    const rows = [sch(S.n, S.h, INK, true)].concat(others.map((o, i) => Object.assign(sch(o.s.n, o.s.h, OTHERS[i % 4]), {tag: i + 1}))).concat([grp((B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], S.la), grp('England ' + PH[S.ph], 'E')]);
     const e = rows[rows.length - 1], cell = (v, ref, f, r) => (v == null ? '<td class="n">–</td>' : `<td class="n">${f(v)}</td>`);      // no green or rust on a named school's figures (Mark, 23 November)
     $('sx-cmp-s').textContent = `The first two columns are the autumn and spring terms ${ay(L)}; “in a year” compares them with the same two terms a year earlier; “since 2018/19” compares full years ${ay(B.base)} and ${ay(B.fy_last)}.`;
     $('sx-cmp').innerHTML = '<thead><tr><th>School</th><th class="n">Overall absence</th><th class="n">Persistent absence</th><th class="n">Overall, in a year</th><th class="n">Persistent, in a year</th><th class="n">Overall, since 2018/19</th></tr></thead><tbody>' + rows.map((r) =>
-      `<tr><td><i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, e.abs, pc, r)}${cell(r.pa, e.pa, pc, r)}${cell(r.yr, e.yr, sg, r)}${cell(r.yrp, e.yrp, sg, r)}${cell(r.base, e.base, sg, r)}</tr>`).join('') + '</tbody>';
+      `<tr><td>${r.tag ? '<span class="ax-num">' + r.tag + '</span>' : `<i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>`}${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, e.abs, pc, r)}${cell(r.pa, e.pa, pc, r)}${cell(r.yr, e.yr, sg, r)}${cell(r.yrp, e.yrp, sg, r)}${cell(r.base, e.base, sg, r)}</tr>`).join('') + '</tbody>';
   }
 
   let token = 0;

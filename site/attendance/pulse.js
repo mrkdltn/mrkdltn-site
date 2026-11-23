@@ -118,7 +118,7 @@
     const m = {t: 12, r: 14, b: 30, l: 40}, s = svg(el, W, H, 'Overall absence each week, this year and last');
     const ser = (code, y) => (P.weekly[code][y] ? P.weeks[y].map((iso, i) => ({x: Math.round((Date.parse(iso + 'T00:00:00Z') - base(y)) / 6048e5), v: P.weekly[code][y][ph].abs[i], iso})) : []);
     const lines = [{d: ser(a.c, prev), c: LAST, w: 2, n: ay(prev)}];
-    if (a.c !== eng) lines.push({d: ser(eng, cur), c: VERD, w: 2, n: 'England ' + ay(cur)});
+    if (a.c !== eng) lines.push({d: ser(eng, cur), c: MUTED, w: 2, n: 'England ' + ay(cur)});
     lines.push({d: ser(a.c, cur), c: INK, w: 3, n: ay(cur)});
     const vals = lines.flatMap((l) => l.d.map((p) => p.v)).filter((v) => v != null);
     const x = d3.scaleLinear([0, 46], [m.l, W - m.r]), y = d3.scaleLinear([Math.max(0, d3.min(vals) - 80), d3.max(vals) + 60], [H - m.b, m.t]).nice(4);
@@ -215,13 +215,13 @@
     s.append('line').attr('x1', x(dom[0])).attr('y1', y(dom[0])).attr('x2', x(dom[1])).attr('y2', y(dom[1])).attr('stroke', MUTED).attr('stroke-dasharray', '4 4');
     s.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text('Same point in ' + ay(prev));
     s.append('text').attr('transform', `translate(12,${(m.t + H - m.b) / 2}) rotate(-90)`).attr('text-anchor', 'middle').text(ay(cur) + ' so far');
-    const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(las.filter((d) => d.a.c !== state.area)).join('circle').attr('cx', (d) => x(d.x)).attr('cy', (d) => y(d.y)).attr('r', W < 420 ? 3.5 : 4.5).attr('fill', VERD).attr('fill-opacity', 0.55);
+    const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(las.filter((d) => d.a.c !== state.area)).join('circle').attr('cx', (d) => x(d.x)).attr('cy', (d) => y(d.y)).attr('r', W < 420 ? 3.5 : 4.5).attr('fill', (d) => AXc.gap(gap(d.y, d.x))).attr('fill-opacity', 0.6);
     const html = (d) => `<b>${d.a.n}</b><br>${ay(cur)}: ${pc(d.y)}<br>Same point ${ay(prev)}: ${pc(d.x)}`;
     c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); pick(d.a.c); showTip(ev, html(d)); });
     const me = las.find((d) => d.a.c === state.area);
     if (me) tipOn(s.append('path').datum(me).attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(me.x)},${y(me.y)})`).attr('fill', INK).attr('stroke', '#fff'), html);
     const lower = las.filter((d) => gap(d.y, d.x) < 0).length, higher = las.filter((d) => gap(d.y, d.x) > 0).length;
-    key(el, [`<i style="background:${VERD};border-radius:50%;width:10px"></i>Local authorities`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${me.a.n}`] : []));
+    key(el, [`<i style="background:${AXc.VERD};border-radius:50%;width:10px"></i>Lower than last year`, `<i style="background:${AXc.RUST};border-radius:50%;width:10px"></i>Higher`, `<i style="background:${AXc.SLATE};border-radius:50%;width:10px"></i>The same`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${me.a.n}`] : []));
     $('ax-change-r').innerHTML = `Absence in ${PHASE[ph]} is lower than at this point last year in <b>${lower}</b> of ${las.length} authorities and higher in <b>${higher}</b>.`;
   }
 

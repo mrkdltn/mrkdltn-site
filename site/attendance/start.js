@@ -50,6 +50,13 @@
     groups: 'Absence by pupil group is published for local authorities and counties only. Choose a local authority at step 2 to see it.',
     severeSchool: 'Severe absence is not shown for a single school, because it usually describes a handful of children. It is given for trusts and areas.'};
 
+  // How each section is named in the sentence above the button.
+  const SAYS = {'Summary': 'the latest figures', 'Three ways': 'the school beside England, its local authority and similar schools',
+    'Position': 'where it sits among schools of its phase', 'Year by year': 'the record year by year', 'Since 2018/19': 'the change since 2018/19',
+    'Side by side': 'a side-by-side table', 'Pupil groups': 'absence by pupil group', 'School by school': 'the spread across its schools',
+    'Compared': 'how it compares with others of its kind', 'The schools': 'the list of its schools', 'Day by day': 'the calendar of school days',
+    'Week by week': 'the record week by week', 'Weekdays': 'the pattern across the week', 'Reasons': 'the reasons for absence',
+    'Map': 'the map of local authorities', 'Against last year': 'the comparison with last year'};
   const KIND = {s: 'School', t: 'Trust', a: 'Local authority', y: 'County', c: 'Constituency', w: 'Ward', e: 'England'};
   const PH = {P: 'Primary', S: 'Secondary', X: 'Special'};
   const $ = (id) => document.getElementById(id);
@@ -121,7 +128,7 @@
     if (!place) return; const {out, none} = build(place), first = out[0];
     $('st-build').href = first.href;
     $('st-plan').textContent = (none ? 'Nothing is ticked yet, so you will get the whole picture. ' : '')
-      + 'Your briefing on ' + first.name + ' will show ' + list(first.show.map((n) => (n === 'Summary' ? 'a summary' : n.toLowerCase()))) + ', then sources and method.';
+      + 'Your briefing on ' + first.name + ' will show ' + list(first.show.map((n) => SAYS[n] || n.toLowerCase())) + ', then sources and method.';
     const also = $('st-also'); also.innerHTML = ''; also.hidden = out.length < 2;
     if (out.length > 1) { also.appendChild(el('p', null, out.length > 2 ? 'Two more briefings answer the rest of what you chose.' : 'One more briefing answers the rest of what you chose.'));
       out.slice(1).forEach((b) => { const a = el('a', 'ax-btn st-also-a', b.what); a.href = b.href; also.appendChild(a); }); }
