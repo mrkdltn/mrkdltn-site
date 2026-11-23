@@ -223,6 +223,19 @@ def schools():
         raw, join = raw_history(u)
         return {p: shown(v) for p, v in raw.items()}, join
 
+    # context, expected rates and similar schools (scripts/model_attendance.py), where present
+    ctx, mod, model = {}, {}, None
+    if os.path.exists(os.path.join(RAW, 'school_model.csv')):
+        F = lambda v: float(v) if v != '' else None
+        ctx = {r['urn']: [F(r['fsm_pct']), F(r['eal_pct']), F(r['sen_pct']), F(r['ehcp_pct']), int(r['pupils']), int(r['rural'])]
+               for r in csv.DictReader(open(os.path.join(RAW, 'school_context.csv'), encoding='utf-8'))}
+        mod = {r['urn']: r for r in csv.DictReader(open(os.path.join(RAW, 'school_model.csv'), encoding='utf-8'))}
+        model = json.load(open(os.path.join(RAW, 'model.json')))
+        model['release'] = json.load(open(os.path.join(RAW, 'context_release.json')))
+        if model['period'] != latest:
+            print(f"attendance: the model was fitted on {model['period']} but the newest period is {latest}; expected rates left out")
+            mod = {}
+
     current = sorted((u for u in rows if latest in rows[u] or fy_last in rows[u]), key=int)
     current = [u for u in current if latest in rows[u]]            # the newest release defines who is listed
     out = os.path.join(OUT, 'sch')
@@ -230,7 +243,7 @@ def schools():
     shards = [dict() for _ in range(SHARDS)]
     las = sorted({meta[u]['la'] for u in current})
     index = {k: [] for k in ('urn', 'name', 'town', 'pc', 'la', 'ph')}
-    dist = {ph: {k: [] for k in ('urn', 'la', 'enrol', 'abs', 'pa', 'chg')} for ph in 'PSX'}
+    dist = {ph: {k: [] for k in ('urn', 'la', 'enrol', 'abs', 'pa', 'chg', 'fsm', 'eal', 'sen', 'ehcp', 'xabs', 'xpa')} for ph in 'PSX'}
     base = '2018'
     trust_n = {}
     for u in current:
@@ -246,6 +259,14 @@ def schools():
             rec['join'] = join
         if u in grade:
             rec['g'] = list(grade[u])
+        if u in ctx:
+            rec['ctx'] = ctx[u]
+        if u in mod and h.get(latest):
+            k = mod[u]
+            nn = [x for x in k['nn'].split() if latest in rows.get(x, {})]
+            rec['exp'] = [int(k['exp_abs']), int(k['exp_pa']), int(k['band_abs']), int(k['band_pa'])]
+            rec['nn'] = [int(x) for x in nn]
+            rec['sim'] = pool([rows[x][latest] for x in nn])
         shards[int(u) % SHARDS][u] = rec
         for k, v in (('urn', int(u)), ('name', m['name']), ('town', m['town']), ('pc', m['postcode']), ('la', las.index(m['la'])), ('ph', m['phase'])):
             index[k].append(v)
@@ -255,6 +276,10 @@ def schools():
             a, b = h.get(fy_last), h.get(base)
             d['urn'].append(int(u)); d['la'].append(las.index(m['la'])); d['enrol'].append(now[0]); d['abs'].append(now[1]); d['pa'].append(now[3])
             d['chg'].append(a[1] - b[1] if a and b else None)
+            c = ctx.get(u, [None] * 6)
+            for i, k in enumerate(('fsm', 'eal', 'sen', 'ehcp')):
+                d[k].append(c[i])
+            d['xabs'].append(int(mod[u]['exp_abs']) if u in mod else None); d['xpa'].append(int(mod[u]['exp_pa']) if u in mod else None)
     for i, sh in enumerate(shards):
         json.dump(sh, open(os.path.join(out, f'{i}.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
     json.dump({'n': len(current), 'las': las, 'data': index}, open(os.path.join(OUT, 'schools.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
@@ -271,6 +296,7 @@ def schools():
     for d in dist.values():
         assert all(0 <= x <= 10000 for x in d['abs'] + d['pa'])
     groups_build(current, meta, rows, raw_history, shown, pool, periods, latest)
+    patterns_build(current, meta, rows, raw_history, pool, fy, ctx, model, bench, names)
 
 
 # ---------------------------------------------------------------- trusts and constituencies
@@ -347,6 +373,44 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest)
     json.dump({'shards': G_SHARDS, 'data': index}, open(os.path.join(OUT, 'groups.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
     print(f"attendance groups: {index['k'].count('c')} constituencies, {index['k'].count('t')} trusts with two or more schools "
           f"({len(overview['t'])} with {MIN_TRUST} or more, which get pooled figures)")
+
+
+# ---------------------------------------------------------------- patterns (the national picture)
+def patterns_build(current, meta, rows, raw_history, pool, fy, ctx, model, bench, names):
+    hist = {u: raw_history(u)[0] for u in current}
+    out = {'fy': fy, 'model': model, 'gradient': {}, 'ridges': {}, 'regions': {}}
+    # by eligibility for free school meals: schools in five equal groups by their newest census figure
+    for ph in 'PS':
+        us = sorted((u for u in current if meta[u]['phase'] == ph and ctx.get(u) and ctx[u][0] is not None), key=lambda u: ctx[u][0])
+        q = [us[i * len(us) // 5:(i + 1) * len(us) // 5] for i in range(5)]
+        out['gradient'][ph] = {'cut': [[ctx[g[0]][0], ctx[g[-1]][0]] for g in q],
+                               'rate': [[pool([hist[u][p] for u in g if p in hist[u]]) for p in fy] for g in q]}
+    # the whole distribution, year by year
+    step = {'P': 25, 'S': 50, 'X': 100}
+    top = {'P': 1200, 'S': 1800, 'X': 3600}
+    for ph in 'PSX':
+        us = [u for u in current if meta[u]['phase'] == ph]
+        yrs = {}
+        for p in fy:
+            v = [hist[u][p][2] for u in us if p in hist[u] and hist[u][p][2] is not None and (hist[u][p][0] or 0) >= MIN_ENROL]
+            b = [0] * (top[ph] // step[ph])
+            for x in v:
+                b[min(len(b) - 1, x // step[ph])] += 1
+            yrs[p] = {'n': len(v), 'bins': b, 'median': sorted(v)[len(v) // 2] if v else None}
+        out['ridges'][ph] = {'step': step[ph], 'years': yrs}
+    # regions, pooled from schools
+    area = {a['code']: a for a in csv.DictReader(open(os.path.join(RAW, 'areas.csv'), encoding='utf-8'))}
+    reg = {}
+    for u in current:
+        r = area.get(meta[u]['la'], {}).get('region')
+        if r:
+            reg.setdefault((r, meta[u]['phase']), []).append(u)
+    for (r, ph), us in reg.items():
+        out['regions'].setdefault(ph, {})[names.get(r, r)] = [pool([hist[u][p] for u in us if p in hist[u]]) for p in fy]
+    for ph in 'PSX':
+        out['regions'].setdefault(ph, {})['England'] = [bench['E'][ph].get(p) for p in fy]
+    json.dump(out, open(os.path.join(OUT, 'patterns.json'), 'w'), separators=(',', ':'))
+    print(f"attendance patterns: {os.path.getsize(os.path.join(OUT, 'patterns.json')) // 1024} KB")
 
 
 if __name__ == '__main__':

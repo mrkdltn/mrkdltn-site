@@ -63,6 +63,36 @@
     else { O.hidden = true; O.innerHTML = ''; }
   }
 
+  // readings scale (the Explorer's own, never Ofsted's colours): lower absence than the comparison sits on the verdigris side
+  const READ = [['well below', '#1E544D'], ['below', '#2F6F66'], ['close to', '#55627A'], ['above', '#A3402B'], ['well above', '#7A2617']];
+  const reading = (d, band) => READ[d < -2 * band ? 0 : d < -band ? 1 : d <= band ? 2 : d <= 2 * band ? 3 : 4];
+  let names = null;
+  function readings() {
+    const card = $('sx-read-c'), el = $('sx-read'), M = MEAS[meas], L = B.latest, now = S.h[L]; card.hidden = !(now && S.exp); if (card.hidden) return;
+    const mine = now[M.i], x0 = meas === 'abs' ? 0 : 1, band = S.exp[x0 + 2], e = bench('E', S.ph, L), l = bench(S.la, S.ph, L);
+    const rows = [['England ' + PH[S.ph], e && e[M.b]], [(B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], l && l[M.b]], ['The 20 similar schools', S.sim && S.sim[M.b]], ['Expected for its circumstances', S.exp[x0], true, true]].filter((r) => r[1] != null);
+    const W = width(el), narrow = W < 560, rh = narrow ? 62 : 46, lab = narrow ? 0 : 250, m = {l: lab + 8, r: narrow ? 12 : 270, t: 8, b: 26}, H = m.t + rows.length * rh + m.b, s = svg(el, W, H, 'The school beside four comparisons');
+    const all = rows.map((r) => r[1]).concat([mine, S.exp[x0] - 2 * band, S.exp[x0] + 2 * band]), pad = (d3.max(all) - d3.min(all)) * 0.12 + 20;
+    const x = d3.scaleLinear([Math.max(0, d3.min(all) - pad), d3.max(all) + pad], [m.l, W - m.r]);
+    x.ticks(narrow ? 4 : 6).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', H - 8).attr('text-anchor', 'middle').text((t / 100) + '%'); });
+    rows.forEach((r, i) => { const y = m.t + i * rh + (narrow ? 40 : rh / 2), d = mine - r[1], rd = r[2] ? reading(d, band) : null;
+      s.append('text').attr('x', narrow ? m.l : lab).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'start' : 'end').attr('class', 'strong').text(r[0] + (narrow ? ': ' + pc(r[1]) : ''));
+      if (r[3]) s.append('rect').attr('x', x(r[1] - band)).attr('width', x(r[1] + band) - x(r[1] - band)).attr('y', y - 11).attr('height', 22).attr('fill', '#E6EAF0');
+      s.append('line').attr('x1', x(r[1])).attr('x2', x(mine)).attr('y1', y).attr('y2', y).attr('stroke', rd ? rd[1] : SOFT).attr('stroke-width', 3);
+      s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', VERD).attr('stroke-width', 3);
+      s.append('path').attr('d', d3.symbol(d3.symbolDiamond, 110)()).attr('transform', `translate(${x(mine)},${y})`).attr('fill', INK);
+      const g = gap(mine, r[1]), t = (narrow ? '' : pc(r[1]) + ' · ') + (g === 0 ? 'the same' : pts(g) + ' points ' + (g < 0 ? 'lower' : 'higher')) + (rd ? ', ' + rd[0] + ' expected' : '');
+      s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').attr('fill', rd ? rd[1] : null).style('fill', rd ? rd[1] : null).text(narrow ? (g === 0 ? 'same' : (g < 0 ? '−' : '+') + pts(g)) + (rd ? ', ' + rd[0] : '') : t); });
+    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${VERD};width:3px;height:14px"></i>The comparison`, `<i style="background:#E6EAF0"></i>Close to expected (within ${(band / 100).toFixed(1)} points)`]);
+    const dx = mine - S.exp[x0], rx = reading(dx, band), gs = S.sim ? gap(mine, S.sim[M.b]) : null, gx = gap(mine, S.exp[x0]);
+    $('sx-read-r').innerHTML = `Given its circumstances, the model expects ${M.n} of <b>${pc(S.exp[x0])}</b> at a school like this. The school’s ${pc(mine)} is ` + (gx === 0 ? 'the same' : `<b>${pts(gx)}</b> points ${gx < 0 ? 'lower' : 'higher'}`) + `, which for a school of its size counts as <b style="color:${rx[1]}">${rx[0]} expected</b>.` + (gs == null ? '' : ` The 20 schools most like it had ${pc(S.sim[M.b])} between them.`);
+    const c = S.ctx; $('sx-ctx').textContent = c ? `Its circumstances, January 2026 census: ${c[4].toLocaleString('en-GB')} pupils; ${c[0].toFixed(1)}% eligible for free school meals; ${c[2].toFixed(1)}% with SEN support; ${c[3].toFixed(1)}% with an education, health and care plan; ${c[1].toFixed(1)}% with a first language other than English; ${c[5] ? 'rural' : 'urban'}.` : '';
+    const ul = $('sx-sim'), fill = () => { ul.innerHTML = S.nn.map((u) => names.get(u)).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name)).map((r) => `<li><a href="${AXsearch.href(r.urn)}">${esc(r.name)}</a> <small>${esc(r.town)}</small></li>`).join(''); };
+    ul.innerHTML = ''; $('sx-sim-d').ontoggle = () => { if (!$('sx-sim-d').open) return; if (names) { fill(); return; } ul.textContent = 'Loading…';
+      d3.json('/attendance/data/schools.json').then((j) => { names = new Map(j.data.urn.map((u, i) => [u, {urn: u, name: j.data.name[i], town: j.data.town[i]}])); fill(); }); };
+    if ($('sx-sim-d').open) $('sx-sim-d').ontoggle();
+  }
+
   // histogram of a distribution with this school marked and its local authority's schools as ticks beneath
   function strip(el, values, mine, ticks, step, label, fmtTick, zero) {
     const W = width(el), H = Math.round(Math.min(300, Math.max(200, W * 0.34))), m = {t: 26, r: 14, b: 44, l: 14};
@@ -143,7 +173,7 @@
   function draw() {
     const t = ++token;
     Promise.all(vs.map((u) => school(u).then((s) => (s ? {u, s} : null)))).then((o) => { if (t !== token) return; const others = o.filter(Boolean);
-      head(); position(); history(others); changed(); chips(others); });
+      head(); readings(); position(); history(others); changed(); chips(others); });
   }
   function go() { const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); draw(); }
   function open(u, push) {

@@ -1,0 +1,157 @@
+{
+ "period": "2025AS",
+ "k": 20,
+ "phases": {
+  "P": {
+   "n": 16682,
+   "median_enrol": 184.0,
+   "factors": [
+    "fsm_pct",
+    "eal_pct",
+    "sen_pct",
+    "ehcp_pct",
+    "log_pupils",
+    "rural"
+   ],
+   "labels": [
+    "Eligible for free school meals",
+    "First language other than English",
+    "SEN support",
+    "Education, health and care plans",
+    "School size",
+    "Rural setting"
+   ],
+   "mean": [
+    24.0319,
+    18.8687,
+    15.8197,
+    4.2327,
+    5.2235,
+    0.2811
+   ],
+   "sd": [
+    15.5732,
+    21.0624,
+    6.6035,
+    3.2835,
+    0.682,
+    0.4496
+   ],
+   "weights": [
+    0.448,
+    0.055,
+    0.158,
+    0.17,
+    0.14,
+    0.029
+   ],
+   "abs": {
+    "coef": [
+     -2.9204,
+     0.12712,
+     0.01552,
+     0.04496,
+     0.04835,
+     -0.03979,
+     0.00812
+    ],
+    "base": 0.7,
+    "r2": 0.259,
+    "resid_sd": 1.57
+   },
+   "pa": {
+    "coef": [
+     -1.92797,
+     0.26655,
+     0.05272,
+     0.06781,
+     0.06397,
+     -0.05094,
+     0.0043
+    ],
+    "base": 3.05,
+    "r2": 0.365,
+    "resid_sd": 5.41
+   }
+  },
+  "S": {
+   "n": 3419,
+   "median_enrol": 950.0,
+   "factors": [
+    "fsm_pct",
+    "eal_pct",
+    "sen_pct",
+    "ehcp_pct",
+    "log_pupils",
+    "rural",
+    "selective"
+   ],
+   "labels": [
+    "Eligible for free school meals",
+    "First language other than English",
+    "SEN support",
+    "Education, health and care plans",
+    "School size",
+    "Rural setting",
+    "Selective admissions"
+   ],
+   "mean": [
+    28.8351,
+    18.7582,
+    14.7558,
+    3.7401,
+    6.8006,
+    0.1299,
+    0.0477
+   ],
+   "sd": [
+    14.6445,
+    17.723,
+    5.843,
+    2.1463,
+    0.431,
+    0.3362,
+    0.2131
+   ],
+   "weights": [
+    0.354,
+    0.238,
+    0.136,
+    0.046,
+    0.028,
+    0.005,
+    0.193
+   ],
+   "abs": {
+    "coef": [
+     -2.44419,
+     0.14084,
+     -0.09488,
+     0.05395,
+     0.0183,
+     -0.01118,
+     0.00207,
+     -0.07682
+    ],
+    "base": 1.02,
+    "r2": 0.4,
+    "resid_sd": 1.87
+   },
+   "pa": {
+    "coef": [
+     -1.30388,
+     0.23469,
+     -0.10488,
+     0.07086,
+     0.01075,
+     -0.02828,
+     0.0081,
+     -0.15063
+    ],
+    "base": 3.39,
+    "r2": 0.461,
+    "resid_sd": 5.77
+   }
+  }
+ }
+}

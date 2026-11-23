@@ -69,3 +69,21 @@
 .ax-table small{display:block;color:var(--muted);font-size:13px}
 @media (max-width:480px){#gx-body:not([hidden]){gap:16px}.ax-table{font-size:14px}}
 @media (max-width:480px){.ax-controls{position:static}.ax-table th.n{white-space:normal}}
+/* sub-navigation, readings, patterns */
+.ax-nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;margin:-12px 0 -4px}
+.ax-nav a{color:var(--muted);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.ax-nav a[aria-current=page]{color:var(--ink);border-bottom-color:#C9A24B;font-weight:600}
+.ax-nav a:hover{color:var(--ink)}
+.ax-details{margin-top:8px;font-size:15px}
+.ax-details summary{cursor:pointer;color:var(--ink);font-weight:600;padding:6px 0}
+.ax-details ul{list-style:none;margin:6px 0 0;padding:0;columns:2 280px;column-gap:28px}
+.ax-details li{padding:4px 0;break-inside:avoid}
+.ax-details a{color:var(--ink)}.ax-details small{color:var(--muted)}
+#px-body{display:flex;flex-direction:column;gap:22px}
+.ax-chart canvas{display:block;width:100%}
+.ax-pos{position:relative}
+.ax-pos svg{position:absolute;left:0;top:0}
+.ax-multi{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px 16px}
+.ax-multi h3{font-size:13px;font-weight:600;margin:0 0 2px}
+.ax-coef td,.ax-coef th{font-variant-numeric:tabular-nums}
+@media (max-width:480px){#px-body{gap:16px}.ax-nav{gap:4px 14px;font-size:13px;margin-top:-6px}}
