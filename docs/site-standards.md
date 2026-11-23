@@ -47,7 +47,7 @@ Each has a test. Run the tests before any preview goes to Mark.
 
 Met 0 · Partly met 10 · Not met 6. Re-score monthly.
 
-Updated 23 November 2026 as each "Now" item ships: Met 1 · Partly met 9 · Not met 6.
+Updated 23 November 2026 as each "Now" item ships: Met 2 · Partly met 9 · Not met 5.
 
 | # | Standard | Status | Evidence |
 | --- | --- | --- | --- |
@@ -62,8 +62,8 @@ Updated 23 November 2026 as each "Now" item ships: Met 1 · Partly met 9 · Not 
 | 9 | Shares well | Met (23 Nov) | 23 Nov: every page but 404 has a 1200 × 630 JPG card and full OG and Twitter tags, articles with dates; `scripts/check_meta.py` passes on all 6,642 pages and fails the build otherwise. Post Inspector check is Mark's to run (needs his sign-in) |
 | 10 | Findable | Not met | No JSON-LD; `STATIC_PAGES` in `scripts/build_pages.py` omits `/writing/belonging/`; every `lastmod` is the build date |
 | 11 | Honest imagery | Partly | Grade grid drawn inside a generated classroom; no label near figures |
-| 12 | Text before motion | Not met | `.js .pc{opacity:0}` in `home.css`; phone intro invisible until scrolled |
-| 13 | Accessible | Partly | Belonging article clean on axe; home has 5 serious contrast failures (`#55627A` on animated `#C9D7E6`, 4.2:1); footer links 20 px tall |
+| 12 | Text before motion | Met (23 Nov) | 23 Nov: every home card and figure readable at load with JavaScript off, with reduced motion and before any scroll (0 of 9 cards hidden, was 8 of 9 on a phone); figures no longer count up; motion only adds thread, badges and bar growth |
+| 13 | Accessible | Partly (23 Nov) | 23 Nov: home clean on axe (no serious or critical) at 375 × 812 and 1400 × 860, top, middle and bottom, motion on and reduced; `.paper` paints its own stone ground. Still to do: axe on every template, keyboard and screen-reader walk-through, accessibility statement |
 | 14 | Fast | Partly | Desktop cold load ~360 ms, 87 KB, CLS 0; no phone measurement; everything `max-age=0` |
 | 15 | Secure | Partly | Only `nosniff` and `Referrer-Policy`; inline `onclick` on print buttons |
 | 16 | Built and checked | Partly | Hand-built pages and one-off scripts per article; no site gate or changelog |
