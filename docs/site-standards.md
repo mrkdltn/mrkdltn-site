@@ -64,8 +64,8 @@ Updated 23 November 2026 as each "Now" item ships: Met 3 · Partly met 10 · Not
 | 11 | Honest imagery | Partly | Grade grid drawn inside a generated classroom; no label near figures |
 | 12 | Text before motion | Met (23 Nov) | 23 Nov: every home card and figure readable at load with JavaScript off, with reduced motion and before any scroll (0 of 9 cards hidden, was 8 of 9 on a phone); figures no longer count up; motion only adds thread, badges and bar growth |
 | 13 | Accessible | Partly (23 Nov) | 23 Nov: home clean on axe (no serious or critical) at 375 × 812 and 1400 × 860, top, middle and bottom, motion on and reduced; `.paper` paints its own stone ground. Still to do: axe on every template, keyboard and screen-reader walk-through, accessibility statement |
-| 14 | Fast | Partly | Desktop cold load ~360 ms, 87 KB, CLS 0; no phone measurement; everything `max-age=0` |
-| 15 | Secure | Partly | Only `nosniff` and `Referrer-Policy`; inline `onclick` on print buttons |
+| 14 | Fast | Partly (23 Nov) | 23 Nov: fonts, plates, video, writing images and d3 fingerprinted under `/static/` with `public, max-age=31536000, immutable`; HTML `max-age=0, must-revalidate`. Still to do: phone LCP, CLS and INP over 4G, and page weights |
+| 15 | Secure | Partly (23 Nov) | 23 Nov: HSTS `max-age=86400`, `frame-ancestors 'self'` enforced, `Permissions-Policy`, `/.well-known/security.txt`; no inline script or handlers anywhere; CSP report-only shows no violations on home, articles, Explorer and school pages. Still to do: a clean week, then enforce the CSP and lengthen HSTS; privacy note |
 | 16 | Built and checked | Partly | Hand-built pages and one-off scripts per article; no site gate or changelog |
 
 Other specifics found: portrait `site/assets/img/mark-dalton.webp` is 400 × 500 but declared 880w, and the 480w file is identical; home links Progress 8 twice under different titles; the report-cards piece is dated "November 2026" with no day; colophon and 404 descriptions are one word; the 404 page carries a canonical.
