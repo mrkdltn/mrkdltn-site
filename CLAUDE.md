@@ -80,6 +80,7 @@ After a production push, check the live site, then add an entry to the What's ne
 ## Open work (as at 22 November 2026)
 
 - **Main site, from `docs/site-standards.md`:** the "Now" items (share cards, text before motion, contact, feed and structured data, headers and caching, portrait), each on its own branch. Five decisions for Mark are listed at the end of that file.
+- **Attendance Explorer (planned 22 Nov, nothing built):** `docs/attendance-explorer-plan.md` holds the plan, eight decisions for Mark and the phases. Its data facts were not checked against the primary files; Phase 0 (recon) comes first.
 - **Parked by Mark (18 Nov): community lens** (disadvantaged pupils by school White British share). Branch `wb-lens`, unmerged; cut from `887d197`, rebase before any merge. Analysis and plan are in the claude.ai Project. Do not merge or revive without Mark.
 - **Header motion** (looping motion behind the Explorer header): undecided; the style guide currently says motion never loops.
 - **Primary schools:** decisions pending on a KS1 2022/23 prior-attainment proxy, and on moving school pages to a Pages Function to stay under Cloudflare's 20,000-file limit (about 13,100 files per deploy now). Recon scripts on branch `primary-data`.
