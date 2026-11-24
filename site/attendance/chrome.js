@@ -95,3 +95,12 @@
     else if (bar.parentNode !== home || bar.classList.contains('ax-controls-below')) { home.insertBefore(bar, next && next.parentNode === home ? next : home.firstChild); bar.classList.remove('ax-controls-below'); } };
   mq.addEventListener ? mq.addEventListener('change', place) : mq.addListener(place); place();
 })();
+
+/* Saved places follow the reader: on every page except Areas (which shows them at the top), the list sits
+   above the method section once something is saved. */
+(function () {
+  if (!window.AXtools || document.getElementById('ax-places') || document.documentElement.classList.contains('ax-brief')) return;
+  const method = document.querySelector('main.ax .ax-method'); if (!method) return;
+  const host = document.createElement('div'); host.id = 'ax-places-foot'; method.parentNode.insertBefore(host, method);
+  try { AXtools.renderPins(host); } catch (e) { host.remove(); }
+})();
