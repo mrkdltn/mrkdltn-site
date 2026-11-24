@@ -33,3 +33,5 @@ html.ax-brief .ax-hero .ax-top{margin-top:10px}
   html.ax-brief .ax-brief-foot{display:block;order:99;font:9pt/1.4 var(--sans);color:#55627A;margin:0;padding-top:8px;border-top:1px solid #D8DDE5;overflow-wrap:anywhere}
   html.ax-brief *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* the briefing's actions in one row, so the first reading comes sooner */
+.ax-brief-head .ax-btn{display:inline-flex;align-items:center;justify-content:center;width:auto;min-height:44px;padding:0 14px;margin:8px 8px 0 0;text-decoration:none}

@@ -64,7 +64,7 @@
 
   function head() {
     const L = B.latest, prevP = B.periods.filter((p) => p.endsWith('AS') && p < L).pop();
-    $('gx-kind').textContent = KINDS[kind];
+    $('gx-kind').innerHTML = kind === 't' ? 'Trusts' : `<a href="/attendance/">Areas</a> · <a href="/attendance/group/?k=${kind}">${KINDS[kind]}</a>`;      // a breadcrumb in place of the row of kinds
     if (window.AXtools) AXtools.setPlace({kind: 'group', id: kind + ':' + id, name: G.name, href: glink(kind, id)});
     $('gx-name').textContent = G.name; document.title = G.name + ': attendance · Attendance Explorer · Mark Dalton';
     const by = d3.rollup(G.schools, (v) => v.length, (s) => s[2]);
@@ -73,13 +73,11 @@
     $('gx-src').textContent = `“${B.release.autumn_spring.title}” (published ${date(B.release.autumn_spring.published)}) and “${B.release.full_year.title}” (published ${date(B.release.full_year.published)})`;
     const R = $('gx-reading'), K = $('gx-kpis'), now = phase && mine(L), was = phase && prevP && mine(prevP), e = phase && eng(phase, L);
     if (!now) { K.innerHTML = '';
-      R.textContent = kind === 't' && !G.pooled ? `${G.name} has ${count(G.n)} schools. Pooled figures are given for trusts with five or more, so its schools are listed below without one.`
-        : `There are too few schools of one phase here for a pooled figure, so the schools are listed below without one.`; return; }
+      R.textContent = kind === 't' && !G.pooled ? `${G.name} has ${count(G.n)} schools. A figure for all its schools together is given for trusts with five or more, so its schools are listed below without one.`
+        : `There are too few schools of one phase here for a figure across them, so the schools are listed below without one.`; return; }
     let t = `Across the ${count(now[3])} ${PH[phase]} ${of()}, pupils missed <b>${pc(now[0])}</b> of sessions in the ${period(L)}`;
     if (was) { const d = gap(now[0], was[0]); t += d === 0 ? ', the same as in the same two terms a year earlier' : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in the same two terms a year earlier (${pc(was[0])})`; }
     t += '.'; if (e) { const d = gap(now[0], e[0]); t += ` Across England’s ${PH[phase]} the figure was ${pc(e[0])}` + (d === 0 ? '.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
-    t += ` <b>${pc(now[2])}</b> of pupils were persistently absent` + (e ? `, against ${pc(e[2])} across England.` : '.');
-    if (now[4] != null) t += ` <b>${pc(now[4])}</b> were severely absent, missing half or more of their sessions` + (e && e[4] != null ? `; across England it was ${pc(e[4])}.` : '.');
     R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[0], was[0]), 'a year earlier') : '') + (e ? AXc.pill(gap(now[0], e[0]), 'England') : '') + '</span>' + focusLine();
     const k = [['Overall absence', pc(now[0]), was ? 'a year earlier ' + pc(was[0]) : ''], ['Persistent absence', pc(now[2]), was ? 'a year earlier ' + pc(was[2]) : ''], ['Severe absence', now[4] == null ? '–' : pc(now[4]), now[4] == null ? 'too few pupils to show' : was && was[4] != null ? 'a year earlier ' + pc(was[4]) : ''], ['Unauthorised absence', pc(now[1]), e ? 'England ' + pc(e[1]) : ''], ['England ' + PH[phase], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) + (e[4] != null ? ', severe ' + pc(e[4]) : '') : '']];
     K.innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${esc(x[0])}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');
@@ -112,7 +110,7 @@
 
   function hist() {
     const card = $('gx-hist-c'), el = $('gx-hist'), M = MEAS[meas]; card.hidden = !(phase && G.bench[phase]); if (card.hidden) return;
-    $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' || kind === 'a' ? 'Its schools pooled for each full school year.' : kind === 't' ? 'The solid line pools only the schools that were in the trust in each year: the trust’s own record. The dashed line pools all the schools it holds today in every year, including years before they joined.' : 'The schools located in the constituency, pooled for each full school year.') + ' No figures were published for 2019/20.';
+    $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' || kind === 'a' ? 'All its schools together, for each full school year.' : kind === 't' ? 'The solid line pools only the schools that were in the trust in each year: the trust’s own record. The dashed line pools all the schools it holds today in every year, including years before they joined.' : 'The schools located in the constituency, pooled for each full school year.') + ' No figures were published for 2019/20.';
     const W = width(el), H = Math.round(Math.min(360, Math.max(230, W * 0.46))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const inT = kind === 't' && G.bench_in && G.bench_in[phase], at = (p) => (inT && inT[p]) || null;
@@ -138,6 +136,10 @@
     r.innerHTML = !jn.length ? 'No joining dates are recorded for these schools, so the line shows the schools it holds today in every year.'
       : `Its ${count(nj)} ${PH[phase]} joined between <b>${month(jn[0])}</b> and <b>${month(jn[jn.length - 1])}</b>` + (mv ? `; ${count(mv)} came from another trust` : '') + '. ' + (first ? `The solid line starts in ${ay(first)}, the first year with three of them in the trust.` : 'Fewer than three were in the trust in any year with figures, so only the dashed line is drawn.');
   }
+
+  // a tapped mark names itself beneath the chart, with a link to open it: hover is no use on a phone
+  function picked(el, name, text, href) { let p = el.querySelector('.ax-picked'); if (!p) { p = document.createElement('p'); p.className = 'ax-picked'; el.appendChild(p); }
+    p.innerHTML = `<span><b>${esc(name)}</b>${text ? ': ' + text : ''}</span>` + (href ? ` <a class="ax-btn" href="${href}">Open</a>` : ''); }
 
   // ---- what is being compared: the newest rate, or its change
   const VIEW = {now: 'Latest', yr: 'Change in a year', base: 'Change since 2018/19'}, CH = {abs: [5, 7, 8], pa: [6, 9, 10], sev: [12, 13, 14]};
@@ -169,7 +171,7 @@
     if (mid != null) s.append('line').attr('x1', x(mid)).attr('x2', x(mid)).attr('y1', m.t - 6).attr('y2', H - m.b).attr('stroke', MUTED).attr('stroke-width', 2);
     const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(rows.filter((d) => d.r.id !== id)).join('circle').attr('cx', (d) => x(d.v)).attr('cy', (d, i) => 60 + ((i * 37) % 31) - 15).attr('r', 3.5).attr('fill', (d) => AXc.gap(d.v - mid)).attr('fill-opacity', 0.55);
     const html = (d) => `<b>${esc(d.r.name)}</b><br>${cap(vname())}: ${fv(d.v)}`;
-    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = glink('t', d.r.id); });
+    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); picked(el, d.r.name, fv(d.v), glink('t', d.r.id)); });
     const me = rows.find((d) => d.r.id === id); if (me) tipOn(s.append('path').datum(me).attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(me.v)},60)`).attr('fill', INK).attr('stroke', '#fff'), html);
     key(el, [`<i style="background:${AXc.VERD};border-radius:50%;width:10px"></i>Fell, or rose less than England`, `<i style="background:${AXc.RUST};border-radius:50%;width:10px"></i>Rose more`, `<i style="background:${MUTED};width:2px;height:12px"></i>England ${PH[phase]}, ${fv(mid)}`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}, ${fv(me.v)}`] : []));
     $('gx-over-r').innerHTML = me ? `Across the ${PH[phase]} it holds today, ${vname()} was <b>${fv(me.v)}</b>, against ${fv(mid)} across England. <b>${rows.filter((d) => d.v < me.v).length}</b> of the other ${rows.length - 1} trusts had a smaller rise or a larger fall.` : '';
@@ -187,7 +189,7 @@
     s.style('max-width', cap2 + 'px').style('margin', '0 auto');
     const has = new Set(H2.map((d) => d.r.id)), blank = ALL.filter((r) => !has.has(r.id) && r.q != null).map((r) => ({r, v: null}));
     const g = s.append('g').attr('class', 'ax-hexes').selectAll('path').data(blank.concat(H2)).join('path').attr('d', dpath).attr('transform', (d) => `translate(${px(d)},${py(d)})`).attr('fill', (d) => AXc.div(d.v, mid, span));
-    g.on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : cap(vname()) + ': ' + fv(d.v)}`)).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = glink(kind, d.r.id); });
+    g.on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : cap(vname()) + ': ' + fv(d.v)}`)).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); if (d.r.id === id) return; picked(el, d.r.name, d.v == null ? 'no figure' : fv(d.v), glink(kind, d.r.id)); });
     const me = H2.find((d) => d.r.id === id); if (me) s.append('path').attr('d', dpath).attr('transform', `translate(${px(me)},${py(me)}) scale(${kind === 'c' ? 1.6 : 1.15})`).attr('fill', 'none').attr('stroke', BRASS).attr('stroke-width', 2.5).attr('pointer-events', 'none');
     key(el, [AXc.legend(mid, span, 'England', view === 'now' ? null : (v) => sign(v) + ' points'), `<i style="background:none;border:2px solid ${BRASS}"></i>${esc(G.name)}`]);
     const below = me ? H2.filter((d) => d.v < me.v).length : null;
@@ -211,7 +213,7 @@
     s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(p0 * 10000)).attr('y2', y(p0 * 10000)).attr('stroke', MUTED).attr('stroke-width', 2);
     const html = (d) => `<b>${esc(d.r.name)}</b><br>${d.r[phase][0]} ${PH[phase]}, ${d.n.toLocaleString('en-GB')} pupils<br>${cap(M.n)} ${pc(d.v)}`;
     const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(rows.filter((d) => d.r.id !== id)).join('circle').attr('cx', (d) => x(d.n)).attr('cy', (d) => y(d.v)).attr('r', W < 480 ? 3 : 4).attr('fill', MUTED).attr('fill-opacity', 0.5);
-    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = glink('t', d.r.id); });
+    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); picked(el, d.r.name, fv(d.v), glink('t', d.r.id)); });
     const me = rows.find((d) => d.r.id === id); if (me) tipOn(s.append('path').datum(me).attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(me.n)},${y(me.v)})`).attr('fill', INK).attr('stroke', '#fff'), html);
     key(el, [`<i style="background:${MUTED};border-radius:50%;width:10px"></i>Trusts (${rows.length})`, `<i style="background:#E6EAF0"></i>About 95% of trusts`, `<i style="background:#F4F5F8;border:1px solid ${GRID}"></i>About 99.8%`, `<i class="ln" style="border-color:${MUTED}"></i>All these trusts together, ${pc(p0 * 10000)}`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}`] : []));
     if (me) { const zz = (me.v / 10000 - p0) / Math.sqrt(phi * p0 * (1 - p0) / me.n), a = Math.abs(zz);
@@ -228,7 +230,7 @@
     const path = (w) => w.p.map((r) => 'M' + d3.range(r.length / 2).map((i) => (r[2 * i] * k).toFixed(1) + ',' + ((D.h - r[2 * i + 1]) * k).toFixed(1)).join('L') + 'Z').join('');
     const g = s.selectAll('path').data(D.wards.slice().sort((a, b) => (a.c === id) - (b.c === id))).join('path').attr('d', path).attr('fill-rule', 'evenodd').attr('class', (w) => (w.c === id ? 'me' : null)).attr('fill', (w) => AXc.div(wv(w), mid, span));
     const html = (w) => `<b>${esc(w.n)}</b><br>` + (!w.v ? 'No state-funded school in the newest figures' : wv(w) == null ? `${w.v[0]} ${w.v[0] === 1 ? 'school' : 'schools'}: no figure` : `${cap(vname())}: ${fv(wv(w))}`);
-    g.on('pointerenter pointermove', (ev, w) => showTip(ev, html(w))).on('pointerleave', hideTip).on('click', (ev, w) => { ev.stopPropagation(); if (w.v && w.c !== id) location.href = glink('w', w.c); else showTip(ev, html(w)); });
+    g.on('pointerenter pointermove', (ev, w) => showTip(ev, html(w))).on('pointerleave', hideTip).on('click', (ev, w) => { ev.stopPropagation(); if (w.c !== id) picked(el, w.n, !w.v ? 'no state-funded school in the newest figures' : wv(w) == null ? 'no figure' : fv(wv(w)), w.v ? glink('w', w.c) : null); });
     key(el, [AXc.legend(mid, span, 'England primary schools', view === 'now' ? null : (v) => sign(v) + ' points'), `<i style="background:${AXc.NONE}"></i>No figure`, `<i style="background:none;border:2px solid ${INK}"></i>${esc(G.name)}`, 'Boundaries: Office for National Statistics, OGL v3.0. Contains OS data © Crown copyright and database right 2026']);
     $('gx-over-r').innerHTML = `<b>${vals.length}</b> of the ${D.wards.length} wards in ${esc(D.name)} carry a figure. A ward figure describes the schools located there, not the children who live there.`;
   }
@@ -236,7 +238,7 @@
   // areas in order, each set against England (areas may be ordered; schools never are)
   function ordered(el, rows) {
     el.innerHTML = ''; const e = engVal(phase), mid = e == null ? d3.median(rows, (d) => d.v) : e, R = rows.slice().sort((a, b) => a.v - b.v), W = width(el), narrow = W < 520, rh = 20, m = {t: 22, r: narrow ? 46 : 84, b: 8, l: narrow ? 128 : 190}, H = m.t + R.length * rh + m.b;
-    $('gx-over-h').textContent = 'The ceremonial counties'; $('gx-over-s').textContent = `Each county’s ${PH[phase]} pooled, in order of ${vname()}, set against England. Tap a county to open it.`;
+    $('gx-over-h').textContent = 'The ceremonial counties'; $('gx-over-s').textContent = `Each county’s ${PH[phase]} taken together, in order of ${vname()}, set against England. Tap a county to open it.`;
     const s = svg(el, W, H, 'Counties by ' + vname()), x = d3.scaleLinear(d3.extent(R.map((d) => d.v).concat([mid])), [m.l + 8, W - m.r]).nice();
     x.ticks(narrow ? 3 : 6).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t - 4).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', 12).attr('text-anchor', 'middle').text(view === 'now' ? (t / 100) + '%' : sign(t)); });
     s.append('line').attr('x1', x(mid)).attr('x2', x(mid)).attr('y1', m.t - 4).attr('y2', H - m.b).attr('stroke', MUTED).attr('stroke-width', 2);
@@ -276,6 +278,12 @@
     if (view === 'now' && (ss || eh)) t += ` For pupils with SEN support it was ${fv(ss && ss.v)} and for those with an education, health and care plan ${fv(eh && eh.v)}` + (ss && ss.e != null && eh && eh.e != null ? ` (England ${pc(ss.e)} and ${pc(eh.e)}).` : '.');
     if (view !== 'now' && f) t = `For pupils eligible for free school meals, ${MEAS[meas].n} ${f.v > 0 ? 'rose' : f.v < 0 ? 'fell' : 'did not change'}${f.v ? ' by <b>' + (Math.abs(f.v) / 100).toFixed(1) + '</b> points' : ''}` + (f.e == null ? '.' : `, against ${sign(f.e)} points across England.`) + (nf ? ` For other pupils the change was ${sign(nf.v)} points.` : '');
     $('gx-pg-r').innerHTML = t;
+    // every group at once: overall, persistent and severe, with England beneath, and the change in a year in the chosen measure
+    const P1 = prevP(), cellv = (g, k) => { const a = G.pg[phase] && G.pg[phase][g], en = PGE.england[phase] && PGE.england[phase][g], v = a && a[L] ? a[L][k] : null, ev = en && en[L] ? en[L][k] : null;
+      return `<td class="n">${v == null ? '–' : `<span style="color:${ev == null ? 'inherit' : AXc.gap(gap(v, ev))}">${pc(v)}</span>`}<small>England ${pc(ev)}</small></td>`; };
+    const chg = (g) => { const a = G.pg[phase] && G.pg[phase][g], k = i; return a && a[L] && a[P1] && a[L][k] != null && a[P1][k] != null ? sign(a[L][k] - a[P1][k]) : '–'; };
+    $('gx-pgt').innerHTML = `<thead><tr><th>Pupils</th><th class="n">Overall</th><th class="n">Persistent</th><th class="n">Severe</th><th class="n">${cap(MEAS[meas].n.split(' ')[0])}, in a year</th></tr></thead><tbody>` + PGN.filter(([g]) => G.pg[phase] && G.pg[phase][g] && G.pg[phase][g][L]).map(([g, n]) =>
+      `<tr${g === pgsel ? ' class="on"' : ''}><td>${n}</td>${cellv(g, 0)}${cellv(g, 1)}${cellv(g, 2)}<td class="n">${chg(g)}</td></tr>`).join('') + '</tbody>';
   }
 
   // ---- side by side: this place, up to four others of the same kind, and England

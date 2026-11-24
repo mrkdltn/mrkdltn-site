@@ -303,7 +303,7 @@
     const t = el('p', 'ax-places-t', 'Your places'); t.id = id; wrap.appendChild(t);
     if (!list.length) wrap.appendChild(el('p', 'ax-places-none', 'Save a school, trust or area and it is kept here with its latest figure, ready to open or compare each time you come back. Saved only on this device.'));
     else { const ul = el('ul'); ul.setAttribute('aria-labelledby', id);
-      list.forEach((p) => { const li = el('li'), a = el('a'); a.href = p.href; a.appendChild(el('span', 'ax-places-n', p.name)); a.appendChild(el('small', null, KIND[p.kind]));
+      list.forEach((p) => { const li = el('li'), a = el('a'); a.href = p.href; a.appendChild(el('span', 'ax-places-n', p.name)); a.appendChild(el('small', null, p.kind === 'group' ? ({a: 'Local authority', y: 'County', c: 'Constituency', w: 'Ward', t: 'Trust'}[String(p.id).split(':')[0]] || KIND[p.kind]) : KIND[p.kind]));
         const rm = el('button', 'ax-places-x'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove ' + p.name + ' from your places'); rm.appendChild(el('span', null, '×')).setAttribute('aria-hidden', 'true');
         rm.addEventListener('click', () => { unpin(p); const next = host.querySelector('.ax-places-x, a'); if (next) { try { next.focus(); } catch (e) { /* no focus */ } } });
         li.appendChild(a); li.appendChild(rm); ul.appendChild(li); });

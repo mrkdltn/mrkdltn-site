@@ -56,7 +56,6 @@
       if (was) { const d = gap(now[1], was[1]); t += d === 0 ? `, the same as in the same two terms a year earlier` : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in the same two terms a year earlier (${pc(was[1])})`; }
       t += '.';
       if (e) { const d = gap(now[1], e[0]); t += ` Across England’s ${PH[S.ph]} the figure was ${pc(e[0])}` + (d === 0 ? '.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
-      t += ` <b>${pc(now[3])}</b> of pupils were persistently absent, missing a tenth or more of their sessions` + (e ? `; in England’s ${PH[S.ph]} it was ${pc(e[2])}.` : '.');
       R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[1], was[1]), 'a year earlier', true) : '') + (e ? AXc.pill(gap(now[1], e[0]), 'England', true) : '') + (l ? AXc.pill(gap(now[1], l[0]), la, true) : '') + '</span>';
       const k = [['Overall absence', pc(now[1]), was ? 'a year earlier ' + pc(was[1]) : ''], ['Persistent absence', pc(now[3]), was ? 'a year earlier ' + pc(was[3]) : ''],
         ['Unauthorised absence', pc(now[2]), e ? 'England ' + pc(e[1]) : ''], [la + ' ' + PH[S.ph], l ? pc(l[0]) : '–', l ? 'persistent ' + pc(l[2]) : ''], ['England ' + PH[S.ph], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) : '']];
@@ -139,7 +138,7 @@
     const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([others.length ? d3.min(vals) * 0.85 : 0, d3.max(vals) * 1.08], [H - m.b, m.t]).nice(5);      // with places added, the axis closes in so the lines separate
     y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
     const gx = x('2019'); s.append('rect').attr('x', gx - x.step() * 0.38).attr('width', x.step() * 0.76).attr('y', m.t).attr('height', H - m.b - m.t).attr('fill', '#F4F5F8');
-    s.append('text').attr('x', gx).attr('y', m.t + 12).attr('text-anchor', 'middle').text(W < 520 ? 'none' : 'not published');
+    s.append('text').attr('x', gx).attr('y', m.t + 12).attr('text-anchor', 'middle').text(W < 520 ? 'no figures' : 'not published');
     yrs.forEach((p, i) => { if (W >= 640 || i % 2 === 0) s.append('text').attr('x', x(p)).attr('y', H - 8).attr('text-anchor', 'middle').text(W < 640 ? "'" + ay(p).slice(2) : ay(p)); });
     const line = d3.line().defined((p) => p.v != null).x((p) => x(p.p)).y((p) => y(p.v));
     lines.forEach((l) => { if (l.tag) { const z = l.d.filter((p) => p.v != null).pop(); if (z) s.append('text').attr('class', 'strong ax-tag').attr('x', x(z.p) + 7).attr('y', y(z.v) + 4).text(l.tag); }

@@ -28,7 +28,7 @@ Mark asked for another review for simplicity, usefulness and intuitive operation
 | --- | --- |
 | On a school page, choosing a school from search and adding a school to compare did nothing (a function named `history` hid the browser's own) | Fixed 24 Nov; now part of the checks |
 | Controls meant to be hidden were showing (a "Pupils" row on ward, constituency and trust pages that did nothing) | Fixed 24 Nov |
-| The first figure was 993 px down a phone screen on a local authority page | Now 668 px: shorter hero on phones, controls as four compact menus in two columns. The Ofsted Explorer's is about 450 px; more to do |
+| The first figure was 993 px down a phone screen on a local authority page | Now 460 to 530 px on every page: shorter hero on phones, a breadcrumb in place of the row of area kinds, and the summary above the controls, which are four compact menus in two columns |
 | Controls changed things out of sight | The summary now states what is chosen ("Chosen above: ..."), and a one-line "Showing" strip under the section menu appears once the controls scroll away |
 | A saved place or a tapped hexagon forgot the chosen phase, measure and view | Fixed: links carry them |
 | Random examples were often near-empty pages | Fixed: drawn only from places with a pooled figure |
@@ -39,6 +39,10 @@ Mark asked for another review for simplicity, usefulness and intuitive operation
 | Side-by-side tables were cut off on phones | Phones show the first three columns, with a note that more show on a wider screen |
 | On the Trusts page, search put a local authority and a ward above the trust | The page's own kind now comes first |
 | No way past the navigation for keyboard users | A "Skip to the figures" link |
-| A briefing dropped only one section, so was barely shorter than the page | To do: tighten the mapping in `start.js` |
-| The hexagon maps cannot be read by touch | To do |
-| Saved places appear only on Areas | To do |
+| A briefing dropped only one section, so was barely shorter than the page | Part done: the briefing's buttons are one row and choosing a role moves straight on. The mapping in `start.js` still to tighten |
+| The hexagon maps cannot be read by touch | Fixed: a tapped hexagon, ward or trust dot names itself beneath the chart with its figure and an Open button |
+| Saved places appear only on Areas | To do. The empty "Your places" card no longer shows until something is saved |
+| Summaries carried seven figures in one paragraph | Two sentences now; the tiles carry the rest |
+| Pupil groups took four control changes to read | A table in "By pupil group" gives every group's overall, persistent and severe absence against England at once |
+| "Copy link" under every chart | One in the header on wider screens; "Save image" stays per chart |
+| Words that assume knowledge ("pooled", "none", "Area or trust") | Reworded |

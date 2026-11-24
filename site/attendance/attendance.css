@@ -201,3 +201,20 @@ body.explorer{background:#ECE9E1}
   #gx-cmp th:nth-child(n+6),#gx-cmp td:nth-child(n+6),#gx-cmp th:nth-child(4),#gx-cmp td:nth-child(4),#sx-cmp th:nth-child(n+5),#sx-cmp td:nth-child(n+5){display:none}
   .ax-cmp+.ax-cmp-note,.ax-tablewrap:has(.ax-cmp)::after{content:"More columns show on a wider screen: severe absence, and change in persistent absence and since 2018/19.";display:block;font:13px/1.4 var(--sans);color:var(--muted);margin-top:8px}
 }
+/* second usability pass, 24 November 2026 */
+.ax-kinds{display:flex}body[data-ax-page=group] .ax-kinds{display:none}      /* place pages carry a breadcrumb instead */
+.ax-places:has(.ax-places-none){display:none}                               /* nothing saved: no empty card above England's figures */
+.ax-tools .ax-tool:nth-child(2){display:none}                               /* one Copy link per page (in the header), Save image per chart */
+.ax-picked{margin:10px 0 0;font:15px/1.4 var(--sans);color:var(--ink);background:#F6F3EC;padding:8px 12px;border-radius:2px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.ax-picked .ax-btn{display:inline-flex;align-items:center;text-decoration:none;min-height:40px}
+.ax-pgt{margin-top:14px}.ax-pgt td small{display:block;color:var(--muted);font-size:12px;font-weight:400}.ax-pgt tr.on td{background:#F6F3EC}.ax-pgt td.n span{font-weight:600}
+.ax-top .ax-label a{color:inherit}
+@media (max-width:480px){.ax-pgt th:nth-child(2),.ax-pgt td:nth-child(2),.ax-pgt th:nth-child(5),.ax-pgt td:nth-child(5){display:none}}
+@media (max-width:480px){
+  .ax-hero .ax-head-row{flex-wrap:wrap}
+  .ax-kinds{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-top:12px}.ax-kinds::-webkit-scrollbar{display:none}.ax-kinds a{flex:none}
+  .ax-controls .ax-field:has(> select.ax-select){grid-column:auto}
+  .ax-hero .ax-date{margin-top:6px;font-size:13px}
+}
+@media (max-width:480px){.ax-hero .ax-copy{display:none}.ax-hero .ax-head-row{flex-wrap:nowrap}}      /* phones share from the browser; keep the header to one row */
+@media (max-width:480px){.ax-controls-below{margin:2px 0}.ax-hero-search .ax-field > span{position:absolute;left:-9999px}}

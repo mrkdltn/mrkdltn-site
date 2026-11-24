@@ -75,3 +75,23 @@
   bar.addEventListener('change', () => setTimeout(strip, 0));
   sync();
 })();
+
+/* One "Copy link" for the page, in the header, in place of one under every chart. */
+(function () {
+  const hero = document.querySelector('.ax-hero-in'); if (!hero || document.documentElement.classList.contains('ax-brief')) return;
+  let row = hero.querySelector('.ax-head-row'); if (!row) { row = document.createElement('div'); row.className = 'ax-head-row'; (hero.querySelector('.ax-top') || hero).appendChild(row); }
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'ax-btn ax-copy'; b.textContent = 'Copy link';
+  b.addEventListener('click', () => { const done = (ok) => { b.textContent = ok ? 'Link copied' : 'Could not copy'; setTimeout(() => { b.textContent = 'Copy link'; }, 2000); };
+    try { navigator.clipboard.writeText(location.href).then(() => done(true), () => done(false)); } catch (e) { done(false); } });
+  row.appendChild(b);
+})();
+
+/* On phones the answer comes first: where a page opens with a Summary, the controls sit directly beneath it. */
+(function () {
+  const bar = document.querySelector('.ax-controls'), mq = matchMedia('(max-width: 480px)'); if (!bar) return;
+  const home = bar.parentNode, next = bar.nextSibling;
+  const place = () => { const sum = document.querySelector('main.ax section[data-nav="Summary"]');
+    if (mq.matches && sum) { if (sum.nextSibling !== bar) sum.after(bar); bar.classList.add('ax-controls-below'); }
+    else if (bar.parentNode !== home || bar.classList.contains('ax-controls-below')) { home.insertBefore(bar, next && next.parentNode === home ? next : home.firstChild); bar.classList.remove('ax-controls-below'); } };
+  mq.addEventListener ? mq.addEventListener('change', place) : mq.addListener(place); place();
+})();

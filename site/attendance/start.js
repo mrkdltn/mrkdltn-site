@@ -163,6 +163,7 @@
   function init() {
     const form = $('st-form'); if (!form) return;
     form.addEventListener('submit', (e) => e.preventDefault());
+    form.addEventListener('click', (e) => { const r = e.target.closest('input[name=role]'); if (r && e.detail > 0) setTimeout(() => go(2), 120); });
     form.addEventListener('change', (e) => { const t = e.target;
       if (t.name === 'role') { S.role = t.value; $('st-need-1').hidden = true; write(false); draw(false); const again = form.querySelector('input[name=role]:checked'); if (again) again.focus(); }
       if (t.name === 'want') { S.q = [...form.querySelectorAll('input[name=want]:checked')].map((i) => i.value); write(false); plan(); } });

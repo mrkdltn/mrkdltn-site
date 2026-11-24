@@ -145,7 +145,7 @@
     key(el, [`<i style="background:${AXc.VERD}"></i>Below England`, `<i style="background:${AXc.RUST}"></i>Above England`, `<i style="background:${MUTED};width:2px;height:12px;vertical-align:-2px"></i>England`]);
     const ends = (f) => { const a = d3.min(names, f), b = d3.max(names, f); return {lo: a, hi: b, los: names.filter((n) => f(n) === a).sort(), his: names.filter((n) => f(n) === b).sort()}; };
     const A = ends(now), C = ends(chg), ce = chg('England'), allUp = ce > 0 && C.lo > 0, allDown = ce < 0 && C.hi < 0;
-    $('px-reg-s').textContent = `Today’s schools in each region pooled for the full school year ${ay(last)}, in order of ${MN[meas]}, each set against England. The change since ${ay(base)} is in percentage points and is set against England’s change.`;
+    $('px-reg-s').textContent = `Today’s schools in each region taken together for the full school year ${ay(last)}, in order of ${MN[meas]}, each set against England. The change since ${ay(base)} is in percentage points and is set against England’s change.`;
     $('px-reg-r').innerHTML = `In ${ay(last)}, ${MN[meas]} in ${PH[phase]} was lowest in ${list(A.los)} (<b>${V.now.fmt(A.lo)}</b>) and highest in ${list(A.his)} (<b>${V.now.fmt(A.hi)}</b>), against <b>${V.now.fmt(now('England'))}</b> across England. ` +
       (allUp ? `Since ${ay(base)} it has risen by <b>${pts(ce)}</b> points across England. The rise was smallest in ${list(C.los)} (${pts(C.lo)} points) and largest in ${list(C.his)} (${pts(C.hi)} points).`
         : allDown ? `Since ${ay(base)} it has fallen by <b>${pts(ce)}</b> points across England. The fall was largest in ${list(C.los)} (${pts(C.lo)} points) and smallest in ${list(C.his)} (${pts(C.hi)} points).`
