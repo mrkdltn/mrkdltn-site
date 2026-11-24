@@ -91,3 +91,7 @@ An independent worker recomputed 5,787 displayed figures on 183 pages from the D
 | Parental responsibility measures by area | Built, preview only: see `docs/attendance-enforcement-note.md`, with three decisions for Mark. Not yet independently checked |
 | Enforcement figures, independent fifth pass | Counts all agree with the DfE. Seven faults found; six fixed (see the end of `docs/attendance-enforcement-note.md`). Open: whether the flag should carry one sentence saying the high-absence condition is as common where more notices are issued (9 of 38 against 32 of 113), which the checker recommends and Mark has yet to decide |
 | Enforcement: flags and the pattern explorer | Dropped by Mark on 24 Nov. Replaced by the category (none, fewer than 10, fifths) each authority and region falls in for each measure. The open question about a sentence on the flag no longer arises. Not yet independently checked |
+
+## Fresh review, 24 November 2026
+
+Mark said the tool appears overly complex and asked for a fresh review of the whole of it. `docs/attendance-simplification-review.md` holds an independent reviewer's measurements and findings and a proposal for five pages, one search and one menu, with a named list of what to cut. No rebuilding until Mark has chosen a direction; the items above are on hold until then.
