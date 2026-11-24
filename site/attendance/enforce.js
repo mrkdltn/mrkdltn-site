@@ -7,7 +7,10 @@
   const $ = (id) => document.getElementById(id), area = $('gx-enf'), all = $('px-enf'); if (!area && !all) return;
   const INK = '#0B1A2E', SLATE = '#55627A', SOFT = '#A8B5C8', GRID = '#E3E6EC', BRASS = '#C9A24B';
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
-  const num = (v) => (v == null ? '–' : v < 0 ? 'fewer than 10' : v.toLocaleString('en-GB'));
+  const num = (v) => (v == null ? '–' : v < 0 ? 'fewer than 10' : v === 0 ? 'None' : v.toLocaleString('en-GB'));
+  const isLA = (c) => /^E0|^E10/.test(c);
+  // how many local authorities recorded none, fewer than 10, 10 or more, or gave no figure, for one measure
+  const spread = (c, y) => { const o = {none: 0, few: 0, more: 0, na: 0, n: 0}; Object.keys(D.areas).filter(isLA).forEach((k) => { const r = D.areas[k].y[y]; if (!r) return; const v = r[C[c]]; o.n++; o[v == null ? 'na' : v === 0 ? 'none' : v < 0 ? 'few' : 'more']++; }); return o; };
   const ay = (y) => y + '/' + String((+y + 1) % 100).padStart(2, '0');
   const width = (el) => Math.max(280, Math.floor(el.getBoundingClientRect().width));
   const svg = (el, w, h, label) => d3.select(el).append('svg').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', label);
@@ -57,7 +60,7 @@
     tile('Issued for unauthorised holiday', share == null ? '–' : share.toFixed(0) + '%', 'England ' + eshare.toFixed(0) + '%');
     tile('Unauthorised holiday absence', hol == null ? '–' : (hol / 100).toFixed(2) + '%', 'of sessions · England ' + (ehol == null ? '–' : (ehol / 100).toFixed(2) + '%'));
     if (issued === 0) add(area, 'p', 'ax-reading', `${esc(name)} recorded no penalty notices in ${ay(L)}.`);
-    else if (rate != null) { const rank = Object.keys(D.areas).filter((c) => /^E0|^E1[01]/.test(c)).map((c) => per(D.areas[c], L, 'issued', 100)).filter((v) => v != null), above = rank.filter((v) => v > rate).length;
+    else if (rate != null) { const rank = Object.keys(D.areas).filter(isLA).map((c) => per(D.areas[c], L, 'issued', 100)).filter((v) => v != null), above = rank.filter((v) => v > rate).length;
       add(area, 'p', 'ax-reading', `${esc(name)} issued <b>${num(issued)}</b> penalty notices in ${ay(L)}, <b>${rate.toFixed(1)}</b> for every 100 pupils, against ${erate.toFixed(1)} across England.`
         + (kind === 'a' ? ` ${above} of the ${rank.length} local authorities issued more for their size.` : '')
         + (share == null ? '' : ` <b>${share.toFixed(0)}%</b> were for unauthorised holiday.`)
@@ -75,10 +78,10 @@
       ['cm_pros', 'Cases prosecuted after case management'], ['cm_improved', 'Cases withdrawn because attendance improved'], ['contracts', 'Parenting contracts offered'], ['contracts_acc', 'Parenting contracts accepted'],
       ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];
     add(area, 'h3', 'en-h', `Other measures, ${ay(L)}`);
-    const wrap = add(area, 'div', 'ax-tablewrap'), p10 = (r, c) => { const v = per(r, L, c, 10000); return v == null ? (col(r, L, c) < 0 ? 'under ' + (10 * 10000 / col(r, L, 'enrol')).toFixed(1) : '–') : v.toFixed(1); };
-    add(wrap, 'table', 'ax-table en-table', '<thead><tr><th>Measure</th><th class="n">Number</th><th class="n">For every 10,000 pupils</th><th class="n">England, for every 10,000</th></tr></thead><tbody>'
-      + ROWS.map(([c, n]) => `<tr><td>${n}</td><td class="n">${num(col(rec, L, c))}</td><td class="n">${p10(rec, c)}</td><td class="n">${p10(E, c)}</td></tr>`).join('') + '</tbody>');
-    add(area, 'p', 'ax-note', 'A dash means the local authority did not supply the figure. More enforcement is not in itself better or worse: the numbers reflect how much unauthorised absence there is, and also how each authority and its schools choose to respond to it. ' + SRC()
+    const wrap = add(area, 'div', 'ax-tablewrap'), p10 = (r, c) => { const v = per(r, L, c, 10000); return v == null ? (col(r, L, c) < 0 ? 'under ' + (10 * 10000 / col(r, L, 'enrol')).toFixed(1) : '–') : v > 0 && v < 0.05 ? 'under 0.1' : v.toFixed(1); };
+    add(wrap, 'table', 'ax-table en-table en-other', '<thead><tr><th>Measure</th><th class="n">Number</th><th class="n">For every 10,000 pupils</th><th class="n">England, for every 10,000</th><th class="n">Authorities recording none</th></tr></thead><tbody>'
+      + ROWS.map(([c, n]) => { const sp = spread(c, L), v = col(rec, L, c); return `<tr><td>${n}</td><td class="n">${num(v)}</td><td class="n">${v === 0 ? '–' : p10(rec, c)}</td><td class="n">${p10(E, c)}</td><td class="n">${sp.none} of ${sp.n - sp.na}</td></tr>`; }).join('') + '</tbody>');
+    add(area, 'p', 'ax-note', '“None” is a recorded zero, which is different from “fewer than 10” (a count of 1 to 9, not given exactly) and from a dash in the Number column (the local authority did not supply the figure). More enforcement is not in itself better or worse: the numbers reflect how much unauthorised absence there is, and also how each authority and its schools choose to respond to it. ' + SRC()
       + ' <a href="/attendance/patterns/#sec-enforcement">Every local authority compared</a>.');
   }
 
@@ -130,6 +133,20 @@
       .on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : d.v.toFixed(1) + ' for every 100 pupils'}`)).on('pointerleave', hideTip)
       .on('click', (ev, d) => { let e = mp.querySelector('.ax-picked'); if (!e) e = add(mp, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(d.r.name)}</b>: ${d.v == null ? 'no figure' : d.v.toFixed(1) + ' for every 100 pupils'}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">Open</a>`; });
     const mk = add(mp, 'div', 'ax-key'); add(mk, 'span', null, `0 <i style="background:linear-gradient(90deg,#EEF0F4,${INK});width:90px;border:1px solid ${SOFT}"></i>${vmax.toFixed(0)} or more for every 100 pupils`); add(mk, 'span', null, 'One hexagon for each local authority, placed roughly where it sits.');
+    // how many authorities use each measure at all: none is a finding, and is not the same as a few
+    const MS = [['hols', 'Notices for unauthorised holiday'], ['other', 'Notices for other unauthorised absence'], ['late', 'Notices for lateness'], ['repeat', 'Second notices within three years'], ['pros', 'Prosecutions for non-payment'], ['pros_limit', 'Prosecutions at the two-notice limit'],
+      ['cm', 'Attendance case management'], ['cm_pros', 'Prosecutions after case management'], ['contracts', 'Parenting contracts offered'], ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];
+    const SEG = [['none', 'None', '#fff'], ['few', 'Fewer than 10', '#C5CCD8'], ['more', '10 or more', '#33405A'], ['na', 'No figure supplied', '#F1EEE6']];
+    add(all, 'h3', 'en-h', `How many local authorities used each measure, ${ay(L)}`);
+    add(all, 'p', 'ax-sub', 'For several measures the commonest answer is none. A recorded zero is shown as none; a count of 1 to 9 is shown as fewer than 10 and not given exactly.');
+    const ue = add(all, 'div', 'ax-chart'), UW = width(ue), un = UW < 560, ul = un ? 0 : 270, urh = un ? 48 : 30, UH = MS.length * urh + 4, us = svg(ue, UW, UH, 'Local authorities recording none, fewer than 10, or 10 or more of each measure');
+    MS.forEach(([c, n], k) => { const sp = spread(c, L), y0 = k * urh + (un ? 20 : 3), ux = d3.scaleLinear([0, sp.n], [ul, UW - 2]); let acc = 0;
+      us.append('text').attr('x', un ? 0 : ul - 10).attr('y', un ? y0 - 6 : y0 + 16).attr('text-anchor', un ? 'start' : 'end').text(n);
+      SEG.forEach(([key, label, fill]) => { const v = sp[key]; if (!v) return; us.append('rect').attr('x', ux(acc)).attr('y', y0).attr('width', ux(acc + v) - ux(acc)).attr('height', 22).attr('fill', fill).attr('stroke', SLATE).attr('stroke-width', 0.75)
+          .on('pointerenter pointermove', (ev) => showTip(ev, `<b>${n}</b><br>${label}: ${v} of ${sp.n} local authorities`)).on('pointerleave', hideTip);
+        if (ux(acc + v) - ux(acc) > 26) us.append('text').attr('x', (ux(acc) + ux(acc + v)) / 2).attr('y', y0 + 15).attr('text-anchor', 'middle').attr('pointer-events', 'none').style('fill', key === 'more' ? '#fff' : INK).text(v);
+        acc += v; }); });
+    const uk = add(all, 'div', 'ax-key'); SEG.forEach(([, label, fill]) => add(uk, 'span', null, `<i style="background:${fill};border:1px solid ${SLATE}"></i>${label}`));
     // highest and lowest
     const ord = H2.filter((d) => d.v != null && col(D.areas[d.r.id], L, 'enrol') >= 2000).sort((a, b) => b.v - a.v), row = (d) => `<tr><td><a href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">${esc(d.r.name)}</a></td><td class="n">${d.v.toFixed(1)}</td><td class="n">${num(col(D.areas[d.r.id], L, xcol))}</td></tr>`;
     const wrap = add(all, 'div', 'en-pair'), tbl = (title, list) => { const b = add(wrap, 'div', 'en-mini'); add(b, 'h3', null, title); add(add(b, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table', `<thead><tr><th>Local authority</th><th class="n">For every 100 pupils</th><th class="n">Number</th></tr></thead><tbody>${list.map(row).join('')}</tbody>`); };

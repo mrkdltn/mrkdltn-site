@@ -49,8 +49,12 @@ So the tool shows the association and says plainly how strong it is, computed on
 - "Enforcement" on every local authority and county page: notices issued and for every 100 pupils against England, the share for unauthorised holiday, unauthorised holiday absence beside it, both year by year since 2013/14, what became of the notices, and the other measures for every 10,000 pupils.
 - "Enforcement" on Patterns: every local authority as a circle, a choice of enforcement measure against unauthorised holiday absence or a pupil group's absence, the strength of the pattern in a sentence, a map, and the authorities with most and fewest for their size.
 
+## None is not fewer than 10
+
+Mark's point of 24 November: many authorities record none of a measure, and that is a finding in itself. In 2024/25, of 153 local authorities: 145 recorded no education supervision orders, 142 no parenting orders, 115 no prosecutions at the two-notice limit, 113 no notices for lateness, 92 offered no parenting contracts, 45 prosecuted nobody after case management, 29 had no case management cases and 17 prosecuted nobody for non-payment. Two issued no penalty notices at all. The tool writes a recorded zero as "None", a count of 1 to 9 as "fewer than 10", and a dash where the authority supplied no figure; each authority's table says how many authorities recorded none, and Patterns shows the split for every measure. On phones the table keeps the number and that count and drops the two per-10,000 columns.
+
 ## For Mark to decide
 
-1. Whether counts of notices and cases at local authority level sit within the rule "rates only, never pupil counts". They count notices, not pupils, and the DfE publishes them; the tool shows them with a rate beside each.
+1. Settled by Mark's reply on 24 November, which took the counts as read and asked that none be kept apart from fewer than 10. For the record, the question was whether counts of notices and cases at local authority level sit within the rule "rates only, never pupil counts". They count notices, not pupils, and the DfE publishes them; the tool shows them with a rate beside each.
 2. Whether the two short tables naming the authorities with most and fewest notices for their size should stay. They are a reading of published data and carry no judgement, but they are lists of named places.
 3. Whether to seek the pupil-level picture elsewhere. No published source splits penalty notices by pupil group; a freedom of information request to the DfE or to authorities is the only route.
