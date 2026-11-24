@@ -5,7 +5,7 @@
    - Brass marks structure and selection only, never data. */
 (function () {
   const LOW = d3.interpolateRgb('#E7EFEC', '#1E544D'), HIGH = d3.interpolateRgb('#F6E9E4', '#7A2617');
-  const pc = (v) => (v / 100).toFixed(1) + '%';
+  const pc = (v) => (Math.round(v / 10) / 10).toFixed(1) + '%';
   const AXc = {
     VERD: '#2F6F66', RUST: '#A3402B', SLATE: '#55627A', NONE: '#E3E6EB',
     // a rate against a centre (usually England): verdigris below, rust above, pale near the centre

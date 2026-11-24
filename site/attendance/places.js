@@ -2,7 +2,7 @@
    places of one kind can be opened side by side. Everything stays in this browser. */
 (function () {
   const host = document.getElementById('ax-places'); if (!host || !window.AXtools) return;
-  const pc = (v) => (v == null ? '' : (v / 100).toFixed(1) + '%');
+  const pc = (v) => (v == null ? '' : (Math.round(v / 10) / 10).toFixed(1) + '%');
   let bench = null; const get = (u) => fetch(u).then((r) => r.json()), cache = new Map(), once = (u) => { if (!cache.has(u)) cache.set(u, get(u)); return cache.get(u); };
   const SH = {t: 16, c: 16, w: 64, y: 1, a: 8}, PH = {P: 'primary', S: 'secondary', X: 'special'};
   const figure = (p) => once('/attendance/data/bench.json').then((B) => { bench = B;

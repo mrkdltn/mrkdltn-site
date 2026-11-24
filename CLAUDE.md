@@ -68,6 +68,7 @@ Cloudflare Pages project `mrkdltn-site`: build command `python3 scripts/build_da
 - Every `[data-tip]` tooltip stays on screen at 1,900 px and 375 px.
 - Anything drawn as an image (share cards, slides): render it and look at it; try long names.
 - Attendance Explorer: use the page as a visitor would, not only load it. On a school page, pick a school from search, add one to compare and press Back; on an area page change each control and confirm the summary's "Chosen above" line and the address follow. A fault that broke both went unnoticed for a day because the checks only loaded pages.
+- Attendance Explorer rounding: every rate is shown by rounding hundredths to tenths (`pc`), and every difference is the difference of the two figures as shown (`rd`, `gap`), never of the unrounded values, so a sentence, its table and its chart cannot disagree.
 - Never name a function after a browser global (`history`, `location`, `name`, `open`, `close`, `status`, `event`).
 - Models of percentages stay within 0–100%.
 - New things at the bottom of a page need the same inset as the cards at every breakpoint.

@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>School attendance · Attendance Explorer · Mark Dalton</title>
-<meta name="description" content="School attendance in England, day by day: every local authority and region read against England and against last year. Built from the DfE's fortnightly attendance data.">
+<title>Schools · Attendance Explorer · Mark Dalton</title>
+<meta name="description" content="Absence at any state-funded primary, secondary or special school in England, set beside England, its local authority and the 20 schools most like it, and year by year from 2013/14. From the DfE's termly absence statistics.">
 <link rel="canonical" href="https://mrkdltn.com/attendance/school/">
-<meta property="og:title" content="Attendance Explorer">
-<meta property="og:description" content="School attendance in every local authority in England, day by day, against England and last year. Free, built from public data.">
+<meta property="og:title" content="Schools · Attendance Explorer">
+<meta property="og:description" content="Absence at any state-funded school in England, beside England, its local authority and the 20 schools most like it. Free, and built from public data.">
 <meta property="og:url" content="https://mrkdltn.com/attendance/school/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://mrkdltn.com/attendance/data/card.png">
@@ -33,12 +33,12 @@
     <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · Schools</p>
     <h1 id="sx-name">Find a school</h1>
     <p class="ax-date" id="sx-meta">Absence at every state-funded primary, secondary and special school in England, from the DfE’s termly statistics.</p>
-    <p class="ax-date" id="sx-hint" hidden>A school chosen at random to start you off. Search for any school below.</p>
+    <p class="ax-date" id="sx-hint" hidden>This school was chosen at random to start you off. Search below for any school.</p>
     <div class="ax-head-row"><div id="ax-pin"></div><button type="button" class="ax-btn" id="sx-another">Show me another school</button></div>
   </header>
     <div class="ax-hero-search">
-    <label class="ax-field ax-find"><span>School, trust or constituency</span>
-      <input id="sx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Find a school, trust or area" role="combobox" aria-expanded="false" aria-controls="sx-list" aria-autocomplete="list">
+    <label class="ax-field ax-find"><span>Find a school, trust or area</span>
+      <input id="sx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Name, town or postcode" role="combobox" aria-expanded="false" aria-controls="sx-list" aria-autocomplete="list">
       <ul id="sx-list" class="ax-pop" role="listbox" hidden></ul></label>
     </div>
 </div></div>
@@ -56,11 +56,11 @@
 
   <section data-nav="Three ways" class="ax-card" id="sx-read-c">
     <h2>Read three ways</h2>
-    <p class="ax-sub">The school’s <span class="sx-meas-n"></span> beside England, its local authority and the 20 schools most like it in their circumstances. Green marks lower absence at this school than the comparison, rust higher.</p>
+    <p class="ax-sub">The school’s <span class="sx-meas-n"></span> beside England, its local authority and the 20 schools most like it in their circumstances. A green bar means lower absence at this school than the comparison, a rust bar higher.</p>
     <div id="sx-read" class="ax-chart"></div>
     <p class="ax-reading" id="sx-read-r"></p>
     <p class="ax-sub" id="sx-ctx"></p>
-    <details class="ax-details" id="sx-sim-d"><summary>The 20 similar schools</summary><ul id="sx-sim"></ul></details>
+    <details class="ax-details" id="sx-sim-d"><summary>The 20 similar schools, in alphabetical order</summary><ul id="sx-sim"></ul></details>
   </section>
 
   <section data-nav="Side by side" class="ax-card" id="sx-cmp-c">
@@ -74,7 +74,7 @@
 
   <section data-nav="Position" class="ax-card">
     <h2>Where it sits among <span id="sx-phase-n"></span></h2>
-    <p class="ax-sub">Every school of the same phase in England, by <span class="sx-meas-n"></span>. The marks beneath are the other schools in the same local authority. This is a position in a distribution, not a judgement of the school.</p>
+    <p class="ax-sub">Every school in England of the same phase (primary, secondary or special), by <span class="sx-meas-n"></span>. The taller the bar, the more schools at that rate. The marks beneath are the other schools in its local authority. This is a position in a distribution, not a judgement of the school.</p>
     <div class="ax-seg sx-meas" role="group" aria-label="Measure"><button type="button" data-m="abs">Overall absence</button><button type="button" data-m="pa">Persistent absence</button></div>
     <div id="sx-dist" class="ax-chart"></div>
     <p class="ax-reading" id="sx-dist-r"></p>
@@ -82,7 +82,7 @@
 
   <section data-nav="Year by year" class="ax-card">
     <h2>Year by year</h2>
-    <p class="ax-sub">Full school years from 2013/14. No figures were published for 2019/20. Schools added under Side by side are drawn here too.</p>
+    <p class="ax-sub">Full school years from 2013/14. No figures were published for 2019/20. Any school added under Side by side is drawn here too.</p>
     <div id="sx-hist" class="ax-chart"></div>
     <p class="ax-reading" id="sx-hist-r"></p>
   </section>
@@ -96,19 +96,23 @@
   </div>
 
   <section data-nav="Method" class="ax-card ax-method">
-    <h2>Sources and method</h2>
-    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>: <span id="sx-src"></span>. Accredited official statistics from the school census. School details from Get Information about Schools. Open Government Licence v3.0.</p>
-    <p><b>Measures.</b> Overall absence is the share of possible sessions missed. Persistent absence is the share of pupils who missed 10% or more of their own possible sessions. Figures cover pupils aged 5 to 15.</p>
+    <h2>How this page works</h2>
+    <p><b>Measures.</b> Overall absence is the share of possible sessions that pupils missed. A session is a morning or an afternoon. Persistent absence is the share of pupils who missed a tenth or more of their own possible sessions. Figures cover pupils aged 5 to 15.</p>
+    <p><b>Points.</b> A difference between two rates is given in percentage points, shortened to “points”. A rate of 7.0% against 6.5% is 0.5 points higher.</p>
     <p><b>Two kinds of period.</b> The newest figures cover the autumn and spring terms only and are compared with the same two terms a year earlier. The long run uses full school years. The two are never mixed on one chart.</p>
-    <p><b>England and the local authority.</b> These are pooled across schools of the same phase in the DfE’s school-level file: sessions missed over sessions possible, and persistent absentees over enrolments.</p>
-    <p><b>Similar schools.</b> For primary and secondary schools, the 20 nearest schools of the same phase on eligibility for free school meals, first language other than English, SEN support, education, health and care plans, size, rural setting and, for secondaries, selective admissions. Each factor is weighted by how strongly it relates to absence. This is our own match from published data, not the DfE’s. Context figures are from the January 2026 school census.</p>
-    <p><b>No expected rate.</b> The Explorer does not calculate what a school’s absence “should” be. It sets each school beside real schools in similar circumstances and leaves the reading to you.</p>
-    <p><b>Special schools.</b> No similar schools are given: what a special school provides for shapes its attendance far more than the context measured here.</p>
-    <p><b>Trusts.</b> The date a school joined its present trust is from Get Information about Schools and is marked on the year-by-year chart. Where the DfE recorded a different trust for the school before that date, it is named; those records begin in 2020/21.</p>
-    <p><b>Schools that changed.</b> Where a school has exactly one predecessor, for example before becoming an academy, the earlier years come from the predecessor and the chart marks the join. Schools formed by merging others start at the merger.</p>
-    <p><b>What is not shown.</b> Rates only, never counts of pupils. No figures for a school with fewer than 10 enrolments. Severe absence (missing half or more of sessions) is not shown for single schools because it is usually a handful of children. The DfE publishes no breakdown by pupil group for individual schools, so none appears here.</p>
-    <p><b>Small schools.</b> In a school of 100 pupils one child is a full percentage point of persistent absence. Read small differences accordingly.</p>
-    <p><b>Ofsted.</b> The attendance and behaviour grade is taken from the school’s most recent report card and is shown as published, with its date.</p>
+    <p><b>England and the local authority.</b> Each is one rate for all its schools of the same phase taken together, from the DfE’s school-level file: sessions missed over sessions possible, and persistently absent pupils over pupils on roll. Larger schools count for more.</p>
+    <p><b>Similar schools.</b> For a primary or secondary school, the 20 schools of the same phase nearest to it on these factors: pupils eligible for free school meals, first language other than English, SEN support, education, health and care plans, size, rural setting and, for secondary schools, selective admissions. Each factor is weighted by how strongly it goes with overall absence across schools. The match is made here from published data and is not the DfE’s. The factors are from the January 2026 school census. The <a href="/attendance/patterns/">Patterns</a> page sets out the weights.</p>
+    <p><b>Since 2018/19.</b> 2018/19 is the last full school year before the pandemic. The change since then is the difference between that year and the newest full school year.</p>
+    <p><b>Colours.</b> On “Read three ways” a green bar means lower absence at this school than the comparison and a rust bar higher. Colour shows direction only. Everywhere else on the page a school’s figures are in ink.</p>
+    <p><b>Trusts.</b> The date a school joined its present trust is from Get Information about Schools and is marked on the year-by-year chart. Where the DfE recorded a different trust for the school before that date, that trust is named. Those records begin in 2020/21.</p>
+    <p><b>Schools that changed.</b> Where a school has exactly one predecessor, for example before it became an academy, the earlier years are the predecessor’s and the chart marks the join. A school formed by merging others starts at the merger.</p>
+    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>: <span id="sx-src"></span>. These are accredited official statistics from the school census. School details are from Get Information about Schools. Open Government Licence v3.0.</p>
+    <p><b>Ofsted.</b> The attendance and behaviour grade is from the school’s most recent report card. It is shown as published, in Ofsted’s own colour, with the date of the inspection.</p>
+    <p><b>What is not shown.</b> Rates only, never counts of pupils. No figures for a school with fewer than 10 pupils on roll. Severe absence, which is missing half or more of sessions, is never shown for a single school, where it usually describes a handful of children. The DfE publishes no absence figures by pupil group for individual schools, so none appears here.</p>
+    <p><b>Small schools.</b> In a school of 100 pupils, one child is a full percentage point of persistent absence. Read small differences with that in mind.</p>
+    <p><b>No expected rate.</b> No expected rate is calculated for any school. The page sets each school beside real schools in similar circumstances and leaves the reading to you.</p>
+    <p><b>Special schools.</b> No similar schools are given for a special school. What a special school provides for shapes its attendance far more than the factors measured here.</p>
+    <p><b>Not a judgement.</b> Every figure here is a reading of published data, not a judgement on a school. No school is ranked. Ethnicity is never used.</p>
   </section>
 </main>
 

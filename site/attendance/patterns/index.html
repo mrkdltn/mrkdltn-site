@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Patterns · Attendance Explorer · Mark Dalton</title>
-<meta name="description" content="How absence varies with the circumstances of a school, how the spread between schools has widened since 2018/19, and how regions compare. Every state-funded school in England, from DfE data.">
+<meta name="description" content="How absence varies with a school's circumstances, how the spread between schools has moved since 2013/14, and how the regions compare. Every state-funded school in England, from the DfE's absence statistics.">
 <link rel="canonical" href="https://mrkdltn.com/attendance/patterns/">
-<meta property="og:title" content="Patterns in school absence">
-<meta property="og:description" content="What goes with absence across every state-funded school in England, and how it has changed since 2018/19.">
+<meta property="og:title" content="Patterns in school absence · Attendance Explorer">
+<meta property="og:description" content="What goes with absence across every state-funded school in England, and how it has changed since 2013/14. Free, and built from public data.">
 <meta property="og:url" content="https://mrkdltn.com/attendance/patterns/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://mrkdltn.com/attendance/data/card.png">
@@ -32,7 +32,7 @@
   <header class="ax-top">
     <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · Patterns</p>
     <h1>What goes with absence, and how it has changed</h1>
-    <p class="ax-lede">Every state-funded school in England at once: how absence varies with the circumstances of a school, how the whole distribution has moved since 2013/14, and where the gaps have opened.</p>
+    <p class="ax-lede">Every state-funded school in England at once: how absence varies with a school’s circumstances, and how the spread between schools has moved since 2013/14. Overall absence is the share of sessions (mornings and afternoons) that pupils missed. Persistent absence is the share of pupils who missed a tenth or more of their sessions.</p>
     <p class="ax-date" id="px-date">Loading…</p>
   </header>
 </div></div>
@@ -49,31 +49,31 @@
   <div id="px-body">
   <section data-nav="Free school meals" class="ax-card" id="px-grad-c">
     <h2 id="px-grad-h">The gap by free school meals</h2>
-    <p class="ax-sub">Schools in five equal groups by the share of pupils eligible for free school meals (January 2026 census), each group pooled for every full school year. No figures were published for 2019/20.</p>
+    <p class="ax-sub">Schools are put in five equal groups by the share of their pupils eligible for free school meals in the January 2026 census. Each line is one group of schools taken together, for every full school year. No figures were published for 2019/20.</p>
     <div id="px-grad" class="ax-chart"></div>
     <p class="ax-reading" id="px-grad-r"></p>
   </section>
 
   <section data-nav="Circumstances" class="ax-card" id="px-scat-c">
     <h2>School by school, against its circumstances</h2>
-    <p class="ax-sub">Each dot is a school. The dark line joins the middle school of each twentieth of schools along the axis.</p>
-    <label class="ax-field" style="max-width:340px"><span>Across the page</span>
-      <select id="px-x" class="ax-select"><option value="fsm">Eligible for free school meals</option><option value="sen">SEN support</option><option value="ehcp">Education, health and care plans</option><option value="eal">First language other than English</option></select></label>
+    <p class="ax-sub">Each dot is a school, placed by its absence and by one of its circumstances. The dark line joins the middle school of each twentieth of schools along the axis.</p>
+    <label class="ax-field" style="max-width:340px"><span>Circumstance</span>
+      <select id="px-x" class="ax-select"><option value="fsm">Pupils eligible for free school meals</option><option value="sen">Pupils with SEN support</option><option value="ehcp">Pupils with an education, health and care plan</option><option value="eal">Pupils with a first language other than English</option></select></label>
     <div id="px-scat" class="ax-chart ax-pos"></div>
     <p class="ax-reading" id="px-scat-r"></p>
   </section>
 
   <section data-nav="Distribution" class="ax-card">
     <h2 id="px-ridge-h">How schools are spread, year by year</h2>
-    <p class="ax-sub">Schools in order of overall absence in each full school year. The line follows the middle school, the darker band holds the middle half of schools and the lighter band the middle eight in ten. Overall absence only, whichever measure is chosen above.</p>
+    <p class="ax-sub">Schools in order of overall absence in each full school year. The line follows the middle school. The darker band holds the middle half of schools and the lighter band the middle eight in ten. This chart uses overall absence only, whichever measure is chosen above.</p>
     <div id="px-ridge" class="ax-chart"></div>
     <p class="ax-reading" id="px-ridge-r"></p>
   </section>
 
   <section data-nav="Regions" class="ax-card">
     <h2>Region by region, against England</h2>
-    <p class="ax-sub" id="px-reg-s">Today’s schools in each region pooled for the newest full school year, each set against England.</p>
-    <div class="ax-seg px-rview" id="px-rview" role="group" aria-label="Compare by" hidden><button type="button" data-v="now">Newest year</button><button type="button" data-v="chg">Change since 2018/19</button></div>
+    <p class="ax-sub" id="px-reg-s">Today’s schools in each region taken together for the newest full school year, each set against England.</p>
+    <div class="ax-seg px-rview" id="px-rview" role="group" aria-label="Show" hidden><button type="button" data-v="now">Newest year</button><button type="button" data-v="chg">Change since 2018/19</button></div>
     <div id="px-reg" class="ax-chart"></div>
     <p class="ax-reading" id="px-reg-r"></p>
   </section>
@@ -81,14 +81,14 @@
 
   <section data-nav="Day by day" class="ax-card" id="px-cal-c">
     <h2>The school year, one square a day</h2>
-    <p class="ax-sub">Every school day in England, from the registers schools share with the DfE each day: green where fewer sessions were missed than on the average day of the last full year, rust where more. Rows run Monday to Friday. The pattern of the week and of the terms shows at a glance. It follows the schools chosen above.</p>
+    <p class="ax-sub">Each square is one school day in England, from the registers schools share with the DfE each day. Green days had lower absence than the average day of the last full school year, rust days higher. Rows run Monday to Friday. This chart follows the schools chosen above, not the measure.</p>
     <div id="px-cal" class="ax-chart"></div>
     <p class="ax-reading" id="px-cal-r"></p>
   </section>
 
   <section data-nav="Severe absence" class="ax-card" id="px-sev-c">
     <h2 id="px-sev-h">Severe absence, year by year</h2>
-    <p class="ax-sub">The share of pupils who missed half or more of their sessions in each full school year, pooled across England’s schools. No figures were published for 2019/20. This chart follows the schools chosen above, not the measure.</p>
+    <p class="ax-sub">The share of pupils who missed half or more of their sessions in each full school year, across England’s schools taken together. No figures were published for 2019/20. This chart follows the schools chosen above, not the measure.</p>
     <div id="px-sev" class="ax-chart"></div>
     <p class="ax-reading" id="px-sev-r"></p>
   </section>
@@ -109,16 +109,20 @@
       <table class="px-mtable">
         <thead><tr><th>Chart</th><th>How it is made</th></tr></thead>
         <tbody>
-          <tr><td>The gap by free school meals</td><td>Primary and secondary schools are put in five equal groups by the share of pupils eligible for free school meals. Each group is pooled for every full school year. Schools are grouped by their newest census figure and keep that group in every year, so each line follows the same schools back in time.</td></tr>
+          <tr><td>The gap by free school meals</td><td>Primary and secondary schools are put in five equal groups by the share of pupils eligible for free school meals. Each group is taken together for every full school year. Schools are grouped by their newest census figure and keep that group in every year, so each line follows the same schools back in time.</td></tr>
           <tr><td>School by school</td><td>Each dot is one school in the autumn and spring terms <span class="px-latest">2025/26</span>, placed by its absence and by one of its circumstances from the January 2026 census. The line joins the middle school of each twentieth of schools along the axis.</td></tr>
           <tr><td>How schools are spread</td><td>In each full school year the schools are put in order of overall absence. The line is the middle school. The bands mark the middle half of schools and the middle eight in ten. The edges of the bands are estimated from counts of schools in narrow bands of absence (0.25 percentage points wide for primary schools, 0.5 for secondary and 1 for special), so each edge is an estimate to within a band of that width.</td></tr>
-          <tr><td>Region by region</td><td>Today’s schools in each region are pooled for the newest full school year and set against England. The change is the difference, in percentage points, between 2018/19 and that year, set against England’s change.</td></tr>
+          <tr><td>Region by region</td><td>Today’s schools in each region are taken together for the newest full school year and set against England. The change is the difference, in percentage points, between 2018/19 and that year, set against England’s change.</td></tr>
+          <tr><td>One square a day</td><td>Each square is one school day in England, from the in-year figures. It is coloured against the average day of the last full school year. A day is left blank where fewer than 80% of the usual sessions were due.</td></tr>
+          <tr><td>Severe absence</td><td>The share of pupils who missed half or more of their sessions in each full school year, for England’s schools of each phase taken together.</td></tr>
         </tbody>
       </table>
       <dl class="px-mdl">
         <dt>Overall absence</dt><dd>The share of possible sessions that pupils missed, whether authorised or not. A session is a morning or an afternoon.</dd>
-        <dt>Persistent absence</dt><dd>The share of pupils who missed 10% or more of their possible sessions.</dd>
-        <dt>Pooled</dt><dd>One rate for a group of schools taken together, so that larger schools count for more. It is not the average of the schools’ own rates.</dd>
+        <dt>Persistent absence</dt><dd>The share of pupils who missed a tenth or more of their possible sessions.</dd>
+        <dt>Severe absence</dt><dd>The share of pupils who missed half or more of their possible sessions.</dd>
+        <dt>Taken together</dt><dd>One rate for a group of schools, so that larger schools count for more. It is not the average of the schools’ own rates.</dd>
+        <dt>Points</dt><dd>A difference between two rates is given in percentage points, shortened to “points”.</dd>
         <dt>The middle school</dt><dd>The school with as many schools above it as below it: the median.</dd>
       </dl>
       <p><b>Association, not cause.</b> The charts show what goes with absence across schools. They do not show that any circumstance causes it. They describe schools, not pupils, and a pattern across schools need not hold for the children within them.</p>
@@ -160,6 +164,7 @@
           <tr><td>Fewer than 10 pupils on roll</td><td>The school is left out of every chart.</td></tr>
           <tr><td>Rates only</td><td>Absence is always a percentage. Where a number of schools is given, it is a count of schools, never of pupils.</td></tr>
           <tr><td>Schools, not pupils</td><td>Every figure describes a school or a group of schools. Nothing here describes a group of pupils within a school.</td></tr>
+          <tr><td>Severe absence</td><td>Shown for England by phase only. It is never shown for a single school.</td></tr>
         </tbody>
       </table>
     </div>

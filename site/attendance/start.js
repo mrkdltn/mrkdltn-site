@@ -5,18 +5,18 @@
 (function () {
   // ---- Question 1. Role changes the title of the briefing (brief.js) and the order of its sections, never the figures.
   const ROLES = [
-    {id: 'head', label: 'Headteacher or senior leader', order: ['compare', 'improving'], hint: 'Most headteachers and senior leaders start with their own school.'},
-    {id: 'trust', label: 'Trust leader', order: ['compare', 'improving'], hint: 'Most trust leaders start with their trust, then look at one school at a time.'},
-    {id: 'governor', label: 'Governor or trustee', order: ['improving', 'compare'], hint: 'Most governors start with their school, and most trustees with their trust.'},
-    {id: 'la', label: 'Local authority officer or councillor', order: ['compare', 'improving'], hint: 'Most officers start with their local authority, and most councillors with their ward or local authority.'},
-    {id: 'press', label: 'Journalist or researcher', order: ['improving', 'compare'], hint: 'Most journalists and researchers start with a local authority, county or constituency.'},
-    {id: 'parent', label: 'Parent or carer', order: ['improving', 'compare'], hint: 'Most parents and carers start with their child’s school.'}];
+    {id: 'head', label: 'Headteacher or senior leader', order: ['compare', 'improving'], hint: 'Your own school is the natural place to start.'},
+    {id: 'trust', label: 'Trust leader', order: ['compare', 'improving'], hint: 'Start with your trust, then look at one school at a time.'},
+    {id: 'governor', label: 'Governor or trustee', order: ['improving', 'compare'], hint: 'Start with your school, or with your trust if you are a trustee.'},
+    {id: 'la', label: 'Local authority officer or councillor', order: ['compare', 'improving'], hint: 'Start with your local authority, or with your ward if you are a councillor.'},
+    {id: 'press', label: 'Journalist or researcher', order: ['improving', 'compare'], hint: 'A local authority, county or constituency is a good place to start.'},
+    {id: 'parent', label: 'Parent or carer', order: ['improving', 'compare'], hint: 'Start with your child’s school.'}];
 
   // ---- Question 3, as asked.
   const WANTS = [
     {id: 'compare', label: 'How does it compare?'},
-    {id: 'improving', label: 'Is it improving?'},
-    {id: 'groups', label: 'Which pupils miss most?'},
+    {id: 'improving', label: 'Is absence falling?'},
+    {id: 'groups', label: 'Which pupils miss the most school?'},
     {id: 'severe', label: 'Severe absence'},
     {id: 'whole', label: 'The whole picture'}];
 
@@ -29,34 +29,34 @@
       all: ['Summary', 'Three ways', 'Position', 'Year by year', 'Since 2018/19'],
       compare: {show: ['Three ways', 'Position'], says: 'Beside England, its local authority and the 20 schools most like it.'},
       improving: {show: ['Year by year', 'Since 2018/19'], says: 'Year by year, and against 2018/19.'},
-      groups: {own: 'la', show: ['Summary', 'Pupil groups'], says: 'Published for local authorities, not for schools, so this opens a second briefing for the school’s local authority.'},
+      groups: {own: 'la', show: ['Summary', 'Pupil groups'], says: 'The DfE publishes this for local authorities, not for schools, so it opens a second briefing for the school’s local authority.'},
       severe: null,   // never for a single school
       whole: {says: 'Every section of the school’s page.'}},
     group: {    // /attendance/group/?k=&id=   (t trust, a local authority, y county, c constituency, w ward)
       all: ['Summary', 'Side by side', 'Pupil groups', 'School by school', 'Year by year', 'Compared', 'The schools'],
-      compare: {show: ['Compared', 'School by school'], set: {v: 'now'}, says: 'Beside others of its kind and England, with the spread across its own schools.'},
-      improving: {show: ['Year by year'], solo: {show: ['Compared'], set: {v: 'yr'}}, says: 'Year by year, and the change in the last year.'},
-      groups: {kinds: 'ay', show: ['Pupil groups'], says: 'Pupils eligible for free school meals, with SEN support and with education, health and care plans.'},
-      severe: {own: 'self', show: ['Summary', 'Year by year', 'Compared'], set: {m: 'sev'}, says: 'Pupils who missed half or more of their sessions. This opens as a briefing of its own.'},
+      compare: {show: ['Compared', 'School by school'], set: {v: 'now'}, says: 'Beside England and others of its kind, with the spread across its own schools.'},
+      improving: {show: ['Year by year'], solo: {show: ['Compared'], set: {v: 'yr'}}, says: 'Year by year, and the change from a year earlier.'},
+      groups: {kinds: 'ay', show: ['Pupil groups'], says: 'Pupils eligible for free school meals, pupils with SEN support and pupils with an education, health and care plan.'},
+      severe: {own: 'self', show: ['Summary', 'Year by year', 'Compared'], set: {m: 'sev'}, says: 'The share of pupils who missed half or more of their sessions. This opens as a briefing of its own.'},
       whole: {says: 'Every section of the page.'}},
     england: {  // /attendance/
       all: ['Summary', 'Day by day', 'Week by week', 'Weekdays', 'Reasons', 'Map', 'Against last year'],
-      compare: {show: ['Map', 'Against last year'], says: 'Every local authority on a map, and this year beside last.'},
-      improving: {show: ['Week by week', 'Against last year'], says: 'Week by week this year, and beside last year.'},
+      compare: {show: ['Map', 'Against last year'], says: 'Every local authority on a map, and this year beside the same point last year.'},
+      improving: {show: ['Week by week', 'Against last year'], says: 'Week by week this year, and beside the same point last year.'},
       groups: null, severe: null,
       whole: {says: 'Every section of the page.'}}};
   // What to say when a question is not offered for the chosen place.
   const NOTES = {
-    groups: 'Absence by pupil group is published for local authorities and counties only. Choose a local authority at step 2 to see it.',
-    severeSchool: 'Severe absence is not shown for a single school, because it usually describes a handful of children. It is given for trusts and areas.'};
+    groups: 'Absence by pupil group is shown for local authorities and counties only, because the DfE does not publish it for anything smaller. Choose a local authority or a county at step 2 to see it.',
+    severeSchool: 'Severe absence is never shown for a single school, where it usually describes a handful of children. It is given for trusts and areas.'};
 
   // How each section is named in the sentence above the button.
   const SAYS = {'Summary': 'the latest figures', 'Three ways': 'the school beside England, its local authority and similar schools',
     'Position': 'where it sits among schools of its phase', 'Year by year': 'the record year by year', 'Since 2018/19': 'the change since 2018/19',
     'Side by side': 'a side-by-side table', 'Pupil groups': 'absence by pupil group', 'School by school': 'the spread across its schools',
     'Compared': 'how it compares with others of its kind', 'The schools': 'the list of its schools', 'Day by day': 'the calendar of school days',
-    'Week by week': 'the record week by week', 'Weekdays': 'the pattern across the week', 'Reasons': 'the reasons for absence',
-    'Map': 'the map of local authorities', 'Against last year': 'the comparison with last year'};
+    'Week by week': 'the record week by week', 'Weekdays': 'the pattern across the week', 'Reasons': 'the reasons recorded for absence',
+    'Map': 'the map of local authorities', 'Against last year': 'the comparison with the same point last year'};
   const KIND = {s: 'School', t: 'Trust', a: 'Local authority', y: 'County', c: 'Constituency', w: 'Ward', e: 'England'};
   const PH = {P: 'Primary', S: 'Secondary', X: 'Special'};
   const $ = (id) => document.getElementById(id);
@@ -130,7 +130,7 @@
     $('st-plan').textContent = (none ? 'Nothing is ticked yet, so you will get the whole picture. ' : '')
       + 'Your briefing on ' + first.name + ' will show ' + list(first.show.map((n) => SAYS[n] || n.toLowerCase())) + ', then sources and method.';
     const also = $('st-also'); also.innerHTML = ''; also.hidden = out.length < 2;
-    if (out.length > 1) { also.appendChild(el('p', null, out.length > 2 ? 'Two more briefings answer the rest of what you chose.' : 'One more briefing answers the rest of what you chose.'));
+    if (out.length > 1) { also.appendChild(el('p', null, out.length > 2 ? 'Two more briefings cover the rest of what you chose.' : 'One more briefing covers the rest of what you chose.'));
       out.slice(1).forEach((b) => { const a = el('a', 'ax-btn st-also-a', b.what); a.href = b.href; also.appendChild(a); }); }
   }
 
@@ -144,13 +144,13 @@
     $('st-need-1').hidden = true; $('st-need-2').hidden = true;
 
     const roles = $('st-roles'); roles.innerHTML = ''; ROLES.forEach((r) => roles.appendChild(option('radio', 'role', r.id, r.label, '', r.id === S.role)));
-    $('st-hint').textContent = (role ? role.hint + ' ' : '') + 'Any school, trust, local authority, county, constituency or ward in England will do.';
+    $('st-hint').textContent = (role ? role.hint + ' ' : '') + 'You can choose any school, trust, local authority, county, constituency or ward in England.';
     const ch = $('st-chosen'); ch.hidden = !place; ch.innerHTML = '';
     if (place) { ch.append(el('span', 'st-chosen-k', 'Chosen'), el('b', null, place.name), el('small', null, place.sub || '')); }
 
     const wants = $('st-wants'), notes = $('st-notes'); wants.innerHTML = ''; notes.innerHTML = '';
     if (place) { const o = offered(place), M = MAP[pageOf(place)];
-      o.out.forEach((w) => { let says = M[w.id].says; if (w.id === 'groups' && M.groups.own === 'la') says = 'Published for local authorities, not for schools, so this opens a second briefing for ' + place.la.name + '.';
+      o.out.forEach((w) => { let says = M[w.id].says; if (w.id === 'groups' && M.groups.own === 'la') says = 'The DfE publishes this for local authorities, not for schools, so it opens a second briefing for ' + place.la.name + '.';
         wants.appendChild(option('checkbox', 'want', w.id, w.label, says, S.q.includes(w.id))); });
       o.notes.forEach((t) => notes.appendChild(el('p', 'st-note', t)));
       plan(); }

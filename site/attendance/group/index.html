@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Areas and trusts · Attendance Explorer · Mark Dalton</title>
-<meta name="description" content="School attendance in England, day by day: every local authority and region read against England and against last year. Built from the DfE's fortnightly attendance data.">
+<meta name="description" content="Overall, persistent and severe absence across the schools of any local authority, county, constituency, ward or trust in England, against England and year by year. Built from the DfE's school-level absence statistics.">
 <link rel="canonical" href="https://mrkdltn.com/attendance/group/">
-<meta property="og:title" content="Attendance Explorer">
-<meta property="og:description" content="School attendance in every local authority in England, day by day, against England and last year. Free, built from public data.">
+<meta property="og:title" content="Areas and trusts · Attendance Explorer">
+<meta property="og:description" content="Absence across the schools of any local authority, county, constituency, ward or trust in England, against England and year by year. Free, and built from public data.">
 <meta property="og:url" content="https://mrkdltn.com/attendance/group/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://mrkdltn.com/attendance/data/card.png">
@@ -32,20 +32,20 @@
   <header class="ax-top">
     <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · <span id="gx-kind">Areas</span></p>
     <h1 id="gx-name">Areas and trusts</h1>
-    <p class="ax-date" id="gx-meta">Absence across the schools of any trust, parliamentary constituency, ward or county in England, built from the DfE’s school-level statistics.</p>
+    <p class="ax-date" id="gx-meta">Absence across the schools of any local authority, county, constituency, ward or trust in England, built from the DfE’s school-level statistics.</p>
     <div class="ax-head-row"><div id="ax-pin"></div><button type="button" class="ax-btn" id="gx-another">Show me another</button></div>
   </header>
   <nav class="ax-kinds" id="ax-kinds" aria-label="Kind of area" hidden><a href="/attendance/" data-k="e">This year, week by week</a><a href="/attendance/group/?k=a" data-k="a">Local authorities</a><a href="/attendance/group/?k=y" data-k="y">Counties</a><a href="/attendance/group/?k=c" data-k="c">Constituencies</a><a href="/attendance/group/?k=w" data-k="w">Wards</a></nav>
     <div class="ax-hero-search">
-    <label class="ax-field ax-find"><span>Local authority, trust, constituency, ward, county or school</span>
-      <input id="gx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Find an area, trust or school" role="combobox" aria-expanded="false" aria-controls="gx-list" aria-autocomplete="list">
+    <label class="ax-field ax-find"><span>Find an area, trust or school</span>
+      <input id="gx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Name, town or postcode" role="combobox" aria-expanded="false" aria-controls="gx-list" aria-autocomplete="list">
       <ul id="gx-list" class="ax-pop" role="listbox" hidden></ul></label>
     </div>
 </div></div>
 <nav class="ax-secnav noprint" aria-label="Sections"><div class="in" id="ax-secnav"></div></nav>
 <main class="ax">
 
-  <section class="ax-controls" aria-label="Search">
+  <section class="ax-controls" aria-label="Choose what to show">
     <div class="ax-field" id="gx-phase-f" hidden><span id="gx-phase-l">Schools</span>
       <div class="ax-seg" id="gx-phase" role="group" aria-labelledby="gx-phase-l"></div></div>
     <div class="ax-field" id="gx-pg-f" hidden><span id="gx-pgs-l">Pupils</span>
@@ -82,7 +82,7 @@
 
   <section data-nav="School by school" class="ax-card" id="gx-strip-c">
     <h2>School by school</h2>
-    <p class="ax-sub">Each circle is one of its <span class="gx-phase-n"></span>, sized by the number of pupils and placed by <span class="gx-meas-n"></span>. Tap a circle for the school.</p>
+    <p class="ax-sub">Each circle is one of its <span class="gx-phase-n"></span>, placed by <span class="gx-meas-n"></span>. A larger circle is a larger school. Tap a circle to name the school.</p>
     <div id="gx-strip" class="ax-chart"></div>
     <p class="ax-reading" id="gx-strip-r"></p>
   </section>
@@ -111,20 +111,26 @@
   </div>
 
   <section data-nav="Method" class="ax-card ax-method">
-    <h2>Sources and method</h2>
-    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files: <span id="gx-src"></span>. Trust and constituency of each school from Get Information about Schools. Open Government Licence v3.0. The DfE publishes no absence figures for trusts or constituencies; these are built from its school figures.</p>
-    <p><b>Three measures.</b> Overall absence is the share of sessions missed. Persistent absence is the share of pupils who missed a tenth or more of their sessions. Severe absence is the share who missed half or more. Severe absence is given for areas, trusts and pupil groups, never for a single school, and not where fewer than 10 pupils are severely absent.</p>
-    <p><b>Pooled rates.</b> Sessions missed across the schools over sessions possible, and persistent and severe absentees over pupils on roll. Phases are kept apart because primary, secondary and special schools differ so much that a single figure would mostly describe the mix.</p>
-    <p><b>When a pooled rate is shown.</b> Only where at least three schools of the phase contribute, and for a trust only where it has five or more schools in all. Smaller groups list their schools without a pooled figure.</p>
-    <p><b>Trusts over time.</b> The solid line on a trust’s chart pools only the schools that had joined it by the end of December of each school year, so it is the trust’s own record. The dashed line pools every school it holds today in every year, including years before they joined and a predecessor school where there was exactly one. Joining dates are from Get Information about Schools. Where the DfE recorded a different trust for a school before its joining date, the school is shown as having come from that trust; the DfE’s records of this begin in 2020/21, so earlier transfers are not identified, and a trust that only changed its name is not counted as a transfer. The list includes the trusts of some maintained foundation schools, which have no joining dates.</p>
-    <p><b>Constituencies.</b> 2024 boundaries. A figure describes the schools located in the constituency, not the children who live there; many pupils cross boundaries to school.</p>
-    <p><b>Local authorities.</b> The 153 authorities responsible for schools. A local authority’s figures here are pooled from its primary, secondary and special schools in the DfE’s school-level file, so they can differ slightly from the DfE’s own authority totals.</p>
-    <p><b>Pupil groups.</b> Absence for pupils eligible for free school meals, with SEN support, with an education, health and care plan, and with no identified SEN, from the DfE’s “Absence by pupil characteristics” for the autumn and spring terms (published 15 October 2026). The DfE publishes these for local authorities, regions and England only, so they appear on local authority and county pages and not for single schools, trusts, constituencies or wards. County figures pool their authorities. No figure is shown for a group of fewer than 10 pupils.</p>
-    <p><b>Change.</b> “Change in a year” sets the autumn and spring terms of 2025/26 against the same two terms of 2024/25. “Change since 2018/19” sets the full year 2024/25 against 2018/19, the last full year before the pandemic; for pupil groups, which are published for the two terms only, it sets the autumn and spring terms of 2025/26 against those of 2018/19. Places are coloured against England’s change, so green means absence fell, or rose less than it did across England. For trusts, change describes the schools held today.</p>
-    <p><b>Wards.</b> May 2026 wards, with boundaries from the Office for National Statistics (Open Government Licence v3.0; contains OS data © Crown copyright and database right 2026). Only primary schools are pooled, and only where a ward has three or more: secondary pupils travel too far for a ward figure to mean much, and about 44% of wards with a school carry a figure. As with constituencies, a figure describes the schools in the ward, not its children.</p>
-    <p><b>Counties.</b> The 48 ceremonial counties, each made up of whole local authorities. Stockton-on-Tees, which straddles two, is counted with County Durham. Local authority figures on county pages are pooled from schools and so differ slightly from the DfE’s own authority figures, which include other settings.</p>
-    <p><b>The funnel.</b> Each trust’s rate is set against its number of pupils. The curved bands show where about 95% and 99.8% of trusts of a given size fall, widened to match the spread actually seen between trusts. Small trusts vary more by chance alone, so position within the band says little.</p>
-    <p><b>Maps.</b> Hexagon layout from <a href="https://github.com/odileeds/hexmaps">Open Innovations</a> (MIT licence), one hexagon per constituency.</p>
+    <h2>How this page works</h2>
+    <p><b>Three measures.</b> Overall absence is the share of possible sessions that pupils missed. A session is a morning or an afternoon. Persistent absence is the share of pupils who missed a tenth or more of their sessions. Severe absence is the share who missed half or more.</p>
+    <p><b>Taken together.</b> Each figure for a place is one rate for its schools taken together: sessions missed across the schools over sessions possible, and persistently and severely absent pupils over pupils on roll. Larger schools count for more, so it is not the average of the schools’ own rates. Primary, secondary and special schools are kept apart, because they differ so much that a single figure would mostly describe the mix.</p>
+    <p><b>Points.</b> A difference between two rates is given in percentage points, shortened to “points”. A rate of 7.0% against 6.5% is 0.5 points higher.</p>
+    <p><b>Change.</b> “Change in a year” sets the autumn and spring terms of 2025/26 against the same two terms a year earlier. “Change since 2018/19” sets the full year 2024/25 against 2018/19, the last full year before the pandemic. Pupil groups are published for the two terms only, so for them it sets the autumn and spring terms of 2025/26 against those of 2018/19. For trusts, change describes the schools held today.</p>
+    <p><b>Colours.</b> Green marks lower absence than England and rust higher. Where a change is shown, green means absence fell, or rose less than it did across England, and rust means it rose more. Colour shows direction only. A named school is never coloured on these pages.</p>
+    <p><b>Trusts over time.</b> The solid line on a trust’s chart takes together only the schools that had joined it by the end of December of each school year. It is the trust’s own record. The dashed line takes together every school the trust holds today in every year, including years before they joined and a predecessor school where there was exactly one. Joining dates are from Get Information about Schools. Where the DfE recorded a different trust for a school before its joining date, the school is shown as having come from that trust. The DfE’s records of this begin in 2020/21, so earlier transfers are not identified. A trust that only changed its name is not counted as a transfer. The list includes the trusts of some maintained foundation schools, which have no joining dates.</p>
+    <p><b>The funnel.</b> Each trust’s rate is set against its number of pupils. The curved bands show where about 95% and 99.8% of trusts of a given size fall, widened to match the spread actually seen between trusts. Small trusts vary more by chance alone, so position within the band says little. The comparison takes no account of the pupils a trust’s schools serve.</p>
+    <p><b>Pupil groups.</b> Absence for pupils eligible for free school meals, pupils not eligible, pupils with SEN support, pupils with an education, health and care plan and pupils with no identified SEN. The figures are from the DfE’s “Absence by pupil characteristics” for the autumn and spring terms (published 15 October 2026). The DfE publishes them for local authorities, regions and England only. They appear on local authority and county pages, and not for single schools, trusts, constituencies or wards. A county’s figures take its local authorities together. No figure is shown for a group of fewer than 10 pupils.</p>
+    <p><b>Local authorities.</b> The 153 local authorities responsible for schools. A local authority’s figures here take together its primary, secondary and special schools in the DfE’s school-level file. They can differ slightly from the DfE’s own totals for the authority, which include other settings.</p>
+    <p><b>Counties.</b> The 48 ceremonial counties, each made up of whole local authorities. Stockton-on-Tees, which straddles two, is counted with County Durham.</p>
+    <p><b>Constituencies.</b> Parliamentary constituencies on their 2024 boundaries. A figure describes the schools located in the constituency, not the children who live there. Many pupils cross a boundary to go to school.</p>
+    <p><b>Wards.</b> Wards as at May 2026. Only primary schools are counted, and only where a ward has three or more. Secondary pupils travel too far for a ward figure to mean much. Fewer than half of wards with a school carry a figure. As with constituencies, a figure describes the schools in the ward, not the children who live there.</p>
+    <p><b>Trusts.</b> A trust’s schools are those recorded for it in Get Information about Schools. The DfE publishes no absence figures for trusts or constituencies. The figures here are built from its figures for their schools.</p>
+    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files: <span id="gx-src"></span>. The trust and constituency of each school are from Get Information about Schools. Open Government Licence v3.0.</p>
+    <p><b>Maps.</b> The hexagon layout is from <a href="https://github.com/odileeds/hexmaps">Open Innovations</a> (MIT licence), one hexagon per constituency. Ward boundaries are from the Office for National Statistics (Open Government Licence v3.0; contains OS data © Crown copyright and database right 2026).</p>
+    <p><b>Small numbers.</b> A figure for a place is given only where at least three of its schools of the phase contribute, and for a trust only where it has five or more schools in all. Smaller places list their schools without one. No school with fewer than 10 pupils on roll is shown. Rates only, never counts of pupils.</p>
+    <p><b>Severe absence.</b> Severe absence is given for areas, trusts and pupil groups. It is never shown for a single school, where it usually describes a handful of children, and it is withheld where fewer than 10 pupils are severely absent.</p>
+    <p><b>No expected rate.</b> No expected rate is calculated for any school. Each place is set beside England and beside others of its kind, and the reading is left to you.</p>
+    <p><b>Not a judgement.</b> Every figure here is a reading of published data, not a judgement on a school, a trust or an area. Schools are listed in alphabetical order and never ranked. Ethnicity is never used.</p>
   </section>
 </main>
 

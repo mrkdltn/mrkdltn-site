@@ -46,3 +46,7 @@ Mark asked for another review for simplicity, usefulness and intuitive operation
 | Pupil groups took four control changes to read | A table in "By pupil group" gives every group's overall, persistent and severe absence against England at once |
 | "Copy link" under every chart | One in the header on wider screens; "Save image" stays per chart |
 | Words that assume knowledge ("pooled", "none", "Area or trust") | Reworded |
+
+## Writing pass and figures, 24 November 2026
+
+A writing pass in Mark's voice covered every page; each substantive change is listed before and after in `docs/attendance-writing-pass.md` for Mark to review. It found that a summary and its table could differ by 0.1 because they rounded differently; one rounding rule now applies everywhere. An independent check of the figures against the DfE's own files is in `docs/attendance-figures-check.md` when complete.

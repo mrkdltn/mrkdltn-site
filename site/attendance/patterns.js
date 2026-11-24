@@ -9,7 +9,7 @@
   const XN = {fsm: 'eligible for free school meals', sen: 'with SEN support', ehcp: 'with an education, health and care plan', eal: 'with a first language other than English'};
   const XF = {fsm: 'fsm_pct', sen: 'sen_pct', ehcp: 'ehcp_pct', eal: 'eal_pct'};
   const $ = (id) => document.getElementById(id);
-  const pc = (v, dp) => (v == null ? '–' : (v / 100).toFixed(dp == null ? 1 : dp) + '%');
+  const pc = (v, dp) => (v == null ? '–' : (dp == null ? Math.round(v / 10) / 10 : v / 100).toFixed(dp == null ? 1 : dp) + '%');      // shown figures round hundredths to tenths, the same way differences do
   const gap = (a, b) => Math.round(a / 10) - Math.round(b / 10), pts = (t) => (Math.abs(t) / 10).toFixed(1);
   const ay = (p) => { const y = +p.slice(0, 4); return y + '/' + String((y + 1) % 100).padStart(2, '0'); };
   const date = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
@@ -45,7 +45,7 @@
     key(el, g.cut.map((c, q) => `<i class="ln" style="border-color:${SHADES[q]}"></i>${name(q)}: ${c[0]}% to ${c[1]}%`));
     const a = '2018', b = P.fy[P.fy.length - 1], g0 = gap(val(4, a), val(0, a)), g1 = gap(val(4, b), val(0, b));
     $('px-grad-h').textContent = g1 > g0 ? 'The gap by free school meals has widened' : 'The gap by free school meals';
-    $('px-grad-r').innerHTML = `In ${ay(b)}, ${MN[meas]} in the fifth of ${PH[phase]} with the most pupils eligible for free school meals was <b>${pc(val(4, b))}</b>, against <b>${pc(val(0, b))}</b> in the fifth with the fewest: a gap of <b>${pts(g1)}</b> points. In ${ay(a)} the gap was ${pts(g0)} points.`;
+    $('px-grad-r').innerHTML = `In ${ay(b)}, ${MN[meas]} in the fifth of ${PH[phase]} with the most pupils eligible for free school meals was <b>${pc(val(4, b))}</b>, against <b>${pc(val(0, b))}</b> in the fifth with the fewest. That is a gap of <b>${pts(g1)}</b> points. In ${ay(a)} the gap was ${pts(g0)} points.`;
   }
 
   function scatter(D) {
@@ -66,7 +66,7 @@
     s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 5); s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', INK).attr('stroke-width', 2.5);
     const M = P.model && P.model.phases[phase], items = [`<i style="background:${SOFT};border-radius:50%;width:8px;height:8px"></i>${idx.length.toLocaleString('en-GB')} ${PH[phase]}`, `<i class="ln" style="border-color:${INK}"></i>Middle school of each twentieth`];
     key(el, items);
-    $('px-scat-r').innerHTML = `In the twentieth of ${PH[phase]} with the fewest pupils ${XN[xf]}, the middle school had ${MN[meas]} of <b>${pc(bins[0].v)}</b>; in the twentieth with the most, <b>${pc(bins[19].v)}</b>.`;
+    $('px-scat-r').innerHTML = `In the twentieth of ${PH[phase]} with the fewest pupils ${XN[xf]}, the middle school had ${MN[meas]} of <b>${pc(bins[0].v)}</b>. In the twentieth with the most, it had <b>${pc(bins[19].v)}</b>.`;
   }
 
   /* A percentile from counts of schools in equal bands of absence, by interpolation within the band it falls in.
@@ -205,7 +205,7 @@
       const cells = Pz.days[yy].map((iso, i) => ({iso, v: D[yy][ph].abs[i]})).filter((c) => c.v != null);
       tipOn(g.selectAll('rect.c').data(cells).join('rect').attr('class', 'c').attr('x', (c) => left + Math.floor((Date.parse(c.iso + 'T00:00:00Z') - base(yy)) / 6048e5) * cw).attr('y', (c) => dow(c.iso) * chh).attr('width', cw - gp).attr('height', chh - gp).attr('fill', (c) => AXc.div(c.v, mid, span)),
         (c) => `<b>${fmt(c.iso)}</b><br>Overall absence ${pc(c.v)}`); });
-    key(el, [AXc.legend(mid, span, 'the average day of ' + ay(full)), 'Blank squares are holidays, or days when under 80% of the usual pupils were due in' + (phase === 'S' ? '. In secondary schools that includes most days from June, once Year 11 has left' : '')]);
+    key(el, [AXc.legend(mid, span, 'the average day of ' + ay(full)), 'Blank squares are holidays, or days when fewer than 80% of the usual sessions were due' + (phase === 'S' ? '. In secondary schools that includes most days from June, once Year 11 has left' : '')]);
     const by = [0, 1, 2, 3, 4].map((d) => d3.mean(Pz.days[full].map((iso, i) => (dow(iso) === d ? D[full][ph].abs[i] : null)).filter((v) => v != null))), midwk = d3.mean([by[1], by[2], by[3]]);
     const mAvg = (m) => d3.mean(Pz.days[full].map((iso, i) => (+iso.slice(5, 7) === m ? D[full][ph].abs[i] : null)).filter((v) => v != null));
     $('px-cal-r').innerHTML = `Across ${ay(full)} in England’s ${PH[phase]}, Fridays averaged <b>${pc(by[4])}</b> and Mondays <b>${pc(by[0])}</b>, against <b>${pc(midwk)}</b> from Tuesday to Thursday. September averaged ${pc(mAvg(9))}, December ${pc(mAvg(12))} and July ${pc(mAvg(7))}.`;
@@ -227,7 +227,7 @@
     $('px-phase').addEventListener('click', (e) => { const k = e.target.closest('button'); if (k) { phase = k.dataset.p; draw(); } });
     $('px-rview').addEventListener('click', (e) => { const k = e.target.closest('button'); if (k) { rview = k.dataset.v; draw(); } });
     $('px-meas').addEventListener('click', (e) => { const k = e.target.closest('button'); if (k) { meas = k.dataset.m; draw(); } });
-    $('px-date').textContent = `Full school years to ${ay(B.fy_last)}; school by school for the autumn and spring terms ${ay(B.latest)}. Published by the DfE on ${date(B.release.full_year.published)} and ${date(B.release.autumn_spring.published)}.`;
+    $('px-date').textContent = `Full school years to ${ay(B.fy_last)}, and each school’s figures for the autumn and spring terms ${ay(B.latest)}. Published by the DfE on ${date(B.release.full_year.published)} and ${date(B.release.autumn_spring.published)}.`;
     $('px-src-fy').textContent = `full school years ${ay(P.fy[0])} to ${ay(B.fy_last)}, published ${date(B.release.full_year.published)}`;
     $('px-src-as').textContent = `autumn and spring terms ${ay(B.latest)}, published ${date(B.release.autumn_spring.published)}`;
     document.querySelectorAll('.px-latest').forEach((n) => { n.textContent = ay(B.latest); }); document.querySelectorAll('.px-fylast').forEach((n) => { n.textContent = ay(B.fy_last); });

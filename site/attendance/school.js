@@ -11,7 +11,9 @@
   const PH = {P: 'primary schools', S: 'secondary schools', X: 'special schools'};
   const MEAS = {abs: {i: 1, b: 0, n: 'overall absence', step: 25}, pa: {i: 3, b: 2, n: 'persistent absence', step: 100}};
   const $ = (id) => document.getElementById(id);
-  const pc = (v, dp) => (v == null ? '–' : (v / 100).toFixed(dp == null ? 1 : dp) + '%');
+  const pc = (v, dp) => (v == null ? '–' : (dp == null ? Math.round(v / 10) / 10 : v / 100).toFixed(dp == null ? 1 : dp) + '%');      // shown figures round hundredths to tenths, the same way differences do
+  // a difference between two rates is the difference of the figures as shown (tenths), in hundredths
+  const rd = (a, b) => (Math.round(a / 10) - Math.round(b / 10)) * 10;
   const gap = (a, b) => Math.round(a / 10) - Math.round(b / 10);
   const pts = (t) => (Math.abs(t) / 10).toFixed(1);
   const ay = (p) => { const y = +p.slice(0, 4); return y + '/' + String((y + 1) % 100).padStart(2, '0'); };
@@ -46,16 +48,16 @@
     const link = (t, k, id) => (id ? `<a href="${AXsearch.ghref(k, id)}">${esc(t)}</a>` : esc(t));
     $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') + (S.tj ? esc(', joined ' + month(S.tj) + (S.tprev ? ' from ' + S.tprev : '')) : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
     document.title = S.n + ': attendance · Attendance Explorer · Mark Dalton';
-    $('sx-period').textContent = 'The ' + period(L);
+    $('sx-period').textContent = 'Absence in the ' + period(L);
     $('sx-phase-n').textContent = PH[S.ph]; $('sx-base-n').textContent = ay(B.base) + ' and ' + ay(B.fy_last);
     $('sx-src').textContent = `“${B.release.autumn_spring.title}” (${B.release.autumn_spring.release}, published ${date(B.release.autumn_spring.published)}) and “${B.release.full_year.title}” (${B.release.full_year.release}, published ${date(B.release.full_year.published)})`;
     const R = $('sx-reading'), K = $('sx-kpis');
-    if (!now) { R.textContent = `No rate is shown for this school for the ${period(L)}: it had fewer than ${B.min_enrol} pupils on roll, or no figures were published.`; K.innerHTML = ''; }
+    if (!now) { R.textContent = `No rate is shown for this school for the ${period(L)}. It had fewer than ${B.min_enrol} pupils on roll, or no figures were published.`; K.innerHTML = ''; }
     else {
-      let t = `Pupils at ${esc(S.n)} missed <b>${pc(now[1])}</b> of sessions in the ${period(L)}`;
-      if (was) { const d = gap(now[1], was[1]); t += d === 0 ? `, the same as in the same two terms a year earlier` : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in the same two terms a year earlier (${pc(was[1])})`; }
+      let t = `Pupils at ${esc(S.n)} missed <b>${pc(now[1])}</b> of their sessions in the ${period(L)}`;
+      if (was) { const d = gap(now[1], was[1]); t += d === 0 ? `, unchanged from the same two terms a year earlier` : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in the same two terms a year earlier (${pc(was[1])})`; }
       t += '.';
-      if (e) { const d = gap(now[1], e[0]); t += ` Across England’s ${PH[S.ph]} the figure was ${pc(e[0])}` + (d === 0 ? '.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
+      if (e) { const d = gap(now[1], e[0]); t += ` Across England’s ${PH[S.ph]} the figure was ${pc(e[0])}` + (d === 0 ? ', the same.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
       R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[1], was[1]), 'a year earlier', true) : '') + (e ? AXc.pill(gap(now[1], e[0]), 'England', true) : '') + (l ? AXc.pill(gap(now[1], l[0]), la, true) : '') + '</span>';
       const k = [['Overall absence', pc(now[1]), was ? 'a year earlier ' + pc(was[1]) : ''], ['Persistent absence', pc(now[3]), was ? 'a year earlier ' + pc(was[3]) : ''],
         ['Unauthorised absence', pc(now[2]), e ? 'England ' + pc(e[1]) : ''], [la + ' ' + PH[S.ph], l ? pc(l[0]) : '–', l ? 'persistent ' + pc(l[2]) : ''], ['England ' + PH[S.ph], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) : '']];
@@ -81,11 +83,11 @@
       s.append('line').attr('x1', x(r[1])).attr('x2', x(mine)).attr('y1', y).attr('y2', y).attr('stroke', col).attr('stroke-width', 3);
       s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', MUTED).attr('stroke-width', 3);      // comparisons are slate; green and rust mean direction only (Mark, 24 November)
       s.append('path').attr('d', d3.symbol(d3.symbolDiamond, 110)()).attr('transform', `translate(${x(mine)},${y})`).attr('fill', INK);
-      s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').style('fill', col).text(narrow ? (g === 0 ? 'same' : (g < 0 ? '−' : '+') + pts(g)) : pc(r[1]) + ' · ' + (g === 0 ? 'the same' : pts(g) + ' points ' + (g < 0 ? 'lower' : 'higher'))); });
-    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>The comparison`, `<i style="background:${AXc.VERD}"></i>Lower absence here`, `<i style="background:${AXc.RUST}"></i>Higher`]);
+      s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').style('fill', col).text(narrow ? (g === 0 ? 'same' : (g < 0 ? '−' : '+') + pts(g)) : pc(r[1]) + ' · ' + (g === 0 ? 'the same' : 'school ' + pts(g) + ' ' + (g < 0 ? 'lower' : 'higher'))); });
+    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>The comparison`, `<i style="background:${AXc.VERD}"></i>Lower absence here`, `<i style="background:${AXc.RUST}"></i>Higher absence here`]);
     const gs = gap(mine, S.sim[M.b]);
-    $('sx-read-r').innerHTML = `Across the 20 schools most like it, ${M.n} was <b>${pc(S.sim[M.b])}</b>. The school’s ${pc(mine)} is ` + (gs === 0 ? 'the same.' : `<b>${pts(gs)}</b> points ${gs < 0 ? 'lower' : 'higher'}.`) + (now[0] < 200 ? ` With ${now[0]} pupils on roll, one pupil is about ${(100 / now[0]).toFixed(1)} points of persistent absence, so small gaps mean little.` : '');
-    const c = S.ctx; $('sx-ctx').textContent = c ? `Its circumstances, January 2026 census: ${c[4].toLocaleString('en-GB')} pupils; ${c[0].toFixed(1)}% eligible for free school meals; ${c[2].toFixed(1)}% with SEN support; ${c[3].toFixed(1)}% with an education, health and care plan; ${c[1].toFixed(1)}% with a first language other than English; ${c[5] ? 'rural' : 'urban'}.` : '';
+    $('sx-read-r').innerHTML = `Across the 20 schools most like it, ${M.n} was <b>${pc(S.sim[M.b])}</b>. The school’s ${pc(mine)} was ` + (gs === 0 ? 'the same.' : `<b>${pts(gs)}</b> points ${gs < 0 ? 'lower' : 'higher'}.`) + (now[0] < 200 ? ` In a school this small, one pupil is about ${(100 / now[0]).toFixed(1)} points of persistent absence, so a small gap means little.` : '');
+    const c = S.ctx; $('sx-ctx').textContent = c ? `Its circumstances in the January 2026 census: ${c[4].toLocaleString('en-GB')} pupils; ${c[0].toFixed(1)}% eligible for free school meals; ${c[2].toFixed(1)}% with SEN support; ${c[3].toFixed(1)}% with an education, health and care plan; ${c[1].toFixed(1)}% with a first language other than English; ${c[5] ? 'rural' : 'urban'}.` : '';
     const ul = $('sx-sim'), fill = () => { ul.innerHTML = S.nn.map((u) => names.get(u)).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name)).map((r) => `<li><a href="${AXsearch.href(r.urn)}">${esc(r.name)}</a> <small>${esc(r.town)}</small></li>`).join(''); };
     ul.innerHTML = ''; $('sx-sim-d').ontoggle = () => { if (!$('sx-sim-d').open) return; if (names) { fill(); return; } ul.textContent = 'Loading…';
       d3.json('/attendance/data/schools.json').then((j) => { names = new Map(j.data.urn.map((u, i) => [u, {urn: u, name: j.data.name[i], town: j.data.town[i]}])); fill(); }); };
@@ -123,7 +125,7 @@
     if (mine == null) { $('sx-dist-r').textContent = ''; return; }
     const lower = d3.bisectLeft(v, mine), share = Math.round(100 * (v.length - d3.bisectRight(v, mine)) / v.length), below = Math.round(100 * lower / v.length);
     const med = d3.median(v);
-    $('sx-dist-r').innerHTML = `${M.n.replace(/^./, (c) => c.toUpperCase())} here was <b>${pc(mine)}</b>. The middle school of this phase had ${pc(med)}; <b>${share}%</b> of ${PH[S.ph]} had a higher rate and <b>${below}%</b> a lower one.`;
+    $('sx-dist-r').innerHTML = `${M.n.replace(/^./, (c) => c.toUpperCase())} here was <b>${pc(mine)}</b>. The middle school in England, with as many schools above it as below, had ${pc(med)}. <b>${share}%</b> of ${PH[S.ph]} had a higher rate than this school and <b>${below}%</b> a lower one.`;
   }
 
   // (named yearChart, not history: a function called history hides the browser's own and breaks every address change)
@@ -134,7 +136,7 @@
     const lines = [{d: yrs.map((p) => ({p, v: (bench('E', S.ph, p) || [])[M.b]})), c: MUTED, w: 2, n: 'England ' + PH[S.ph]},
       {d: yrs.map((p) => ({p, v: (bench(S.la, S.ph, p) || [])[M.b]})), c: MUTED, w: 2, dash: '2 3', n: (B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph]}]
       .concat(others.map((o, i) => ({d: ser(o.s.h, M.i), c: OTHERS[i % 4], w: 2, n: o.s.n, dash: ODASH[i % 4], tag: i + 1})), [{d: ser(S.h, M.i), c: INK, w: 3, n: S.n, me: true}]);
-    const vals = lines.flatMap((l) => l.d.map((p) => p.v)).filter((v) => v != null); if (!vals.length) { el.textContent = 'No full-year figures are published for this school yet.'; $('sx-hist-r').textContent = ''; return; }
+    const vals = lines.flatMap((l) => l.d.map((p) => p.v)).filter((v) => v != null); if (!vals.length) { el.textContent = 'No full-year figures have been published for this school yet.'; $('sx-hist-r').textContent = ''; return; }
     const x = d3.scalePoint(yrs, [m.l + 8, W - m.r - 8]), y = d3.scaleLinear([others.length ? d3.min(vals) * 0.85 : 0, d3.max(vals) * 1.08], [H - m.b, m.t]).nice(5);      // with places added, the axis closes in so the lines separate
     y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
     const gx = x('2019'); s.append('rect').attr('x', gx - x.step() * 0.38).attr('width', x.step() * 0.76).attr('y', m.t).attr('height', H - m.b - m.t).attr('fill', '#F4F5F8');
@@ -150,7 +152,7 @@
       s.append('text').attr('x', tx > W * 0.6 ? tx - 5 : tx + 5).attr('text-anchor', tx > W * 0.6 ? 'end' : 'start').attr('y', H - m.b - 6).attr('class', 'strong').text(W < 520 ? 'Joined trust' : 'Joined ' + (S.tname || 'its trust').slice(0, 34)); }
     if (S.join && x(S.join) != null) { const jx = x(S.join) - x.step() / 2; s.append('line').attr('x1', jx).attr('x2', jx).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', '#C9A24B').attr('stroke-width', 1.5).attr('stroke-dasharray', '2 3'); }
     { const tg = s.selectAll('text.ax-tag').nodes().map((n) => ({n, y: +n.getAttribute('y')})).sort((a, b) => a.y - b.y); tg.forEach((t, i) => { if (i && t.y - tg[i - 1].y < 14) t.y = tg[i - 1].y + 14; t.n.setAttribute('y', t.y); }); }      // keep the numbers at the line ends apart
-    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}${l.dash ? ';border-top-style:dashed' : ''}"></i>${l.tag ? l.tag + ' ' : ''}${esc(l.n)}`).concat(S.join ? ['<i class="ln" style="border-color:#C9A24B;border-top-style:dotted"></i>Earlier years are the predecessor school'] : [], ty && x(ty) != null ? [`<i class="ln" style="border-color:#C9A24B"></i>Joined ${esc(S.tname || 'its trust')}, ${month(S.tj)}` + (S.tprev ? `, from ${esc(S.tprev)}` : '')] : []));
+    key(el, lines.slice().reverse().map((l) => `<i class="ln" style="border-color:${l.c}${l.dash ? ';border-top-style:dashed' : ''}"></i>${l.tag ? l.tag + ' ' : ''}${esc(l.n)}`).concat(S.join ? ['<i class="ln" style="border-color:#C9A24B;border-top-style:dotted"></i>Earlier years are from the predecessor school'] : [], ty && x(ty) != null ? [`<i class="ln" style="border-color:#C9A24B"></i>Joined ${esc(S.tname || 'its trust')}, ${month(S.tj)}` + (S.tprev ? `, from ${esc(S.tprev)}` : '')] : []));
     const a = S.h[B.base], b = S.h[B.fy_last]; let t = '';
     if (b) { t = `In ${ay(B.fy_last)}, ${M.n} was <b>${pc(b[M.i])}</b>`; if (a) { const d = gap(b[M.i], a[M.i]); t += d === 0 ? `, the same as in ${ay(B.base)}, the last full year before the pandemic.` : `, <b>${pts(d)}</b> points ${d < 0 ? 'lower' : 'higher'} than in ${ay(B.base)}, the last full year before the pandemic (${pc(a[M.i])}).`; } else t += '.'; }
     $('sx-hist-r').innerHTML = t;
@@ -158,13 +160,13 @@
 
   function changed() {
     const el = $('sx-chg'); if (!dist) return;
-    const a = S.h[B.base], b = S.h[B.fy_last], mine = a && b ? b[1] - a[1] : null;
+    const a = S.h[B.base], b = S.h[B.fy_last], mine = a && b ? rd(b[1], a[1]) : null;
     const laIx = dist.la[dist.urn.indexOf(+urn)], ticks = dist.chg.filter((v, i) => dist.la[i] === laIx && dist.urn[i] !== +urn);
     const v = strip(el, dist.chg, mine, ticks, 25, 'Change in overall absence since ' + ay(B.base), (t, own) => (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 100).toFixed(own ? 1 : (Math.abs(t) % 100 ? 1 : 0)) + (own ? ' points' : ''), true);
-    key(el, [`<i style="background:${SOFT}"></i>${PH[S.ph].replace(/^./, (c) => c.toUpperCase())} with figures for both years (${v.length.toLocaleString('en-GB')})`, `<i style="background:${MUTED};width:2px;height:12px"></i>Others in the local authority`]);
+    key(el, [`<i style="background:${SOFT}"></i>${PH[S.ph].replace(/^./, (c) => c.toUpperCase())} with figures for both years (${v.length.toLocaleString('en-GB')})`, `<i style="background:${MUTED};width:2px;height:12px"></i>Other schools in its local authority`]);
     const med = d3.median(v), up = Math.round(100 * v.filter((x) => x > 0).length / v.length);
-    $('sx-chg-r').innerHTML = (mine == null ? `This school has no figures for both years, so it is not marked. ` : `Overall absence here ${gap(b[1], a[1]) === 0 ? 'was unchanged' : (mine > 0 ? 'rose' : 'fell') + ` by <b>${pts(gap(b[1], a[1]))}</b> points`} between ${ay(B.base)} and ${ay(B.fy_last)}. `)
-      + `Absence was higher in ${ay(B.fy_last)} than in ${ay(B.base)} at <b>${up}%</b> of ${PH[S.ph]}; the middle school rose by ${(med / 100).toFixed(1)} points.`;
+    $('sx-chg-r').innerHTML = (mine == null ? `This school does not have figures for both years, so it is not marked. ` : `Overall absence here ${gap(b[1], a[1]) === 0 ? 'was unchanged' : (mine > 0 ? 'rose' : 'fell') + ` by <b>${pts(gap(b[1], a[1]))}</b> points`} between ${ay(B.base)} and ${ay(B.fy_last)}. `)
+      + `Absence was higher in ${ay(B.fy_last)} than in ${ay(B.base)} at <b>${up}%</b> of ${PH[S.ph]}. At the middle school it ${med >= 0 ? 'rose' : 'fell'} by ${(Math.abs(med) / 100).toFixed(1)} points.`;
   }
 
   function chips(others) {
@@ -176,12 +178,12 @@
 
   // side by side: this school, any added, its local authority and England, set out as on area and trust pages
   function side(others) {
-    const L = B.latest, P1 = B.periods.filter((p) => p.endsWith('AS') && p < L).pop(), d = (a, b) => (a == null || b == null ? null : a - b), sg = (v) => { const t = Math.round(v / 10); return (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 10).toFixed(1); };
+    const L = B.latest, P1 = B.periods.filter((p) => p.endsWith('AS') && p < L).pop(), d = (a, b) => (a == null || b == null ? null : rd(a, b)), sg = (v) => { const t = Math.round(v / 10); return (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 10).toFixed(1); };
     const sch = (name, h, col, me) => { const g = (p, i) => (h && h[p] ? h[p][i] : null); return {name, col, me, abs: g(L, 1), pa: g(L, 3), yr: d(g(L, 1), g(P1, 1)), yrp: d(g(L, 3), g(P1, 3)), base: d(g(B.fy_last, 1), g(B.base, 1))}; };
     const grp = (name, a) => { const g = (p, i) => (bench(a, S.ph, p) || [])[i]; return {name, col: MUTED, ref: true, abs: g(L, 0), pa: g(L, 2), yr: d(g(L, 0), g(P1, 0)), yrp: d(g(L, 2), g(P1, 2)), base: d(g(B.fy_last, 0), g(B.base, 0))}; };
     const rows = [sch(S.n, S.h, INK, true)].concat(others.map((o, i) => Object.assign(sch(o.s.n, o.s.h, OTHERS[i % 4]), {tag: i + 1}))).concat([grp((B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], S.la), grp('England ' + PH[S.ph], 'E')]);
     const e = rows[rows.length - 1], cell = (v, ref, f, r) => (v == null ? '<td class="n">–</td>' : `<td class="n">${f(v)}</td>`);      // no green or rust on a named school's figures (Mark, 23 November)
-    $('sx-cmp-s').textContent = `The first two columns are the autumn and spring terms ${ay(L)}; “in a year” compares them with the same two terms a year earlier; “since 2018/19” compares full years ${ay(B.base)} and ${ay(B.fy_last)}.`;
+    $('sx-cmp-s').textContent = `Overall absence is the share of sessions (mornings and afternoons) that pupils missed. Persistent absence is the share of pupils who missed a tenth or more of their sessions. The first two columns are the autumn and spring terms ${ay(L)}. “In a year” is the change from the same two terms a year earlier, and “since 2018/19” the change between the full years ${ay(B.base)} and ${ay(B.fy_last)}, both in percentage points.`;
     $('sx-cmp').innerHTML = '<thead><tr><th>School</th><th class="n">Overall absence</th><th class="n">Persistent absence</th><th class="n">Overall, in a year</th><th class="n">Persistent, in a year</th><th class="n">Overall, since 2018/19</th></tr></thead><tbody>' + rows.map((r) =>
       `<tr><td>${r.tag ? '<span class="ax-num">' + r.tag + '</span>' : `<i class="ax-sw" style="background:${r.col}${r.me ? ';transform:rotate(45deg)' : ''}"></i>`}${r.me ? '<b>' + esc(r.name) + '</b>' : esc(r.name)}</td>${cell(r.abs, e.abs, pc, r)}${cell(r.pa, e.pa, pc, r)}${cell(r.yr, e.yr, sg, r)}${cell(r.yrp, e.yrp, sg, r)}${cell(r.base, e.base, sg, r)}</tr>`).join('') + '</tbody>';
   }
@@ -194,7 +196,7 @@
   }
   function go() { random = false; const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); draw(); }
   function open(u, push) {
-    school(u).then((s) => { if (!s) { $('sx-name').textContent = 'School not found'; $('sx-meta').textContent = 'No school with that number appears in the newest release. It may have closed or changed. Search for it by name below.'; $('sx-body').hidden = true; return; }
+    school(u).then((s) => { if (!s) { $('sx-name').textContent = 'School not found'; $('sx-meta').textContent = 'No school with that number is in the newest release. It may have closed or changed. Search for it by name below.'; $('sx-body').hidden = true; return; }
       urn = String(u); S = s; if (push) random = false;
       // the address always names the school on screen, so a copied link opens the same school for the next person
       if (!push) history.replaceState(null, '', AXsearch.href(urn, vs.length ? '#vs=' + vs.join(',') : '')); vs = vs.filter((x) => x !== urn); $('sx-body').hidden = false; dist = null;

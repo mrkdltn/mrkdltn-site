@@ -17,14 +17,14 @@
   const show = showRaw.split(',').map((s) => s.trim()).filter((s) => s && s !== 'Method');
 
   const TITLE = {head: 'A headteacher’s briefing', trust: 'A trust leader’s briefing', governor: 'A governor’s briefing',
-    la: 'A local authority briefing', press: 'A briefing for reporting', parent: 'A parent’s briefing'};
+    la: 'A local authority briefing', press: 'A briefing for reporting and research', parent: 'A parent’s briefing'};
   // how each section is described in the sentence under the title
   const SAYS = {'Summary': 'the latest figures', 'Three ways': 'the school beside England, its local authority and similar schools',
     'Position': 'where it sits among schools of its phase', 'Year by year': 'the record year by year', 'Since 2018/19': 'the change since 2018/19',
     'Side by side': 'a side-by-side table', 'Pupil groups': 'absence by pupil group', 'School by school': 'the spread across its schools',
     'Compared': 'how it compares with others of its kind', 'The schools': 'the list of its schools', 'Day by day': 'the calendar of school days',
-    'Week by week': 'the record week by week', 'Weekdays': 'the pattern across the week', 'Reasons': 'the reasons for absence',
-    'Map': 'the map of local authorities', 'Against last year': 'the comparison with last year'};
+    'Week by week': 'the record week by week', 'Weekdays': 'the pattern across the week', 'Reasons': 'the reasons recorded for absence',
+    'Map': 'the map of local authorities', 'Against last year': 'the comparison with the same point last year'};
 
   // Pages rewrite their own address as they draw, which would drop brief and show: put them back each time,
   // so the briefing survives a refresh and "Copy link" copies a briefing.
@@ -90,7 +90,7 @@
       const setting = [pressed('gx-phase'), pressed('gx-meas') && pressed('gx-meas') + ' absence', pressed('gx-view')].filter(Boolean);
       set(says, (parts.length ? 'This briefing gives ' + list(parts) + ', with sources and method at the end. ' : 'Sources and method are at the end. ')
         + (setting.length ? 'Shown for: ' + setting.join(', ').toLowerCase() + '. ' : '')
-        + 'It is a reading of published DfE data, not a judgement.');
+        + 'It is a reading of data published by the DfE, not a judgement.');
       set(foot, (document.body.dataset.axSource || 'Source: Department for Education.') + ' Made ' + today + ' at mrkdltn.com' + full().split('#')[0]);
     }
     let t = null; const later = () => { clearTimeout(t); t = setTimeout(apply, 60); };
