@@ -111,3 +111,16 @@ Mark's point of 24 November: many authorities record none of a measure, and that
 ## Independent check, 24 November 2026 (fifth pass, `docs/attendance-figures-check.md`)
 
 All 58,178 stored counts agree with the DfE's file, and the pooled holiday and other unauthorised absence rates are identical to the DfE's own authority figures. Faults found and fixed: one flag on a rounding tie (pupil-group and holiday rates now kept at the DfE's precision, by refetching); the outcome chart where a part is fewer than 10 (shares are now of all notices issued, and the masked part is drawn but given no figure); a table heading that said every 100 where the figures were for every 1,000; and several figures in this note. Left as it is, and stated here plainly: "fewer than 10" is a rule for what the pages print, not a guarantee. A masked figure can sometimes be worked out from a county total or from the other parts of a total, and the DfE publishes every one of these counts exactly. The rule keeps very small counts of notices from being quoted from this site; it does not and cannot hide them.
+
+## Final shape (Mark, 24 November, later the same day)
+
+Mark dropped the flags and the pattern explorer. Neither is on the site: no flag on any profile, no list of flagged authorities, no scatter, no correlation sentences, no map and no tables of most and fewest. The analysis above stays in this note as the record of what was looked at and found.
+
+In their place the tool shows which category each area falls in for each kind of enforcement:
+
+- **Categories.** For every measure, a local authority (2,000 pupils or more) is in one of seven: none recorded; fewer than 10; or one of five equal groups of the authorities with an exact figure above zero, ordered by the number for every 1,000 pupils. Where fewer than 25 authorities used a measure (lateness notices, prosecutions at the two-notice limit, parenting orders, education supervision orders) no fifths are given and the page says how many used it.
+- **On a local authority's page.** One table of twelve measures: the number, the rate for every 1,000 pupils, a strip of seven boxes with the authority's category filled, its region's rate placed on the same scale, and England's rate. The two penalty-notice strands and their year-by-year charts remain above it, and the outcome chart.
+- **On Patterns.** A choice of measure and a row for each of the nine regions and England: the region's number and rate, the category the region as a whole would fall in, and how many of its local authorities are in each category. The chart of how many authorities used each measure stays.
+- **Counties** show numbers and rates against England, without categories.
+
+Not yet independently checked in this shape.

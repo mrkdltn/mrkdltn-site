@@ -24,26 +24,24 @@
   const per = (rec, y, name, base) => { const v = col(rec, y, name), e = col(rec, y, 'enrol'); return v == null || v < 0 || !e ? null : base * v / e; };
   const SRC = () => `Source: DfE, Parental responsibility measures, ${ay(D.latest)}, published ${new Date(D.published + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}; unauthorised holiday absence from the DfE's school-level absence statistics.`;
 
-  // ---------------------------------------------------------------- the flag
-  // A local authority is flagged where two published facts hold together: few penalty notices for unauthorised absence other
-  // than holiday (none, fewer than 10, or in the lowest quarter of authorities for its size), and, for at least one pupil
-  // group, persistent absence and severe absence both in the highest quarter of authorities. Authorities under 2,000 pupils
-  // are left out. It is a statement of two facts side by side and claims no cause.
-  const FG = [['fsm', 'pupils eligible for free school meals'], ['sen', 'pupils with SEN support'], ['ehcp', 'pupils with an education, health and care plan']];
-  let FLAGS = null;
-  function flags(rows) {
-    const L = String(D.latest), big = rows.filter((r) => D.areas[r.id] && D.areas[r.id].y[L] && col(D.areas[r.id], L, 'enrol') >= 2000 && r.pg && r.pg.A);
-    const cnt = (r) => col(D.areas[r.id], L, 'other'), rt = (r) => (cnt(r) == null ? null : cnt(r) < 0 ? 0 : per(D.areas[r.id], L, 'other', 1000)), val = (r, g, m) => { const x = r.pg.A[g]; return x && x[1] && x[1][m] != null ? x[1][m] : null; };
-    const lowCut = d3.quantile(big.map(rt).filter((v) => v != null).sort(d3.ascending), 0.25), cut = {};
-    FG.forEach(([g]) => { cut[g] = [1, 2].map((m) => d3.quantile(big.map((r) => val(r, g, m)).filter((v) => v != null).sort(d3.ascending), 0.75)); });
-    const out = {list: [], by: {}, lowCut, cut, n: big.length, low: 0};
-    big.forEach((r) => { const c = cnt(r); if (c == null || !(c <= 0 || rt(r) <= lowCut)) return; out.low++;
-      const gs = FG.filter(([g]) => { const pa = val(r, g, 1), sa = val(r, g, 2); return pa != null && sa != null && pa >= cut[g][0] && sa >= cut[g][1]; }).map(([g, n]) => ({g, n, pa: val(r, g, 1) / 100, sa: val(r, g, 2) / 100}));
-      if (gs.length) { const f = {r, c, rate: c > 0 ? rt(r) : null, gs, cm: col(D.areas[r.id], L, 'cm')}; out.list.push(f); out.by[r.id] = f; } });
-    out.list.sort((a, b) => a.r.name.localeCompare(b.r.name)); return out;
-  }
-  const lowWords = (f, L) => (f.c === 0 ? 'recorded <b>no</b> penalty notices' : f.c < 0 ? 'issued <b>fewer than 10</b> penalty notices' : `issued <b>${num(f.c)}</b> penalty notices (${f.rate.toFixed(1)} for every 1,000 pupils, in the lowest quarter of local authorities)`) + ` for unauthorised absence other than holiday in ${ay(L)}`;
-  const joinAnd = (a) => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
+  // ---------------------------------------------------------------- which fifth
+  // Where a local authority sits for one enforcement category. None and fewer than 10 are their own categories. Authorities
+  // with an exact figure above zero are put in five equal groups by how much they used the measure for their size. Where
+  // fewer than 25 authorities used a measure, fifths would mean little and none are given. The two smallest authorities
+  // (under 2,000 pupils) are left off the scale.
+  const CATS = [['hols', 'Penalty notices: holiday in term time not agreed by the school'], ['other', 'Penalty notices: other unauthorised absence'], ['late', 'Penalty notices: lateness'],
+    ['repeat', 'Second penalty notices within three years'], ['pros', 'Prosecutions for not paying a penalty notice'], ['pros_limit', 'Prosecutions at the two-notice limit'],
+    ['cm', 'Cases entering attendance case management'], ['cm_pros', 'Prosecutions after case management'], ['cm_improved', 'Cases withdrawn because attendance improved'],
+    ['contracts', 'Parenting contracts offered'], ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];
+  const FIFTH = ['Lowest fifth', 'Second fifth', 'Middle fifth', 'Fourth fifth', 'Highest fifth'], BANDS = ['None', 'Fewer than 10'].concat(FIFTH);
+  const scales = {};
+  const scale = (c, y) => { const k = c + y; if (!scales[k]) { const las = Object.keys(D.areas).filter((id) => isLA(id) && D.areas[id].y[y] && col(D.areas[id], y, 'enrol') >= 2000);
+      const nz = las.map((id) => per(D.areas[id], y, c, 1000)).filter((v) => v != null && v > 0).sort(d3.ascending); scales[k] = {nz, cuts: [0.2, 0.4, 0.6, 0.8].map((q) => d3.quantile(nz, q))}; } return scales[k]; };
+  // band index: 0 none, 1 fewer than 10, 2 to 6 the fifths; null where there is no figure; -1 where too few authorities use the measure for fifths
+  const band = (rec, c, y) => { const v = col(rec, y, c); if (v == null) return null; if (v === 0) return 0; if (v < 0) return 1; const sc = scale(c, y); if (sc.nz.length < 25) return -1; const r = per(rec, y, c, 1000); return 2 + sc.cuts.filter((q) => r > q).length; };
+  const r1k = (v) => (v == null ? '–' : v > 0 && v < 0.005 ? 'under 0.01' : v >= 10 ? v.toFixed(1) : v.toFixed(2));
+  const strip = (b, counts) => '<span class="en-q" aria-hidden="true">' + BANDS.map((n, i) => `<i class="${i < 2 ? 'z' : ''}${b === i ? ' on' : ''}" title="${n}">${counts ? (counts[i] || '') : ''}</i>`).join('') + '</span>';
+  const bandWords = (b, c, y) => (b == null ? 'No figure' : b === -1 ? `Used by ${scale(c, y).nz.length} authorities` : BANDS[b]);
 
   // ---------------------------------------------------------------- one place against England
   function lines(host, title, unit, series, years, fmt) {
@@ -78,11 +76,6 @@
     card.hidden = !(rec && rec.y[L]); area.innerHTML = ''; if (card.hidden) return;
     const name = ($('gx-name') || {}).textContent || 'This area', issued = col(rec, L, 'issued');
     add(area, 'p', 'ax-sub', `Penalty notices to parents in ${ay(L)}, kept in two separate strands because they answer different things: notices for a holiday taken in term time without the school’s agreement, and notices for other unauthorised absence from school. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
-    const fl = kind === 'a' && FLAGS && FLAGS.by[id];
-    if (fl) { const box = add(area, 'div', 'en-flag'); box.setAttribute('role', 'note'); add(box, 'p', 'en-flag-h', 'Flag: few notices for unauthorised absence other than holiday, and high persistent and severe absence among ' + joinAnd(fl.gs.map((g) => g.n)));
-      add(box, 'p', null, `${esc(name)} ${lowWords(fl, L)}.` + (fl.cm == null ? '' : ` It had ${fl.cm === 0 ? 'no' : fl.cm < 0 ? 'fewer than 10' : num(fl.cm)} cases in attendance case management.`)
-        + ' ' + fl.gs.map((g) => `Among ${g.n}, persistent absence was <b>${g.pa.toFixed(1)}%</b> and severe absence <b>${g.sa.toFixed(2)}%</b> in the autumn and spring terms of ${ay(L)}, each in the highest quarter of local authorities (which starts at ${(FLAGS.cut[g.g][0] / 100).toFixed(1)}% and ${(FLAGS.cut[g.g][1] / 100).toFixed(2)}%).`).join(' '));
-      add(box, 'p', 'en-flag-n', `${FLAGS.list.length} of ${FLAGS.n} local authorities carry this flag. It sets two published facts side by side and does not show that one causes the other. <a href="/attendance/patterns/#sec-enforcement">How the flag is set, and the others that carry it</a>.`); }
     const years = Object.keys(E.y).filter((y) => +y >= 2016).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair en-strands');
     const strand = (c, title, noun, absKey, absName, absNote) => { const box = add(grid, 'div', 'en-strand'); add(box, 'h3', 'en-st', title);
       const n = col(rec, L, c), r = per(rec, L, c, 1000), er = per(E, L, c, 1000), ab = rec[absKey] && rec[absKey][L], eab = E[absKey] && E[absKey][L], sp = spread(c, L);
@@ -107,79 +100,40 @@
     // what became of the notices: the DfE gives outcomes for all notices together, not by reason
     if (issued >= 10) { add(area, 'h3', 'en-h', `What became of the notices issued in ${ay(L)}`);
       add(area, 'p', 'ax-sub', 'The DfE publishes payment, withdrawal and prosecution for all penalty notices together, so this one chart cannot be split between holiday and other unauthorised absence.'); fate(area, [{n: name, rec}, {n: 'England', rec: E}], L); }
-    // the other measures
-    const ROWS = [['repeat', 'Second penalty notices to the same parent for the same child within three years'], ['pros_limit', 'Prosecutions because the limit of two notices had been reached'], ['cm', 'Cases entering attendance case management'],
-      ['cm_pros', 'Cases prosecuted after case management'], ['cm_improved', 'Cases withdrawn because attendance improved'], ['contracts', 'Parenting contracts offered'], ['contracts_acc', 'Parenting contracts accepted'],
-      ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];
-    add(area, 'h3', 'en-h', `Other legal measures, ${ay(L)}`);
-    const wrap = add(area, 'div', 'ax-tablewrap'), p10 = (r, c) => { const v = per(r, L, c, 10000); return v == null ? (col(r, L, c) < 0 ? 'under ' + (10 * 10000 / col(r, L, 'enrol')).toFixed(1) : '–') : v > 0 && v < 0.05 ? 'under 0.1' : v.toFixed(1); };
-    add(wrap, 'table', 'ax-table en-table en-other', '<thead><tr><th>Measure</th><th class="n">Number</th><th class="n">For every 10,000 pupils</th><th class="n">England, for every 10,000</th><th class="n">Authorities recording none</th></tr></thead><tbody>'
-      + ROWS.map(([c, n]) => { const sp = spread(c, L), v = col(rec, L, c); return `<tr><td>${n}</td><td class="n">${num(v)}</td><td class="n">${v === 0 ? '–' : p10(rec, c)}</td><td class="n">${p10(E, c)}</td><td class="n">${sp.none} of ${sp.n - sp.na}</td></tr>`; }).join('') + '</tbody>');
+    // every category at once: the number, the rate, the fifth of local authorities it falls in, and its region beside it
+    const R = kind === 'a' && rec.reg ? D.areas[rec.reg] : null, rname = R ? D.names[rec.reg] : '';
+    add(area, 'h3', 'en-h', kind === 'a' ? `Where ${esc(name)} sits among local authorities, ${ay(L)}` : `Every measure, ${ay(L)}`);
+    add(area, 'p', 'ax-sub', kind === 'a' ? `For each kind of enforcement the strip shows seven categories: none, fewer than 10, then five equal groups of the local authorities that used it, from the fewest for their size to the most. The filled box is ${esc(name)}. ${R ? `The region’s own rate is beside it, placed on the same scale.` : ''}`
+      : 'Counts for the county’s local authorities added together, with the rate for every 1,000 pupils against England.');
+    const wrap = add(area, 'div', 'ax-tablewrap'), rate = (r, c) => { const v = col(r, L, c); return v == null ? '–' : v === 0 ? '–' : v < 0 ? 'under ' + r1k(10000 / col(r, L, 'enrol')) : r1k(per(r, L, c, 1000)); };
+    add(wrap, 'table', 'ax-table en-table en-other', `<thead><tr><th>Measure</th><th class="n">Number</th><th class="n">For every 1,000 pupils</th>${kind === 'a' ? '<th class="en-qh">Category among local authorities</th>' + (R ? `<th class="en-qh">${esc(rname)}</th>` : '') : ''}<th class="n">England, for every 1,000</th></tr></thead><tbody>`
+      + CATS.map(([c, n]) => { const b = band(rec, c, L), rb = R ? band(R, c, L) : null;
+        return `<tr><td>${n}</td><td class="n">${num(col(rec, L, c))}</td><td class="n">${rate(rec, c)}</td>`
+          + (kind === 'a' ? `<td class="en-qc">${b === -1 || b == null ? '' : strip(b)}<span class="en-ql">${bandWords(b, c, L)}</span>${R ? `<span class="en-qr">${esc(rname)}: ${rb === 0 || rb === 1 ? BANDS[rb].toLowerCase() : rate(R, c) + (rb != null && rb >= 2 ? ', ' + BANDS[rb].toLowerCase() : '')}</span>` : ''}</td>` + (R ? `<td class="en-qc en-qreg">${rb === -1 || rb == null ? '' : strip(rb)}<span class="en-ql">${rb === 0 || rb === 1 ? BANDS[rb] : rate(R, c) + (rb != null && rb >= 2 ? ' · ' + BANDS[rb].toLowerCase() : '')}</span></td>` : '') : '')
+          + `<td class="n">${rate(E, c)}</td></tr>`; }).join('') + '</tbody>');
+    if (kind === 'a') add(area, 'p', 'ax-note', 'The five groups are fifths of the local authorities with an exact figure above zero for that measure, so “lowest fifth” means the fewest among those that used it at all. Where fewer than 25 authorities used a measure no fifths are given. A category describes how much a measure was used and is not a judgement of the authority.');
     add(area, 'p', 'ax-note', '“None” is a recorded zero, which is different from “fewer than 10” (a count of 1 to 9, not given exactly) and from a dash in the Number column (the local authority did not supply the figure). More enforcement is not in itself better or worse: the numbers reflect how much unauthorised absence there is, and also how each authority and its schools choose to respond to it. ' + SRC()
-      + ' <a href="/attendance/patterns/#sec-enforcement">Every local authority compared</a>.');
+      + ' <a href="/attendance/patterns/#sec-enforcement">The same breakdown by region</a>.');
   }
 
-  // ---------------------------------------------------------------- every local authority at once (Patterns)
-  const YS = [['hol', 'Unauthorised holiday absence', 'all pupils, % of sessions'], ['oth', 'Other unauthorised absence', 'all pupils, % of sessions'], ['fsm', 'Pupils eligible for free school meals', 'overall absence'], ['nfsm', 'Pupils not eligible', 'overall absence'],
-    ['sen', 'Pupils with SEN support', 'overall absence'], ['ehcp', 'Pupils with an EHC plan', 'overall absence']];
-  const XS = [['hols', 'Notices for unauthorised holiday'], ['other', 'Notices for other unauthorised absence'], ['cmp', 'Cases in case management']];
-  const PAIR = {hols: 'hol', other: 'oth'};          // each strand of notices opens against its own kind of absence
-  let ysel = 'hol', xsel = 'hols', msel = 0, LAS = null;
-  const MSN = ['Overall absence', 'Persistent absence', 'Severe absence'];
-  const rank = (a) => { const o = a.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]), r = new Array(a.length); for (let i = 0; i < o.length;) { let j = i; while (j + 1 < o.length && o[j + 1][0] === o[i][0]) j++; for (let k = i; k <= j; k++) r[o[k][1]] = (i + j) / 2; i = j + 1; } return r; };
-  const corr = (a, b) => { const ma = d3.mean(a), mb = d3.mean(b); let s = 0, sa = 0, sb = 0; a.forEach((v, i) => { s += (v - ma) * (b[i] - mb); sa += (v - ma) ** 2; sb += (b[i] - mb) ** 2; }); return s / Math.sqrt(sa * sb); };
-  const resid = (a, z) => { const mz = d3.mean(z), ma = d3.mean(a); let n = 0, d = 0; z.forEach((v, i) => { n += (v - mz) * (a[i] - ma); d += (v - mz) ** 2; }); const b = n / d; return a.map((v, i) => v - ma - b * (z[i] - mz)); };
-  const strength = (r) => { const a = Math.abs(r); return a < 0.15 ? 'no clear pattern' : (a < 0.35 ? 'a weak' : a < 0.6 ? 'a moderate' : 'a strong') + ' tendency'; };
+  // ---------------------------------------------------------------- by region (Patterns)
+  let csel = 'hols';
   function england() {
-    const L = String(D.latest), xname = XS.find((x) => x[0] === xsel)[1], yrow = YS.find((y) => y[0] === ysel), xcol = xsel === 'cmp' ? 'cm' : xsel;
-    const pts = LAS.map((r) => { const rec = D.areas[r.id], g = r.pg && r.pg.A, x = rec && per(rec, L, xcol, 1000), y = ysel === 'hol' || ysel === 'oth' ? (rec && rec[ysel] && rec[ysel][L] != null ? rec[ysel][L] / 100 : null) : (g && g[ysel] && g[ysel][1] && g[ysel][1][msel] != null ? g[ysel][1][msel] / 100 : null);
-      return {r, x, y, n: rec ? col(rec, L, 'enrol') : 0}; }).filter((p) => p.x != null && p.y != null && p.n >= 2000);
+    const L = String(D.latest), E = D.areas.E92000001, regs = Object.keys(D.areas).filter((c) => /^E12/.test(c) && D.areas[c].y[L]).sort((a, b) => D.names[a].localeCompare(D.names[b])), cname = CATS.find((c) => c[0] === csel)[1], sc = scale(csel, L);
     all.innerHTML = '';
-    add(all, 'p', 'ax-sub', `Each circle is a local authority in ${ay(L)}. Across it runs how many ${xname.toLowerCase()} it had for every 1,000 pupils; up it runs ${yrow[1].toLowerCase()} (${ysel === 'hol' || ysel === 'oth' ? yrow[2] : MSN[msel].toLowerCase() + ', autumn and spring terms'}). ${LAS.length - pts.length} authorities are left out: the two smallest, and any whose count is fewer than 10 or was not supplied.`);
-    const ctl = add(all, 'div', 'en-ctl'), seg = (label, opts, cur, set) => { const f = add(ctl, 'div', 'ax-field'), id = 'en-l-' + label.replace(/\W+/g, ''); add(f, 'span', null, label).id = id; const s = add(f, 'div', 'ax-seg'); s.setAttribute('role', 'group'); s.setAttribute('aria-labelledby', id);
-      opts.forEach(([v, n]) => { const b = add(s, 'button', null, n); b.type = 'button'; b.setAttribute('aria-pressed', String(v === cur)); b.addEventListener('click', () => { set(v); england(); }); }); };
-    seg('Enforcement', XS, xsel, (v) => { if (PAIR[v] && (ysel === 'hol' || ysel === 'oth')) ysel = PAIR[v]; xsel = v; }); seg('Set against', YS.map((y) => [y[0], y[1]]), ysel, (v) => { ysel = v; });
-    if (ysel !== 'hol' && ysel !== 'oth') seg('Measure', MSN.map((n, i) => [i, n]), msel, (v) => { msel = v; });
-    const el = add(all, 'div', 'ax-chart'), W = width(el), narrow = W < 560, H = narrow ? 340 : 440, m = {l: 46, r: 14, t: 12, b: 42}, s = svg(el, W, H, `${xname} for every 1,000 pupils against ${yrow[1].toLowerCase()}, by local authority`);
-    const x = d3.scaleLinear([0, d3.max(pts, (p) => p.x)], [m.l, W - m.r]).nice(), y = d3.scaleLinear(d3.extent(pts, (p) => p.y), [H - m.b, m.t]).nice();
-    x.ticks(narrow ? 4 : 8).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(t); });
-    y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text(t + '%'); });
-    s.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text(xname + ' for every 1,000 pupils');
-    const rsz = d3.scaleSqrt([0, 260000], [3, narrow ? 9 : 13]), fmtY = (v) => v.toFixed(ysel === 'hol' || ysel === 'oth' || msel === 2 ? 2 : 1) + '%';
-    const picked = (p) => { let e = all.querySelector('.ax-picked'); if (!e) e = add(all, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(p.r.name)}</b>: ${p.x.toFixed(1)} for every 1,000 pupils; ${fmtY(p.y)}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${p.r.id}#sec-enforcement">Open</a>`; };
-    s.append('g').selectAll('circle').data(pts.slice().sort((a, b) => b.n - a.n)).join('circle').attr('cx', (p) => x(p.x)).attr('cy', (p) => y(p.y)).attr('r', (p) => rsz(p.n)).attr('fill', SLATE).attr('fill-opacity', 0.45).attr('stroke', SLATE)
-      .on('pointerenter pointermove', (ev, p) => showTip(ev, `<b>${esc(p.r.name)}</b><br>${xname}: ${p.x.toFixed(1)} for every 1,000 pupils<br>${yrow[1]}: ${fmtY(p.y)}`)).on('pointerleave', hideTip).on('click', (ev, p) => picked(p));
-    const key = add(all, 'div', 'ax-key'); add(key, 'span', null, `<i style="background:${SLATE};opacity:.6;border-radius:50%;width:10px;height:10px"></i>A local authority, sized by its pupils`); add(key, 'span', null, 'Tap a circle to name it.');
-    // the reading: the rank correlation, and what is left once free school meals eligibility is allowed for
-    const ok = pts.filter((p) => { const g = p.r.pg.A; return g.fsm && g.nfsm && g.all && g.fsm[1] && g.all[1]; }), fs = (p) => { const g = p.r.pg.A, a = g.all[1][0], f = g.fsm[1][0], n = g.nfsm[1][0]; return f === n ? 0 : (a - n) / (f - n); };
-    const r0 = corr(rank(pts.map((p) => p.x)), rank(pts.map((p) => p.y))); let r1 = null;
-    if (ok.length > 100) { const z = rank(ok.map(fs)); r1 = corr(resid(rank(ok.map((p) => p.x)), z), resid(rank(ok.map((p) => p.y)), z)); }
-    const dir = (r) => (Math.abs(r) < 0.15 ? '' : r > 0 ? ': authorities with more of one tend to have more of the other' : ': authorities with more of one tend to have less of the other');
-    add(all, 'p', 'ax-reading', `Across ${pts.length} local authorities there is <b>${strength(r0)}</b>${dir(r0)} (rank correlation ${r0 >= 0 ? '+' : '−'}${Math.abs(r0).toFixed(2)}).`
-      + (r1 == null ? '' : ` Comparing authorities with a similar share of pupils eligible for free school meals, there is ${strength(r1)} (${r1 >= 0 ? '+' : '−'}${Math.abs(r1).toFixed(2)}).`));
-    add(all, 'p', 'ax-note', 'Notices for holiday and notices for other unauthorised absence are separate strands and are never added together here. Read each chart as a pattern across areas and no more. A notice follows an absence, so more notices where there is more of that kind of absence is what the rules would produce; it does not show that notices raise or lower absence. The DfE does not publish who receives notices by pupil group, so nothing here shows whether families of pupils eligible for free school meals or with special educational needs are fined more or less often than others. '
-      + 'The share eligible for free school meals is worked out from each authority’s published rates. ' + SRC());
-    // the flagged authorities: few notices for unauthorised absence other than holiday, with high persistent and severe absence in a pupil group
-    { const F = FLAGS || (FLAGS = flags(LAS)), big = LAS.filter((r) => D.areas[r.id] && D.areas[r.id].y[L] && col(D.areas[r.id], L, 'enrol') >= 2000), cnt = (r) => col(D.areas[r.id], L, 'other');
-      add(all, 'h3', 'en-h', `Flagged: few notices for unauthorised absence other than holiday, with high persistent and severe absence in a pupil group, ${ay(L)}`);
-      add(all, 'p', 'ax-sub', `A local authority is flagged where two things hold together. First, it recorded no penalty notices for unauthorised absence other than holiday, fewer than 10, or so few for its size that it is in the lowest quarter of authorities (${F.lowCut.toFixed(1)} or fewer for every 1,000 pupils): ${F.low} authorities. Second, for at least one pupil group both persistent absence and severe absence were in the highest quarter of authorities in the autumn and spring terms of ${ay(L)}. ${F.list.length} of ${F.n} authorities meet both. The two smallest authorities are left out.`);
-      add(add(all, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table en-flagt', '<thead><tr><th>Local authority</th><th class="n">Notices for other unauthorised absence</th><th>Pupil group: persistent absence, severe absence</th></tr></thead><tbody>'
-        + F.list.map((f) => `<tr><td><a href="/attendance/group/?k=a&id=${f.r.id}#sec-enforcement">${esc(f.r.name)}</a></td><td class="n">${f.c === 0 ? 'None' : f.c < 0 ? 'fewer than 10' : num(f.c) + ' · ' + f.rate.toFixed(1) + ' for every 1,000'}</td><td>${f.gs.map((g) => `${g.n.replace(/^pupils /, '').replace(/^(.)/, (c) => c.toUpperCase())}: ${g.pa.toFixed(1)}%, ${g.sa.toFixed(2)}%`).join('<br>')}</td></tr>`).join('') + '</tbody>');
-      add(all, 'p', 'ax-note', 'The flag sets two published facts side by side for one authority. It does not show that one causes the other, and an authority that issues few notices may rely on attendance case management or early help instead. The highest quarter starts at '
-        + FG.map(([g, n]) => `${(F.cut[g][0] / 100).toFixed(1)}% persistent and ${(F.cut[g][1] / 100).toFixed(2)}% severe absence for ${n}`).join('; ') + '. Severe absence is missing where the DfE’s figure rests on fewer than 10 pupils, and such a group cannot be flagged.');
-      const names = (list) => list.slice().sort((a, b) => a.name.localeCompare(b.name)).map((r) => `<a href="/attendance/group/?k=a&id=${r.id}#sec-enforcement">${esc(r.name)}</a>`).join(', ');
-      add(all, 'p', 'ax-note en-names', `<b>Recorded no notices for unauthorised absence other than holiday:</b> ${names(big.filter((r) => cnt(r) === 0)) || 'no authority'}.<br><b>Recorded fewer than 10:</b> ${names(big.filter((r) => cnt(r) != null && cnt(r) < 0)) || 'no authority'}.`); }
-    // the map: notices for every 1,000 pupils
-    add(all, 'h3', 'en-h', `${xname} for every 1,000 pupils, ${ay(L)}`);
-    const mp = add(all, 'div', 'ax-chart'), H2 = LAS.filter((r) => r.q != null).map((r) => ({r, v: D.areas[r.id] ? per(D.areas[r.id], L, xcol, 1000) : null})), cap = 480, MW = Math.min(cap, width(mp));
-    const qs = d3.extent(H2, (d) => d.r.q + (d.r.r & 1) / 2), rs = d3.extent(H2, (d) => d.r.r), size = (MW - 4) / ((qs[1] - qs[0] + 1) * Math.sqrt(3)), MH = Math.ceil((rs[1] - rs[0]) * 1.5 * size + 2 * size + 4);
-    const dpath = 'M' + d3.range(6).map((i) => { const t = Math.PI / 180 * (60 * i - 30); return (Math.cos(t) * (size - 0.6)).toFixed(2) + ',' + (Math.sin(t) * (size - 0.6)).toFixed(2); }).join('L') + 'Z';
-    const vmax = d3.quantile(H2.map((d) => d.v).filter((v) => v != null).sort(d3.ascending), 0.97) || 1, shade = (v) => (v == null ? '#fff' : d3.interpolateRgb('#EEF0F4', INK)(Math.min(1, v / vmax)));
-    const ms = svg(mp, MW, MH, `Map of local authorities shaded by ${xname.toLowerCase()} for every 1,000 pupils`); ms.style('max-width', cap + 'px').style('margin', '0 auto');
-    ms.append('g').selectAll('path').data(H2).join('path').attr('d', dpath).attr('transform', (d) => `translate(${(d.r.q + (d.r.r & 1) / 2 - qs[0] + 0.5) * Math.sqrt(3) * size + 2},${(rs[1] - d.r.r) * 1.5 * size + size + 2})`).attr('fill', (d) => shade(d.v)).attr('stroke', d3.rgb(SOFT)).attr('stroke-width', 0.5)
-      .on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : d.v.toFixed(1) + ' for every 1,000 pupils'}`)).on('pointerleave', hideTip)
-      .on('click', (ev, d) => { let e = mp.querySelector('.ax-picked'); if (!e) e = add(mp, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(d.r.name)}</b>: ${d.v == null ? 'no figure' : d.v.toFixed(1) + ' for every 1,000 pupils'}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">Open</a>`; });
-    const mk = add(mp, 'div', 'ax-key'); add(mk, 'span', null, `0 <i style="background:linear-gradient(90deg,#EEF0F4,${INK});width:90px;border:1px solid ${SOFT}"></i>${vmax.toFixed(0)} or more for every 1,000 pupils`); add(mk, 'span', null, 'One hexagon for each local authority, placed roughly where it sits.');
+    add(all, 'p', 'ax-sub', `How much each kind of enforcement was used in ${ay(L)}, region by region. Local authorities fall into seven categories for each measure: none, fewer than 10, then five equal groups of the authorities that used it, from the fewest for their size to the most. Each region’s row shows where the region as a whole would sit and how many of its local authorities are in each category.`);
+    const f = add(add(all, 'div', 'en-ctl'), 'label', 'ax-field'); add(f, 'span', null, 'Measure'); const sel = add(f, 'select', 'ax-select'); CATS.forEach(([c, n]) => { const o = add(sel, 'option', null, n); o.value = c; o.selected = c === csel; });
+    sel.addEventListener('change', () => { const y0 = scrollY; csel = sel.value; england(); scrollTo(0, y0); });
+    const inReg = (reg) => Object.keys(D.areas).filter((id) => isLA(id) && D.areas[id].reg === reg && D.areas[id].y[L] && col(D.areas[id], L, 'enrol') >= 2000);
+    const row = (code, label) => { const r = D.areas[code], v = col(r, L, csel), b = band(r, csel, L), ids = code === 'E92000001' ? Object.keys(D.areas).filter((id) => isLA(id) && D.areas[id].y[L] && col(D.areas[id], L, 'enrol') >= 2000) : inReg(code), counts = BANDS.map(() => 0); let other = 0;
+      ids.forEach((id) => { const x = band(D.areas[id], csel, L); if (x == null) other++; else if (x === -1) counts[2]++; else counts[x]++; });
+      const few = sc.nz.length < 25, cells = few ? `<td class="en-qc"><span class="en-ql">None ${counts[0]} · fewer than 10 ${counts[1]} · 10 or more ${counts[2]}${other ? ' · no figure ' + other : ''}</span></td>` : `<td class="en-qc">${strip(code === 'E92000001' ? null : b, counts)}<span class="en-ql">${code === 'E92000001' ? '' : bandWords(b, csel, L)}${other ? (code === 'E92000001' ? '' : ' · ') + other + ' with no figure' : ''}</span></td>`;
+      return `<tr${code === 'E92000001' ? ' class="en-eng"' : ''}><td>${esc(label)}</td><td class="n">${num(v)}</td><td class="n">${v == null || v <= 0 ? '–' : r1k(per(r, L, csel, 1000))}</td>${cells}<td class="n">${ids.length}</td></tr>`; };
+    add(add(all, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table en-reg', `<thead><tr><th>Region</th><th class="n">Number</th><th class="n">For every 1,000 pupils</th><th class="en-qh">${sc.nz.length < 25 ? 'Its local authorities' : 'Category, and its local authorities in each'}</th><th class="n">Local authorities</th></tr></thead><tbody>`
+      + regs.map((c) => row(c, D.names[c])).join('') + row('E92000001', 'England') + '</tbody>');
+    const k = add(all, 'div', 'ax-key'); if (sc.nz.length >= 25) { add(k, 'span', null, strip(null, ['None', '<10', '1', '2', '3', '4', '5']).replace('class="en-q"', 'class="en-q en-qk"') + ' None, fewer than 10, then the lowest to the highest fifth'); add(k, 'span', null, `<span class="en-q"><i class="on"></i></span> where the region as a whole sits; the numbers count its local authorities`); }
+    add(all, 'p', 'ax-note', (sc.nz.length < 25 ? `Only ${sc.nz.length} local authorities have an exact figure above zero for this measure, too few for fifths to mean much, so the table counts how many used it. ` : `For ${cname.toLowerCase()} the fifths divide the ${sc.nz.length} local authorities with an exact figure above zero at ${sc.cuts.map(r1k).join(', ')} for every 1,000 pupils. `)
+      + 'A category describes how much a measure was used and is not a judgement of the region or its authorities. The two smallest authorities are left off the scale. ' + SRC());
     // how many authorities use each measure at all: none is a finding, and is not the same as a few
     const MS = [['hols', 'Notices for unauthorised holiday'], ['other', 'Notices for other unauthorised absence'], ['late', 'Notices for lateness'], ['repeat', 'Second notices within three years'], ['pros', 'Prosecutions for non-payment'], ['pros_limit', 'Prosecutions at the two-notice limit'],
       ['cm', 'Attendance case management'], ['cm_pros', 'Prosecutions after case management'], ['contracts', 'Parenting contracts offered'], ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];
@@ -187,24 +141,19 @@
     add(all, 'h3', 'en-h', `How many local authorities used each measure, ${ay(L)}`);
     add(all, 'p', 'ax-sub', 'For several measures the commonest answer is none. A recorded zero is shown as none; a count of 1 to 9 is shown as fewer than 10 and not given exactly.');
     const ue = add(all, 'div', 'ax-chart'), UW = width(ue), un = UW < 560, ul = un ? 0 : 270, urh = un ? 48 : 30, UH = MS.length * urh + 4, us = svg(ue, UW, UH, 'Local authorities recording none, fewer than 10, or 10 or more of each measure');
-    MS.forEach(([c, n], k) => { const sp = spread(c, L), y0 = k * urh + (un ? 20 : 3), ux = d3.scaleLinear([0, sp.n], [ul, UW - 2]); let acc = 0;
+    MS.forEach(([c, n], i) => { const sp = spread(c, L), y0 = i * urh + (un ? 20 : 3), ux = d3.scaleLinear([0, sp.n], [ul, UW - 2]); let acc = 0;
       us.append('text').attr('x', un ? 0 : ul - 10).attr('y', un ? y0 - 6 : y0 + 16).attr('text-anchor', un ? 'start' : 'end').text(n);
       SEG.forEach(([key, label, fill]) => { const v = sp[key]; if (!v) return; us.append('rect').attr('x', ux(acc)).attr('y', y0).attr('width', ux(acc + v) - ux(acc)).attr('height', 22).attr('fill', fill).attr('stroke', SLATE).attr('stroke-width', 0.75)
           .on('pointerenter pointermove', (ev) => showTip(ev, `<b>${n}</b><br>${label}: ${v} of ${sp.n} local authorities`)).on('pointerleave', hideTip);
         if (ux(acc + v) - ux(acc) > 26) us.append('text').attr('x', (ux(acc) + ux(acc + v)) / 2).attr('y', y0 + 15).attr('text-anchor', 'middle').attr('pointer-events', 'none').style('fill', key === 'more' ? '#fff' : INK).text(v);
         acc += v; }); });
     const uk = add(all, 'div', 'ax-key'); SEG.forEach(([, label, fill]) => add(uk, 'span', null, `<i style="background:${fill};border:1px solid ${SLATE}"></i>${label}`));
-    // highest and lowest
-    const ord = H2.filter((d) => d.v != null && col(D.areas[d.r.id], L, 'enrol') >= 2000).sort((a, b) => b.v - a.v), row = (d) => `<tr><td><a href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">${esc(d.r.name)}</a></td><td class="n">${d.v.toFixed(1)}</td><td class="n">${num(col(D.areas[d.r.id], L, xcol))}</td></tr>`;
-    const wrap = add(all, 'div', 'en-pair'), tbl = (title, list) => { const b = add(wrap, 'div', 'en-mini'); add(b, 'h3', null, title); add(add(b, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table', `<thead><tr><th>Local authority</th><th class="n">For every 1,000 pupils</th><th class="n">Number</th></tr></thead><tbody>${list.map(row).join('')}</tbody>`); };
-    tbl('Most for their size', ord.slice(0, 8)); tbl('Fewest for their size', ord.slice(-8).reverse());
   }
 
   d3.json('/attendance/data/prm.json').then((j) => { D = j; j.cols.forEach((c, i) => { C[c] = i; });
     if (area) { let last = ''; const go = () => { const sig = location.search + '|' + (($('gx-name') || {}).textContent || ''); if (sig === last) return; last = sig; place(); };
-      d3.json('/attendance/data/grp/a_all.json').then((rows) => { FLAGS = flags(rows); last = ''; go(); }).catch(() => {});
       const nm = $('gx-name'); if (nm) new MutationObserver(go).observe(nm, {childList: true, characterData: true, subtree: true}); addEventListener('popstate', () => setTimeout(go, 50)); go();
       let t = null; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { last = ''; go(); }, 200); }); }
-    if (all) d3.json('/attendance/data/grp/a_all.json').then((rows) => { LAS = rows; england(); let t = null, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(england, 200); }); });
+    if (all) { england(); let t = null, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(england, 200); }); }
   }).catch(() => { const c = $('gx-enf-c') || $('px-enf-c'); if (c) c.hidden = true; });
 })();

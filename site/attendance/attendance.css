@@ -249,7 +249,6 @@ body.explorer{background:#ECE9E1}
 .ax-note a{color:var(--ink)}
 @media (max-width:720px){.en-pair{grid-template-columns:1fr}}
 @media (max-width:480px){.en-ctl .ax-seg button{flex:1 1 auto}}
-@media (max-width:560px){.en-other th:nth-child(3),.en-other td:nth-child(3),.en-other th:nth-child(4),.en-other td:nth-child(4){display:none}}
 .en-strands{gap:22px 36px;align-items:start}
 .en-strand{min-width:0;border-top:3px solid var(--ink);padding-top:12px}
 .en-st{font:400 20px/1.25 var(--display, "Libre Caslon Display", serif);color:var(--ink);margin:0}
@@ -264,3 +263,18 @@ body.explorer{background:#ECE9E1}
 .en-flag .en-flag-h{font:600 16px/1.35 var(--sans)}
 .en-flag .en-flag-n{font-size:14px;color:var(--muted);margin:0}.en-flag a{color:var(--ink)}
 .en-flagt td{vertical-align:top}
+.en-q{display:inline-flex;gap:2px;vertical-align:middle;margin-right:8px}
+.en-q i{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid #8A96A8;background:#fff;font:600 11px/1 var(--sans);font-style:normal;color:var(--ink);font-variant-numeric:tabular-nums}
+.en-q i.z{border-style:dashed;margin-right:1px}
+.en-q i.z + i:not(.z){margin-left:5px}
+.en-q i.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.en-qk i{width:auto;min-width:18px;padding:0 3px;font-weight:400}
+.en-qc{white-space:nowrap}.en-ql{font-size:14px;color:var(--ink)}
+.en-reg .en-q i{width:22px;height:22px}
+.en-eng td{font-weight:600;border-top:2px solid var(--ink)}
+@media (max-width:900px){.en-qc{white-space:normal}.en-ql{display:block;margin-top:3px}}
+@media (max-width:560px){.en-other th:nth-child(2),.en-other td:nth-child(2),.en-other th:last-child,.en-other td:last-child,.en-reg th:nth-child(2),.en-reg td:nth-child(2),.en-reg th:last-child,.en-reg td:last-child{display:none}.en-q i{width:14px;height:16px}.en-reg .en-q i{width:19px;height:20px}}
+.ax-table td.en-qc,.ax-table th.en-qh{padding-left:22px}
+@media (max-width:560px){.en-other th:nth-child(3),.en-other td:nth-child(3){display:none}.ax-table td.en-qc{padding-left:8px}.en-other td:first-child{max-width:112px}.en-other .en-ql{font-size:13px}}
+.en-qr{display:none}
+@media (max-width:560px){.en-other th:nth-child(5),.en-other td.en-qreg{display:none}.en-qr{display:block;font-size:13px;color:var(--muted);margin-top:2px}}

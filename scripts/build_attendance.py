@@ -434,9 +434,15 @@ def prm_build():
             rec['oth'] = {str(y): hund(max(0.0, 10000 * t[2] / t[0] - t[1] / t[0])) for y, t in sorted(hol.get(code, {}).items()) if t[0]}
         if rec['y']:
             out[code[2:] if code.startswith('y:') else code] = rec
+    names = {}
+    for r in csv.DictReader(open(os.path.join(RAW, 'areas.csv'), encoding='utf-8')):
+        if r['code'] in out:
+            names[r['code']] = r['name']
+            if r['level'] == 'la' and r['region'] in out:
+                out[r['code']]['reg'] = r['region']
     rel = json.load(open(os.path.join(RAW, 'prm_release.json')))
     latest = max(int(y) for y in out['E92000001']['y'])
-    json.dump({'cols': PRM_COLS, 'latest': latest, 'published': rel['published'], 'areas': out}, open(os.path.join(OUT, 'prm.json'), 'w'), separators=(',', ':'))
+    json.dump({'cols': PRM_COLS, 'latest': latest, 'published': rel['published'], 'names': names, 'areas': out}, open(os.path.join(OUT, 'prm.json'), 'w'), separators=(',', ':'))
     e = raw['E92000001'][latest]
     print(f"attendance enforcement: {len(out)} areas to {latest}/{(latest + 1) % 100:02d}; England {e[1]:,} penalty notices, "
           f"{100 * e[1] / e[0]:.2f} per 100 enrolments, {100 * e[2] / e[1]:.1f}% for unauthorised holiday; {os.path.getsize(os.path.join(OUT, 'prm.json')) // 1024} KB")
