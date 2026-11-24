@@ -250,3 +250,10 @@ body.explorer{background:#ECE9E1}
 @media (max-width:720px){.en-pair{grid-template-columns:1fr}}
 @media (max-width:480px){.en-ctl .ax-seg button{flex:1 1 auto}}
 @media (max-width:560px){.en-other th:nth-child(3),.en-other td:nth-child(3),.en-other th:nth-child(4),.en-other td:nth-child(4){display:none}}
+.en-strands{gap:22px 36px;align-items:start}
+.en-strand{min-width:0;border-top:3px solid var(--ink);padding-top:12px}
+.en-st{font:400 20px/1.25 var(--display, "Libre Caslon Display", serif);color:var(--ink);margin:0}
+.en-k3{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.en-k3 .ax-kpi{padding:10px}.en-k3 .ax-kpi .v{font-size:22px}
+.en-strand .en-mini{margin-top:16px}
+@media (max-width:1000px){.en-k3{grid-template-columns:repeat(2,minmax(0,1fr))}}

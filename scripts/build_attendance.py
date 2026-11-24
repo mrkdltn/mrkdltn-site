@@ -411,15 +411,17 @@ def prm_build():
         if r['period'].isdigit() and r['poss'] and r['hol_u'] != '' and r['urn'] in la_of:
             po = int(r['poss'])
             for code in (la_of[r['urn']], 'E92000001'):
-                t = hol.setdefault(code, {}).setdefault(int(r['period']), [0, 0.0])
+                t = hol.setdefault(code, {}).setdefault(int(r['period']), [0, 0.0, 0])
                 t[0] += po
                 t[1] += po * float(r['hol_u'])
+                t[2] += int(r['missed_unauth'] or 0)
     for cid, las in county.items():
         for la in las:
             for y, t in hol.get(la, {}).items():
-                c = hol.setdefault(cid, {}).setdefault(y, [0, 0.0])
+                c = hol.setdefault(cid, {}).setdefault(y, [0, 0.0, 0])
                 c[0] += t[0]
                 c[1] += t[1]
+                c[2] += t[2]
     mask = lambda i, v: v if v is None or i == 0 or v == 0 or v >= 10 else -1
     out = {}
     for code, ys in raw.items():
@@ -427,6 +429,8 @@ def prm_build():
         h = {str(y): hund(t[1] / t[0]) for y, t in sorted(hol.get(code, {}).items()) if t[0]}
         if h:
             rec['hol'] = h
+            # unauthorised absence other than holiday: all unauthorised sessions less unauthorised holiday
+            rec['oth'] = {str(y): hund(max(0.0, 10000 * t[2] / t[0] - t[1] / t[0])) for y, t in sorted(hol.get(code, {}).items()) if t[0]}
         if rec['y']:
             out[code[2:] if code.startswith('y:') else code] = rec
     rel = json.load(open(os.path.join(RAW, 'prm_release.json')))

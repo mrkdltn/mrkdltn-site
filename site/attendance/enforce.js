@@ -51,33 +51,37 @@
   function place() {
     const card = $('gx-enf-c'), q = new URLSearchParams(location.search), kind = q.get('k'), id = q.get('id'), rec = (kind === 'a' || kind === 'y') && D.areas[id], E = D.areas.E92000001, L = String(D.latest);
     card.hidden = !(rec && rec.y[L]); area.innerHTML = ''; if (card.hidden) return;
-    const name = ($('gx-name') || {}).textContent || 'This area', rate = per(rec, L, 'issued', 100), erate = per(E, L, 'issued', 100), issued = col(rec, L, 'issued'), hols = col(rec, L, 'hols');
-    const share = issued > 0 && hols != null && hols >= 0 ? 100 * hols / issued : null, eshare = 100 * col(E, L, 'hols') / col(E, L, 'issued'), hol = rec.hol && rec.hol[L], ehol = E.hol && E.hol[L];
-    add(area, 'p', 'ax-sub', `Penalty notices issued to parents for unauthorised absence, and the other legal measures a local authority can use, in ${ay(L)}. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices and cases, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
-    const k = add(area, 'div', 'ax-kpis'), tile = (label, v, d) => add(k, 'div', 'ax-kpi', `<div class="k">${label}</div><div class="v">${v}</div><div class="d">${d}</div>`);
-    tile('Penalty notices issued', num(issued), ay(L));
-    tile('For every 100 pupils', rate == null ? '–' : rate.toFixed(1), 'England ' + erate.toFixed(1));
-    tile('Issued for unauthorised holiday', share == null ? '–' : share.toFixed(0) + '%', 'England ' + eshare.toFixed(0) + '%');
-    tile('Unauthorised holiday absence', hol == null ? '–' : (hol / 100).toFixed(2) + '%', 'of sessions · England ' + (ehol == null ? '–' : (ehol / 100).toFixed(2) + '%'));
-    if (issued === 0) add(area, 'p', 'ax-reading', `${esc(name)} recorded no penalty notices in ${ay(L)}.`);
-    else if (rate != null) { const rank = Object.keys(D.areas).filter(isLA).map((c) => per(D.areas[c], L, 'issued', 100)).filter((v) => v != null), above = rank.filter((v) => v > rate).length;
-      add(area, 'p', 'ax-reading', `${esc(name)} issued <b>${num(issued)}</b> penalty notices in ${ay(L)}, <b>${rate.toFixed(1)}</b> for every 100 pupils, against ${erate.toFixed(1)} across England.`
-        + (kind === 'a' ? ` ${above} of the ${rank.length} local authorities issued more for their size.` : '')
-        + (share == null ? '' : ` <b>${share.toFixed(0)}%</b> were for unauthorised holiday.`)
-        + (hol == null || ehol == null ? '' : ` Unauthorised holiday took <b>${(hol / 100).toFixed(2)}%</b> of sessions in its schools, against ${(ehol / 100).toFixed(2)}% across England.`)); }
-    // year by year: notices for every 100 pupils, and unauthorised holiday absence
-    const years = Object.keys(E.y).filter((y) => +y >= 2013).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair');
-    lines(grid, 'Penalty notices for every 100 pupils', '', [{n: 'England', c: SLATE, w: 2, get: (y) => per(E, y, 'issued', 100)}, {n: name, c: INK, w: 3, get: (y) => per(rec, y, 'issued', 100)}], years, (v) => v.toFixed(1) + ' for every 100 pupils');
-    lines(grid, 'Unauthorised holiday absence, % of sessions', '%', [{n: 'England', c: SLATE, w: 2, get: (y) => (E.hol && E.hol[y] != null ? E.hol[y] / 100 : null)}, {n: name, c: INK, w: 3, get: (y) => (rec.hol && rec.hol[y] != null ? rec.hol[y] / 100 : null)}], years, (v) => v.toFixed(2) + '% of sessions');
+    const name = ($('gx-name') || {}).textContent || 'This area', issued = col(rec, L, 'issued');
+    add(area, 'p', 'ax-sub', `Penalty notices to parents in ${ay(L)}, kept in two separate strands because they answer different things: notices for a holiday taken in term time without the school’s agreement, and notices for other unauthorised absence from school. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
+    const years = Object.keys(E.y).filter((y) => +y >= 2016).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair en-strands');
+    const strand = (c, title, noun, absKey, absName, absNote) => { const box = add(grid, 'div', 'en-strand'); add(box, 'h3', 'en-st', title);
+      const n = col(rec, L, c), r = per(rec, L, c, 1000), er = per(E, L, c, 1000), ab = rec[absKey] && rec[absKey][L], eab = E[absKey] && E[absKey][L], sp = spread(c, L);
+      const k = add(box, 'div', 'ax-kpis en-k3'), tile = (label, v, d) => add(k, 'div', 'ax-kpi', `<div class="k">${label}</div><div class="v">${v}</div><div class="d">${d}</div>`);
+      tile('Notices issued', num(n), ay(L));
+      tile('For every 1,000 pupils', n === 0 ? '–' : r == null ? (n < 0 ? 'under ' + (10000 / col(rec, L, 'enrol')).toFixed(1) : '–') : r.toFixed(1), 'England ' + er.toFixed(1));
+      tile(absName, ab == null ? '–' : (ab / 100).toFixed(2) + '%', 'of sessions · England ' + (eab == null ? '–' : (eab / 100).toFixed(2) + '%'));
+      const others = Object.keys(D.areas).filter(isLA).map((x) => per(D.areas[x], L, c, 1000)).filter((v) => v != null), above = r == null ? null : others.filter((v) => v > r).length;
+      add(box, 'p', 'ax-reading', (n === 0 ? `${esc(name)} recorded <b>no</b> penalty notices for ${noun} in ${ay(L)}` + (kind === 'a' ? `, as did ${sp.none - 1} other local authorit${sp.none - 1 === 1 ? 'y' : 'ies'}.` : '.')
+        : n == null ? `No figure was supplied for ${noun}.` : n < 0 ? `${esc(name)} issued <b>fewer than 10</b> penalty notices for ${noun} in ${ay(L)}.`
+        : `${esc(name)} issued <b>${num(n)}</b> penalty notices for ${noun} in ${ay(L)}: <b>${r.toFixed(1)}</b> for every 1,000 pupils, against ${er.toFixed(1)} across England.` + (kind === 'a' && above != null ? ` ${above} of the ${others.length} local authorities issued more for their size.` : ''))
+        + (ab == null || eab == null ? '' : ` ${absNote} took <b>${(ab / 100).toFixed(2)}%</b> of sessions in its schools, against ${(eab / 100).toFixed(2)}% across England.`));
+      lines(box, 'Notices for every 1,000 pupils', '', [{n: 'England', c: SLATE, w: 2, get: (y) => per(E, y, c, 1000)}, {n: name, c: INK, w: 3, get: (y) => per(rec, y, c, 1000)}], years, (v) => v.toFixed(1) + ' for every 1,000 pupils');
+      lines(box, absName + ', % of sessions', '%', [{n: 'England', c: SLATE, w: 2, get: (y) => (E[absKey] && E[absKey][y] != null ? E[absKey][y] / 100 : null)}, {n: name, c: INK, w: 3, get: (y) => (rec[absKey] && rec[absKey][y] != null ? rec[absKey][y] / 100 : null)}], years, (v) => v.toFixed(2) + '% of sessions'); };
+    strand('hols', 'Holiday in term time, not agreed by the school', 'unauthorised holiday', 'hol', 'Unauthorised holiday absence', 'Unauthorised holiday');
+    strand('other', 'Other unauthorised absence from school', 'other unauthorised absence', 'oth', 'Other unauthorised absence', 'Unauthorised absence other than holiday');
     const key = add(area, 'div', 'ax-key'); add(key, 'span', null, `<i style="background:${INK};height:3px"></i>${esc(name)}`); add(key, 'span', null, `<i style="background:${SLATE};height:2px"></i>England`);
-    add(area, 'p', 'ax-note', 'No figures were collected for 2019/20, and 2020/21 was a year of partial school closures. From August 2024 a national framework set one threshold and one scale of charges for every local authority, so 2024/25 is the first year counted on the same rules everywhere.');
-    // what became of the notices
-    if (issued >= 10) { add(area, 'h3', 'en-h', `What became of the notices issued in ${ay(L)}`); fate(area, [{n: name, rec}, {n: 'England', rec: E}], L); }
+    const late = col(rec, L, 'late'), ls = spread('late', L);
+    add(area, 'p', 'ax-note', `A third, much smaller strand is lateness: ${late == null ? 'no figure was supplied' : late === 0 ? 'none' : num(late)} here in ${ay(L)}, and none in ${ls.none} of ${ls.n - ls.na} local authorities. `
+      + 'The reason for each notice has been recorded since 2016/17. No figures were collected for 2019/20, and 2020/21 was a year of partial school closures. From August 2024 a national framework set one threshold and one scale of charges for every local authority, so 2024/25 is the first year counted on the same rules everywhere. '
+      + '“Other unauthorised absence” in the right-hand charts is all unauthorised absence less unauthorised holiday; it includes arriving after the register has closed and absences with no reason yet given.');
+    // what became of the notices: the DfE gives outcomes for all notices together, not by reason
+    if (issued >= 10) { add(area, 'h3', 'en-h', `What became of the notices issued in ${ay(L)}`);
+      add(area, 'p', 'ax-sub', 'The DfE publishes payment, withdrawal and prosecution for all penalty notices together, so this one chart cannot be split between holiday and other unauthorised absence.'); fate(area, [{n: name, rec}, {n: 'England', rec: E}], L); }
     // the other measures
     const ROWS = [['repeat', 'Second penalty notices to the same parent for the same child within three years'], ['pros_limit', 'Prosecutions because the limit of two notices had been reached'], ['cm', 'Cases entering attendance case management'],
       ['cm_pros', 'Cases prosecuted after case management'], ['cm_improved', 'Cases withdrawn because attendance improved'], ['contracts', 'Parenting contracts offered'], ['contracts_acc', 'Parenting contracts accepted'],
       ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];
-    add(area, 'h3', 'en-h', `Other measures, ${ay(L)}`);
+    add(area, 'h3', 'en-h', `Other legal measures, ${ay(L)}`);
     const wrap = add(area, 'div', 'ax-tablewrap'), p10 = (r, c) => { const v = per(r, L, c, 10000); return v == null ? (col(r, L, c) < 0 ? 'under ' + (10 * 10000 / col(r, L, 'enrol')).toFixed(1) : '–') : v > 0 && v < 0.05 ? 'under 0.1' : v.toFixed(1); };
     add(wrap, 'table', 'ax-table en-table en-other', '<thead><tr><th>Measure</th><th class="n">Number</th><th class="n">For every 10,000 pupils</th><th class="n">England, for every 10,000</th><th class="n">Authorities recording none</th></tr></thead><tbody>'
       + ROWS.map(([c, n]) => { const sp = spread(c, L), v = col(rec, L, c); return `<tr><td>${n}</td><td class="n">${num(v)}</td><td class="n">${v === 0 ? '–' : p10(rec, c)}</td><td class="n">${p10(E, c)}</td><td class="n">${sp.none} of ${sp.n - sp.na}</td></tr>`; }).join('') + '</tbody>');
@@ -86,9 +90,10 @@
   }
 
   // ---------------------------------------------------------------- every local authority at once (Patterns)
-  const YS = [['hol', 'Unauthorised holiday absence', 'all pupils, % of sessions'], ['fsm', 'Pupils eligible for free school meals', 'overall absence'], ['nfsm', 'Pupils not eligible', 'overall absence'],
+  const YS = [['hol', 'Unauthorised holiday absence', 'all pupils, % of sessions'], ['oth', 'Other unauthorised absence', 'all pupils, % of sessions'], ['fsm', 'Pupils eligible for free school meals', 'overall absence'], ['nfsm', 'Pupils not eligible', 'overall absence'],
     ['sen', 'Pupils with SEN support', 'overall absence'], ['ehcp', 'Pupils with an EHC plan', 'overall absence']];
-  const XS = [['hols', 'Notices for unauthorised holiday'], ['issued', 'All penalty notices'], ['cmp', 'Cases in case management']];
+  const XS = [['hols', 'Notices for unauthorised holiday'], ['other', 'Notices for other unauthorised absence'], ['cmp', 'Cases in case management']];
+  const PAIR = {hols: 'hol', other: 'oth'};          // each strand of notices opens against its own kind of absence
   let ysel = 'hol', xsel = 'hols', LAS = null;
   const rank = (a) => { const o = a.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]), r = new Array(a.length); for (let i = 0; i < o.length;) { let j = i; while (j + 1 < o.length && o[j + 1][0] === o[i][0]) j++; for (let k = i; k <= j; k++) r[o[k][1]] = (i + j) / 2; i = j + 1; } return r; };
   const corr = (a, b) => { const ma = d3.mean(a), mb = d3.mean(b); let s = 0, sa = 0, sb = 0; a.forEach((v, i) => { s += (v - ma) * (b[i] - mb); sa += (v - ma) ** 2; sb += (b[i] - mb) ** 2; }); return s / Math.sqrt(sa * sb); };
@@ -96,22 +101,22 @@
   const strength = (r) => { const a = Math.abs(r); return a < 0.15 ? 'no clear pattern' : (a < 0.35 ? 'a weak' : a < 0.6 ? 'a moderate' : 'a strong') + ' tendency'; };
   function england() {
     const L = String(D.latest), xname = XS.find((x) => x[0] === xsel)[1], yrow = YS.find((y) => y[0] === ysel), xcol = xsel === 'cmp' ? 'cm' : xsel;
-    const pts = LAS.map((r) => { const rec = D.areas[r.id], g = r.pg && r.pg.A, x = rec && per(rec, L, xcol, 100), y = ysel === 'hol' ? (rec && rec.hol && rec.hol[L] != null ? rec.hol[L] / 100 : null) : (g && g[ysel] && g[ysel][1] && g[ysel][1][0] != null ? g[ysel][1][0] / 100 : null);
+    const pts = LAS.map((r) => { const rec = D.areas[r.id], g = r.pg && r.pg.A, x = rec && per(rec, L, xcol, 1000), y = ysel === 'hol' || ysel === 'oth' ? (rec && rec[ysel] && rec[ysel][L] != null ? rec[ysel][L] / 100 : null) : (g && g[ysel] && g[ysel][1] && g[ysel][1][0] != null ? g[ysel][1][0] / 100 : null);
       return {r, x, y, n: rec ? col(rec, L, 'enrol') : 0}; }).filter((p) => p.x != null && p.y != null && p.n >= 2000);
     all.innerHTML = '';
-    add(all, 'p', 'ax-sub', `Each circle is a local authority in ${ay(L)}. Across it runs how many ${xname.toLowerCase()} it had for every 100 pupils; up it runs ${yrow[1].toLowerCase()} (${yrow[2]}${ysel === 'hol' ? '' : ', autumn and spring terms'}). The two smallest authorities are left out.`);
+    add(all, 'p', 'ax-sub', `Each circle is a local authority in ${ay(L)}. Across it runs how many ${xname.toLowerCase()} it had for every 1,000 pupils; up it runs ${yrow[1].toLowerCase()} (${yrow[2]}${ysel === 'hol' || ysel === 'oth' ? '' : ', autumn and spring terms'}). ${LAS.length - pts.length} authorities are left out: the two smallest, and any whose count is fewer than 10 or was not supplied.`);
     const ctl = add(all, 'div', 'en-ctl'), seg = (label, opts, cur, set) => { const f = add(ctl, 'div', 'ax-field'), id = 'en-l-' + label.replace(/\W+/g, ''); add(f, 'span', null, label).id = id; const s = add(f, 'div', 'ax-seg'); s.setAttribute('role', 'group'); s.setAttribute('aria-labelledby', id);
       opts.forEach(([v, n]) => { const b = add(s, 'button', null, n); b.type = 'button'; b.setAttribute('aria-pressed', String(v === cur)); b.addEventListener('click', () => { set(v); england(); }); }); };
-    seg('Enforcement', XS, xsel, (v) => { xsel = v; }); seg('Set against', YS.map((y) => [y[0], y[1]]), ysel, (v) => { ysel = v; });
-    const el = add(all, 'div', 'ax-chart'), W = width(el), narrow = W < 560, H = narrow ? 340 : 440, m = {l: 46, r: 14, t: 12, b: 42}, s = svg(el, W, H, `${xname} for every 100 pupils against ${yrow[1].toLowerCase()}, by local authority`);
+    seg('Enforcement', XS, xsel, (v) => { if (PAIR[v] && (ysel === 'hol' || ysel === 'oth')) ysel = PAIR[v]; xsel = v; }); seg('Set against', YS.map((y) => [y[0], y[1]]), ysel, (v) => { ysel = v; });
+    const el = add(all, 'div', 'ax-chart'), W = width(el), narrow = W < 560, H = narrow ? 340 : 440, m = {l: 46, r: 14, t: 12, b: 42}, s = svg(el, W, H, `${xname} for every 1,000 pupils against ${yrow[1].toLowerCase()}, by local authority`);
     const x = d3.scaleLinear([0, d3.max(pts, (p) => p.x)], [m.l, W - m.r]).nice(), y = d3.scaleLinear(d3.extent(pts, (p) => p.y), [H - m.b, m.t]).nice();
     x.ticks(narrow ? 4 : 8).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(t); });
     y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text(t + '%'); });
-    s.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text(xname + ' for every 100 pupils');
-    const rsz = d3.scaleSqrt([0, 260000], [3, narrow ? 9 : 13]), fmtY = (v) => v.toFixed(ysel === 'hol' ? 2 : 1) + '%';
-    const picked = (p) => { let e = all.querySelector('.ax-picked'); if (!e) e = add(all, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(p.r.name)}</b>: ${p.x.toFixed(1)} for every 100 pupils; ${fmtY(p.y)}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${p.r.id}#sec-enforcement">Open</a>`; };
+    s.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text(xname + ' for every 1,000 pupils');
+    const rsz = d3.scaleSqrt([0, 260000], [3, narrow ? 9 : 13]), fmtY = (v) => v.toFixed(ysel === 'hol' || ysel === 'oth' ? 2 : 1) + '%';
+    const picked = (p) => { let e = all.querySelector('.ax-picked'); if (!e) e = add(all, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(p.r.name)}</b>: ${p.x.toFixed(1)} for every 1,000 pupils; ${fmtY(p.y)}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${p.r.id}#sec-enforcement">Open</a>`; };
     s.append('g').selectAll('circle').data(pts.slice().sort((a, b) => b.n - a.n)).join('circle').attr('cx', (p) => x(p.x)).attr('cy', (p) => y(p.y)).attr('r', (p) => rsz(p.n)).attr('fill', SLATE).attr('fill-opacity', 0.45).attr('stroke', SLATE)
-      .on('pointerenter pointermove', (ev, p) => showTip(ev, `<b>${esc(p.r.name)}</b><br>${xname}: ${p.x.toFixed(1)} for every 100 pupils<br>${yrow[1]}: ${fmtY(p.y)}`)).on('pointerleave', hideTip).on('click', (ev, p) => picked(p));
+      .on('pointerenter pointermove', (ev, p) => showTip(ev, `<b>${esc(p.r.name)}</b><br>${xname}: ${p.x.toFixed(1)} for every 1,000 pupils<br>${yrow[1]}: ${fmtY(p.y)}`)).on('pointerleave', hideTip).on('click', (ev, p) => picked(p));
     const key = add(all, 'div', 'ax-key'); add(key, 'span', null, `<i style="background:${SLATE};opacity:.6;border-radius:50%;width:10px;height:10px"></i>A local authority, sized by its pupils`); add(key, 'span', null, 'Tap a circle to name it.');
     // the reading: the rank correlation, and what is left once free school meals eligibility is allowed for
     const ok = pts.filter((p) => { const g = p.r.pg.A; return g.fsm && g.nfsm && g.all && g.fsm[1] && g.all[1]; }), fs = (p) => { const g = p.r.pg.A, a = g.all[1][0], f = g.fsm[1][0], n = g.nfsm[1][0]; return f === n ? 0 : (a - n) / (f - n); };
@@ -120,19 +125,19 @@
     const dir = (r) => (Math.abs(r) < 0.15 ? '' : r > 0 ? ': authorities with more of one tend to have more of the other' : ': authorities with more of one tend to have less of the other');
     add(all, 'p', 'ax-reading', `Across ${pts.length} local authorities there is <b>${strength(r0)}</b>${dir(r0)} (rank correlation ${r0 >= 0 ? '+' : '−'}${Math.abs(r0).toFixed(2)}).`
       + (r1 == null ? '' : ` Comparing authorities with a similar share of pupils eligible for free school meals, there is ${strength(r1)} (${r1 >= 0 ? '+' : '−'}${Math.abs(r1).toFixed(2)}).`));
-    add(all, 'p', 'ax-note', 'Read this as a pattern across areas and no more. A notice follows an absence, so more notices where there is more unauthorised holiday is what the rules would produce; it does not show that notices raise or lower absence. The DfE does not publish who receives notices by pupil group, so nothing here shows whether families of pupils eligible for free school meals or with special educational needs are fined more or less often than others. '
+    add(all, 'p', 'ax-note', 'Notices for holiday and notices for other unauthorised absence are separate strands and are never added together here. Read each chart as a pattern across areas and no more. A notice follows an absence, so more notices where there is more of that kind of absence is what the rules would produce; it does not show that notices raise or lower absence. The DfE does not publish who receives notices by pupil group, so nothing here shows whether families of pupils eligible for free school meals or with special educational needs are fined more or less often than others. '
       + 'The share eligible for free school meals is worked out from each authority’s published rates. ' + SRC());
-    // the map: notices for every 100 pupils
-    add(all, 'h3', 'en-h', `${xname} for every 100 pupils, ${ay(L)}`);
-    const mp = add(all, 'div', 'ax-chart'), H2 = LAS.filter((r) => r.q != null).map((r) => ({r, v: D.areas[r.id] ? per(D.areas[r.id], L, xcol, 100) : null})), cap = 480, MW = Math.min(cap, width(mp));
+    // the map: notices for every 1,000 pupils
+    add(all, 'h3', 'en-h', `${xname} for every 1,000 pupils, ${ay(L)}`);
+    const mp = add(all, 'div', 'ax-chart'), H2 = LAS.filter((r) => r.q != null).map((r) => ({r, v: D.areas[r.id] ? per(D.areas[r.id], L, xcol, 1000) : null})), cap = 480, MW = Math.min(cap, width(mp));
     const qs = d3.extent(H2, (d) => d.r.q + (d.r.r & 1) / 2), rs = d3.extent(H2, (d) => d.r.r), size = (MW - 4) / ((qs[1] - qs[0] + 1) * Math.sqrt(3)), MH = Math.ceil((rs[1] - rs[0]) * 1.5 * size + 2 * size + 4);
     const dpath = 'M' + d3.range(6).map((i) => { const t = Math.PI / 180 * (60 * i - 30); return (Math.cos(t) * (size - 0.6)).toFixed(2) + ',' + (Math.sin(t) * (size - 0.6)).toFixed(2); }).join('L') + 'Z';
     const vmax = d3.quantile(H2.map((d) => d.v).filter((v) => v != null).sort(d3.ascending), 0.97) || 1, shade = (v) => (v == null ? '#fff' : d3.interpolateRgb('#EEF0F4', INK)(Math.min(1, v / vmax)));
-    const ms = svg(mp, MW, MH, `Map of local authorities shaded by ${xname.toLowerCase()} for every 100 pupils`); ms.style('max-width', cap + 'px').style('margin', '0 auto');
+    const ms = svg(mp, MW, MH, `Map of local authorities shaded by ${xname.toLowerCase()} for every 1,000 pupils`); ms.style('max-width', cap + 'px').style('margin', '0 auto');
     ms.append('g').selectAll('path').data(H2).join('path').attr('d', dpath).attr('transform', (d) => `translate(${(d.r.q + (d.r.r & 1) / 2 - qs[0] + 0.5) * Math.sqrt(3) * size + 2},${(rs[1] - d.r.r) * 1.5 * size + size + 2})`).attr('fill', (d) => shade(d.v)).attr('stroke', d3.rgb(SOFT)).attr('stroke-width', 0.5)
-      .on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : d.v.toFixed(1) + ' for every 100 pupils'}`)).on('pointerleave', hideTip)
-      .on('click', (ev, d) => { let e = mp.querySelector('.ax-picked'); if (!e) e = add(mp, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(d.r.name)}</b>: ${d.v == null ? 'no figure' : d.v.toFixed(1) + ' for every 100 pupils'}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">Open</a>`; });
-    const mk = add(mp, 'div', 'ax-key'); add(mk, 'span', null, `0 <i style="background:linear-gradient(90deg,#EEF0F4,${INK});width:90px;border:1px solid ${SOFT}"></i>${vmax.toFixed(0)} or more for every 100 pupils`); add(mk, 'span', null, 'One hexagon for each local authority, placed roughly where it sits.');
+      .on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : d.v.toFixed(1) + ' for every 1,000 pupils'}`)).on('pointerleave', hideTip)
+      .on('click', (ev, d) => { let e = mp.querySelector('.ax-picked'); if (!e) e = add(mp, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(d.r.name)}</b>: ${d.v == null ? 'no figure' : d.v.toFixed(1) + ' for every 1,000 pupils'}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">Open</a>`; });
+    const mk = add(mp, 'div', 'ax-key'); add(mk, 'span', null, `0 <i style="background:linear-gradient(90deg,#EEF0F4,${INK});width:90px;border:1px solid ${SOFT}"></i>${vmax.toFixed(0)} or more for every 1,000 pupils`); add(mk, 'span', null, 'One hexagon for each local authority, placed roughly where it sits.');
     // how many authorities use each measure at all: none is a finding, and is not the same as a few
     const MS = [['hols', 'Notices for unauthorised holiday'], ['other', 'Notices for other unauthorised absence'], ['late', 'Notices for lateness'], ['repeat', 'Second notices within three years'], ['pros', 'Prosecutions for non-payment'], ['pros_limit', 'Prosecutions at the two-notice limit'],
       ['cm', 'Attendance case management'], ['cm_pros', 'Prosecutions after case management'], ['contracts', 'Parenting contracts offered'], ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];

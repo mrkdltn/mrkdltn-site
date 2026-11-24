@@ -49,6 +49,25 @@ So the tool shows the association and says plainly how strong it is, computed on
 - "Enforcement" on every local authority and county page: notices issued and for every 100 pupils against England, the share for unauthorised holiday, unauthorised holiday absence beside it, both year by year since 2013/14, what became of the notices, and the other measures for every 10,000 pupils.
 - "Enforcement" on Patterns: every local authority as a circle, a choice of enforcement measure against unauthorised holiday absence or a pupil group's absence, the strength of the pattern in a sentence, a map, and the authorities with most and fewest for their size.
 
+## Two strands, kept apart
+
+Mark's instruction of 24 November: penalty notices for a holiday in term time that the school did not agree, and penalty notices for other unauthorised absence from school, are separate things and must be treated as such. The pages never add them together. Each strand has its own count, its own rate for every 1,000 pupils and its own kind of absence beside it (unauthorised holiday absence; and unauthorised absence other than holiday, which is all unauthorised absence less unauthorised holiday and so includes arriving after the register has closed and absences with no reason yet given). The total appears only where the DfE gives nothing finer: what became of the notices (paid, withdrawn, prosecuted) is published for all notices together.
+
+England, 2024/25: 459,288 notices for unauthorised holiday (62.2 for every 1,000 pupils), 32,113 for other unauthorised absence (4.4) and 1,424 for lateness (0.2). Across local authorities with an exact figure, notices for other unauthorised absence have a median of 3.2 for every 1,000 pupils, the middle half between 1.2 and 6.6.
+
+Rank correlations by strand (local authorities, 2024/25; second figure allows for the share eligible for free school meals):
+
+| Set against | Holiday notices (151 authorities) | Notices for other unauthorised absence (138) |
+| --- | --- | --- |
+| Unauthorised holiday absence | +0.74, +0.69 | +0.21, +0.07 |
+| Other unauthorised absence | +0.40, +0.17 | +0.34, +0.12 |
+| Absence, pupils eligible for free school meals | +0.07, +0.30 | −0.08, +0.09 |
+| Absence, pupils not eligible | −0.06, −0.07 | +0.10, +0.12 |
+| Absence, SEN support | +0.27, +0.25 | +0.13, +0.10 |
+| Absence, EHC plan | +0.16, +0.25 | −0.02, +0.02 |
+
+Read separately, the two strands behave differently. Holiday notices follow holiday absence closely. Notices for other unauthorised absence follow that absence only weakly, and hardly at all once deprivation is allowed for: how far an authority uses notices for non-holiday absence looks much more like a choice of practice than a response to how much of it there is. Neither strand shows a clear link with the absence of pupils eligible for free school meals or with special educational needs. (These supersede the combined figures in the table further up, which used all notices together.)
+
 ## None is not fewer than 10
 
 Mark's point of 24 November: many authorities record none of a measure, and that is a finding in itself. In 2024/25, of 153 local authorities: 145 recorded no education supervision orders, 142 no parenting orders, 115 no prosecutions at the two-notice limit, 113 no notices for lateness, 92 offered no parenting contracts, 45 prosecuted nobody after case management, 29 had no case management cases and 17 prosecuted nobody for non-payment. Two issued no penalty notices at all. The tool writes a recorded zero as "None", a count of 1 to 9 as "fewer than 10", and a dash where the authority supplied no figure; each authority's table says how many authorities recorded none, and Patterns shows the split for every measure. On phones the table keeps the number and that count and drops the two per-10,000 columns.
