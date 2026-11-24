@@ -229,3 +229,90 @@ Seed 20261124.
 - Pupil groups: E08000025, E08000017, E06000012. In-year: England, E06000042, E06000007, E08000012.
 - Schools with fewer than 10 enrolments: 109476, 110405, 112803, 114065, 115703, 117064, 121480, 122294, 123756, 142250, 145341, 150249, 151001.
 - Rendered in addition, to show the worst cases: `k=a&id=E06000015&phase=X`, `k=t&id=16956&phase=P`, `urn=151185`, `k=a&id=E06000054&phase=X`, `urn=145198`.
+
+## Re-run at 6f69be2
+
+Run again on 24 November 2026 against commit `6f69be2` ("errors found by the independent figures check, fixed") with the data as rebuilt at that commit. Same seed (20261124), same sample, same 183 pages. The DfE files were downloaded afresh, and GIAS was taken from the extract of 24 November, the date the refetched data now records. My figures were recomputed before the changed scripts were read. Two of my definitions follow the tool's new ones, re-implemented from the primary files: an area is every school there in each period; a trust is today's schools followed back through a single plain predecessor, now for two-term periods as well.
+
+### The finding
+
+The one real error is gone. No year-earlier figure anywhere now leaves a school out, and no group or school lacks one that the DfE published. Of 5,787 displayed figures, 5,647 match to one decimal place, 133 are changes shown as the difference of the displayed figures (deliberate, not counted as errors), and 7 do not match: 4 pooled overall rates 0.1 out, 2 figures shown to two decimal places that are now 0.01 low, and 1 year-earlier severe figure not shown.
+
+Two things remain wrong in the stored data. Pooled overall and unauthorised absence still land on the wrong tenth in about 1.3% of cases. And the fix for rounding has newly broken the two figures on the in-year page that are shown to two decimal places.
+
+### Counts
+
+Stored data, all of it:
+
+| What | Compared | Result |
+| --- | --- | --- |
+| School rates (overall, unauthorised, persistent), 271,593 school-periods | 814,779 | all within 0.01; all show the right tenth except 23 exact ties at x.x5 |
+| Enrolments | 271,593 | all identical |
+| Pooled overall and unauthorised absence, every area and trust, every period | 139,836 | all within 0.02; 1,829 (1.3%) show the wrong tenth |
+| Pooled persistent absence | 69,918 | all within 0.01; all show the right tenth |
+| Pooled severe absence (a rate, or withheld) | 69,918 | all agree; all show the right tenth |
+| School-page benchmarks (England and local authority) | 24,368 | all within 0.02; 116 overall or unauthorised rates show the wrong tenth |
+| Pupil-group rates, 153 local authorities | 68,661 | all show the right tenth; none withheld at a count of exactly 10; none shown for a group under 50 with 0% or 100% persistent absence |
+| Number of schools behind every pooled figure | 69,918 | identical to mine |
+| Membership of every trust against GIAS of 24 November | 1,139 | identical |
+
+Pages:
+
+| Group | Figures | Match | Change taken from shown figures (0.1) | Does not match |
+| --- | --- | --- | --- | --- |
+| Schools (23 pages) | 1,012 | 942 | 70 | 0 |
+| England by phase | 42 | 40 | 2 | 0 |
+| Local authorities | 2,808 | 2,789 | 16 | 3 |
+| Counties | 279 | 271 | 8 | 0 |
+| Constituencies | 705 | 692 | 13 | 0 |
+| Wards | 198 | 191 | 7 | 0 |
+| Trusts | 437 | 425 | 10 | 2 |
+| Pupil groups | 210 | 204 | 6 | 0 |
+| In-year page | 96 | 93 | 1 | 2 |
+| All | 5,787 | 5,647 | 133 | 7 |
+
+At `7408458` the same sample gave 5,300 matches, 275 rates 0.1 out, 136 changes and 76 wrong. The 133 changes are about a quarter of the 530 or so changes checked; each is within 0.1 of the true change.
+
+Small-number rules hold as before: no severe absence on any of 36 school pages, no rate for the 13 schools under 10 enrolments, no pooled figure for the three small wards. No page raised a console error.
+
+### What still does not match
+
+**1. Pooled overall and unauthorised absence: the wrong tenth in about 1 case in 75. Build.** The build now recovers each school's sessions missed from its stored rate. That rate is held to 0.01 of a point and, since this commit, is stepped back by 0.01 wherever it rounded up to a 5. The pooled figure therefore carries an error of up to about 0.01, which is enough to cross a tenth, and `hund()` then steps the pooled figure back as well. Of 69,918 pooled overall figures, 897 show a tenth that is not the true one (about 70% of them 0.1 too low); for unauthorised absence it is 932. Persistent and severe absence are unaffected, because pupil counts recover exactly. This was about 5% before, so it is much reduced, not removed. Seen in the sample:
+
+| Page | Figure | Displayed | Mine | Difference |
+| --- | --- | --- | --- | --- |
+| `/attendance/group/?k=a&id=E08000025&phase=P` | Overall a year earlier (summary and tile) | 5.8% | 5.850% → 5.9% | −0.1 |
+| `/attendance/group/?k=a&id=E06000007&phase=X` | Year chart, 2024/25 | 13.9% | 13.951% → 14.0% | −0.1 |
+| `/attendance/group/?k=t&id=1337&phase=X` | Year chart, 2023/24 | 9.4% | 9.453% → 9.5% | −0.1 |
+| `/attendance/group/?k=a&id=E06000015&phase=X` (outside the sample) | Overall a year earlier | 13.7% | 13.751% → 13.8% | −0.1 |
+
+The cause is that sessions missed are not kept. The DfE files give the count (`sess_overall`, `sess_unauthorised`); storing it would make every pooled figure exact and remove the need to recover anything.
+
+**2. Figures shown to two decimal places are now 0.01 low. Build; newly broken by this commit.** The step back in `hund()` is right for a figure that will be rounded again to one decimal place and wrong for one that is shown as stored. The in-year page shows unauthorised holiday to two decimal places (`pc(y.hol_u, 2)`, and the reasons tooltip does the same):
+
+| Page | Figure | Displayed | Mine | DfE's own figure |
+| --- | --- | --- | --- | --- |
+| `/attendance/` | Unauthorised holiday, England, all schools | 0.44% | 0.449% → 0.45% | 0.45 |
+| `/attendance/#phase=S` | Unauthorised holiday, England, secondary | 0.34% | 0.345% → 0.35% | 0.35 |
+
+Any stored rate that rounded up to a 5 is affected, about one in twenty.
+
+**3. One year-earlier severe figure is not shown.** `/attendance/group/?k=t&id=3543&phase=P`: the data holds severe absence a year earlier (2.8%, more than 10 pupils), but the tile shows nothing because the latest figure is withheld. A choice of the page, not an error in a number.
+
+### The nine original findings
+
+| | Finding | Now |
+| --- | --- | --- |
+| 1 | Year-earlier figure left out schools that changed URN | **Resolved.** Every pooled figure rests on the same number of schools as mine, in every period. Derby special schools now show a year earlier 13.7% and +1.0 (true 13.75% and +0.9; the 0.1 is item 1 above). Trust 16956 shows 6.0% and persistent +0.8, as it should. School 151185 shows 4.3% a year earlier (4.325%). Trusts 3543 and 15795 now have year-earlier figures. |
+| 2 | "Since 2018/19" for a local authority meant two sets of schools | **Resolved.** Wiltshire special schools show +2.0 on both pages (true +2.01). All area figures now equal the school-page benchmark. |
+| 3 | Patterns regional sentence named the wrong regions | **Resolved** as to the regions: North East for the smallest primary rise, London alone for the largest, South West alone for the largest secondary rise. The sizes quoted are still differences of the shown figures, so the North East's rise reads 1.1 where it is 1.03, London's secondary rise 2.2 where it is 2.25, and England's special rise 2.7 where it is 2.64. See 6. |
+| 4 | Funnel band said to hold about 95% held 87% to 89% | **Resolved.** The band holds 669 of 705 primary trusts and 278 of 293 secondary trusts, 94.9% each, and the sentence no longer mentions chance. |
+| 5 | Rates rounded twice, 0.1 too high in about 5% | **Partly resolved.** School rates, pupil groups, England, and all persistent and severe figures now show the DfE's tenth (England primary persistent absence 13.2%, severe 1.0%). Pooled overall and unauthorised absence are still wrong in 1.3% of cases (item 1 above), and the fix has broken two-decimal figures (item 2 above). |
+| 6 | Changes are the difference of the shown figures | **Unchanged, by decision.** 133 of about 530 changes checked differ from the true change by 0.1. Not counted as errors. |
+| 7 | In-year count of authorities ignored small differences | **Resolved.** The page says lower in 114 of 151 and higher in 33; unrounded it is 114 and 37. The four that differ are equal to the hundredth. Secondary: 109 and 41 shown, 109 and 42 unrounded. The code comment says "unrounded"; it counts on stored hundredths. |
+| 8 | Secondary "July averaged" rested on one day | **Resolved.** The sentence now gives March (8.8%; mine 8.81%, 20 days) and drops July. Primary and special keep July, with 13 and 12 days. |
+| 9 | Smaller points | **Partly resolved.** The 18-pupil group is gone, and no group under 50 with 0% or 100% persistent absence is shown anywhere. The 2018/19 lower quarter for secondary schools still reads 4.6% (4.67%), a banded estimate the method note declares. A page asked for a phase the place lacks still shows another phase without saying so. |
+
+### Not re-checked
+
+The limits listed under "What I could not check" stand. In addition, the similar-schools match re-run on 24 November was not examined, and only the default view of each group page was read again.

@@ -37,6 +37,11 @@ def rate(n, d):
     return None if not d else hund(10000 * n / d)
 
 
+def rate2(n, d):
+    """For the few in-year figures shown to two decimal places as stored: plain rounding."""
+    return None if not d else round(10000 * n / d)
+
+
 def monday(d):
     x = datetime.date.fromisoformat(d)
     return (x - datetime.timedelta(days=x.weekday())).isoformat()
@@ -101,7 +106,9 @@ def to_date(series, last):
                 s[i] += x
     if s[0] < MIN_SESSIONS * 5:
         return None
-    return {k: rate(s[i + 1], s[0]) for i, k in enumerate(RATES)}
+    out = {k: rate(s[i + 1], s[0]) for i, k in enumerate(RATES)}
+    out['x'] = {k: rate2(s[i + 1], s[0]) for i, k in enumerate(RATES)}      # as plain hundredths, for the figures shown to two decimal places
+    return out
 
 
 def main():
@@ -152,7 +159,7 @@ def main():
     for c in pulse['ytd']:
         for y in pulse['ytd'][c]:
             for p, v in pulse['ytd'][c][y].items():
-                assert v is None or all(0 <= x <= 10000 for x in v.values()), (c, y, p)
+                assert v is None or all(0 <= x <= 10000 for k, x in v.items() if k != 'x'), (c, y, p)
 
 
 def share_card(pulse, eng, cur, last):
@@ -202,7 +209,11 @@ def schools():
     I = lambda v: int(v) if v != '' else None
     rows = {}
     for r in csv.DictReader(open(apath, encoding='utf-8')):
-        rows.setdefault(r['urn'], {})[r['period']] = [I(r['enrol']), I(r['poss'])] + [I(r[c]) for c in SCOLS[1:]] + [I(r.get('sev', ''))]
+        en, po, mi, mu, pn = I(r['enrol']), I(r['poss']), I(r['missed']), I(r['missed_unauth']), I(r['pa_n'])
+        pct = lambda n, d: None if n is None or not d else hund(10000 * n / d)
+        # [enrolments, sessions possible, overall, unauthorised, persistent, illness, unauthorised holiday, severe count,
+        #  then the counts behind the first three, kept for pooling and never published]
+        rows.setdefault(r['urn'], {})[r['period']] = [en, po, pct(mi, po), pct(mu, po), pct(pn, en), I(r['ill']), I(r['hol_u']), I(r.get('sev', '')), mi, mu, pn]
     meta = {r['urn']: r for r in csv.DictReader(open(os.path.join(RAW, 'schools.csv'), encoding='utf-8'))}
     periods = sorted({p for h in rows.values() for p in h})
     fy = [p for p in periods if not p.endswith('AS')]
@@ -225,8 +236,8 @@ def schools():
         for v in urns_periods:
             if v[0] is None or v[1] is None or v[2] is None:
                 continue
-            # counts are recovered from each school's published rate, then pooled: sessions missed over sessions possible, absentees over enrolments
-            e += v[0]; po += v[1]; ab += round(v[2] * v[1] / 10000); un += round((v[3] or 0) * v[1] / 10000); pa += round((v[4] or 0) * v[0] / 10000)
+            # the DfE's own counts, summed: sessions missed over sessions possible, absentees over enrolments
+            e += v[0]; po += v[1]; ab += v[8] or 0; un += v[9] or 0; pa += v[10] or 0
         return None if not po or e < MIN_ENROL else [hund(10000 * ab / po), hund(10000 * un / po), hund(10000 * pa / e)]
 
     def sev(urns_periods):

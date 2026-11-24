@@ -76,7 +76,7 @@
       ['Overall absence since September', pc(y.abs), yl ? 'same point last year ' + pc(yl.abs) : ''],
       ['Latest week, from ' + (li >= 0 ? fmtD(P.weeks[cur][li], {day: 'numeric', month: 'short'}) : ''), li >= 0 ? pc(w[li]) : '–', a.l !== 'national' ? 'England ' + pc(P.weekly[eng][cur][ph].abs[li]) : ''],
       ['Authorised absence', pc(y.auth), 'of which illness ' + pc(y.ill)],
-      ['Unauthorised absence', pc(y.unauth), 'of which holiday ' + pc(y.hol_u, 2)],
+      ['Unauthorised absence', pc(y.unauth), 'of which holiday ' + pc((y.x || y).hol_u, 2)],
     ];
     $('ax-kpis').innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${x[0]}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');
   }
@@ -169,7 +169,7 @@
     const x = d3.scaleLinear([0, d3.max(R, (r) => r[1].abs)], [m.l, W - m.r]);
     R.forEach((r, i) => { const g = s.append('g').attr('transform', `translate(0,${m.t + i * rh})`); let acc = 0;
       g.append('text').attr('class', i === 0 ? 'strong' : null).attr('y', 14).text(r[0]);
-      const segs = parts.map((p) => { const v = Math.max(0, p[1](r[1])); const o = {n: p[0], v, x0: acc, c: p[2]}; acc += v; return o; });
+      const segs = parts.map((p) => { const v = Math.max(0, p[1](r[1].x || r[1]));      // the plain hundredths: these are shown to two decimal places const o = {n: p[0], v, x0: acc, c: p[2]}; acc += v; return o; });
       const rect = g.selectAll('rect').data(segs).join('rect').attr('x', (d) => x(d.x0)).attr('y', 22).attr('height', 22).attr('width', (d) => Math.max(0, x(d.x0 + d.v) - x(d.x0) - 1)).attr('fill', (d) => d.c);
       tipOn(rect, (d) => `<b>${d.n}</b><br>${pc(d.v, 2)} of possible sessions<br>${Math.round(100 * d.v / acc)}% of all absence`);
       g.append('text').attr('class', 'strong').attr('x', x(acc) + 6).attr('y', 38).text(pc(r[1].abs)); });

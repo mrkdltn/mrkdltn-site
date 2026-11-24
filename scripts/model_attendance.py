@@ -45,6 +45,8 @@ def fraclogit(X, y, iters=60):
 def main():
     rd = lambda n: list(csv.DictReader(open(os.path.join(RAW, n), encoding='utf-8')))
     absn = rd('school_absence.csv')
+    for r in absn:      # the file holds counts; the match needs the overall rate, in hundredths of a point
+        r['abs'] = str(round(10000 * int(r['missed']) / int(r['poss']))) if r['missed'] != '' and r['poss'] not in ('', '0') else ''
     latest = max(r['period'] for r in absn if r['period'].endswith('AS'))
     A = {r['urn']: r for r in absn if r['period'] == latest and r['abs'] != '' and int(r['enrol']) >= 10}
     M = {r['urn']: r for r in rd('schools.csv')}
