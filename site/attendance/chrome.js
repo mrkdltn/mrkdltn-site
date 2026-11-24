@@ -104,3 +104,39 @@
   const host = document.createElement('div'); host.id = 'ax-places-foot'; method.parentNode.insertBefore(host, method);
   try { AXtools.renderPins(host); } catch (e) { host.remove(); }
 })();
+
+/* Feedback, as on the Ofsted Explorer: one form at the foot of every page, posted to /api/feedback (the same private
+   store), with the address of the page attached so the place and the choices on screen come with the message. */
+(function () {
+  const method = document.querySelector('main.ax .ax-method'); if (!method || document.documentElement.classList.contains('ax-brief')) return;
+  const s = document.createElement('section'); s.className = 'ax-card ax-fb'; s.dataset.nav = 'Feedback'; s.id = 'feedback';
+  s.innerHTML = '<h2>Tell me what to improve</h2>'
+    + '<p class="ax-sub">Spotted a figure that looks wrong, want something added, or have a question about the data? Every message is read.</p>'
+    + '<form novalidate>'
+    + '<div class="ax-fbrow"><label for="ax-fb-type">What is it about?</label><select id="ax-fb-type" name="type" class="ax-select"><option value="suggestion">A suggestion or feature</option><option value="error">Something looks wrong</option><option value="data">A question about the data</option><option value="other">Something else</option></select></div>'
+    + '<div class="ax-fbrow"><label for="ax-fb-msg">Your message</label><textarea id="ax-fb-msg" name="message" rows="5" maxlength="4000" required placeholder="The more specific the better: which place, which chart, what you expected to see."></textarea></div>'
+    + '<div class="ax-fbrow ax-fbhp" aria-hidden="true"><label for="ax-fb-web">Leave this empty</label><input id="ax-fb-web" name="website" tabindex="-1" autocomplete="off"></div>'
+    + '<div class="ax-fbrow"><label class="ax-fbchk"><input type="checkbox" id="ax-fb-consent"> I&rsquo;d like a reply. Keep my email address for that.</label>'
+    + '<input type="email" id="ax-fb-email" name="email" placeholder="Email address (optional)" autocomplete="email" disabled></div>'
+    + '<p class="ax-fbnote">Messages are stored privately on this site&rsquo;s hosting and read only by Mark Dalton, to improve the Attendance Explorer. The address of the page you were viewing is attached. Your email, if you give it, is used only to reply and is deleted within 12 months. Please do not include details about individual pupils or staff.</p>'
+    + '<p class="ax-fbact"><button type="submit" class="ax-btn ax-fbsend">Send</button> <span id="ax-fb-note" role="status" aria-live="polite"></span></p>'
+    + '</form>';
+  method.after(s);
+  const f = s.querySelector('form'), consent = s.querySelector('#ax-fb-consent'), email = s.querySelector('#ax-fb-email'), note = s.querySelector('#ax-fb-note'), btn = s.querySelector('.ax-fbsend');
+  consent.addEventListener('change', () => { email.disabled = !consent.checked; if (consent.checked) email.focus(); else email.value = ''; });
+  const say = (t, bad) => { note.textContent = t; note.className = bad ? 'bad' : ''; };
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = f.message.value.trim(); if (msg.length < 5) { say('Please write a little more.', true); f.message.focus(); return; }
+    const urn = (/[?&]urn=(\d+)/.exec(location.search) || /\/school\/(\d+)/.exec(location.pathname) || [])[1] || '';
+    const body = {type: f.type.value, message: msg, consent: consent.checked, email: consent.checked ? email.value.trim() : '', page: location.pathname + location.search + location.hash, urn, website: f.website.value};
+    btn.disabled = true; say('Sending…');
+    try {
+      const r = await fetch('/api/feedback', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(body)});
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.ok) { f.reset(); email.disabled = true; say('Thank you. Your message has been received.'); }
+      else say(j.error || 'Sorry, that did not send. Please try again later.', true);
+    } catch (err) { say('Sorry, that did not send. Please check your connection and try again.', true); }
+    btn.disabled = false;
+  });
+})();

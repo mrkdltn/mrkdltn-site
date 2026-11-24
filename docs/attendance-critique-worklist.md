@@ -66,3 +66,11 @@ An independent worker recomputed 5,787 displayed figures on 183 pages from the D
 | "July averaged" for secondary schools rested on one day | Fixed: a month is quoted only with ten or more days of figures |
 | A group of 18 pupils showed 100% persistent absence | Fixed: a pupil group under 50 in which every pupil, or none, is persistently absent is left out |
 | Changes are the difference of the figures as shown, so about a quarter are 0.1 from the true change | Open: a decision for Mark |
+
+### After the figures check
+
+| Item | State |
+| --- | --- |
+| Pooled overall and unauthorised absence still landed on the wrong tenth in about 1.3% of views, and in-year figures to two decimal places were 0.01 low | Fixed in `2c179d4`: school rates and every pooled rate are computed from the DfE's counts; the in-year two-decimal figures use plain hundredths. A third, scoped pass by the independent checker is recorded in `docs/attendance-figures-check.md` |
+| The Areas page was blank on the preview between `2c179d4` and `13e6f7c` | A one-line patch commented out the rest of its statement. Fixed, and `scripts/check_attendance.sh` is now the gate before every commit to `site/attendance/` |
+| No way to report a wrong figure | A feedback form sits at the foot of every page except briefings and Start here. It posts to the Ofsted Explorer's `/api/feedback` with the page address attached, so no new cloud resource is needed. Not yet tried on Cloudflare; a What's new page for Attendance waits until it goes live |
