@@ -8,6 +8,8 @@ Inputs (data/raw/):
 Outputs (site/explorer/data/):
   ks4.json, rc.json  compact column-major JSON, served compressed by Cloudflare Pages
   nn/0..31.json      similar-schools lists, sharded by URN
+  it/0..127.json     inspection timing (scripts/inspection_timing.py), one record per state-funded school, sharded
+                     by URN % 128 so a school page fetches only its own shard (under 5 KB compressed)
   build.json         when and from what the data was built
 
 Format (column-major, compresses well): {"n": rows, "cols": [...], "codes": {col: [labels]}, "data": {col: [...]}}.
@@ -32,6 +34,7 @@ KS4_DROP = {'relig', 'ss_z', 'ss_dist', 'ss_mean_25'}
 # decimals kept per column (everything else numeric is kept as written)
 ROUND = {'lat': 4, 'lng': 4}
 NN_SHARDS = 32
+IT_SHARDS = 128
 
 
 def sha(path):
@@ -162,6 +165,43 @@ def write_model(ks4):
     return model
 
 
+def write_timing(raw, out, as_at):
+    """Inspection timing for every state-funded school in Ofsted's MI, read against Ofsted's published policy and the
+    inspection regulations (docs/inspection-timing-rules.md). MI is the record; a report card read daily counts only
+    where it is newer. Returns the totals for build.json."""
+    import inspection_timing as it
+    mi_path = os.path.join(raw, 'ofsted_mi_latest.csv')
+    if not os.path.exists(mi_path):
+        return None
+    mi = load(mi_path)
+    gias_path, daily_path = os.path.join(raw, 'gias_slim.csv'), os.path.join(raw, 'reports_daily.csv')
+    gias = {g['urn']: g for g in load(gias_path)} if os.path.exists(gias_path) else {}
+    daily = {d['urn']: d for d in load(daily_path)} if os.path.exists(daily_path) else {}
+    meta_path = os.path.join(raw, 'ofsted_mi_meta.json')
+    mi_as_at = json.load(open(meta_path)).get('as_at') if os.path.exists(meta_path) else None
+    shards, totals, used, closed = {}, {}, 0, 0
+    for r in mi:
+        g = gias.get(r['urn'], {})
+        if (g.get('status') or '') == 'Closed':
+            closed += 1
+            continue
+        row, took = it.merge_daily(r, daily.get(r['urn']))
+        used += took
+        rec = it.classify(row, g, as_at)
+        key = rec['rule'] + ('.' + rec['why'] if rec['why'] else '')
+        totals[key] = totals.get(key, 0) + 1
+        shards.setdefault(int(r['urn']) % IT_SHARDS, {})[r['urn']] = it.compact(rec)
+    d = os.path.join(out, 'it')
+    os.makedirs(d, exist_ok=True)
+    head = {'asat': as_at.isoformat(), 'mi': mi_as_at}
+    for k in range(IT_SHARDS):
+        with open(os.path.join(d, f'{k}.json'), 'w') as f:
+            json.dump(dict(head, s=shards.get(k, {})), f, separators=(',', ':'))
+    return {'as_at': as_at.isoformat(), 'mi_as_at': mi_as_at, 'schools': sum(totals.values()),
+            'closed_skipped': closed, 'daily_report_cards_used': used, 'shards': IT_SHARDS,
+            'by_rule': dict(sorted(totals.items(), key=lambda kv: -kv[1]))}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     ks4_path, rc_path = os.path.join(RAW, 'ks4_model_v3.csv'), os.path.join(RAW, 'ofsted_rc.csv')
@@ -258,10 +298,13 @@ def main():
         with open(os.path.join(OUT, name), 'w', encoding='utf-8') as f:
             json.dump(obj, f, ensure_ascii=False, separators=(',', ':'))
 
+    timing = write_timing(RAW, OUT, datetime.date.today())
+
     rc_dates = sorted(r['insp_date'] for r in rc if r.get('insp_date'))
     downloads = data_downloads.write(ks4, rc, rcols, model, OUT)
     now = datetime.datetime.now(datetime.timezone.utc)
-    sources = {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path) if os.path.exists(p)}
+    mi_path = os.path.join(RAW, 'ofsted_mi_latest.csv')
+    sources = {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path, mi_path) if os.path.exists(p)}
     # data version: build date plus a short fingerprint of the inputs, so two builds from the same inputs share it
     fp = hashlib.sha256(''.join(f'{k}{v}' for k, v in sorted(sources.items())).encode()).hexdigest()[:8]
     commit = os.environ.get('CF_PAGES_COMMIT_SHA', '')
@@ -281,6 +324,7 @@ def main():
         'latest_published': latest_published,
         'sources': sources,
         'downloads': downloads,
+        'inspection_timing': timing,
     }
     with open(os.path.join(OUT, 'build.json'), 'w') as f:
         json.dump(meta, f, indent=1)

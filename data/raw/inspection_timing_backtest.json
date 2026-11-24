@@ -1,0 +1,57 @@
+{
+ "window_from": "2025-12-01",
+ "window_to": "2026-11-03",
+ "run": "2026-11-24",
+ "baseline": "Ofsted MI, latest inspections as at 31 October 2025",
+ "min_n": 100,
+ "groups": {
+  "MON_LEG": {
+   "n": 24,
+   "q1": 1.62,
+   "median": 1.82,
+   "q3": 2.27
+  },
+  "NEW": {
+   "n": 347,
+   "q1": 2.79,
+   "median": 2.98,
+   "q3": 3.15
+  },
+  "NEW.nopred": {
+   "n": 39,
+   "q1": 2.76,
+   "median": 2.81,
+   "q3": 2.85
+  },
+  "RI25.RI_KJ": {
+   "n": 4,
+   "q1": 1.1,
+   "median": 1.31,
+   "q3": 1.6
+  },
+  "RI25.RI_OE": {
+   "n": 462,
+   "q1": 2.28,
+   "median": 2.43,
+   "q3": 2.57
+  },
+  "RI25.UNG_CONCERN": {
+   "n": 73,
+   "q1": 1.97,
+   "median": 2.17,
+   "q3": 2.36
+  },
+  "RI25.UNG_SLIP": {
+   "n": 7,
+   "q1": 0.98,
+   "median": 1.04,
+   "q3": 1.16
+  },
+  "STD4": {
+   "n": 2711,
+   "q1": 3.93,
+   "median": 4.07,
+   "q3": 4.22
+  }
+ }
+}
