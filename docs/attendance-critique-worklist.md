@@ -97,3 +97,5 @@ An independent worker recomputed 5,787 displayed figures on 183 pages from the D
 Mark said the tool appears overly complex and asked for a fresh review of the whole of it. `docs/attendance-simplification-review.md` holds an independent reviewer's measurements and findings and a proposal for five pages, one search and one menu, with a named list of what to cut. No rebuilding until Mark has chosen a direction; the items above are on hold until then.
 
 Mark accepted the direction on 24 Nov ("Ok go"). School page rebuilt as the example: 3.1 phone screens with "More detail" closed (was 7.7), four sections (was eight), no controls, the answer at about half a screen. Search now matches whole words and ranks schools properly ("st mary" finds St Mary's schools). Awaiting Mark's view before the trust page is started.
+
+Mark rejected the cut-down school page on seeing it (24 Nov) and asked to roll back and refine and organise instead. Rolled back; the search fix is kept. Next: Mark to choose how the fuller content should be organised.

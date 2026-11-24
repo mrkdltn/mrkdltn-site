@@ -1,5 +1,7 @@
 # Attendance Explorer: fresh review and simplification proposal
 
+> **Status, 24 November 2026: the proposal below was not adopted.** Mark saw the school page rebuilt to it and chose to keep the fuller tool, refining the experience and organising the content instead of cutting. The measurements and findings stand as a record; the section "Proposal" and the lists of what to cut do not describe the direction.
+
 24 November 2026. Mark asked for a fresh review of the whole tool with a full understanding of what its audiences need, saying it "appears overly complex". An independent reviewer with no part in building it used the preview on a phone (390 px) and a desktop (1,300 px) as seven different people, each with one question and two minutes, measured every page and compared it with the Ofsted Explorer. This note records what it found and proposes a simpler tool. Nothing has been rebuilt; the proposal is for Mark to accept, change or reject.
 
 ## How complex it has become
