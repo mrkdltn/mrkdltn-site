@@ -201,26 +201,27 @@
   }
 
   function funnel(el, M, rows) {
-    $('gx-over-h').textContent = 'Among trusts, allowing for size'; $('gx-over-s').textContent = `Each dot is a trust with at least three ${PH[phase]}, placed by its number of pupils and by ${M.n}. The bands show where about 95% and 99.8% of trusts of each size fall. A small trust varies more by chance, so the bands are wider on the left. Tap a dot to name the trust.`;
+    $('gx-over-h').textContent = 'Among trusts, allowing for size'; $('gx-over-s').textContent = `Each dot is a trust with at least three ${PH[phase]}, placed by its number of pupils and by ${M.n}. The band shows where 95% of these trusts fall, allowing for size. A small trust varies more from year to year, so the band is wider on the left. Tap a dot to name the trust.`;
     el.innerHTML = ''; const p0 = d3.sum(rows, (d) => d.v * d.n) / d3.sum(rows, (d) => d.n) / 10000;
     const z = rows.map((d) => (d.v / 10000 - p0) / Math.sqrt(p0 * (1 - p0) / d.n)).sort(d3.ascending), k = Math.floor(z.length * 0.1), zw = z.map((v, i) => (i < k ? z[k] : i >= z.length - k ? z[z.length - k - 1] : v));
-    const phi = Math.max(1, d3.mean(zw, (v) => v * v));
+    // the band is set from the trusts themselves: wide enough that 95% of them fall inside it
+    const az = z.map(Math.abs).sort(d3.ascending), phi = Math.max(1, Math.pow(d3.quantile(az, 0.95) / 1.96, 2));
     const W = width(el), H = Math.round(Math.min(420, Math.max(260, W * 0.5))), m = {t: 14, r: 16, b: 40, l: 44}, s = svg(el, W, H, 'Funnel plot of trusts');
     const xe = d3.extent(rows, (d) => d.n), x = d3.scaleLog([xe[0] * 0.85, xe[1] * 1.15], [m.l + 6, W - m.r - 6]), lim = (n, q) => 10000 * (p0 + q * Math.sqrt(phi * p0 * (1 - p0) / n));
-    const ys = rows.map((d) => d.v).concat([lim(x.domain()[0], 3.09), lim(x.domain()[0], -3.09)]), y = d3.scaleLinear([Math.max(0, d3.min(ys)), d3.max(ys)], [H - m.b, m.t]).nice(5);
+    const ys = rows.map((d) => d.v).concat([lim(x.domain()[0], 1.96), lim(x.domain()[0], -1.96)]), y = d3.scaleLinear([Math.max(0, d3.min(ys)), d3.max(ys)], [H - m.b, m.t]).nice(5);
     y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text((t / 100) + '%'); });
     [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000].filter((t) => t >= x.domain()[0] && t <= x.domain()[1]).forEach((t) => s.append('text').attr('x', x(t)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(t.toLocaleString('en-GB')));
     s.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text('Pupils in the trust’s ' + PH[phase]);
     const ns = d3.range(60).map((i) => x.invert(m.l + 6 + i * (W - m.r - m.l - 12) / 59)), area = (q) => d3.area().x((n) => x(n)).y0((n) => y(Math.max(y.domain()[0], lim(n, -q)))).y1((n) => y(Math.min(y.domain()[1], lim(n, q))))(ns);
-    s.append('path').attr('d', area(3.09)).attr('fill', '#F4F5F8'); s.append('path').attr('d', area(1.96)).attr('fill', '#E6EAF0');
+    s.append('path').attr('d', area(1.96)).attr('fill', '#E6EAF0');
     s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(p0 * 10000)).attr('y2', y(p0 * 10000)).attr('stroke', MUTED).attr('stroke-width', 2);
     const html = (d) => `<b>${esc(d.r.name)}</b><br>${d.r[phase][0]} ${PH[phase]}, ${d.n.toLocaleString('en-GB')} pupils<br>${cap(M.n)} ${pc(d.v)}`;
     const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(rows.filter((d) => d.r.id !== id)).join('circle').attr('cx', (d) => x(d.n)).attr('cy', (d) => y(d.v)).attr('r', W < 480 ? 3 : 4).attr('fill', MUTED).attr('fill-opacity', 0.5);
     c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); picked(el, d.r.name, fv(d.v), glink('t', d.r.id)); });
     const me = rows.find((d) => d.r.id === id); if (me) tipOn(s.append('path').datum(me).attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(me.n)},${y(me.v)})`).attr('fill', INK).attr('stroke', '#fff'), html);
-    key(el, [`<i style="background:${MUTED};border-radius:50%;width:10px"></i>Trusts (${rows.length})`, `<i style="background:#E6EAF0"></i>About 95% of trusts`, `<i style="background:#F4F5F8;border:1px solid ${GRID}"></i>About 99.8%`, `<i class="ln" style="border-color:${MUTED}"></i>All these trusts together, ${pc(p0 * 10000)}`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}`] : []));
+    key(el, [`<i style="background:${MUTED};border-radius:50%;width:10px"></i>Trusts (${rows.length})`, `<i style="background:#E6EAF0"></i>Where 95% of these trusts fall`, `<i class="ln" style="border-color:${MUTED}"></i>All these trusts together, ${pc(p0 * 10000)}`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}`] : []));
     if (me) { const zz = (me.v / 10000 - p0) / Math.sqrt(phi * p0 * (1 - p0) / me.n), a = Math.abs(zz);
-      $('gx-over-r').innerHTML = `With ${me.n.toLocaleString('en-GB')} pupils in its ${PH[phase]}, ${esc(G.name)} sits ` + (a < 1.96 ? 'inside the band that holds about 95% of trusts of its size.' : `${zz < 0 ? 'below' : 'above'} the band that holds about ${a < 3.09 ? '95' : '99.8'}% of trusts of its size, with ${zz < 0 ? 'lower' : 'higher'} ${M.n} than chance alone would explain in a trust of its size.`) + ' The comparison takes no account of the pupils its schools serve.'; }
+      $('gx-over-r').innerHTML = `With ${me.n.toLocaleString('en-GB')} pupils in its ${PH[phase]}, ${esc(G.name)} sits ` + (a < 1.96 ? 'inside the band where 95% of these trusts fall.' : `${zz < 0 ? 'below' : 'above'} the band where 95% of these trusts fall, with ${zz < 0 ? 'lower' : 'higher'} ${M.n} than most trusts of its size.`) + ' The comparison takes no account of the pupils its schools serve.'; }
     else $('gx-over-r').textContent = '';
   }
 

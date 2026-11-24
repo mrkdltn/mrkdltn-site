@@ -24,6 +24,13 @@ GROUP = {('Total', 'Total'): 'all', ('FSM', 'FSM eligible'): 'fsm', ('FSM', 'FSM
 PHASE = {'Total': 'A', 'State-funded primary': 'P', 'State-funded secondary': 'S', 'Special': 'X'}
 
 
+def hund(x):
+    """A rate in hundredths of a point that still rounds to the right tenth. Pages show one decimal place by rounding these
+    hundredths, so 13.2476 must not be stored as 13.25 (which would show as 13.3): where rounding up lands on a 5, step back one."""
+    r = round(x)
+    return r - 1 if r % 10 == 5 and r - x > 1e-6 else r
+
+
 def get(url, timeout=600):
     return urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': UA}), timeout=timeout)
 
@@ -44,8 +51,8 @@ def main():
         lvl = r['geographic_level']
         code = r['new_la_code'] if lvl == 'Local authority' else r['region_code'] if lvl == 'Regional' else r['country_code']
         try:
-            out.append([r['time_period'][:4] + 'AS', code, ph, g, int(float(r['enrolments'])), int(float(r['sess_possible'])), round(float(r['sess_overall_percent']) * 100), round(float(r['enrolments_pa_10_exact_percent']) * 100),
-                        round(float(r['enrolments_pa_50_exact_percent']) * 100) if r.get('enrolments_pa_50_exact_percent', '').replace('.', '', 1).isdigit() else ''])
+            out.append([r['time_period'][:4] + 'AS', code, ph, g, int(float(r['enrolments'])), int(float(r['sess_possible'])), hund(float(r['sess_overall_percent']) * 100), hund(float(r['enrolments_pa_10_exact_percent']) * 100),
+                        hund(float(r['enrolments_pa_50_exact_percent']) * 100) if r.get('enrolments_pa_50_exact_percent', '').replace('.', '', 1).isdigit() else ''])
         except ValueError:
             continue
     os.makedirs(OUT, exist_ok=True)

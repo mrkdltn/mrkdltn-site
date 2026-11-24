@@ -58,10 +58,17 @@ def newest():
     return found
 
 
+def hund(x):
+    """A rate in hundredths of a point that still rounds to the right tenth. Pages show one decimal place by rounding these
+    hundredths, so 13.2476 must not be stored as 13.25 (which would show as 13.3): where rounding up lands on a 5, step back one."""
+    r = round(x)
+    return r - 1 if r % 10 == 5 and r - x > 1e-6 else r
+
+
 def bp(v):
     """A DfE percentage as hundredths of a point; '' for not applicable or missing."""
     try:
-        return round(float(v) * 100)
+        return hund(float(v) * 100)
     except ValueError:
         return ''
 

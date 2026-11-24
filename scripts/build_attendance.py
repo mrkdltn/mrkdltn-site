@@ -26,8 +26,15 @@ USUAL_DAY = 0.8
 USUAL_WEEK = 0.7
 
 
+def hund(x):
+    """A rate in hundredths of a point that still rounds to the right tenth. Pages show one decimal place by rounding these
+    hundredths, so 13.2476 must not be stored as 13.25 (which would show as 13.3): where rounding up lands on a 5, step back one."""
+    r = round(x)
+    return r - 1 if r % 10 == 5 and r - x > 1e-6 else r
+
+
 def rate(n, d):
-    return None if not d else round(10000 * n / d)
+    return None if not d else hund(10000 * n / d)
 
 
 def monday(d):
@@ -218,15 +225,16 @@ def schools():
         for v in urns_periods:
             if v[0] is None or v[1] is None or v[2] is None:
                 continue
-            e += v[0]; po += v[1]; ab += v[2] * v[1]; un += (v[3] or 0) * v[1]; pa += (v[4] or 0) * v[0]
-        return None if not po or e < MIN_ENROL else [round(ab / po), round(un / po), round(pa / e)]
+            # counts are recovered from each school's published rate, then pooled: sessions missed over sessions possible, absentees over enrolments
+            e += v[0]; po += v[1]; ab += round(v[2] * v[1] / 10000); un += round((v[3] or 0) * v[1] / 10000); pa += round((v[4] or 0) * v[0] / 10000)
+        return None if not po or e < MIN_ENROL else [hund(10000 * ab / po), hund(10000 * un / po), hund(10000 * pa / e)]
 
     def sev(urns_periods):
         """Severe absence (half or more of sessions missed) pooled across schools, for areas, trusts and phases only.
         Never given for a single school, nor where fewer than 10 pupils are severely absent."""
         vs = [v for v in urns_periods if v[0] is not None and len(v) > 7 and v[7] is not None]
         n, e = sum(v[7] for v in vs), sum(v[0] for v in vs)
-        return round(10000 * n / e) if n >= MIN_ENROL and e and len(vs) >= MIN_SCHOOLS else None
+        return hund(10000 * n / e) if n >= MIN_ENROL and e and len(vs) >= MIN_SCHOOLS else None
     pool.sev = sev
     groups = {}
     for u, h in rows.items():
@@ -259,6 +267,10 @@ def schools():
             if add:
                 join = join or first
                 out.update(add)
+            # the two-term figures too: without this a school that changed URN had no "year earlier", and every area and trust
+            # holding it compared this year with fewer schools than last (found by the figures check, 24 November 2026)
+            first_as = min([p for p in out if p.endswith('AS')] or ['9999AS'])
+            out.update({p: v for p, v in rows[pr].items() if p.endswith('AS') and p < first_as})
             cur = pr
         return out, join
 
@@ -375,9 +387,10 @@ def pupil_groups():
     out = {}
     if os.path.exists(path):
         for r in csv.DictReader(open(path, encoding='utf-8')):
-            if int(r['enrol']) >= MIN_ENROL:
+            # a small group in which every pupil, or none, is persistently absent would tell on those pupils: leave it out
+            if int(r['enrol']) >= MIN_ENROL and not (int(r['enrol']) < 50 and int(r['pa']) in (0, 10000)):
                 out.setdefault(r['code'], {}).setdefault(r['phase'], {}).setdefault(r['group'], {})[r['period']] = [int(r['enrol']), int(r['poss']), int(r['abs']), int(r['pa']),
-                                                                                                                 int(r['sev']) if r.get('sev') not in ('', None) and int(r['sev']) * int(r['enrol']) >= 10 * 10000 else None]
+                                                                                                                 int(r['sev']) if r.get('sev') not in ('', None) and round(int(r['sev']) * int(r['enrol']) / 10000) >= 10 else None]
     return out
 
 
@@ -391,7 +404,7 @@ def pg_pool(parts):
                     t = acc.setdefault(ph, {}).setdefault(g, {}).setdefault(p, [0, 0, 0, 0, 0])
                     t[0] += v[0]; t[1] += v[1]; t[2] += v[2] * v[1]; t[3] += v[3] * v[0]
                     t[4] = None if t[4] is None or v[4] is None else t[4] + v[4] * v[0]
-    return {ph: {g: {p: [round(t[2] / t[1]), round(t[3] / t[0]), None if t[4] is None else round(t[4] / t[0])] for p, t in ps.items() if t[0] >= MIN_ENROL and t[1]} for g, ps in gs.items()} for ph, gs in acc.items()}
+    return {ph: {g: {p: [hund(t[2] / t[1]), hund(t[3] / t[0]), None if t[4] is None else hund(t[4] / t[0])] for p, t in ps.items() if t[0] >= MIN_ENROL and t[1]} for g, ps in gs.items()} for ph, gs in acc.items()}
 
 
 def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest, bench=None, la_names=None):
@@ -418,6 +431,15 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
             members.setdefault(('y', slug(county[m['la']])), []).append(u)
             members.setdefault(('a', m['la']), []).append(u)
     hexes = json.load(open(os.path.join(RAW, 'pcon_hex.json')))
+    # An area's figure for a year is every school that was there that year, as the DfE's own area figures are. (Following
+    # today's schools back, as trusts do, gave a local authority two different changes since 2018/19 on different pages.)
+    then = {}
+    for u in rows:
+        m = meta[u]
+        for key in ((('w', m['ward_code']) if m['ward_code'].startswith('E05') else None), (('c', m['pcon_code']) if m['pcon_code'].startswith('E14') else None),
+                    (('a', m['la']) if m['la'] in county else None), (('y', slug(county[m['la']])) if m['la'] in county else None)):
+            if key:
+                then.setdefault(key, []).append(u)
     shards = {k: [dict() for _ in range(n)] for k, n in G_KIND_SHARDS.items()}
     index = {k: [] for k in ('k', 'id', 'name', 'n')}
     overview = {k: [] for k in G_KIND_SHARDS}
@@ -438,7 +460,7 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
             if big and len(ms) >= MIN_SCHOOLS:
                 b = {}
                 for p in periods:
-                    vs = [hist[u][p] for u in ms if p in hist[u]]
+                    vs = [hist[u][p] for u in ms if p in hist[u]] if kind == 't' else [rows[u][p] for u in then[(kind, gid)] if meta[u]['phase'] == ph and p in rows[u]]
                     if len(vs) >= MIN_SCHOOLS:
                         r = pool(vs)
                         if r:

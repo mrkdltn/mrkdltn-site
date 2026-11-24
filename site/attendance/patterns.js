@@ -144,7 +144,9 @@
       (n) => `<b>${n}</b><br>${ay(last)}: ${MN[meas]} ${V.now.fmt(now(n))}, ${rel(now(n) - now('England'), 'England')} (${V.now.fmt(now('England'))})<br>${ay(base)}: ${pc(val(n, base))}<br>Change: ${signed(chg(n))} points; England ${signed(chg('England'))}`);
     key(el, [`<i style="background:${AXc.VERD}"></i>Below England`, `<i style="background:${AXc.RUST}"></i>Above England`, `<i style="background:${MUTED};width:2px;height:12px;vertical-align:-2px"></i>England`]);
     const ends = (f) => { const a = d3.min(names, f), b = d3.max(names, f); return {lo: a, hi: b, los: names.filter((n) => f(n) === a).sort(), his: names.filter((n) => f(n) === b).sort()}; };
-    const A = ends(now), C = ends(chg), ce = chg('England'), allUp = ce > 0 && C.lo > 0, allDown = ce < 0 && C.hi < 0;
+    // which region is lowest, highest, or changed least or most is decided on the unrounded figures; the figures quoted are as shown
+    const endsBy = (f, show) => { const a = d3.least(names, f), b = d3.greatest(names, f); return {lo: show(a), hi: show(b), los: [a], his: [b]}; };
+    const A = endsBy((n) => val(n, last), now), C = endsBy((n) => val(n, last) - val(n, base), chg), ce = chg('England'), allUp = ce > 0 && C.lo > 0, allDown = ce < 0 && C.hi < 0;
     $('px-reg-s').textContent = `Today’s schools in each region taken together for the full school year ${ay(last)}, in order of ${MN[meas]}, each set against England. The change since ${ay(base)} is in percentage points and is set against England’s change.`;
     $('px-reg-r').innerHTML = `In ${ay(last)}, ${MN[meas]} in ${PH[phase]} was lowest in ${list(A.los)} (<b>${V.now.fmt(A.lo)}</b>) and highest in ${list(A.his)} (<b>${V.now.fmt(A.hi)}</b>), against <b>${V.now.fmt(now('England'))}</b> across England. ` +
       (allUp ? `Since ${ay(base)} it has risen by <b>${pts(ce)}</b> points across England. The rise was smallest in ${list(C.los)} (${pts(C.lo)} points) and largest in ${list(C.his)} (${pts(C.hi)} points).`
@@ -207,8 +209,10 @@
         (c) => `<b>${fmt(c.iso)}</b><br>Overall absence ${pc(c.v)}`); });
     key(el, [AXc.legend(mid, span, 'the average day of ' + ay(full)), 'Blank squares are holidays, or days when fewer than 80% of the usual sessions were due' + (phase === 'S' ? '. In secondary schools that includes most days from June, once Year 11 has left' : '')]);
     const by = [0, 1, 2, 3, 4].map((d) => d3.mean(Pz.days[full].map((iso, i) => (dow(iso) === d ? D[full][ph].abs[i] : null)).filter((v) => v != null))), midwk = d3.mean([by[1], by[2], by[3]]);
-    const mAvg = (m) => d3.mean(Pz.days[full].map((iso, i) => (+iso.slice(5, 7) === m ? D[full][ph].abs[i] : null)).filter((v) => v != null));
-    $('px-cal-r').innerHTML = `Across ${ay(full)} in England’s ${PH[phase]}, Fridays averaged <b>${pc(by[4])}</b> and Mondays <b>${pc(by[0])}</b>, against <b>${pc(midwk)}</b> from Tuesday to Thursday. September averaged ${pc(mAvg(9))}, December ${pc(mAvg(12))} and July ${pc(mAvg(7))}.`;
+    // a month is quoted only if it has at least ten school days with figures (secondary schools have almost none after Year 11 leaves)
+    const mAvg = (m) => { const v = Pz.days[full].map((iso, i) => (+iso.slice(5, 7) === m ? D[full][ph].abs[i] : null)).filter((x) => x != null); return v.length >= 10 ? d3.mean(v) : null; };
+    const MONTHS = [[9, 'September'], [12, 'December'], [3, 'March'], [7, 'July']].map(([m, n]) => [n, mAvg(m)]).filter((x) => x[1] != null);
+    $('px-cal-r').innerHTML = `Across ${ay(full)} in England’s ${PH[phase]}, Fridays averaged <b>${pc(by[4])}</b> and Mondays <b>${pc(by[0])}</b>, against <b>${pc(midwk)}</b> from Tuesday to Thursday.` + (MONTHS.length > 1 ? ' ' + MONTHS.map((x, i) => (i === 0 ? x[0] + ' averaged ' : i === MONTHS.length - 1 ? ' and ' + x[0] + ' ' : ', ' + x[0] + ' ') + pc(x[1])).join('') + '.' : '');
   }
 
   let token = 0;

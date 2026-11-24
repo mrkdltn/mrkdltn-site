@@ -50,3 +50,19 @@ Mark asked for another review for simplicity, usefulness and intuitive operation
 ## Writing pass and figures, 24 November 2026
 
 A writing pass in Mark's voice covered every page; each substantive change is listed before and after in `docs/attendance-writing-pass.md` for Mark to review. It found that a summary and its table could differ by 0.1 because they rounded differently; one rounding rule now applies everywhere. An independent check of the figures against the DfE's own files is in `docs/attendance-figures-check.md` when complete.
+
+### Figures check, 24 November 2026
+
+An independent worker recomputed 5,787 displayed figures on 183 pages from the DfE's own files (`docs/attendance-figures-check.md`). The stored data agreed with the DfE to within 0.01 of a point throughout and the small-number rules all held. What it found on the pages, and what was done:
+
+| Finding | State |
+| --- | --- |
+| "A year earlier" left out schools that had changed URN, so about one area or trust view in seven compared this year with fewer schools than last; 516 school pages had no year-earlier figure | Fixed: predecessors are followed for the two-term periods too |
+| "Since 2018/19" for a local authority meant today's schools followed back on its own page, and every school open at the time on a school page | Fixed: an area is always the schools there at the time; only trusts follow today's schools back |
+| About 5% of displayed rates were 0.1 too high because rates were rounded twice (England primary persistent absence showed 13.3% where the DfE's figure is 13.2%) | Fixed: stored rates now round to the right tenth |
+| The Patterns regional sentence named the wrong regions where two tied at one decimal place | Fixed: decided on unrounded figures |
+| The trust funnel's "95%" band held 87 to 89% of trusts, and "chance alone" overclaimed | Fixed: the band is set from the trusts themselves to hold 95%; the outer band is gone; the wording claims only that a trust is unusual for its size |
+| The in-year "lower in 102 of 151" counted only differences visible at one decimal place | Fixed: counted on the stored figures |
+| "July averaged" for secondary schools rested on one day | Fixed: a month is quoted only with ten or more days of figures |
+| A group of 18 pupils showed 100% persistent absence | Fixed: a pupil group under 50 in which every pupil, or none, is persistently absent is left out |
+| Changes are the difference of the figures as shown, so about a quarter are 0.1 from the true change | Open: a decision for Mark |
