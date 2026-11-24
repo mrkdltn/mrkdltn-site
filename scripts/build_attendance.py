@@ -48,15 +48,21 @@ def monday(d):
 
 
 def load(path):
-    """{code: {phase: {date: [counts]}}}, with phase A added."""
-    t = {}
+    """{code: {phase: {date: [counts]}}}. Phase A (all schools) is the DfE's own row; where a file has none for a
+    day it is the three phases summed."""
+    t, own = {}, {}
     for r in csv.DictReader(open(path, encoding='utf-8')):
         v = [int(r[c] or 0) for c in COLS]
+        if r['phase'] == 'A':
+            own[(r['code'], r['date'])] = v
+            continue
         a = t.setdefault(r['code'], {})
         a.setdefault(r['phase'], {})[r['date']] = v
         s = a.setdefault('A', {}).setdefault(r['date'], [0] * len(COLS))
         for i, x in enumerate(v):
             s[i] += x
+    for (code, date), v in own.items():
+        t.setdefault(code, {}).setdefault('A', {})[date] = v
     return t
 
 

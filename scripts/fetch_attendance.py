@@ -29,7 +29,8 @@ KEEP = {
     'No reason yet (n)': 'none',
 }
 COLS = ['poss', 'abs', 'auth', 'unauth', 'ill', 'hol_u', 'late', 'none']
-PHASE = {'Primary': 'P', 'Secondary': 'S', 'Special': 'X'}
+# 'All schools' is kept as the DfE publishes it: in a few areas it holds slightly more sessions than the three phases summed
+PHASE = {'Primary': 'P', 'Secondary': 'S', 'Special': 'X', 'All schools': 'A'}
 DAYS = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'}
 
 

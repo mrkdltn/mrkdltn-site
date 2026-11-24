@@ -316,3 +316,45 @@ Any stored rate that rounded up to a 5 is affected, about one in twenty.
 ### Not re-checked
 
 The limits listed under "What I could not check" stand. In addition, the similar-schools match re-run on 24 November was not examined, and only the default view of each group page was read again.
+
+## Third pass at 13e6f7c
+
+A scoped pass on 24 November 2026 against commit `13e6f7c`, with the data as built at that commit. The DfE school files, the in-year data set (version 4.4) and GIAS of 24 November were downloaded again and every figure recomputed from them. Fresh sample, seed 20261125: 210 schools (90 primary, 80 secondary, 40 special), 10 local authorities, 5 counties, 8 constituencies, 8 wards and 9 trusts, plus the in-year page for England and 6 authorities in all four phase views. The four pages whose pooled rates showed the wrong tenth last time are in the sample.
+
+The pages were rendered after commit `3cfe126` had also landed. It adds a feedback form (`chrome.js`, `attendance.css`) and touches neither the data nor the code that draws figures; the data checked was built at 15:24 UTC, before `13e6f7c`.
+
+**Both faults from the re-run are fixed. No rate anywhere in the stored data now shows the wrong tenth, and the two-decimal in-year figures are right.** One difference of definition remains on the in-year page, set out below.
+
+| What | Checked | Match | Not matching |
+| --- | --- | --- | --- |
+| (a) Pooled overall, unauthorised and persistent absence, every area and trust, every period, stored | 209,754 | 209,754 show the true tenth | 0 |
+| (a) Pooled severe absence, stored (a rate, or withheld) | 69,918 | 69,918 | 0 |
+| (a) England and local authority benchmarks, stored | 24,368 | 24,368 | 0 |
+| (a) Group pages, 104 views: rates displayed | 4,873 | 4,872 | 1 not shown |
+| (a) Group pages: changes displayed | 332 | 238 | 94 are the difference of the shown figures, 0.1 from the true change (by decision) |
+| (a) Group pages: schools listed and header counts against GIAS | 184 | 184 | 0 |
+| (b) School rates, all 21,223 schools, every period, stored | 814,779 | 814,779 show the true tenth | 0 |
+| (b) School pages, 210: rates displayed | 6,720 | 6,717 | 3 sentences give no figure because they say "the same" |
+| (b) School pages: changes displayed | 2,520 | 1,905 | 606 are the difference of the shown figures; 9 sentences say "the same" where the true gap is under 0.1 |
+| (c) In-year page, 28 views: year to date, authorised, illness, unauthorised | 112 | 110 | 2 (definition, below) |
+| (c) In-year page: unauthorised holiday, two decimal places | 28 | 28 | 0 |
+| (c) In-year year-to-date figures at two decimal places, all 163 areas, stored | 4,501 | 4,495 against the DfE's rows; all against the sum of phases | 6 (definition, below) |
+
+The pages that failed last time now read: Birmingham primary a year earlier 5.9% (5.850%); Warrington special 2024/25 14.0% (13.951%); trust 1337 special 2023/24 9.5% (9.453%); Derby special a year earlier 13.8% (13.751%). Unauthorised holiday for England reads 0.45% for all schools and 0.35% for secondary, as the DfE has them.
+
+### What does not match
+
+1. **In-year "all schools" is the sum of the three phases, not the DfE's all-schools row.** In 10 of 163 areas the DfE's row holds a few more sessions than primary, secondary and special together. It changes a displayed figure in one area in the sample: `/attendance/#area=E09000021` shows overall absence since September 4.7% and authorised absence 3.3%; the DfE's all-schools row gives 4.753% (4.8%) and 3.352% (3.4%); the three phases summed give 4.749% and 3.349%. At two decimal places 6 of 805 all-schools figures differ from the DfE's row by 0.01. The stored figures equal the sum of phases in every case, so this is a choice of definition, present since the first check, and not an arithmetic fault. Reading the DfE's own row for "all schools" would remove it.
+2. **One year-earlier severe figure is still not shown** on `/attendance/group/?k=t&id=3543&phase=P` (2.8% a year earlier; the tile is blank because the latest figure is withheld). A choice of the page.
+
+### (d) Counts and small numbers
+
+- No file under `site/attendance/data/` carries sessions missed, or pupils persistently or severely absent, for a single school. Each school-period holds enrolments and five rates; all 271,593 were compared with my rates and match. The distribution, index and group files hold enrolments and rates only.
+- Severe absence is withheld wherever fewer than 10 pupils are severely absent and wherever fewer than three schools are pooled: 34,126 withheld figures agree with mine, and none is shown that should be withheld. It appears for no single school.
+- No page raised a console error.
+
+Not re-checked in this pass: pupil groups, the Patterns page, and the sentences.
+
+### Acted on after the third pass
+
+The in-year "all schools" figure now reads the DfE's own all-schools row (`fetch_attendance.py` keeps it as phase `A`; `build_attendance.py` falls back to the three phases summed only where a file has none for a day). Both years were refetched on 24 November 2026. The area the checker cited, `E09000021`, now stores overall 4.75 and authorised 3.35, shown as 4.8% and 3.4%, as the DfE has them. Not yet re-verified independently. The year-earlier severe figure left unshown where the latest is withheld stays as it is: showing it would invite a reader to infer the withheld one.
