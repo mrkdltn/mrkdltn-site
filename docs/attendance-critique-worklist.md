@@ -65,7 +65,7 @@ An independent worker recomputed 5,787 displayed figures on 183 pages from the D
 | The in-year "lower in 102 of 151" counted only differences visible at one decimal place | Fixed: counted on the stored figures |
 | "July averaged" for secondary schools rested on one day | Fixed: a month is quoted only with ten or more days of figures |
 | A group of 18 pupils showed 100% persistent absence | Fixed: a pupil group under 50 in which every pupil, or none, is persistently absent is left out |
-| Changes are the difference of the figures as shown, so about a quarter are 0.1 from the true change | Open: a decision for Mark |
+| Changes were the difference of the figures as shown, so about a quarter were 0.1 from the true change | Decided by Mark, 24 Nov: true change. Rates are now stored to two further decimal places and every difference is taken before rounding; against the DfE's counts, 11 of 20,631 school year-on-year changes still fall on the other tenth (exact ties). Each method section explains why a difference can be 0.1 from subtracting the figures on screen |
 
 ### After the figures check
 

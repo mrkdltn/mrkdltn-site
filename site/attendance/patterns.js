@@ -10,7 +10,7 @@
   const XF = {fsm: 'fsm_pct', sen: 'sen_pct', ehcp: 'ehcp_pct', eal: 'eal_pct'};
   const $ = (id) => document.getElementById(id);
   const pc = (v, dp) => (v == null ? '–' : (dp == null ? Math.round(v / 10) / 10 : v / 100).toFixed(dp == null ? 1 : dp) + '%');      // shown figures round hundredths to tenths, the same way differences do
-  const gap = (a, b) => Math.round(a / 10) - Math.round(b / 10), pts = (t) => (Math.abs(t) / 10).toFixed(1);
+  const gap = ((a, b) => { const d = a - b; return Math.sign(d) * Math.round(Math.abs(d) / 10); }), pts = (t) => (Math.abs(t) / 10).toFixed(1);
   const ay = (p) => { const y = +p.slice(0, 4); return y + '/' + String((y + 1) % 100).padStart(2, '0'); };
   const date = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'});
   const width = (el) => Math.max(280, Math.floor(el.getBoundingClientRect().width));

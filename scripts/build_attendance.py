@@ -27,10 +27,9 @@ USUAL_WEEK = 0.7
 
 
 def hund(x):
-    """A rate in hundredths of a point that still rounds to the right tenth. Pages show one decimal place by rounding these
-    hundredths, so 13.2476 must not be stored as 13.25 (which would show as 13.3): where rounding up lands on a 5, step back one."""
-    r = round(x)
-    return r - 1 if r % 10 == 5 and r - x > 1e-6 else r
+    """A rate in hundredths of a point, kept to two further decimal places (so 13.2476% is 1324.76). Pages show one decimal
+    place by rounding once from this, and take differences from it before rounding, so both land on the true tenth."""
+    return round(x, 2)
 
 
 def rate(n, d):
@@ -570,7 +569,7 @@ def patterns_build(current, meta, rows, raw_history, pool, fy, ctx, model, bench
             v = [hist[u][p][2] for u in us if p in hist[u] and hist[u][p][2] is not None and (hist[u][p][0] or 0) >= MIN_ENROL]
             b = [0] * (top[ph] // step[ph])
             for x in v:
-                b[min(len(b) - 1, x // step[ph])] += 1
+                b[min(len(b) - 1, int(x // step[ph]))] += 1
             yrs[p] = {'n': len(v), 'bins': b, 'median': sorted(v)[len(v) // 2] if v else None}
         out['ridges'][ph] = {'step': step[ph], 'years': yrs}
     # regions, pooled from schools

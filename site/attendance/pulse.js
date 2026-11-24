@@ -8,7 +8,7 @@
   const $ = (id) => document.getElementById(id);
   const pc = (v, dp) => (v == null ? '–' : (dp == null ? Math.round(v / 10) / 10 : v / 100).toFixed(dp == null ? 1 : dp) + '%');      // shown figures round hundredths to tenths, the same way differences do
   // differences are taken between the figures as shown (one decimal place), so the sentence always agrees with them
-  const gap = (a, b) => Math.round(a / 10) - Math.round(b / 10);
+  const gap = ((a, b) => { const d = a - b; return Math.sign(d) * Math.round(Math.abs(d) / 10); });
   const pts = (t) => (Math.abs(t) / 10).toFixed(1);
   const day = (iso) => new Date(iso + 'T12:00:00');
   const fmtD = (iso, o) => day(iso).toLocaleDateString('en-GB', o || {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
