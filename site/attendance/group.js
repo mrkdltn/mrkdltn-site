@@ -40,16 +40,32 @@
   const pgOn = () => pgsel !== 'all' && (kind === 'a' || kind === 'y'), pgi = () => (meas === 'abs' ? 0 : meas === 'pa' ? 1 : 2), sub = (a, b) => (a == null || b == null ? null : a - b);
   const pgVal = (pg) => { const t = pg && pg[phase] && pg[phase][pgsel], i = pgi(), g = (k) => (t && t[k] ? t[k][i] : null); return view === 'now' ? g(0) : view === 'yr' ? sub(g(0), g(1)) : sub(g(0), g(2)); };
   const pgEng = () => { const t = PGE && PGE.england[phase] && PGE.england[phase][pgsel], i = pgi(), g = (p) => (t && t[p] ? t[p][i] : null), L = B.latest; return view === 'now' ? g(L) : view === 'yr' ? sub(g(L), g(B.periods.filter((p) => p.endsWith('AS') && p < L).pop())) : sub(g(L), g(B.base + 'AS')); };
+  // links to other places keep the schools, measure and view chosen here
+  const glink = (k, i) => AXsearch.ghref(k, i) + (phase ? '&phase=' + phase : '') + (meas !== 'abs' ? '&m=' + meas : '') + (view !== 'now' ? '&v=' + view : '') + (pgOn() && (k === 'a' || k === 'y') ? '&g=' + pgsel : '');
   const KINDA = {t: 'a trust', c: 'a constituency', w: 'a ward', y: 'a county', a: 'a local authority'};
   const recs = new Map(), rec = (k, i) => { const u = `/attendance/data/grp/${k}${[...i].reduce((a, c) => a + c.charCodeAt(0), 0) % SH[k]}.json`; if (!recs.has(u)) recs.set(u, d3.json(u)); return recs.get(u).then((j) => j[i] || null); };
   const eng = (ph, p) => (B.bench.E[ph] && B.bench.E[ph][p]) || null;
   const mine = (p) => (G.bench[phase] && G.bench[phase][p]) || null;
   const of = () => (kind === 't' ? 'of ' + G.name : 'in ' + G.name);
 
+  // what the controls above have chosen, said in the summary so their effect is never out of sight
+  function focusLine() {
+    if (!phase || (meas === 'abs' && view === 'now' && !pgOn())) return '';
+    const M = MEAS[meas], L = B.latest, P0 = view === 'yr' ? prevP() : null, i = pgi(), d = (a, b) => (a == null || b == null ? null : a - b);
+    let v, ev, ch = null, ech = null;
+    if (pgOn()) { const a = G.pg && G.pg[phase] && G.pg[phase][pgsel], en = PGE && PGE.england[phase] && PGE.england[phase][pgsel], g = (s, p) => (s && s[p] ? s[p][i] : null), Pb = view === 'yr' ? P0 : B.base + 'AS';
+      v = g(a, L); ev = g(en, L); if (view !== 'now') { ch = d(v, g(a, Pb)); ech = d(ev, g(en, Pb)); } }
+    else { const g = (p) => (mine(p) || [])[M.b], ge = (p) => (eng(phase, p) || [])[M.b]; v = g(L); ev = ge(L);
+      if (view === 'yr') { ch = d(v, g(P0)); ech = d(ev, ge(P0)); } if (view === 'base') { ch = d(g(B.fy_last), g(B.base)); ech = d(ge(B.fy_last), ge(B.base)); } }
+    if (v == null) return `<span class="ax-focus">Chosen above: no figure is published for ${M.n}${pgOn() ? ' for pupils ' + PGL[pgsel] : ''} here.</span>`;
+    return `<span class="ax-focus"><b>Chosen above:</b> ${M.n} for ${pgOn() ? 'pupils ' + PGL[pgsel] : 'all pupils'} in its ${PH[phase]} was <b>${pc(v)}</b>` + (ev == null ? '' : `, against ${pc(ev)} across England`)
+      + (ch == null ? '' : `. ${view === 'yr' ? 'In a year' : 'Since 2018/19'} it changed by <b>${sign(ch)}</b> points` + (ech == null ? '' : ` (England ${sign(ech)})`)) + '.</span>';
+  }
+
   function head() {
     const L = B.latest, prevP = B.periods.filter((p) => p.endsWith('AS') && p < L).pop();
     $('gx-kind').textContent = KINDS[kind];
-    if (window.AXtools) AXtools.setPlace({kind: 'group', id: kind + ':' + id, name: G.name, href: AXsearch.ghref(kind, id)});
+    if (window.AXtools) AXtools.setPlace({kind: 'group', id: kind + ':' + id, name: G.name, href: glink(kind, id)});
     $('gx-name').textContent = G.name; document.title = G.name + ': attendance · Attendance Explorer · Mark Dalton';
     const by = d3.rollup(G.schools, (v) => v.length, (s) => s[2]);
     $('gx-meta').textContent = (random ? 'Chosen at random to start you off. ' : '') + KIND[kind] + ' · ' + (kind === 'y' ? G.n.toLocaleString('en-GB') + ' schools in ' + count(G.las.length) + (G.las.length === 1 ? ' local authority' : ' local authorities') : '') + ['P', 'S', 'X'].filter((p) => by.get(p)).map((p) => by.get(p) + ' ' + (by.get(p) === 1 ? PH[p].replace(/s$/, '') : PH[p])).join(', ');
@@ -64,7 +80,7 @@
     t += '.'; if (e) { const d = gap(now[0], e[0]); t += ` Across England’s ${PH[phase]} the figure was ${pc(e[0])}` + (d === 0 ? '.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
     t += ` <b>${pc(now[2])}</b> of pupils were persistently absent` + (e ? `, against ${pc(e[2])} across England.` : '.');
     if (now[4] != null) t += ` <b>${pc(now[4])}</b> were severely absent, missing half or more of their sessions` + (e && e[4] != null ? `; across England it was ${pc(e[4])}.` : '.');
-    R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[0], was[0]), 'a year earlier') : '') + (e ? AXc.pill(gap(now[0], e[0]), 'England') : '') + '</span>';
+    R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[0], was[0]), 'a year earlier') : '') + (e ? AXc.pill(gap(now[0], e[0]), 'England') : '') + '</span>' + focusLine();
     const k = [['Overall absence', pc(now[0]), was ? 'a year earlier ' + pc(was[0]) : ''], ['Persistent absence', pc(now[2]), was ? 'a year earlier ' + pc(was[2]) : ''], ['Severe absence', now[4] == null ? '–' : pc(now[4]), now[4] == null ? 'too few pupils to show' : was && was[4] != null ? 'a year earlier ' + pc(was[4]) : ''], ['Unauthorised absence', pc(now[1]), e ? 'England ' + pc(e[1]) : ''], ['England ' + PH[phase], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) + (e[4] != null ? ', severe ' + pc(e[4]) : '') : '']];
     K.innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${esc(x[0])}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');
   }
@@ -72,6 +88,7 @@
   function strip() {
     const card = $('gx-strip-c'), el = $('gx-strip'), M = MEAS[meas], L = B.latest;
     const ph = phase || (G.schools[0] && G.schools[0][2]), S = G.schools.filter((s) => s[2] === ph && s[M.s] != null);
+    if (meas === 'sev') { card.hidden = !phase; el.innerHTML = ''; $('gx-strip-r').textContent = 'Severe absence is not shown school by school: in one school it usually describes a handful of children. Choose overall or persistent absence to see each school.'; return; }
     card.hidden = S.length < 2; if (S.length < 2) return;
     document.querySelectorAll('.gx-phase-n').forEach((n) => { n.textContent = PH[ph]; }); document.querySelectorAll('.gx-meas-n').forEach((n) => { n.textContent = M.n + ' in the ' + period(L); });
     const W = width(el), m = {t: 22, r: 18, b: 30, l: 18}, e = eng(ph, L), g = phase && mine(L);
@@ -152,7 +169,7 @@
     if (mid != null) s.append('line').attr('x1', x(mid)).attr('x2', x(mid)).attr('y1', m.t - 6).attr('y2', H - m.b).attr('stroke', MUTED).attr('stroke-width', 2);
     const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(rows.filter((d) => d.r.id !== id)).join('circle').attr('cx', (d) => x(d.v)).attr('cy', (d, i) => 60 + ((i * 37) % 31) - 15).attr('r', 3.5).attr('fill', (d) => AXc.gap(d.v - mid)).attr('fill-opacity', 0.55);
     const html = (d) => `<b>${esc(d.r.name)}</b><br>${cap(vname())}: ${fv(d.v)}`;
-    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = AXsearch.ghref('t', d.r.id); });
+    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = glink('t', d.r.id); });
     const me = rows.find((d) => d.r.id === id); if (me) tipOn(s.append('path').datum(me).attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(me.v)},60)`).attr('fill', INK).attr('stroke', '#fff'), html);
     key(el, [`<i style="background:${AXc.VERD};border-radius:50%;width:10px"></i>Fell, or rose less than England`, `<i style="background:${AXc.RUST};border-radius:50%;width:10px"></i>Rose more`, `<i style="background:${MUTED};width:2px;height:12px"></i>England ${PH[phase]}, ${fv(mid)}`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}, ${fv(me.v)}`] : []));
     $('gx-over-r').innerHTML = me ? `Across the ${PH[phase]} it holds today, ${vname()} was <b>${fv(me.v)}</b>, against ${fv(mid)} across England. <b>${rows.filter((d) => d.v < me.v).length}</b> of the other ${rows.length - 1} trusts had a smaller rise or a larger fall.` : '';
@@ -170,7 +187,7 @@
     s.style('max-width', cap2 + 'px').style('margin', '0 auto');
     const has = new Set(H2.map((d) => d.r.id)), blank = ALL.filter((r) => !has.has(r.id) && r.q != null).map((r) => ({r, v: null}));
     const g = s.append('g').attr('class', 'ax-hexes').selectAll('path').data(blank.concat(H2)).join('path').attr('d', dpath).attr('transform', (d) => `translate(${px(d)},${py(d)})`).attr('fill', (d) => AXc.div(d.v, mid, span));
-    g.on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : cap(vname()) + ': ' + fv(d.v)}`)).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = AXsearch.ghref(kind, d.r.id); });
+    g.on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : cap(vname()) + ': ' + fv(d.v)}`)).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = glink(kind, d.r.id); });
     const me = H2.find((d) => d.r.id === id); if (me) s.append('path').attr('d', dpath).attr('transform', `translate(${px(me)},${py(me)}) scale(${kind === 'c' ? 1.6 : 1.15})`).attr('fill', 'none').attr('stroke', BRASS).attr('stroke-width', 2.5).attr('pointer-events', 'none');
     key(el, [AXc.legend(mid, span, 'England', view === 'now' ? null : (v) => sign(v) + ' points'), `<i style="background:none;border:2px solid ${BRASS}"></i>${esc(G.name)}`]);
     const below = me ? H2.filter((d) => d.v < me.v).length : null;
@@ -194,7 +211,7 @@
     s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(p0 * 10000)).attr('y2', y(p0 * 10000)).attr('stroke', MUTED).attr('stroke-width', 2);
     const html = (d) => `<b>${esc(d.r.name)}</b><br>${d.r[phase][0]} ${PH[phase]}, ${d.n.toLocaleString('en-GB')} pupils<br>${cap(M.n)} ${pc(d.v)}`;
     const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(rows.filter((d) => d.r.id !== id)).join('circle').attr('cx', (d) => x(d.n)).attr('cy', (d) => y(d.v)).attr('r', W < 480 ? 3 : 4).attr('fill', MUTED).attr('fill-opacity', 0.5);
-    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = AXsearch.ghref('t', d.r.id); });
+    c.on('pointerenter pointermove', (ev, d) => showTip(ev, html(d))).on('pointerleave', hideTip).on('click', (ev, d) => { location.href = glink('t', d.r.id); });
     const me = rows.find((d) => d.r.id === id); if (me) tipOn(s.append('path').datum(me).attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(me.n)},${y(me.v)})`).attr('fill', INK).attr('stroke', '#fff'), html);
     key(el, [`<i style="background:${MUTED};border-radius:50%;width:10px"></i>Trusts (${rows.length})`, `<i style="background:#E6EAF0"></i>About 95% of trusts`, `<i style="background:#F4F5F8;border:1px solid ${GRID}"></i>About 99.8%`, `<i class="ln" style="border-color:${MUTED}"></i>All these trusts together, ${pc(p0 * 10000)}`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}`] : []));
     if (me) { const zz = (me.v / 10000 - p0) / Math.sqrt(phi * p0 * (1 - p0) / me.n), a = Math.abs(zz);
@@ -211,7 +228,7 @@
     const path = (w) => w.p.map((r) => 'M' + d3.range(r.length / 2).map((i) => (r[2 * i] * k).toFixed(1) + ',' + ((D.h - r[2 * i + 1]) * k).toFixed(1)).join('L') + 'Z').join('');
     const g = s.selectAll('path').data(D.wards.slice().sort((a, b) => (a.c === id) - (b.c === id))).join('path').attr('d', path).attr('fill-rule', 'evenodd').attr('class', (w) => (w.c === id ? 'me' : null)).attr('fill', (w) => AXc.div(wv(w), mid, span));
     const html = (w) => `<b>${esc(w.n)}</b><br>` + (!w.v ? 'No state-funded school in the newest figures' : wv(w) == null ? `${w.v[0]} ${w.v[0] === 1 ? 'school' : 'schools'}: no figure` : `${cap(vname())}: ${fv(wv(w))}`);
-    g.on('pointerenter pointermove', (ev, w) => showTip(ev, html(w))).on('pointerleave', hideTip).on('click', (ev, w) => { ev.stopPropagation(); if (w.v && w.c !== id) location.href = AXsearch.ghref('w', w.c); else showTip(ev, html(w)); });
+    g.on('pointerenter pointermove', (ev, w) => showTip(ev, html(w))).on('pointerleave', hideTip).on('click', (ev, w) => { ev.stopPropagation(); if (w.v && w.c !== id) location.href = glink('w', w.c); else showTip(ev, html(w)); });
     key(el, [AXc.legend(mid, span, 'England primary schools', view === 'now' ? null : (v) => sign(v) + ' points'), `<i style="background:${AXc.NONE}"></i>No figure`, `<i style="background:none;border:2px solid ${INK}"></i>${esc(G.name)}`, 'Boundaries: Office for National Statistics, OGL v3.0. Contains OS data © Crown copyright and database right 2026']);
     $('gx-over-r').innerHTML = `<b>${vals.length}</b> of the ${D.wards.length} wards in ${esc(D.name)} carry a figure. A ward figure describes the schools located there, not the children who live there.`;
   }
@@ -223,7 +240,7 @@
     const s = svg(el, W, H, 'Counties by ' + vname()), x = d3.scaleLinear(d3.extent(R.map((d) => d.v).concat([mid])), [m.l + 8, W - m.r]).nice();
     x.ticks(narrow ? 3 : 6).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t - 4).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', 12).attr('text-anchor', 'middle').text(view === 'now' ? (t / 100) + '%' : sign(t)); });
     s.append('line').attr('x1', x(mid)).attr('x2', x(mid)).attr('y1', m.t - 4).attr('y2', H - m.b).attr('stroke', MUTED).attr('stroke-width', 2);
-    const g = s.append('g').selectAll('g').data(R).join('g').attr('transform', (d, i) => `translate(0,${m.t + i * rh + rh / 2})`).style('cursor', 'pointer').on('click', (ev, d) => { location.href = AXsearch.ghref('y', d.r.id); });
+    const g = s.append('g').selectAll('g').data(R).join('g').attr('transform', (d, i) => `translate(0,${m.t + i * rh + rh / 2})`).style('cursor', 'pointer').on('click', (ev, d) => { location.href = glink('y', d.r.id); });
     g.append('rect').attr('x', 0).attr('y', -rh / 2).attr('width', W).attr('height', rh).attr('fill', (d) => (d.r.id === id ? '#F6F3EC' : 'transparent'));
     g.append('text').attr('x', m.l - 4).attr('y', 4).attr('text-anchor', 'end').attr('class', (d) => (d.r.id === id ? 'strong' : null)).text((d) => (narrow && d.r.name.length > 19 ? d.r.name.slice(0, 18) + '…' : d.r.name));
     g.append('line').attr('x1', x(mid)).attr('x2', (d) => x(d.v)).attr('stroke', (d) => AXc.gap(d.v - mid)).attr('stroke-width', 3);
@@ -279,15 +296,17 @@
     $('gx-q2').disabled = VS.length >= 4; $('gx-q2').placeholder = VS.length >= 4 ? 'Four added' : 'Add ' + KINDA[kind];
   }
 
-  let showAll = false;
+  let showAll = false, allPh = false;
   function table() {
     const t = $('gx-table'); t.innerHTML = '<thead><tr><th>School</th><th class="n">Overall absence</th><th class="n">Persistent absence</th></tr></thead>';
     const b = t.appendChild(document.createElement('tbody'));
     $('gx-more').hidden = true;
     if (kind === 'y') { $('gx-table-h').textContent = 'Its local authorities'; t.querySelector('th').textContent = 'Local authority';
       G.las.forEach((l) => { const v = l[2][phase]; const tr = b.appendChild(document.createElement('tr')); tr.innerHTML = `<td><a href="${AXsearch.ghref('a', l[0])}">${esc(l[1])}</a><small>${PH1[phase] || ''} schools, pooled</small></td><td class="n">${pc(v && v[0])}</td><td class="n">${pc(v && v[2])}</td>`; }); return; }
-    const list = showAll ? G.schools : G.schools.slice(0, 10);
-    if (G.schools.length > 10) { const m = $('gx-more'); m.hidden = false; m.textContent = showAll ? 'Show the first 10' : `Show all ${G.schools.length} schools`; m.onclick = () => { showAll = !showAll; table(); }; }
+    const mine2 = G.schools.filter((s) => allPh || !phase || s[2] === phase), list = showAll ? mine2 : mine2.slice(0, 10);
+    const pn = $('gx-table-n'); pn.hidden = !phase || mine2.length === G.schools.length && !allPh; pn.innerHTML = allPh ? `All ${G.schools.length} schools. <button type="button" class="ax-linkbtn">Show only its ${PH[phase]}</button>` : `Its ${count(mine2.length)} ${PH[phase]}. <button type="button" class="ax-linkbtn">Show all ${G.schools.length} schools</button>`;
+    const lb = pn.querySelector('button'); if (lb) lb.onclick = () => { allPh = !allPh; showAll = false; table(); };
+    if (mine2.length > 10) { const m = $('gx-more'); m.hidden = false; m.textContent = showAll ? 'Show the first 10' : `Show all ${mine2.length}`; m.onclick = () => { showAll = !showAll; table(); }; }
     list.forEach((s) => { const tr = b.appendChild(document.createElement('tr'));
       tr.innerHTML = `<td><a href="${AXsearch.href(s[0])}">${esc(s[1])}</a><small>${esc([PH1[s[2]], s[3], s[7] ? 'joined ' + month(s[7]) + (s[8] ? ' from ' + s[8] : '') : ''].filter(Boolean).join(' · '))}</small></td><td class="n">${pc(s[5])}</td><td class="n">${pc(s[6])}</td>`; });
   }
@@ -298,21 +317,21 @@
     document.querySelectorAll('#gx-view button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
     document.querySelectorAll('#gx-pgs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.g === pgsel)));
     const p = new URLSearchParams({k: kind, id}); if (phase) p.set('phase', phase); if (meas !== 'abs') p.set('m', meas); if (view !== 'now') p.set('v', view); if (pgOn()) p.set('g', pgsel); if (VS.length) p.set('vs', VS.map((o) => o.id).join(','));
-    if (!random) history.replaceState(null, '', location.pathname + '?' + p.toString());
+    history.replaceState(null, '', location.pathname + '?' + p.toString());      // always: a copied link must open this place
     head(); compare(); groups(); strip(); hist(); over(); table();
   }
 
   d3.json('/attendance/data/bench.json').then((j) => {
     B = j; const q = new URLSearchParams(location.search); kind = SH[q.get('k')] ? q.get('k') : 'c'; id = q.get('id') || '';
-    AXsearch($('gx-q'), $('gx-list'), AXsearch.go, true);
+    AXsearch($('gx-q'), $('gx-list'), AXsearch.go, true, null, kind);
     $('gx-another').addEventListener('click', () => { location.href = '/attendance/group/?k=' + kind; });
     // which part of the Explorer this is: trusts stand apart; every other kind is an area
     const nv = document.querySelector(`.ax-nav a[data-v="${kind === 't' ? 'trusts' : 'areas'}"]`); if (nv) nv.setAttribute('aria-current', 'page');
     const ks = $('ax-kinds'); if (ks && kind !== 't') { ks.hidden = false; const a = ks.querySelector(`a[data-k="${kind}"]`); if (a) a.setAttribute('aria-current', 'page'); }
     // with no place chosen, open on one of that kind picked at random
     const pick = (list) => { random = true; id = list[Math.floor(Math.random() * list.length)]; };
-    const start = id ? Promise.resolve() : kind === 'w' ? d3.json('/attendance/data/groups.json').then((g) => pick(g.data.id.filter((x, i) => g.data.k[i] === 'w' && g.data.n[i] >= 3)))
-      : d3.json(`/attendance/data/grp/${kind}_all.json`).then((all) => pick(all.map((r) => r.id)));
+    const start = id ? Promise.resolve() : kind === 'w' ? d3.json('/attendance/data/groups.json').then((g) => pick(g.data.id.filter((x, i) => g.data.k[i] === 'w' && g.data.n[i] >= 6)))
+      : d3.json(`/attendance/data/grp/${kind}_all.json`).then((all) => pick(all.filter((r) => (r.P && r.P[0] >= 3) || (r.S && r.S[0] >= 3)).map((r) => r.id)));      // only places with a pooled figure
     return start.then(() => { const shard = [...id].reduce((a, c) => a + c.charCodeAt(0), 0) % SH[kind];
       return d3.json(`/attendance/data/grp/${kind}${shard}.json`); }).then((sh) => { G = sh[id];
       const extra = !G ? null : kind === 'w' ? (G.lad ? d3.json(`/attendance/data/geo/${G.lad}.json`).catch(() => null) : null) : d3.json(`/attendance/data/grp/${kind}_all.json`);

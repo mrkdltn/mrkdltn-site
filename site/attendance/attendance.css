@@ -174,3 +174,30 @@ body.explorer{background:#ECE9E1}
 @media print{.ax-tabs{display:none}.ax-panel[hidden]{display:block!important}.ax-panel::before{content:attr(data-title);display:block;font-weight:600;margin:14px 0 4px}}
 .ax-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1px solid var(--muted);border-radius:50%;font:600 12px/1 var(--sans);color:var(--ink);margin-right:8px;vertical-align:1px}
 @media (max-width:480px){.ax-hero .ax-nav{gap:2px 13px;flex-wrap:nowrap}.ax-hero .ax-nav a{font-size:14px}}
+
+/* ---- Usability pass, 24 November 2026, from the independent review (docs/attendance-ux-review.md) */
+.ax [hidden],.ax-hero [hidden],.ax-secnav [hidden]{display:none!important}      /* display:flex was overriding the hidden attribute */
+.ax-focus{display:block;margin-top:10px;font:15px/1.5 var(--sans);color:var(--ink);background:#F6F3EC;padding:9px 12px;border-radius:2px}
+.ax-linkbtn{font:inherit;color:var(--ink);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.ax-skip{position:absolute;left:-9999px}.ax-skip:focus{left:16px;top:8px;z-index:50;background:#fff;color:#0B1A2E;padding:10px 14px;border:2px solid #0B1A2E}
+.ax-showing{max-width:1180px;margin:0 auto;padding:7px 24px 8px;font:13px/1.3 var(--sans);color:#33405A;border-top:1px solid #D9D4C8;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.ax-showing b{font-weight:600;color:#0B1A2E}
+.ax-showing button{font:inherit;font-weight:600;color:#0B1A2E;background:none;border:0;text-decoration:underline;cursor:pointer;padding:6px 0;flex:none}
+.ax-msel{display:none}
+@media (max-width:480px){
+  /* the first figure sooner: a shorter hero, and controls as four compact menus in two columns */
+  .ax-hero .ax-top h1{font-size:30px;margin:6px 0 8px}
+  .ax-hero .ax-lede{display:none}
+  .ax-hero .ax-head-row{margin-top:12px;gap:8px;flex-wrap:nowrap}
+  .ax-hero .ax-head-row .ax-btn,.ax-hero .ax-head-row .ax-pinbtn{font-size:14px;padding:0 10px;white-space:nowrap}
+  body[data-ax-page=group] .ax-kinds{display:none}
+  .ax-hero-search{margin-top:14px}.ax-hero-search .ax-select{min-height:48px}
+  .ax-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;padding:0}
+  .ax-controls .ax-field{width:auto}
+  .ax-controls .ax-seg{display:none}
+  .ax-controls .ax-msel{display:block;width:100%;min-width:0;font:inherit;font-size:15px;min-height:44px;padding:0 8px;border:1px solid var(--muted);border-radius:2px;background:#fff;color:var(--ink)}
+  .ax-controls .ax-field:has(> select.ax-select){grid-column:1 / -1}
+  .ax-showing{padding:6px 16px 7px}
+  #gx-cmp th:nth-child(n+6),#gx-cmp td:nth-child(n+6),#gx-cmp th:nth-child(4),#gx-cmp td:nth-child(4),#sx-cmp th:nth-child(n+5),#sx-cmp td:nth-child(n+5){display:none}
+  .ax-cmp+.ax-cmp-note,.ax-tablewrap:has(.ax-cmp)::after{content:"More columns show on a wider screen: severe absence, and change in persistent absence and since 2018/19.";display:block;font:13px/1.4 var(--sans);color:var(--muted);margin-top:8px}
+}

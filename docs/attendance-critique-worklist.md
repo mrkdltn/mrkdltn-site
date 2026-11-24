@@ -19,3 +19,26 @@ From Mark's review of the preview on 24 November 2026. Not ready to go live; wor
 | 13 | "The DfE squares for patterns data is important" | Mark confirmed (24 Nov): the coloured day-by-day calendar. Now on Patterns as well as Areas, for England by phase, this year and last | Done 24 Nov |
 
 Mark also said: looking by area and by geography is really useful; Schools works quite well; the comparisons are interesting; Patterns is useful.
+
+## Usability review, 24 November 2026
+
+Mark asked for another review for simplicity, usefulness and intuitive operation. An independent review, working seven real tasks on a phone, is in `docs/attendance-ux-review.md`. What it found and what has been done:
+
+| Finding | State |
+| --- | --- |
+| On a school page, choosing a school from search and adding a school to compare did nothing (a function named `history` hid the browser's own) | Fixed 24 Nov; now part of the checks |
+| Controls meant to be hidden were showing (a "Pupils" row on ward, constituency and trust pages that did nothing) | Fixed 24 Nov |
+| The first figure was 993 px down a phone screen on a local authority page | Now 668 px: shorter hero on phones, controls as four compact menus in two columns. The Ofsted Explorer's is about 450 px; more to do |
+| Controls changed things out of sight | The summary now states what is chosen ("Chosen above: ..."), and a one-line "Showing" strip under the section menu appears once the controls scroll away |
+| A saved place or a tapped hexagon forgot the chosen phase, measure and view | Fixed: links carry them |
+| Random examples were often near-empty pages | Fixed: drawn only from places with a pooled figure |
+| A copied link from a random example opened a different place | Fixed: the address always names the place on screen |
+| "Compare by" contained "Latest" | Now "Show": latest figures, change in a year, change since 2018/19 |
+| "The schools" listed every phase when one was chosen | Lists the chosen phase, with a link to show all |
+| "Severe" silently removed "School by school" | The section stays and says why no school is shown |
+| Side-by-side tables were cut off on phones | Phones show the first three columns, with a note that more show on a wider screen |
+| On the Trusts page, search put a local authority and a ward above the trust | The page's own kind now comes first |
+| No way past the navigation for keyboard users | A "Skip to the figures" link |
+| A briefing dropped only one section, so was barely shorter than the page | To do: tighten the mapping in `start.js` |
+| The hexagon maps cannot be read by touch | To do |
+| Saved places appear only on Areas | To do |

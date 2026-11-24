@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="/attendance/tools.css">
 <link rel="stylesheet" href="/attendance/brief.css">
 </head>
-<body class="explorer" data-ax-source="Source: Department for Education, Pupil absence in schools in England. A reading of the data, not a judgement.">
+<body class="explorer" data-ax-page="group" data-ax-source="Source: Department for Education, Pupil absence in schools in England. A reading of the data, not a judgement.">
 <header class="site-head"><div class="wrap">
   <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
   <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/" aria-current="page">Attendance</a><a href="/#about">About</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
@@ -50,8 +50,8 @@
       <div class="ax-seg" id="gx-phase" role="group" aria-labelledby="gx-phase-l"></div></div>
     <div class="ax-field" id="gx-pg-f" hidden><span id="gx-pgs-l">Pupils</span>
       <div class="ax-seg" id="gx-pgs" role="group" aria-labelledby="gx-pgs-l"><button type="button" data-g="all">All</button><button type="button" data-g="fsm">Free school meals</button><button type="button" data-g="sen">SEN support</button><button type="button" data-g="ehcp">EHC plan</button></div></div>
-    <div class="ax-field" id="gx-view-f" hidden><span id="gx-view-l">Compare by</span>
-      <div class="ax-seg" id="gx-view" role="group" aria-labelledby="gx-view-l"><button type="button" data-v="now">Latest</button><button type="button" data-v="yr">Change in a year</button><button type="button" data-v="base">Change since 2018/19</button></div></div>
+    <div class="ax-field" id="gx-view-f" hidden><span id="gx-view-l">Show</span>
+      <div class="ax-seg" id="gx-view" role="group" aria-labelledby="gx-view-l"><button type="button" data-v="now">Latest figures</button><button type="button" data-v="yr">Change in a year</button><button type="button" data-v="base">Change since 2018/19</button></div></div>
     <div class="ax-field" id="gx-meas-f" hidden><span id="gx-meas-l">Measure</span>
       <div class="ax-seg" id="gx-meas" role="group" aria-labelledby="gx-meas-l"><button type="button" data-m="abs">Overall</button><button type="button" data-m="pa">Persistent</button><button type="button" data-m="sev">Severe</button></div></div>
   </section>
@@ -103,6 +103,7 @@
   <section data-nav="The schools" class="ax-card">
     <h2 id="gx-table-h">The schools</h2>
     <p class="ax-sub">In alphabetical order, for the <span id="gx-table-p"></span>. A dash means no rate is shown.</p>
+    <p class="ax-sub" id="gx-table-n" hidden></p>
     <div class="ax-tablewrap"><table class="ax-table" id="gx-table"></table></div>
     <button type="button" class="ax-btn ax-more" id="gx-more" hidden></button>
   </section>

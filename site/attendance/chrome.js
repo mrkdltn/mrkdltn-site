@@ -45,3 +45,33 @@
     b.addEventListener('keydown', (e) => { const c = e.key; if (c === 'ArrowRight' || c === 'ArrowLeft' || c === 'Home' || c === 'End') { e.preventDefault(); show(c === 'Home' ? 0 : c === 'End' ? tabs.length - 1 : (k + (c === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length, true); } }); });
   show(0);
 })();
+
+/* Usability pass, 24 November 2026.
+   On phones each row of choice buttons becomes one compact menu, so four rows of controls fit in two short lines.
+   Once the controls scroll out of sight, a one-line "Showing" strip under the section menu says what is chosen and
+   leads back to them. A skip link takes keyboard users past the navigation. */
+(function () {
+  const main = document.querySelector('main.ax'); if (!main) return;
+  if (!main.id) main.id = 'ax-main';
+  const skip = document.createElement('a'); skip.className = 'ax-skip'; skip.href = '#' + main.id; skip.textContent = 'Skip to the figures'; document.body.insertBefore(skip, document.body.firstChild);
+  const bar = document.querySelector('.ax-controls'); if (!bar) return;
+  const segs = () => [...bar.querySelectorAll('.ax-seg')];
+  const sync = () => { segs().forEach((seg) => { const btns = [...seg.querySelectorAll('button')]; let sel = seg.parentNode.querySelector('select.ax-msel');
+      const sig = btns.map((b) => b.textContent).join('|');
+      if (!sel) { sel = document.createElement('select'); sel.className = 'ax-msel'; const lab = seg.getAttribute('aria-labelledby'), l = lab && document.getElementById(lab); sel.setAttribute('aria-label', l ? l.textContent : 'Choose');
+        sel.addEventListener('change', () => { const b = [...seg.querySelectorAll('button')][sel.selectedIndex]; if (b) b.click(); }); seg.after(sel); }
+      if (sel.dataset.sig !== sig) { sel.innerHTML = ''; btns.forEach((b) => sel.appendChild(new Option(b.textContent))); sel.dataset.sig = sig; }
+      const on = btns.findIndex((b) => b.getAttribute('aria-pressed') === 'true'); if (on >= 0) sel.selectedIndex = on; });
+    strip(); };
+  // the "Showing" strip
+  const nav = document.querySelector('.ax-secnav'); let st = null, out = false;
+  const strip = () => { if (!nav) return; if (!st) { st = document.createElement('div'); st.className = 'ax-showing'; st.hidden = true; st.innerHTML = '<span></span><button type="button">Change</button>'; nav.appendChild(st);
+      st.querySelector('button').addEventListener('click', () => bar.scrollIntoView({block: 'center', behavior: 'auto'})); }
+    const parts = segs().filter((s) => s.parentNode.offsetParent !== null || s.offsetParent !== null).map((s) => { const b = s.querySelector('button[aria-pressed=true]'); return b ? b.textContent : null; }).filter(Boolean);
+    const pick = bar.querySelector('select.ax-select'); if (pick && pick.selectedOptions[0]) parts.unshift(pick.selectedOptions[0].textContent);
+    st.querySelector('span').innerHTML = '<b>Showing</b> ' + parts.join(' · '); st.hidden = !(out && parts.length); };
+  new MutationObserver(() => sync()).observe(bar, {subtree: true, attributes: true, attributeFilter: ['aria-pressed', 'hidden'], childList: true});
+  if ('IntersectionObserver' in window) new IntersectionObserver((es) => { out = !es[0].isIntersecting && es[0].boundingClientRect.top < 0; strip(); }).observe(bar);
+  bar.addEventListener('change', () => setTimeout(strip, 0));
+  sync();
+})();

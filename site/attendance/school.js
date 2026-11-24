@@ -127,7 +127,8 @@
     $('sx-dist-r').innerHTML = `${M.n.replace(/^./, (c) => c.toUpperCase())} here was <b>${pc(mine)}</b>. The middle school of this phase had ${pc(med)}; <b>${share}%</b> of ${PH[S.ph]} had a higher rate and <b>${below}%</b> a lower one.`;
   }
 
-  function history(others) {
+  // (named yearChart, not history: a function called history hides the browser's own and breaks every address change)
+  function yearChart(others) {
     const el = $('sx-hist'), M = MEAS[meas], W = width(el), H = Math.round(Math.min(380, Math.max(240, W * 0.5))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const ser = (h, i) => yrs.map((p) => ({p, v: h[p] ? h[p][i] : null}));
@@ -190,12 +191,14 @@
   function draw() {
     const t = ++token;
     Promise.all(vs.map((u) => school(u).then((s) => (s ? {u, s} : null)))).then((o) => { if (t !== token) return; const others = o.filter(Boolean);
-      head(); side(others); readings(); position(); history(others); changed(); chips(others); });
+      head(); side(others); readings(); position(); yearChart(others); changed(); chips(others); });
   }
   function go() { random = false; const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); draw(); }
   function open(u, push) {
     school(u).then((s) => { if (!s) { $('sx-name').textContent = 'School not found'; $('sx-meta').textContent = 'No school with that number appears in the newest release. It may have closed or changed. Search for it by name below.'; $('sx-body').hidden = true; return; }
-      urn = String(u); S = s; if (push) random = false; vs = vs.filter((x) => x !== urn); $('sx-body').hidden = false; dist = null;
+      urn = String(u); S = s; if (push) random = false;
+      // the address always names the school on screen, so a copied link opens the same school for the next person
+      if (!push) history.replaceState(null, '', AXsearch.href(urn, vs.length ? '#vs=' + vs.join(',') : '')); vs = vs.filter((x) => x !== urn); $('sx-body').hidden = false; dist = null;
       if (push) history.pushState(null, '', AXsearch.href(urn, vs.length ? '#vs=' + vs.join(',') : ''));
       draw(); getDist(S.ph).then((d) => { if (urn === String(u)) { dist = d; position(); changed(); } }); });
   }
