@@ -24,6 +24,27 @@
   const per = (rec, y, name, base) => { const v = col(rec, y, name), e = col(rec, y, 'enrol'); return v == null || v < 0 || !e ? null : base * v / e; };
   const SRC = () => `Source: DfE, Parental responsibility measures, ${ay(D.latest)}, published ${new Date(D.published + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}; unauthorised holiday absence from the DfE's school-level absence statistics.`;
 
+  // ---------------------------------------------------------------- the flag
+  // A local authority is flagged where two published facts hold together: few penalty notices for unauthorised absence other
+  // than holiday (none, fewer than 10, or in the lowest quarter of authorities for its size), and, for at least one pupil
+  // group, persistent absence and severe absence both in the highest quarter of authorities. Authorities under 2,000 pupils
+  // are left out. It is a statement of two facts side by side and claims no cause.
+  const FG = [['fsm', 'pupils eligible for free school meals'], ['sen', 'pupils with SEN support'], ['ehcp', 'pupils with an education, health and care plan']];
+  let FLAGS = null;
+  function flags(rows) {
+    const L = String(D.latest), big = rows.filter((r) => D.areas[r.id] && D.areas[r.id].y[L] && col(D.areas[r.id], L, 'enrol') >= 2000 && r.pg && r.pg.A);
+    const cnt = (r) => col(D.areas[r.id], L, 'other'), rt = (r) => (cnt(r) == null ? null : cnt(r) < 0 ? 0 : per(D.areas[r.id], L, 'other', 1000)), val = (r, g, m) => { const x = r.pg.A[g]; return x && x[1] && x[1][m] != null ? x[1][m] : null; };
+    const lowCut = d3.quantile(big.map(rt).filter((v) => v != null).sort(d3.ascending), 0.25), cut = {};
+    FG.forEach(([g]) => { cut[g] = [1, 2].map((m) => d3.quantile(big.map((r) => val(r, g, m)).filter((v) => v != null).sort(d3.ascending), 0.75)); });
+    const out = {list: [], by: {}, lowCut, cut, n: big.length, low: 0};
+    big.forEach((r) => { const c = cnt(r); if (c == null || !(c <= 0 || rt(r) <= lowCut)) return; out.low++;
+      const gs = FG.filter(([g]) => { const pa = val(r, g, 1), sa = val(r, g, 2); return pa != null && sa != null && pa >= cut[g][0] && sa >= cut[g][1]; }).map(([g, n]) => ({g, n, pa: val(r, g, 1) / 100, sa: val(r, g, 2) / 100}));
+      if (gs.length) { const f = {r, c, rate: c > 0 ? rt(r) : null, gs, cm: col(D.areas[r.id], L, 'cm')}; out.list.push(f); out.by[r.id] = f; } });
+    out.list.sort((a, b) => a.r.name.localeCompare(b.r.name)); return out;
+  }
+  const lowWords = (f, L) => (f.c === 0 ? 'recorded <b>no</b> penalty notices' : f.c < 0 ? 'issued <b>fewer than 10</b> penalty notices' : `issued <b>${num(f.c)}</b> penalty notices (${f.rate.toFixed(1)} for every 1,000 pupils, in the lowest quarter of local authorities)`) + ` for unauthorised absence other than holiday in ${ay(L)}`;
+  const joinAnd = (a) => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
+
   // ---------------------------------------------------------------- one place against England
   function lines(host, title, unit, series, years, fmt) {
     const box = add(host, 'div', 'en-mini'); add(box, 'h3', null, title);
@@ -53,6 +74,11 @@
     card.hidden = !(rec && rec.y[L]); area.innerHTML = ''; if (card.hidden) return;
     const name = ($('gx-name') || {}).textContent || 'This area', issued = col(rec, L, 'issued');
     add(area, 'p', 'ax-sub', `Penalty notices to parents in ${ay(L)}, kept in two separate strands because they answer different things: notices for a holiday taken in term time without the school’s agreement, and notices for other unauthorised absence from school. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
+    const fl = kind === 'a' && FLAGS && FLAGS.by[id];
+    if (fl) { const box = add(area, 'div', 'en-flag'); box.setAttribute('role', 'note'); add(box, 'p', 'en-flag-h', 'Flag: few notices for unauthorised absence other than holiday, and high persistent and severe absence among ' + joinAnd(fl.gs.map((g) => g.n)));
+      add(box, 'p', null, `${esc(name)} ${lowWords(fl, L)}.` + (fl.cm == null ? '' : ` It had ${fl.cm === 0 ? 'no' : fl.cm < 0 ? 'fewer than 10' : num(fl.cm)} cases in attendance case management.`)
+        + ' ' + fl.gs.map((g) => `Among ${g.n}, persistent absence was <b>${g.pa.toFixed(1)}%</b> and severe absence <b>${g.sa.toFixed(2)}%</b> in the autumn and spring terms of ${ay(L)}, each in the highest quarter of local authorities (which starts at ${(FLAGS.cut[g.g][0] / 100).toFixed(1)}% and ${(FLAGS.cut[g.g][1] / 100).toFixed(2)}%).`).join(' '));
+      add(box, 'p', 'en-flag-n', `${FLAGS.list.length} of ${FLAGS.n} local authorities carry this flag. It sets two published facts side by side and does not show that one causes the other. <a href="/attendance/patterns/#sec-enforcement">How the flag is set, and the others that carry it</a>.`); }
     const years = Object.keys(E.y).filter((y) => +y >= 2016).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair en-strands');
     const strand = (c, title, noun, absKey, absName, absNote) => { const box = add(grid, 'div', 'en-strand'); add(box, 'h3', 'en-st', title);
       const n = col(rec, L, c), r = per(rec, L, c, 1000), er = per(E, L, c, 1000), ab = rec[absKey] && rec[absKey][L], eab = E[absKey] && E[absKey][L], sp = spread(c, L);
@@ -94,8 +120,8 @@
     ['sen', 'Pupils with SEN support', 'overall absence'], ['ehcp', 'Pupils with an EHC plan', 'overall absence']];
   const XS = [['hols', 'Notices for unauthorised holiday'], ['other', 'Notices for other unauthorised absence'], ['cmp', 'Cases in case management']];
   const PAIR = {hols: 'hol', other: 'oth'};          // each strand of notices opens against its own kind of absence
-  let ysel = 'hol', xsel = 'hols', msel = 0, gsel = 'fsm', LAS = null;
-  const MSN = ['Overall absence', 'Persistent absence', 'Severe absence'], GRP = [['fsm', 'Eligible for free school meals'], ['sen', 'SEN support'], ['ehcp', 'EHC plan']];
+  let ysel = 'hol', xsel = 'hols', msel = 0, LAS = null;
+  const MSN = ['Overall absence', 'Persistent absence', 'Severe absence'];
   const rank = (a) => { const o = a.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]), r = new Array(a.length); for (let i = 0; i < o.length;) { let j = i; while (j + 1 < o.length && o[j + 1][0] === o[i][0]) j++; for (let k = i; k <= j; k++) r[o[k][1]] = (i + j) / 2; i = j + 1; } return r; };
   const corr = (a, b) => { const ma = d3.mean(a), mb = d3.mean(b); let s = 0, sa = 0, sb = 0; a.forEach((v, i) => { s += (v - ma) * (b[i] - mb); sa += (v - ma) ** 2; sb += (b[i] - mb) ** 2; }); return s / Math.sqrt(sa * sb); };
   const resid = (a, z) => { const mz = d3.mean(z), ma = d3.mean(a); let n = 0, d = 0; z.forEach((v, i) => { n += (v - mz) * (a[i] - ma); d += (v - mz) ** 2; }); const b = n / d; return a.map((v, i) => v - ma - b * (z[i] - mz)); };
@@ -129,25 +155,16 @@
       + (r1 == null ? '' : ` Comparing authorities with a similar share of pupils eligible for free school meals, there is ${strength(r1)} (${r1 >= 0 ? '+' : '−'}${Math.abs(r1).toFixed(2)}).`));
     add(all, 'p', 'ax-note', 'Notices for holiday and notices for other unauthorised absence are separate strands and are never added together here. Read each chart as a pattern across areas and no more. A notice follows an absence, so more notices where there is more of that kind of absence is what the rules would produce; it does not show that notices raise or lower absence. The DfE does not publish who receives notices by pupil group, so nothing here shows whether families of pupils eligible for free school meals or with special educational needs are fined more or less often than others. '
       + 'The share eligible for free school meals is worked out from each authority’s published rates. ' + SRC());
-    // where notices are not used for unauthorised absence other than holiday, beside the persistent and severe absence of pupil groups
-    { const big = LAS.filter((r) => D.areas[r.id] && D.areas[r.id].y[L] && col(D.areas[r.id], L, 'enrol') >= 2000 && r.pg && r.pg.A), cnt = (r) => col(D.areas[r.id], L, 'other'), rt = (r) => per(D.areas[r.id], L, 'other', 1000);
-      const none = big.filter((r) => cnt(r) === 0), few = big.filter((r) => cnt(r) != null && cnt(r) < 0), rest = big.filter((r) => cnt(r) > 0).sort((a, b) => rt(a) - rt(b)), t = Math.floor(rest.length / 3);
-      const G5 = [['None', none], ['Fewer than 10', few], ['Lower third of the rest', rest.slice(0, t)], ['Middle third', rest.slice(t, 2 * t)], ['Upper third', rest.slice(2 * t)]];
-      const val = (r, m) => { const g = r.pg.A[gsel]; return g && g[1] && g[1][m] != null ? g[1][m] / 100 : null; }, med = (list, m) => { const v = list.map((r) => val(r, m)).filter((x) => x != null); return v.length >= 3 ? d3.median(v) : null; };
-      const gname = GRP.find((g) => g[0] === gsel)[1], lname = {fsm: 'pupils eligible for free school meals', sen: 'pupils with SEN support', ehcp: 'pupils with an education, health and care plan'}[gsel];
-      add(all, 'h3', 'en-h', `Where notices are not used for unauthorised absence other than holiday, ${ay(L)}`);
-      add(all, 'p', 'ax-sub', `${none.length} local authorities recorded no penalty notices for unauthorised absence other than holiday and ${few.length} recorded fewer than 10 (the two smallest authorities are left out throughout). The table sets them beside the rest, split into thirds by how many such notices they issued for their size, and gives the middle authority’s persistent and severe absence for the chosen pupils (autumn and spring terms ${ay(L)}).`);
-      const c2 = add(all, 'div', 'en-ctl'), f2 = add(c2, 'div', 'ax-field'); add(f2, 'span', null, 'Pupils').id = 'en-l-pupils'; const s2 = add(f2, 'div', 'ax-seg'); s2.setAttribute('role', 'group'); s2.setAttribute('aria-labelledby', 'en-l-pupils');
-      GRP.forEach(([v, n]) => { const b = add(s2, 'button', null, n); b.type = 'button'; b.setAttribute('aria-pressed', String(v === gsel)); b.addEventListener('click', () => { const y0 = scrollY; gsel = v; england(); scrollTo(0, y0); }); });
-      const f1 = (v, dp) => (v == null ? '–' : v.toFixed(dp) + '%'), rng = (list) => (list.length && list.every((r) => rt(r) != null) ? d3.min(list, rt).toFixed(1) + ' to ' + d3.max(list, rt).toFixed(1) : '–');
-      add(add(all, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table en-use', `<thead><tr><th>Notices for other unauthorised absence</th><th class="n">Local authorities</th><th class="n">For every 1,000 pupils</th><th class="n">Persistent absence, ${gsel === 'fsm' ? gname.toLowerCase() : gname}</th><th class="n">Severe absence</th></tr></thead><tbody>`
-        + G5.map(([n, list], i) => `<tr><td>${n}</td><td class="n">${list.length}</td><td class="n">${i === 0 ? 'none' : i === 1 ? 'not given' : rng(list)}</td><td class="n">${f1(med(list, 1), 1)}</td><td class="n">${f1(med(list, 2), 2)}</td></tr>`).join('') + '</tbody>');
-      const lo = none.concat(few), hi = rest, pa = [med(lo, 1), med(hi, 1)], sa = [med(lo, 2), med(hi, 2)], lon = lo.filter((r) => /^E09/.test(r.id)).length, word = (a, b, tol) => (Math.abs(a - b) < tol ? 'much the same as' : a < b ? 'lower than' : 'higher than');
-      if (pa[0] != null && pa[1] != null) add(all, 'p', 'ax-reading', `In the ${lo.length} authorities that recorded none or fewer than 10, the middle rate of persistent absence for ${lname} was <b>${f1(pa[0], 1)}</b>, ${word(pa[0], pa[1], 0.5)} the <b>${f1(pa[1], 1)}</b> in the other ${hi.length}.`
-        + (sa[0] != null && sa[1] != null ? ` For severe absence it was <b>${f1(sa[0], 2)}</b> against <b>${f1(sa[1], 2)}</b>.` : ''));
-      add(all, 'p', 'ax-note', `This does not show what issuing notices does. ${lon} of the ${lo.length} authorities are London boroughs, where absence is lower in general, and authorities also differ in deprivation and in what else they do: an authority that issues no notices may rely on attendance case management or early help instead. Each figure is the middle authority of its group, not a rate for all its pupils together. Severe absence is missing where the DfE’s figure rests on fewer than 10 pupils.`);
+    // the flagged authorities: few notices for unauthorised absence other than holiday, with high persistent and severe absence in a pupil group
+    { const F = FLAGS || (FLAGS = flags(LAS)), big = LAS.filter((r) => D.areas[r.id] && D.areas[r.id].y[L] && col(D.areas[r.id], L, 'enrol') >= 2000), cnt = (r) => col(D.areas[r.id], L, 'other');
+      add(all, 'h3', 'en-h', `Flagged: few notices for unauthorised absence other than holiday, with high persistent and severe absence in a pupil group, ${ay(L)}`);
+      add(all, 'p', 'ax-sub', `A local authority is flagged where two things hold together. First, it recorded no penalty notices for unauthorised absence other than holiday, fewer than 10, or so few for its size that it is in the lowest quarter of authorities (${F.lowCut.toFixed(1)} or fewer for every 1,000 pupils): ${F.low} authorities. Second, for at least one pupil group both persistent absence and severe absence were in the highest quarter of authorities in the autumn and spring terms of ${ay(L)}. ${F.list.length} of ${F.n} authorities meet both. The two smallest authorities are left out.`);
+      add(add(all, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table en-flagt', '<thead><tr><th>Local authority</th><th class="n">Notices for other unauthorised absence</th><th>Pupil group: persistent absence, severe absence</th></tr></thead><tbody>'
+        + F.list.map((f) => `<tr><td><a href="/attendance/group/?k=a&id=${f.r.id}#sec-enforcement">${esc(f.r.name)}</a></td><td class="n">${f.c === 0 ? 'None' : f.c < 0 ? 'fewer than 10' : num(f.c) + ' · ' + f.rate.toFixed(1) + ' for every 1,000'}</td><td>${f.gs.map((g) => `${g.n.replace(/^pupils /, '').replace(/^(.)/, (c) => c.toUpperCase())}: ${g.pa.toFixed(1)}%, ${g.sa.toFixed(2)}%`).join('<br>')}</td></tr>`).join('') + '</tbody>');
+      add(all, 'p', 'ax-note', 'The flag sets two published facts side by side for one authority. It does not show that one causes the other, and an authority that issues few notices may rely on attendance case management or early help instead. The highest quarter starts at '
+        + FG.map(([g, n]) => `${(F.cut[g][0] / 100).toFixed(1)}% persistent and ${(F.cut[g][1] / 100).toFixed(2)}% severe absence for ${n}`).join('; ') + '. Severe absence is missing where the DfE’s figure rests on fewer than 10 pupils, and such a group cannot be flagged.');
       const names = (list) => list.slice().sort((a, b) => a.name.localeCompare(b.name)).map((r) => `<a href="/attendance/group/?k=a&id=${r.id}#sec-enforcement">${esc(r.name)}</a>`).join(', ');
-      add(all, 'p', 'ax-note en-names', `<b>Recorded none:</b> ${names(none) || 'no authority'}.<br><b>Recorded fewer than 10:</b> ${names(few) || 'no authority'}.`); }
+      add(all, 'p', 'ax-note en-names', `<b>Recorded no notices for unauthorised absence other than holiday:</b> ${names(big.filter((r) => cnt(r) === 0)) || 'no authority'}.<br><b>Recorded fewer than 10:</b> ${names(big.filter((r) => cnt(r) != null && cnt(r) < 0)) || 'no authority'}.`); }
     // the map: notices for every 1,000 pupils
     add(all, 'h3', 'en-h', `${xname} for every 1,000 pupils, ${ay(L)}`);
     const mp = add(all, 'div', 'ax-chart'), H2 = LAS.filter((r) => r.q != null).map((r) => ({r, v: D.areas[r.id] ? per(D.areas[r.id], L, xcol, 1000) : null})), cap = 480, MW = Math.min(cap, width(mp));
@@ -181,6 +198,7 @@
 
   d3.json('/attendance/data/prm.json').then((j) => { D = j; j.cols.forEach((c, i) => { C[c] = i; });
     if (area) { let last = ''; const go = () => { const sig = location.search + '|' + (($('gx-name') || {}).textContent || ''); if (sig === last) return; last = sig; place(); };
+      d3.json('/attendance/data/grp/a_all.json').then((rows) => { FLAGS = flags(rows); last = ''; go(); }).catch(() => {});
       const nm = $('gx-name'); if (nm) new MutationObserver(go).observe(nm, {childList: true, characterData: true, subtree: true}); addEventListener('popstate', () => setTimeout(go, 50)); go();
       let t = null; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { last = ''; go(); }, 200); }); }
     if (all) d3.json('/attendance/data/grp/a_all.json').then((rows) => { LAS = rows; england(); let t = null, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(england, 200); }); });

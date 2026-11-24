@@ -86,6 +86,18 @@ Authorities that issue none or very few do not have higher persistent or severe 
 
 The scatter on Patterns also now lets the reader choose overall, persistent or severe absence for each pupil group.
 
+## The flag (Mark, 24 November, replacing the overall comparison on the page)
+
+Mark asked that the page should not present the overall pattern, and should instead flag the individual local authorities where low enforcement and high persistent and severe absence among vulnerable pupils are found together, on their own profiles. The group-median table above is therefore no longer on the site; it stays in this note as the record of what the data shows overall.
+
+**Definition.** A local authority (2,000 pupils or more) is flagged where both hold in 2024/25: (1) it recorded no penalty notices for unauthorised absence other than holiday, fewer than 10, or so few for its size that it is in the lowest quarter of authorities (0.8 or fewer for every 1,000 pupils); and (2) for at least one of three pupil groups (eligible for free school meals, SEN support, EHC plan) persistent absence and severe absence were both in the highest quarter of authorities in the autumn and spring terms. The thresholds are recomputed from each release.
+
+**Result.** 38 authorities meet the first condition and 10 meet both: Cornwall, Essex, Isle of Wight, Norfolk, Reading, South Gloucestershire, Stockport, Warwickshire, West Berkshire and West Northamptonshire.
+
+**Where it shows.** A boxed flag at the head of the Enforcement section on each flagged authority's page, giving the two facts, its attendance case management count and the thresholds; and a table of the flagged authorities on Patterns with the definition. Counties are not flagged.
+
+**What the flag must not be taken to mean.** It states two published facts about one authority. For the record, so that nobody later reads the flag as evidence of a link: the second condition holds in 10 of the 38 low-enforcement authorities (26%) and in 32 of the other 113 (28%). High persistent and severe absence in a pupil group is as common where more notices are issued. The flag's wording says it does not show cause, and that line should stay.
+
 ## None is not fewer than 10
 
 Mark's point of 24 November: many authorities record none of a measure, and that is a finding in itself. In 2024/25, of 153 local authorities: 145 recorded no education supervision orders, 142 no parenting orders, 115 no prosecutions at the two-notice limit, 113 no notices for lateness, 92 offered no parenting contracts, 45 prosecuted nobody after case management, 29 had no case management cases and 17 prosecuted nobody for non-payment. Two issued no penalty notices at all. The tool writes a recorded zero as "None", a count of 1 to 9 as "fewer than 10", and a dash where the authority supplied no figure; each authority's table says how many authorities recorded none, and Patterns shows the split for every measure. On phones the table keeps the number and that count and drops the two per-10,000 columns.
