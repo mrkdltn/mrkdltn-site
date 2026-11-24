@@ -9,13 +9,13 @@ DfE, "Parental responsibility measures", academic year 2024/25, published 29 Jan
 - **Coverage:** England, regions and every local authority, 2009/10 to 2024/25. No figures for 2019/20. Rates and reasons from 2013/14 and 2016/17.
 - **What it holds:** penalty notices issued, by reason (unauthorised holiday, late, other); paid within 21 days and within 28; withdrawn, with reasons; prosecuted for non-payment; unresolved; from 2024/25, second notices within three years and prosecutions at the two-notice limit; cases entering attendance case management and what became of them; parenting contracts and orders; education supervision orders; and the enrolments the DfE uses as denominator.
 - **What it does not hold:** anything by school, by phase or by pupil group. Nobody can say from this file whether families of pupils eligible for free school meals, or of pupils with special educational needs, are fined more or less often than others.
-- **Small numbers:** the DfE does not suppress. In 2024/25, 230 figures across authorities are counts of 1 to 9 (mostly prosecutions, orders and the less common reasons). The tool writes these as "fewer than 10".
+- **Small numbers:** the DfE does not suppress. In 2024/25, 163 of the figures the tool uses are counts of 1 to 9 (mostly prosecutions, orders and the less common reasons). The tool writes these as "fewer than 10".
 
 ## England, 2024/25
 
 492,825 penalty notices, 6.68 for every 100 enrolments (4.67 in 2018/19; 5.41 in 2022/23). 93.2% were for unauthorised holiday (86.5% in 2018/19). 72% were paid within 21 days; 28,909 led to prosecution for non-payment. 87,859 cases entered attendance case management; 29 parenting orders; 52 education supervision orders.
 
-Across local authorities the notice rate runs from none (the two smallest) and under 1 for every 100 pupils in seven, to 17.1; the middle half lie between 4.0 and 9.1.
+Across local authorities the notice rate runs from none (the two smallest) and under 1 for every 100 pupils in five more, to 17.1; the middle half lie between 4.0 and 9.1.
 
 ## The link with holidays and with pupil groups
 
@@ -23,7 +23,7 @@ Rank correlations across local authorities, 2024/25 (pupil groups: autumn and sp
 
 | Notices for every 100 pupils, against | Correlation | Allowing for FSM |
 | --- | --- | --- |
-| Unauthorised holiday absence (holiday notices) | +0.71 | +0.66 |
+| Unauthorised holiday absence (holiday notices) | +0.74 | +0.69 |
 | Share of pupils eligible for free school meals | +0.41 | |
 | Overall absence, pupils eligible for free school meals | +0.04 | +0.27 |
 | Overall absence, pupils not eligible | −0.02 | −0.02 |
@@ -36,7 +36,7 @@ Over time: an authority's notice rate in 2022/23 against the change in its unaut
 What this supports, and what it does not:
 
 1. **Enforcement follows holidays closely.** Authorities with more unauthorised holiday issue more holiday notices. That is what the rules produce, since a notice follows an absence.
-2. **Practice still differs a great deal.** For every 1,000 days of unauthorised holiday, the middle half of authorities issued between about 50 and 93 holiday notices; the range runs from almost none to about 135.
+2. **Practice still differs a great deal.** For every 1,000 days of unauthorised holiday, the middle half of authorities issued between about 50 and 91 holiday notices; the range runs from almost none to about 135.
 3. **More deprived authorities issue more notices** (+0.41 with the share eligible for free school meals).
 4. **The link with the absence of vulnerable groups is weak, not clear.** Taken plainly there is no pattern for pupils eligible for free school meals (+0.04). Among authorities of similar deprivation there is a weak positive one (+0.27): where those pupils are absent more, somewhat more notices are issued. For SEN support it is weak (+0.29); for EHC plans weaker still.
 5. **Nothing here shows what enforcement does.** These are comparisons between areas in one year. The over-time figures give no sign that issuing more notices is followed by less holiday absence, or by any change in the absence of pupils eligible for free school meals, but two years across 150 authorities cannot settle that either way.
@@ -53,7 +53,7 @@ So the tool shows the association and says plainly how strong it is, computed on
 
 Mark's instruction of 24 November: penalty notices for a holiday in term time that the school did not agree, and penalty notices for other unauthorised absence from school, are separate things and must be treated as such. The pages never add them together. Each strand has its own count, its own rate for every 1,000 pupils and its own kind of absence beside it (unauthorised holiday absence; and unauthorised absence other than holiday, which is all unauthorised absence less unauthorised holiday and so includes arriving after the register has closed and absences with no reason yet given). The total appears only where the DfE gives nothing finer: what became of the notices (paid, withdrawn, prosecuted) is published for all notices together.
 
-England, 2024/25: 459,288 notices for unauthorised holiday (62.2 for every 1,000 pupils), 32,113 for other unauthorised absence (4.4) and 1,424 for lateness (0.2). Across local authorities with an exact figure, notices for other unauthorised absence have a median of 3.2 for every 1,000 pupils, the middle half between 1.2 and 6.6.
+England, 2024/25: 459,288 notices for unauthorised holiday (62.2 for every 1,000 pupils), 32,113 for other unauthorised absence (4.4) and 1,424 for lateness (0.2). Across local authorities with an exact figure, notices for other unauthorised absence have a median of 3.2 for every 1,000 pupils (counting the eight that recorded none), the middle half between 1.2 and 6.6.
 
 Rank correlations by strand (local authorities, 2024/25; second figure allows for the share eligible for free school meals):
 
@@ -82,7 +82,7 @@ Of the 151 authorities with 2,000 or more pupils, 8 recorded no such notices in 
 | Middle third | 43 | 30.9%, 3.80% | 26.2%, 3.80% | 32.0%, 6.39% |
 | Upper third | 44 | 30.8%, 3.84% | 27.2%, 4.16% | 34.7%, 6.87% |
 
-Authorities that issue none or very few do not have higher persistent or severe absence among these pupils; taken plainly it is a little lower (pupils eligible for free school meals: 29.3% against 31.6% persistent; 3.62% against 4.08% severe). Nine of the 21 are London boroughs, where absence is lower in general. Allowing for the share eligible for free school meals and for London, the differences are small and within what chance would give (free school meals persistent −0.5 points, standard error 0.65; severe −0.1, 0.21; SEN support −0.5, 0.54; EHC plan persistent −1.6, 0.76). So there is no evidence here that not issuing these notices goes with worse attendance for vulnerable pupils, and none that issuing them goes with better. One year across 151 areas cannot show cause in either direction, and authorities that issue none may be doing other things instead.
+Authorities that issue none or very few do not have higher persistent or severe absence among these pupils; taken plainly it is a little lower (pupils eligible for free school meals: 29.3% against 31.6% persistent; 3.62% against 4.08% severe). Nine of the 21 are London boroughs, where absence is lower in general. Allowing for the share eligible for free school meals and for London, the differences for free school meals and SEN support are small and within what chance would give (free school meals persistent −0.5 points, standard error 0.65; severe −0.1, 0.21; SEN support −0.5, 0.54). For EHC plans persistent absence is 1.6 points lower in the low-use authorities (standard error 0.76), which is more than chance alone would usually give and points away from the concern. So there is no evidence here that not issuing these notices goes with worse attendance for vulnerable pupils, and none that issuing them goes with better. One year across 151 areas cannot show cause in either direction, and authorities that issue none may be doing other things instead.
 
 The scatter on Patterns also now lets the reader choose overall, persistent or severe absence for each pupil group.
 
@@ -92,11 +92,11 @@ Mark asked that the page should not present the overall pattern, and should inst
 
 **Definition.** A local authority (2,000 pupils or more) is flagged where both hold in 2024/25: (1) it recorded no penalty notices for unauthorised absence other than holiday, fewer than 10, or so few for its size that it is in the lowest quarter of authorities (0.8 or fewer for every 1,000 pupils); and (2) for at least one of three pupil groups (eligible for free school meals, SEN support, EHC plan) persistent absence and severe absence were both in the highest quarter of authorities in the autumn and spring terms. The thresholds are recomputed from each release.
 
-**Result.** 38 authorities meet the first condition and 10 meet both: Cornwall, Essex, Isle of Wight, Norfolk, Reading, South Gloucestershire, Stockport, Warwickshire, West Berkshire and West Northamptonshire.
+**Result.** 38 authorities meet the first condition and 9 meet both: Cornwall, Essex, Isle of Wight, Norfolk, Reading, South Gloucestershire, Stockport, Warwickshire and West Berkshire. (A first build flagged a tenth, West Northamptonshire, on a rounding tie: 4.9512% against a threshold of 4.9520%. Pupil-group rates are now held at the DfE's full precision. The flag is a threshold, so authorities just either side of it differ by very little: Stockport's 4.95% severe absence is barely over.)
 
 **Where it shows.** A boxed flag at the head of the Enforcement section on each flagged authority's page, giving the two facts, its attendance case management count and the thresholds; and a table of the flagged authorities on Patterns with the definition. Counties are not flagged.
 
-**What the flag must not be taken to mean.** It states two published facts about one authority. For the record, so that nobody later reads the flag as evidence of a link: the second condition holds in 10 of the 38 low-enforcement authorities (26%) and in 32 of the other 113 (28%). High persistent and severe absence in a pupil group is as common where more notices are issued. The flag's wording says it does not show cause, and that line should stay.
+**What the flag must not be taken to mean.** It states two published facts about one authority. For the record, so that nobody later reads the flag as evidence of a link: the second condition holds in 9 of the 38 low-enforcement authorities (24%) and in 32 of the other 113 (28%). High persistent and severe absence in a pupil group is as common where more notices are issued. The flag's wording says it does not show cause, and that line should stay.
 
 ## None is not fewer than 10
 
@@ -107,3 +107,7 @@ Mark's point of 24 November: many authorities record none of a measure, and that
 1. Settled by Mark's reply on 24 November, which took the counts as read and asked that none be kept apart from fewer than 10. For the record, the question was whether counts of notices and cases at local authority level sit within the rule "rates only, never pupil counts". They count notices, not pupils, and the DfE publishes them; the tool shows them with a rate beside each.
 2. Whether the two short tables naming the authorities with most and fewest notices for their size should stay. They are a reading of published data and carry no judgement, but they are lists of named places.
 3. Whether to seek the pupil-level picture elsewhere. No published source splits penalty notices by pupil group; a freedom of information request to the DfE or to authorities is the only route.
+
+## Independent check, 24 November 2026 (fifth pass, `docs/attendance-figures-check.md`)
+
+All 58,178 stored counts agree with the DfE's file, and the pooled holiday and other unauthorised absence rates are identical to the DfE's own authority figures. Faults found and fixed: one flag on a rounding tie (pupil-group and holiday rates now kept at the DfE's precision, by refetching); the outcome chart where a part is fewer than 10 (shares are now of all notices issued, and the masked part is drawn but given no figure); a table heading that said every 100 where the figures were for every 1,000; and several figures in this note. Left as it is, and stated here plainly: "fewer than 10" is a rule for what the pages print, not a guarantee. A masked figure can sometimes be worked out from a county total or from the other parts of a total, and the DfE publishes every one of these counts exactly. The rule keeps very small counts of notices from being quoted from this site; it does not and cannot hide them.

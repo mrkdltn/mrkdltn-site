@@ -59,10 +59,9 @@ def newest():
 
 
 def hund(x):
-    """A rate in hundredths of a point that still rounds to the right tenth. Pages show one decimal place by rounding these
-    hundredths, so 13.2476 must not be stored as 13.25 (which would show as 13.3): where rounding up lands on a 5, step back one."""
-    r = round(x)
-    return r - 1 if r % 10 == 5 and r - x > 1e-6 else r
+    """A rate in hundredths of a point kept to two further decimal places, as the build holds every rate (13.2476% is 1324.76),
+    so that a rate, a difference and a pooled figure are each rounded once from the DfE's own figure."""
+    return round(x, 2)
 
 
 def bp(v):

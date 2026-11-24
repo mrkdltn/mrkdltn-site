@@ -214,13 +214,14 @@ def schools():
     if not os.path.exists(apath):
         print('attendance: no school data, school view not built'); return
     I = lambda v: int(v) if v != '' else None
+    F = lambda v: hund(float(v)) if v != '' else None          # illness and unauthorised holiday: the DfE's rates, kept to four decimal places
     rows = {}
     for r in csv.DictReader(open(apath, encoding='utf-8')):
         en, po, mi, mu, pn = I(r['enrol']), I(r['poss']), I(r['missed']), I(r['missed_unauth']), I(r['pa_n'])
         pct = lambda n, d: None if n is None or not d else hund(10000 * n / d)
         # [enrolments, sessions possible, overall, unauthorised, persistent, illness, unauthorised holiday, severe count,
         #  then the counts behind the first three, kept for pooling and never published]
-        rows.setdefault(r['urn'], {})[r['period']] = [en, po, pct(mi, po), pct(mu, po), pct(pn, en), I(r['ill']), I(r['hol_u']), I(r.get('sev', '')), mi, mu, pn]
+        rows.setdefault(r['urn'], {})[r['period']] = [en, po, pct(mi, po), pct(mu, po), pct(pn, en), F(r['ill']), F(r['hol_u']), I(r.get('sev', '')), mi, mu, pn]
     meta = {r['urn']: r for r in csv.DictReader(open(os.path.join(RAW, 'schools.csv'), encoding='utf-8'))}
     periods = sorted({p for h in rows.values() for p in h})
     fy = [p for p in periods if not p.endswith('AS')]
@@ -468,9 +469,9 @@ def pupil_groups():
     if os.path.exists(path):
         for r in csv.DictReader(open(path, encoding='utf-8')):
             # a small group in which every pupil, or none, is persistently absent would tell on those pupils: leave it out
-            if int(r['enrol']) >= MIN_ENROL and not (int(r['enrol']) < 50 and int(r['pa']) in (0, 10000)):
-                out.setdefault(r['code'], {}).setdefault(r['phase'], {}).setdefault(r['group'], {})[r['period']] = [int(r['enrol']), int(r['poss']), int(r['abs']), int(r['pa']),
-                                                                                                                 int(r['sev']) if r.get('sev') not in ('', None) and round(int(r['sev']) * int(r['enrol']) / 10000) >= 10 else None]
+            if int(r['enrol']) >= MIN_ENROL and not (int(r['enrol']) < 50 and float(r['pa']) in (0, 10000)):
+                out.setdefault(r['code'], {}).setdefault(r['phase'], {}).setdefault(r['group'], {})[r['period']] = [int(r['enrol']), int(r['poss']), hund(float(r['abs'])), hund(float(r['pa'])),
+                                                                                                                 hund(float(r['sev'])) if r.get('sev') not in ('', None) and round(float(r['sev']) * int(r['enrol']) / 10000) >= 10 else None]
     return out
 
 

@@ -61,11 +61,15 @@
     const PARTS = [['Paid within 21 days', (r) => col(r, y, 'paid21'), '#33405A'], ['Paid within 22 to 28 days', (r) => { const a = col(r, y, 'paid'), b = col(r, y, 'paid21'); return a == null || b == null || a < 0 || b < 0 ? null : a - b; }, '#7C8799'],
       ['Withdrawn', (r) => col(r, y, 'withdrawn'), '#C5CCD8'], ['Prosecuted for non-payment', (r) => col(r, y, 'pros'), INK], ['Unresolved at the end of the year', (r) => col(r, y, 'unresolved'), '#fff']];
     const el = add(host, 'div', 'ax-chart'), W = width(el), narrow = W < 560, lab = narrow ? 0 : 150, rh = narrow ? 54 : 40, H = rows.length * rh + 6, s = svg(el, W, H, 'What became of the penalty notices issued in ' + ay(y));
-    rows.forEach((r, k) => { const vs = PARTS.map((p) => { const v = p[1](r.rec); return v == null || v < 0 ? 0 : v; }), tot = d3.sum(vs); if (!tot) return; let acc = 0; const y0 = k * rh + (narrow ? 22 : 6), x = d3.scaleLinear([0, tot], [lab, W - 2]);
+    // shares are of all notices issued. A part that is fewer than 10, or was not supplied, is not given a figure: such parts
+    // share what is left of the bar and are labelled, so the other shares stay true.
+    rows.forEach((r, k) => { const raw = PARTS.map((p) => { const v = p[1](r.rec); return v == null || v < 0 ? null : v; }), known = d3.sum(raw), issued = col(r.rec, y, 'issued'), tot = issued > 0 ? Math.max(issued, known) : known; if (!tot) return;
+      const gaps = raw.filter((v) => v == null).length, each = gaps ? Math.max(0, tot - known) / gaps : 0; let acc = 0; const y0 = k * rh + (narrow ? 22 : 6), x = d3.scaleLinear([0, tot], [lab, W - 2]);
       s.append('text').attr('x', narrow ? 0 : lab - 10).attr('y', narrow ? y0 - 7 : y0 + 19).attr('text-anchor', narrow ? 'start' : 'end').attr('class', 'strong').text(r.n);
-      vs.forEach((v, i) => { const share = 100 * v / tot; s.append('rect').attr('x', x(acc)).attr('y', y0).attr('width', Math.max(0, x(acc + v) - x(acc))).attr('height', 28).attr('fill', PARTS[i][2]).attr('stroke', SLATE).attr('stroke-width', 0.75)
-          .on('pointerenter pointermove', (ev) => showTip(ev, `<b>${esc(r.n)}</b><br>${PARTS[i][0]}: ${share.toFixed(0)}% of notices`)).on('pointerleave', hideTip);
-        if (x(acc + v) - x(acc) > 34) s.append('text').attr('x', (x(acc) + x(acc + v)) / 2).attr('y', y0 + 18).attr('text-anchor', 'middle').attr('pointer-events', 'none').style('fill', i === 2 || i === 4 ? INK : '#fff').text(share.toFixed(0) + '%');
+      raw.forEach((v0, i) => { const v = v0 == null ? each : v0, share = 100 * v / tot, words = v0 == null ? 'fewer than 10 notices, or no figure supplied' : share.toFixed(0) + '% of notices';
+        s.append('rect').attr('x', x(acc)).attr('y', y0).attr('width', Math.max(0, x(acc + v) - x(acc))).attr('height', 28).attr('fill', PARTS[i][2]).attr('stroke', SLATE).attr('stroke-width', 0.75)
+          .on('pointerenter pointermove', (ev) => showTip(ev, `<b>${esc(r.n)}</b><br>${PARTS[i][0]}: ${words}`)).on('pointerleave', hideTip);
+        if (v0 != null && x(acc + v) - x(acc) > 34) s.append('text').attr('x', (x(acc) + x(acc + v)) / 2).attr('y', y0 + 18).attr('text-anchor', 'middle').attr('pointer-events', 'none').style('fill', i === 2 || i === 4 ? INK : '#fff').text(share.toFixed(0) + '%');
         acc += v; }); });
     const k = add(host, 'div', 'ax-key'); PARTS.forEach((p) => add(k, 'span', null, `<i style="background:${p[2]};border:1px solid ${SLATE}"></i>${p[0]}`));
   }
@@ -98,7 +102,7 @@
     const key = add(area, 'div', 'ax-key'); add(key, 'span', null, `<i style="background:${INK};height:3px"></i>${esc(name)}`); add(key, 'span', null, `<i style="background:${SLATE};height:2px"></i>England`);
     const late = col(rec, L, 'late'), ls = spread('late', L);
     add(area, 'p', 'ax-note', `A third, much smaller strand is lateness: ${late == null ? 'no figure was supplied' : late === 0 ? 'none' : num(late)} here in ${ay(L)}, and none in ${ls.none} of ${ls.n - ls.na} local authorities. `
-      + 'The reason for each notice has been recorded since 2016/17. No figures were collected for 2019/20, and 2020/21 was a year of partial school closures. From August 2024 a national framework set one threshold and one scale of charges for every local authority, so 2024/25 is the first year counted on the same rules everywhere. '
+      + 'The DfE records one main reason for each notice, and a notice can rest on a mixture of unauthorised absences, so the two strands are a little less separate in the source than they are drawn here. Reasons have been recorded since 2016/17, when two local authorities did not supply them. No figures were collected for 2019/20, and 2020/21 was a year of partial school closures. From August 2024 a national framework set one threshold and one scale of charges for every local authority, so 2024/25 is the first year counted on the same rules everywhere. '
       + '“Other unauthorised absence” in the right-hand charts is all unauthorised absence less unauthorised holiday; it includes arriving after the register has closed and absences with no reason yet given.');
     // what became of the notices: the DfE gives outcomes for all notices together, not by reason
     if (issued >= 10) { add(area, 'h3', 'en-h', `What became of the notices issued in ${ay(L)}`);
@@ -192,7 +196,7 @@
     const uk = add(all, 'div', 'ax-key'); SEG.forEach(([, label, fill]) => add(uk, 'span', null, `<i style="background:${fill};border:1px solid ${SLATE}"></i>${label}`));
     // highest and lowest
     const ord = H2.filter((d) => d.v != null && col(D.areas[d.r.id], L, 'enrol') >= 2000).sort((a, b) => b.v - a.v), row = (d) => `<tr><td><a href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">${esc(d.r.name)}</a></td><td class="n">${d.v.toFixed(1)}</td><td class="n">${num(col(D.areas[d.r.id], L, xcol))}</td></tr>`;
-    const wrap = add(all, 'div', 'en-pair'), tbl = (title, list) => { const b = add(wrap, 'div', 'en-mini'); add(b, 'h3', null, title); add(add(b, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table', `<thead><tr><th>Local authority</th><th class="n">For every 100 pupils</th><th class="n">Number</th></tr></thead><tbody>${list.map(row).join('')}</tbody>`); };
+    const wrap = add(all, 'div', 'en-pair'), tbl = (title, list) => { const b = add(wrap, 'div', 'en-mini'); add(b, 'h3', null, title); add(add(b, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table', `<thead><tr><th>Local authority</th><th class="n">For every 1,000 pupils</th><th class="n">Number</th></tr></thead><tbody>${list.map(row).join('')}</tbody>`); };
     tbl('Most for their size', ord.slice(0, 8)); tbl('Fewest for their size', ord.slice(-8).reverse());
   }
 
