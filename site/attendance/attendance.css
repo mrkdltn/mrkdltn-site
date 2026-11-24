@@ -233,3 +233,8 @@ body.explorer{background:#ECE9E1}
 .ax-fbsend{background:var(--ink);color:#fff;border-color:var(--ink);padding:0 22px}
 #ax-fb-note{font-size:15px;color:#2F6F66}#ax-fb-note.bad{color:#A3402B}
 @media print{.ax-fb{display:none}}
+/* Print: every method panel, whichever tab was open (must follow the [hidden] rule above to win) */
+@media print{.ax .ax-method .ax-panel[hidden],.ax .px-panel[hidden]{display:block!important}}
+/* Touch: nothing tappable under 44px */
+.ax-fb input[type=email]{min-height:44px}
+.ax-linkbtn{padding:12px 0;margin:-12px 0}      /* a 44px target without moving the line it sits in */
