@@ -257,3 +257,5 @@ body.explorer{background:#ECE9E1}
 .en-k3 .ax-kpi{padding:10px}.en-k3 .ax-kpi .v{font-size:22px}
 .en-strand .en-mini{margin-top:16px}
 @media (max-width:1000px){.en-k3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.en-names{line-height:1.8}.en-names b{color:var(--ink);font-weight:600}
+@media (max-width:560px){.en-use th:nth-child(3),.en-use td:nth-child(3){display:none}}

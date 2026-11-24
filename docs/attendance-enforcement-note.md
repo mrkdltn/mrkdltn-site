@@ -68,6 +68,24 @@ Rank correlations by strand (local authorities, 2024/25; second figure allows fo
 
 Read separately, the two strands behave differently. Holiday notices follow holiday absence closely. Notices for other unauthorised absence follow that absence only weakly, and hardly at all once deprivation is allowed for: how far an authority uses notices for non-holiday absence looks much more like a choice of practice than a response to how much of it there is. Neither strand shows a clear link with the absence of pupils eligible for free school meals or with special educational needs. (These supersede the combined figures in the table further up, which used all notices together.)
 
+## Where notices are not used for other unauthorised absence
+
+Mark asked on 24 November for the tool to highlight where local authorities do not enforce for unauthorised absence other than holiday, and the impact on vulnerable learners' persistent and severe absence. The highlight is built on Patterns. The data does not show the impact he expected, and the page says what it does show.
+
+Of the 151 authorities with 2,000 or more pupils, 8 recorded no such notices in 2024/25 and 13 recorded fewer than 10. Middle authority of each group, autumn and spring terms 2024/25:
+
+| Notices for other unauthorised absence | Authorities | FSM: persistent, severe | SEN support: persistent, severe | EHC plan: persistent, severe |
+| --- | --- | --- | --- | --- |
+| None | 8 | 31.3%, 3.91% | 25.0%, 3.69% | 32.5%, 6.50% |
+| Fewer than 10 | 13 | 29.1%, 2.97% | 25.2%, 2.80% | 31.2%, 4.64% |
+| Lower third of the rest | 43 | 32.8%, 4.48% | 26.4%, 4.13% | 33.9%, 7.90% |
+| Middle third | 43 | 30.9%, 3.80% | 26.2%, 3.80% | 32.0%, 6.39% |
+| Upper third | 44 | 30.8%, 3.84% | 27.2%, 4.16% | 34.7%, 6.87% |
+
+Authorities that issue none or very few do not have higher persistent or severe absence among these pupils; taken plainly it is a little lower (pupils eligible for free school meals: 29.3% against 31.6% persistent; 3.62% against 4.08% severe). Nine of the 21 are London boroughs, where absence is lower in general. Allowing for the share eligible for free school meals and for London, the differences are small and within what chance would give (free school meals persistent −0.5 points, standard error 0.65; severe −0.1, 0.21; SEN support −0.5, 0.54; EHC plan persistent −1.6, 0.76). So there is no evidence here that not issuing these notices goes with worse attendance for vulnerable pupils, and none that issuing them goes with better. One year across 151 areas cannot show cause in either direction, and authorities that issue none may be doing other things instead.
+
+The scatter on Patterns also now lets the reader choose overall, persistent or severe absence for each pupil group.
+
 ## None is not fewer than 10
 
 Mark's point of 24 November: many authorities record none of a measure, and that is a finding in itself. In 2024/25, of 153 local authorities: 145 recorded no education supervision orders, 142 no parenting orders, 115 no prosecutions at the two-notice limit, 113 no notices for lateness, 92 offered no parenting contracts, 45 prosecuted nobody after case management, 29 had no case management cases and 17 prosecuted nobody for non-payment. Two issued no penalty notices at all. The tool writes a recorded zero as "None", a count of 1 to 9 as "fewer than 10", and a dash where the authority supplied no figure; each authority's table says how many authorities recorded none, and Patterns shows the split for every measure. On phones the table keeps the number and that count and drops the two per-10,000 columns.
