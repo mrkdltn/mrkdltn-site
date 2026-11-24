@@ -3,17 +3,23 @@
 (function () {
   let idx = null, grp = [], loading = null;
   const load = () => loading || (loading = Promise.all([fetch('/attendance/data/schools.json').then((r) => r.json()), fetch('/attendance/data/groups.json').then((r) => r.json()).catch(() => null)]).then(([j, g]) => {
-    if (g) grp = g.data.id.map((id, i) => ({kind: g.data.k[i], id, name: g.data.name[i], n: g.data.n[i], key: g.data.name[i].toLowerCase()}));
+    if (g) grp = g.data.id.map((id, i) => ({kind: g.data.k[i], id, name: g.data.name[i], n: g.data.n[i], key: ' ' + g.data.name[i].toLowerCase().replace(/[^a-z0-9 ]+/g, ' ')}));
     const d = j.data; idx = d.urn.map((u, i) => ({urn: u, name: d.name[i], town: d.town[i], pc: d.pc[i], ph: d.ph[i],
-      key: (d.name[i] + ' ' + d.town[i] + ' ' + d.pc[i] + ' ' + d.pc[i].replace(' ', '')).toLowerCase()})); return idx; }));
+      key: ' ' + (d.name[i] + ' ' + d.town[i]).toLowerCase().replace(/[^a-z0-9 ]+/g, ' ') + ' ' + (d.pc[i] + ' ' + d.pc[i].replace(' ', '')).toLowerCase()})); return idx; }));
   const PH = {P: 'Primary', S: 'Secondary', X: 'Special'};
-  const findG = (t, prefer) => grp.filter((r) => t.every((w) => r.key.includes(w))).sort((a, b) => ((b.kind === prefer) - (a.kind === prefer)) || (b.key.startsWith(t[0]) - a.key.startsWith(t[0])) || ((b.kind !== 'w') - (a.kind !== 'w')) || b.n - a.n).slice(0, 4);
-  const find = (q, groups, only, prefer) => { const t = q.toLowerCase().split(/\s+/).filter(Boolean); if (!t.length) return [];
-    if (only) return grp.filter((r) => r.kind === only && t.every((w) => r.key.includes(w))).sort((a, b) => (b.key.startsWith(t[0]) - a.key.startsWith(t[0])) || a.name.localeCompare(b.name)).slice(0, 8);
-    if (groups) { const g = findG(t, prefer); return g.concat(findS(t).slice(0, 8 - g.length)); } return findS(t); };
-  const findS = (t) => {
-    const out = []; for (const r of idx) { if (t.every((w) => r.key.includes(w))) { out.push(r); if (out.length >= 60) break; } }
-    const f = t[0]; return out.sort((a, b) => (b.name.toLowerCase().startsWith(f) - a.name.toLowerCase().startsWith(f)) || a.name.localeCompare(b.name)).slice(0, 8); };
+  const findG = (t, prefer) => grp.filter((r) => t.every((w) => r.key.includes(' ' + w))).sort((a, b) => ((b.kind === prefer) - (a.kind === prefer)) || (b.key.startsWith(' ' + t[0]) - a.key.startsWith(' ' + t[0])) || ((b.kind !== 'w') - (a.kind !== 'w')) || b.n - a.n).slice(0, 4);
+  const find = (q, groups, only, prefer) => { const t = q.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean); if (!t.length) return [];
+    if (only) return grp.filter((r) => r.kind === only && t.every((w) => r.key.includes(' ' + w))).sort((a, b) => (b.key.startsWith(' ' + t[0]) - a.key.startsWith(' ' + t[0])) || a.name.localeCompare(b.name)).slice(0, 8);
+    if (!groups) return findS(t);
+    // an area or trust whose name begins with what was typed comes first; then schools; then other areas and trusts
+    const g = findG(t, prefer), lead = g.filter((r) => r.kind !== 'w' && r.kind !== 'c' && r.key.startsWith(' ' + t.join(' '))).slice(0, 3), rest = g.filter((r) => !lead.includes(r));
+    const sch = findS(t).slice(0, Math.max(4, 8 - lead.length - Math.min(2, rest.length))); return lead.concat(sch, rest).slice(0, 8); };
+  // every school is scored, so a common name is not cut off at the first few in the list: the name beginning with the
+  // words typed comes first, then every word found in the name, then matches on town or postcode
+  const findS = (t) => { const phrase = ' ' + t.join(' '), out = [];
+    for (const r of idx) { if (!t.every((w) => r.key.includes(' ' + w))) continue; const nm = ' ' + r.name.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ');
+      out.push([nm.startsWith(phrase) ? 2 : t.every((w) => nm.includes(' ' + w)) ? 1 : 0, r]); }
+    return out.sort((a, b) => b[0] - a[0] || a[1].name.localeCompare(b[1].name) || a[1].town.localeCompare(b[1].town)).slice(0, 8).map((x) => x[1]); };
   function AXsearch(input, list, onPick, groups, only, prefer) {
     if (!input || !list) return;
     let res = [], sel = -1;

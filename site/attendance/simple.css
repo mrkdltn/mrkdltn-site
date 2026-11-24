@@ -1,0 +1,43 @@
+/* Attendance Explorer, rebuilt pages (from the school page, 25 November 2026): one answer first, few sections, no page-wide
+   controls. Sits on attendance.css for the hero, the white cards, the search list and the tables. */
+.sp-hero{padding-top:18px}
+.sp-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 18px;font:600 13px/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.sp-bar a{color:#F5F1E8;text-decoration:none;display:inline-flex;align-items:center;min-height:44px}
+.sp-bar .sp-home{color:#C9A24B}
+.sp-bar span{display:flex;gap:20px}
+.sp-bar span a{text-decoration:underline;text-underline-offset:4px;text-decoration-color:#A8B5C8}
+.sp-hero h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,4.2vw,40px);line-height:1.12;margin:0 0 6px;color:#F5F1E8}
+.sp{gap:16px}
+.sp-empty{font:17px/1.5 var(--serif-text);color:var(--muted);margin:0}
+.sp-period{font:600 13px/1.3 var(--sans);letter-spacing:.05em;text-transform:uppercase;color:#7A5C14;margin:0 0 8px}
+.sp .ax-card h2{font-family:var(--display);font-weight:400;font-size:clamp(22px,3vw,28px);line-height:1.2;margin:0 0 10px;max-width:30ch}
+.sp .ax-reading{margin:0 0 16px;border:0;padding:0}
+.sp-table{width:100%;max-width:640px}
+.sp-table th,.sp-table td{padding:10px 8px 10px 0}
+.sp-table thead th{font-size:13px;color:var(--muted);font-weight:600;vertical-align:bottom}
+.sp-table tbody th{text-align:left;font-weight:400}
+.sp-table tr.me th,.sp-table tr.me td{font-weight:600}
+.sp-table tr.prev th,.sp-table tr.prev td{color:var(--muted)}
+.sp-table td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.sp-foot{font-size:14px;line-height:1.5;color:var(--muted);margin:10px 0 0;max-width:70ch}
+.sp-more summary{font:600 17px/1.3 var(--sans);cursor:pointer;min-height:44px;display:flex;align-items:center;list-style:none}
+.sp-more summary::-webkit-details-marker{display:none}
+.sp-more summary::after{content:"+";margin-left:auto;font-size:24px;font-weight:400;color:var(--muted)}
+.sp-more[open] summary::after{content:"–"}
+.sp-more h3{font:600 15px/1.3 var(--sans);margin:22px 0 6px}
+.sp-more p{font-size:15px;line-height:1.55;margin:0 0 6px;max-width:70ch}
+.sp-more a,.sp-method a{color:var(--ink)}
+.sp-method p{font-size:14px;line-height:1.55;color:#33405A;margin:0 0 8px;max-width:76ch}
+.sp-method b{color:var(--ink)}
+.sp-links{display:flex;flex-wrap:wrap;gap:8px 10px;margin:8px 0 0}
+.sp-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:1px solid var(--muted);border-radius:2px;text-decoration:none;font-size:15px}
+@media (max-width:480px){.sp-table th,.sp-table td{padding:9px 6px 9px 0;font-size:15px}.sp-bar span{gap:14px}}
+@media print{.ax-hero-search,.sp-bar span,.site-head,.site-foot{display:none}.sp-more > div{display:block}}
+.sp-table{border-collapse:collapse}
+.sp-table th,.sp-table td{border-bottom:1px solid var(--line);border-top:0}
+.sp-table thead th{border-bottom:1px solid var(--ink)}
+.sp-table tbody th{white-space:normal;overflow-wrap:anywhere}
+.sp-table tbody th small{display:block;font-size:13px;color:var(--muted)}
+.sp-table td.n,.sp-table thead th.n{width:1%;padding-left:14px;text-align:right}
+.sp-more .ax-tablewrap{overflow:visible}
+.sp-hero .ax-date{color:#C9D2DF}
