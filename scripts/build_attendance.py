@@ -29,7 +29,9 @@ USUAL_WEEK = 0.7
 def hund(x):
     """A rate in hundredths of a point, kept to two further decimal places (so 13.2476% is 1324.76). Pages show one decimal
     place by rounding once from this, and take differences from it before rounding, so both land on the true tenth."""
-    return round(x, 2)
+    r = round(x, 2)
+    # a figure a hair under a half-tenth (644.997) must not round up onto it (645.00), or the page would show the next tenth
+    return round(r - 0.01, 2) if r > x and round(r * 100) % 1000 == 500 else r
 
 
 def rate(n, d):
@@ -369,12 +371,70 @@ def schools():
         assert all(0 <= x <= 10000 for x in d['abs'] + d['pa'])
     groups_build(current, meta, rows, raw_history, shown, pool, periods, latest, bench, names)
     patterns_build(current, meta, rows, raw_history, pool, fy, ctx, model, bench, names)
+    prm_build()
 
 
 # ---------------------------------------------------------------- trusts and constituencies
 G_SHARDS = 16
 MIN_SCHOOLS = 3         # a pooled rate for a phase needs at least three schools
 MIN_TRUST = 5           # and a trust needs at least five schools in all
+
+
+PRM_COLS = ['enrol', 'issued', 'hols', 'late', 'other', 'repeat', 'paid', 'paid21', 'withdrawn', 'pros', 'unresolved', 'pros_limit', 'cm', 'cm_pros',
+            'cm_improved', 'orders', 'contracts', 'contracts_acc', 'eso']
+
+
+def prm_build():
+    """Parental responsibility measures (penalty notices and the other legal measures) for England, regions, local
+    authorities and ceremonial counties, with each area's unauthorised holiday absence beside them. Writes prm.json.
+    The DfE publishes these counts unsuppressed. Here a count of 1 to 9 is written as -1 ("fewer than 10") and a figure
+    the DfE marks unavailable or not collected is null. Counties are summed from their authorities before that rule."""
+    path = os.path.join(RAW, 'prm.csv')
+    if not os.path.exists(path):
+        return
+    slug = lambda t: ''.join(ch if ch.isalnum() else '-' for ch in t.lower()).strip('-')          # as groups_build names counties
+    raw = {}
+    for r in csv.DictReader(open(path, encoding='utf-8')):
+        raw.setdefault(r['code'], {})[int(r['year'])] = [None if r[c] in ('z', 'x', '') else int(r[c]) for c in PRM_COLS]
+    county = {}
+    for r in csv.DictReader(open(os.path.join(RAW, 'counties.csv'), encoding='utf-8')):
+        county.setdefault('y:' + slug(r['county']), []).append(r['la'])
+    for cid, las in county.items():
+        for y in sorted({y for la in las for y in raw.get(la, {})}):
+            parts = [raw.get(la, {}).get(y) for la in las]
+            if all(parts):          # every authority of the county reported that year
+                raw.setdefault(cid, {})[y] = [None if any(p[i] is None for p in parts) else sum(p[i] for p in parts) for i in range(len(PRM_COLS))]
+    # unauthorised holiday absence, pooled from the schools that were in each authority that year (full years)
+    la_of = {r['urn']: r['la'] for r in csv.DictReader(open(os.path.join(RAW, 'schools.csv'), encoding='utf-8'))}
+    hol = {}
+    for r in csv.DictReader(open(os.path.join(RAW, 'school_absence.csv'), encoding='utf-8')):
+        if r['period'].isdigit() and r['poss'] and r['hol_u'] != '' and r['urn'] in la_of:
+            po = int(r['poss'])
+            for code in (la_of[r['urn']], 'E92000001'):
+                t = hol.setdefault(code, {}).setdefault(int(r['period']), [0, 0.0])
+                t[0] += po
+                t[1] += po * float(r['hol_u'])
+    for cid, las in county.items():
+        for la in las:
+            for y, t in hol.get(la, {}).items():
+                c = hol.setdefault(cid, {}).setdefault(y, [0, 0.0])
+                c[0] += t[0]
+                c[1] += t[1]
+    mask = lambda i, v: v if v is None or i == 0 or v == 0 or v >= 10 else -1
+    out = {}
+    for code, ys in raw.items():
+        rec = {'y': {str(y): [mask(i, v) for i, v in enumerate(vs)] for y, vs in sorted(ys.items()) if vs[1] is not None}}
+        h = {str(y): hund(t[1] / t[0]) for y, t in sorted(hol.get(code, {}).items()) if t[0]}
+        if h:
+            rec['hol'] = h
+        if rec['y']:
+            out[code[2:] if code.startswith('y:') else code] = rec
+    rel = json.load(open(os.path.join(RAW, 'prm_release.json')))
+    latest = max(int(y) for y in out['E92000001']['y'])
+    json.dump({'cols': PRM_COLS, 'latest': latest, 'published': rel['published'], 'areas': out}, open(os.path.join(OUT, 'prm.json'), 'w'), separators=(',', ':'))
+    e = raw['E92000001'][latest]
+    print(f"attendance enforcement: {len(out)} areas to {latest}/{(latest + 1) % 100:02d}; England {e[1]:,} penalty notices, "
+          f"{100 * e[1] / e[0]:.2f} per 100 enrolments, {100 * e[2] / e[1]:.1f}% for unauthorised holiday; {os.path.getsize(os.path.join(OUT, 'prm.json')) // 1024} KB")
 
 
 def tidy(name):

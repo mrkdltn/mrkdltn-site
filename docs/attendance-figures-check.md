@@ -358,3 +358,95 @@ Not re-checked in this pass: pupil groups, the Patterns page, and the sentences.
 ### Acted on after the third pass
 
 The in-year "all schools" figure now reads the DfE's own all-schools row (`fetch_attendance.py` keeps it as phase `A`; `build_attendance.py` falls back to the three phases summed only where a file has none for a day). Both years were refetched on 24 November 2026. The area the checker cited, `E09000021`, now stores overall 4.75 and authorised 3.35, shown as 4.8% and 3.4%, as the DfE has them. Not yet re-verified independently. The year-earlier severe figure left unshown where the latest is withheld stays as it is: showing it would invite a reader to infer the withheld one.
+
+## Fourth pass at 1e1ccc7
+
+Run on 24 November 2026 against the data built at 19:23 UTC for commit `1e1ccc7`. Pages were rendered between 19:28 and 19:34, by which time `4ac6103` and `8750b8c` had also landed (share titles, a scheduled refresh, print and tap-target styles; no change to figures). The DfE school files, the pupil-characteristics file, both years of the in-year data set and GIAS of 24 November were downloaded again and every figure recomputed from them. Fresh sample, seed 20261126: 120 schools (50 primary, 50 secondary, 20 special), 10 local authorities, 5 counties, 8 constituencies, 8 wards, 9 trusts; the in-year page for England, all nine regions and 10 authorities including E09000021; and the Patterns page in six views. 256 pages in all, with 16,429 hover texts read.
+
+**Every change and gap on the school, area and trust pages is now the true difference rounded once: 1,780 of 1,780. No sentence says "the same" where the true gap rounds to 0.1 or more, and none names the wrong direction.** Four things do not match, all smaller than what came before, and they are listed below.
+
+### Counts
+
+| | Checked | Match | Not matching |
+| --- | --- | --- | --- |
+| (a) Changes and gaps displayed, school pages (120) | 1,440 | 1,440 | 0 |
+| (a) Changes and gaps displayed, 104 area and trust views | 340 | 340 | 0 |
+| (a) Sentences saying "the same" or "unchanged" | 21 | 21 (true gap rounds to 0.0) | 0 |
+| (a) Direction named against the true sign | 1,780 | 1,780 | 0 |
+| (b) Rates displayed, school pages | 3,840 | 3,840 | 0 |
+| (b) Rates displayed, area and trust views (with school lists) | 4,416 | 4,416 | 0 |
+| (b) Rates stored, every school and period | 814,779 | 814,507 show the true tenth | 272 (item 1) |
+| (b) Pooled rates and severe absence stored, every area and trust, with the benchmarks | 304,040 | 303,931 | 109 (item 1) |
+| (b) Stray decimal places: 256 pages, text, tables, chart labels, 16,429 hover texts | 256 | 256 | 0 |
+| (c) In-year "all schools", 20 areas: rates at one decimal place | 116 | 116 | 0 |
+| (c) In-year "all schools": changes and gaps | 35 | 35 | 0 |
+| (c) In-year "all schools": figures at two decimal places | 20 | 20 | 0 |
+| (c) In-year "all schools" stored, all 163 areas, against the DfE's published percentages | 1,127 | 1,127 at one and at two decimal places | 0 |
+| (c) In-year, other phases, stored, against the DfE's year-to-date row | 3,374 | 3,332 | 42, in 9 authorities' special schools (item 4) |
+| (d) Pupil groups, 9 local authorities: rates | 702 | 702 | 0 |
+| (d) Pupil groups, local authorities: changes and gaps | 171 | 165 | 6 (item 2) |
+| (d) Pupil groups, 5 counties: rates | 402 | 400 | 2 (item 3) |
+| (d) Pupil groups, counties: changes and gaps | 97 | 94 | 3 (item 2) |
+| (d) Patterns: rates (regions, England, severe absence, weekdays and months) | 44 | 44 | 0 |
+| (d) Patterns: changes, and the regions named lowest, highest, smallest and largest | 36 | 36 | 0 |
+| (d) Patterns: spread of schools (banded estimates) | 24 | 21 | 3, as before: 4.6% for 4.67%, 1.7 for 1.63, 15.1% for 15.17% |
+| (d) Summary sentences on school, area and trust pages (in the rows above) | 224 pages | all | 0 |
+
+`/attendance/#area=E09000021` now reads 4.8% and 3.4%, as the DfE's all-schools row does. Membership and the number of schools behind every pooled figure are unchanged and still agree. No page raised a console error.
+
+Stored figures are otherwise exact: every one of the 1.1 million rates agrees with mine to the fourth decimal place of a per cent.
+
+### What does not match
+
+**1. A rate a hair under a half-tenth is stored as the half-tenth and shows 0.1 too high. Build.** Rates are kept to two decimal places of a hundredth and the page rounds once more. A true 6.44997% is stored as 645.00 and shown as 6.5%; it should be 6.4%. This is the last trace of rounding twice. It affects 381 stored figures in about 1.1 million (272 school rates, 109 pooled), always upwards. None fell in the page sample. Examples from the data:
+
+| Where | Source figure | Stored | Shown |
+| --- | --- | --- | --- |
+| School 145489, overall absence, 2018/19 | 3,544 of 54,946 sessions, 6.44997% | 645.00 | 6.5% |
+| `/attendance/group/?k=t&id=16617&phase=S`, overall absence, 2025/26 two terms | 6.04997% | 605.00 | 6.1% |
+| `/attendance/group/?k=w&id=E05016503&phase=P`, persistent absence, 2025/26 two terms | 11.54997% | 1155.00 | 11.6% |
+
+Rounding to the tenth from the counts at build, or keeping one more decimal place, would remove it. Exact ties do not arise in these 381: of the 219 school cases tested against the counts, none is a true x.x5.
+
+**2. Pupil-group changes and gaps are not yet the true difference. Fetch.** `la_groups.csv` still holds each group's rates as whole hundredths, stepped back from a rounded-up 5, so a change computed from them can be 0.1 out. Across every authority, 158 of 3,352 pupil-group "overall, in a year" figures differ from the true change. In the sample:
+
+| Page | Figure | Shown | Source |
+| --- | --- | --- | --- |
+| `k=a&id=E06000015&phase=P` | EHC plan, overall in a year | +0.7 | +0.64 (10.787% from 10.148%) |
+| `k=a&id=E06000004&phase=S` | SEN support, overall in a year | +0.2 | +0.14 |
+| `k=a&id=E06000004&phase=S` | Free school meals gap, sentence | 6.9 | 6.85 |
+| `k=a&id=E10000025&phase=S`, `k=y&id=oxfordshire&phase=S` | Free school meals gap, sentence | 10.6 | 10.55 |
+| `k=a&id=E06000016&phase=P` | No identified SEN, overall in a year | −0.4 | −0.34 |
+| `k=a&id=E06000051&phase=S` | No identified SEN, overall in a year | +0.2 | +0.15 |
+| `k=y&id=surrey&phase=P`, `phase=X` | Free school meals gap, sentence | 5.1, 6.3 | 5.04, 6.25 |
+
+**3. County pupil-group rates are pooled from rounded authority rates. Build.** Two of 402 show the wrong tenth: `k=y&id=dorset&phase=P`, EHC plan severe absence 5.7% (5.7506%, so 5.8%); `k=y&id=derbyshire&phase=P`, no identified SEN persistent absence 9.8% (9.7497%, so 9.7%). Keeping the DfE's counts for pupil groups, as is now done for schools, would settle items 2 and 3 together.
+
+**4. In-year special-school figures in nine authorities are not the DfE's year-to-date figure. Build; present since the first check, found now.** The tool sums the daily rows. Where the DfE withholds some days for a phase, its own year-to-date row covers more than those days add up to:
+
+| Authority, special schools | Shown | DfE year-to-date row | Days withheld |
+| --- | --- | --- | --- |
+| Barnsley | 15.2% | 14.89% | 3 |
+| Bracknell Forest | 9.1% | 9.41% | 3 |
+| Shropshire | 14.2% | 14.31% | 1 |
+| Sutton | 12.7% | 12.79% | 5 |
+| Windsor and Maidenhead | 10.1% | 10.15% | 1 |
+| Nottingham | 12.9% | 12.95% | 5 |
+| Kingston upon Thames | 11.9% | 11.94% | 5 |
+| Brent | 8.6% | 8.55% | 1 |
+| Derbyshire | 9.7% | 9.67% | 1 |
+
+The first four differ at one decimal place whichever way a half is rounded. Primary, secondary and all-schools figures agree with the DfE's row in every area.
+
+One effect of the new rule, not an error: a page can now show 5.0% beside "a year earlier 5.1%" and say "unchanged" (`k=y&id=dorset&phase=P`: 5.004% and 5.053%, a true change of −0.05). The change is right; the two shown figures no longer subtract to it.
+
+### (e) Small numbers and the extra precision
+
+- No file under `site/attendance/data/` (642 files) carries sessions missed, or pupils persistently or severely absent, for a single school. A school-period holds enrolments and five rates.
+- Severe absence is withheld under 10 pupils and under three schools in every stored figure, and is never given for a single school. No pupil group under 10 is stored or shown, and none under 50 with 0% or 100% persistent absence.
+- **What the extra decimal places make inferable.** About pupils, nothing new. The number of pupils persistently absent could already be worked out exactly for every one of the 21,210 schools shown, from the published enrolments and the rate in hundredths, and for 97% of them from the one-decimal figure on the page. Severe absence for a school is still not stored at any precision.
+- About sessions, something new. At hundredths, a school's rates fitted thousands of possible totals. At four decimal places, overall and unauthorised absence together fit one total of sessions possible, and so one count of sessions missed, for 46 of 112 sampled schools with fewer than 100 pupils (46 of 600 sampled overall), and a handful of totals for most other small schools. So the session counts that the build takes care not to write to a school's record can be recovered for small schools. They are totals across a whole school, not counts of pupils, and the DfE publishes them for every school in the open file this tool reads. I see no harm, but the statement "the counts are never written to a school's record" is no longer true in effect for small schools.
+
+### Not checked
+
+Captions on saved images (not rendered); maps and other drawn marks beyond their hover text; similar schools; the free school meals fifths exactly (GIAS shares give the overall-absence fifths to within 0.1 and cannot confirm the persistent-absence ones); views of the group page other than the default.

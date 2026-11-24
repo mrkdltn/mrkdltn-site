@@ -78,3 +78,14 @@ An independent worker recomputed 5,787 displayed figures on 183 pages from the D
 | A shared link to an area or trust page named no place | `functions/attendance/group/index.js` gives each its own title, description and address; tried under Cloudflare's local runner for an authority, a county, a trust and an unknown id. Not yet tried on the Cloudflare preview |
 | In-year data refreshed by hand | `attendance-pulse.yml` fetches each fortnightly release, checks it (`check_attendance_pulse.py`) and commits. It does nothing until it is on `main`, which is Mark's call |
 | Touch, keyboard and print not tried | Tried in Chromium only (no Firefox or Safari in the cloud session; Mark's phone is the Safari test). Printed pages showed one method tab only, because the rule that enforces `hidden` outranked the print rule: fixed. "Show all schools" and the feedback email field were under 44 px: fixed. Keyboard: every stop has a visible focus ring, the skip link comes first, and search works by keyboard alone. No chart reading leaves the screen on a phone |
+
+### Fourth figures pass (at `1e1ccc7`) and enforcement, 24 November 2026
+
+| Item | State |
+| --- | --- |
+| Every change and gap is the true difference rounded once | Confirmed by the independent checker: 1,780 of 1,780 on school, area and trust pages; 8,256 sampled rates all the true tenth; in-year all-schools figures match the DfE's row |
+| A rate a hair under a half-tenth (6.44997%) was stored as 645.00 and shown 0.1 high: 381 of about 1.1 million figures | Fixed in `hund()`; not yet re-verified |
+| Pupil-group changes and gaps are not yet true differences, and county pupil-group rates are pooled from rounded authority rates (9 of 268 and 2 of 402 in the sample) | To do: keep the DfE's counts for pupil groups in `la_groups.csv`, as was done for schools |
+| In-year special-school figures in nine authorities are sums of daily rows, where the DfE withholds some days, so they differ from the DfE's own year-to-date figure (Barnsley 15.2% against 14.89%) | To do: read the DfE's year-to-date row |
+| At four decimal places a small school's sessions possible and missed can be worked back from its rates | Noted. These are whole-school totals the DfE publishes openly, and no pupil count is newly exposed; the handover note's wording is corrected |
+| Parental responsibility measures by area | Built, preview only: see `docs/attendance-enforcement-note.md`, with three decisions for Mark. Not yet independently checked |

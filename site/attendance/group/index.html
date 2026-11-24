@@ -80,6 +80,11 @@
     <div class="ax-tablewrap"><table class="ax-table ax-pgt" id="gx-pgt"></table></div>
   </section>
 
+  <section data-nav="Enforcement" class="ax-card" id="gx-enf-c" hidden>
+    <h2>Penalty notices and other legal measures</h2>
+    <div id="gx-enf"></div>
+  </section>
+
   <section data-nav="School by school" class="ax-card" id="gx-strip-c">
     <h2>School by school</h2>
     <p class="ax-sub">Each circle is one of its <span class="gx-phase-n"></span>, placed by <span class="gx-meas-n"></span>. A larger circle is a larger school. Tap a circle to name the school.</p>
@@ -114,6 +119,8 @@
     <h2>How this page works</h2>
     <p><b>Three measures.</b> Overall absence is the share of possible sessions that pupils missed. A session is a morning or an afternoon. Persistent absence is the share of pupils who missed a tenth or more of their sessions. Severe absence is the share who missed half or more.</p>
     <p><b>Taken together.</b> Each figure for a place is one rate for its schools taken together: sessions missed across the schools over sessions possible, and persistently and severely absent pupils over pupils on roll. Larger schools count for more, so it is not the average of the schools’ own rates. Primary, secondary and special schools are kept apart, because they differ so much that a single figure would mostly describe the mix.</p>
+    <p><b>Penalty notices.</b> A local authority can issue a penalty notice to a parent whose child misses school without authorisation. Since August 2024 one national framework applies: a notice is considered once a pupil has 10 sessions of unauthorised absence in 10 school weeks, the charge is £160, reduced to £80 if paid within 21 days, a second notice to the same parent for the same child within three years is £160, and after two notices in three years other measures are used. Each notice is to one parent for one child, so the count is of notices, not of pupils or families. “For every 100 pupils” divides the notices by the enrolments the DfE publishes beside them.</p>
+    <p><b>Other measures.</b> Attendance case management, parenting contracts and orders, education supervision orders and prosecutions are counted as the DfE publishes them for each local authority. A count from 1 to 9 is written “fewer than 10”. These figures are for all schools together; the DfE does not publish them by phase, by pupil group or for single schools. Source: DfE, Parental responsibility measures, 2024/25, published 29 January 2026.</p>
     <p><b>Points.</b> A difference between two rates is given in percentage points, shortened to “points”. A rate of 7.0% against 6.5% is 0.5 points higher. Each difference is worked out from the rates before they are rounded and then rounded once, so it can be 0.1 away from what subtracting the two rates on screen would give.</p>
     <p><b>Change.</b> “Change in a year” sets the autumn and spring terms of 2025/26 against the same two terms a year earlier. “Change since 2018/19” sets the full year 2024/25 against 2018/19, the last full year before the pandemic. Pupil groups are published for the two terms only, so for them it sets the autumn and spring terms of 2025/26 against those of 2018/19. For trusts, change describes the schools held today.</p>
     <p><b>Colours.</b> Green marks lower absence than England and rust higher. Where a change is shown, green means absence fell, or rose less than it did across England, and rust means it rose more. Colour shows direction only. A named school is never coloured on these pages.</p>
@@ -147,5 +154,6 @@
 <script src="/attendance/chrome.js"></script>
 <script src="/attendance/search.js"></script>
 <script src="/attendance/group.js"></script>
+<script src="/attendance/enforce.js"></script>
 </body>
 </html>

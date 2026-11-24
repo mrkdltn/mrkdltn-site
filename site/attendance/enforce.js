@@ -1,0 +1,145 @@
+/* Attendance Explorer: enforcement. Penalty notices and the other legal measures against parents, from the DfE's yearly
+   "Parental responsibility measures" statistics, set beside unauthorised holiday absence and the absence of pupil groups.
+   On a local authority or county page it draws that place against England (#gx-enf); on Patterns it draws every local
+   authority at once (#px-enf). Enforcement is not absence, so nothing here is green or rust: the place is midnight,
+   England and every other authority slate. A count of 1 to 9 arrives as -1 and is written "fewer than 10". */
+(function () {
+  const $ = (id) => document.getElementById(id), area = $('gx-enf'), all = $('px-enf'); if (!area && !all) return;
+  const INK = '#0B1A2E', SLATE = '#55627A', SOFT = '#A8B5C8', GRID = '#E3E6EC', BRASS = '#C9A24B';
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const num = (v) => (v == null ? '–' : v < 0 ? 'fewer than 10' : v.toLocaleString('en-GB'));
+  const ay = (y) => y + '/' + String((+y + 1) % 100).padStart(2, '0');
+  const width = (el) => Math.max(280, Math.floor(el.getBoundingClientRect().width));
+  const svg = (el, w, h, label) => d3.select(el).append('svg').attr('viewBox', `0 0 ${w} ${h}`).attr('role', 'img').attr('aria-label', label);
+  const add = (host, tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; host.appendChild(e); return e; };
+  const tip = $('ax-tip');
+  const showTip = (ev, html) => { if (!tip) return; tip.innerHTML = html; tip.hidden = false; const r = tip.getBoundingClientRect();
+    tip.style.left = Math.max(8, Math.min(ev.clientX + 12, innerWidth - r.width - 8)) + 'px'; tip.style.top = (ev.clientY + 16 + r.height > innerHeight ? Math.max(8, ev.clientY - r.height - 12) : ev.clientY + 16) + 'px'; };
+  const hideTip = () => { if (tip) tip.hidden = true; };
+  let D = null, C = {};
+  const col = (rec, y, name) => { const v = rec && rec.y[y]; return v ? v[C[name]] : null; };
+  const per = (rec, y, name, base) => { const v = col(rec, y, name), e = col(rec, y, 'enrol'); return v == null || v < 0 || !e ? null : base * v / e; };
+  const SRC = () => `Source: DfE, Parental responsibility measures, ${ay(D.latest)}, published ${new Date(D.published + 'T12:00:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}; unauthorised holiday absence from the DfE's school-level absence statistics.`;
+
+  // ---------------------------------------------------------------- one place against England
+  function lines(host, title, unit, series, years, fmt) {
+    const box = add(host, 'div', 'en-mini'); add(box, 'h3', null, title);
+    const el = add(box, 'div', 'ax-chart'), W = width(el), H = 210, m = {l: 40, r: 12, t: 10, b: 26}, s = svg(el, W, H, title);
+    const vals = series.flatMap((x) => years.map((y) => x.get(y))).filter((v) => v != null), x = d3.scalePoint(years, [m.l, W - m.r]), y = d3.scaleLinear([0, d3.max(vals) || 1], [H - m.b, m.t]).nice(4);
+    y.ticks(4).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text(t + unit); });
+    years.forEach((yr, i) => { if (i % (W < 420 ? 3 : 2) === (years.length - 1) % (W < 420 ? 3 : 2)) s.append('text').attr('x', x(yr)).attr('y', H - 8).attr('text-anchor', 'middle').text(ay(yr).slice(2)); });
+    series.forEach((se) => { const pts = years.map((yr) => ({yr, v: se.get(yr)}));
+      s.append('path').attr('d', d3.line().defined((d) => d.v != null).x((d) => x(d.yr)).y((d) => y(d.v))(pts)).attr('fill', 'none').attr('stroke', se.c).attr('stroke-width', se.w);
+      s.append('g').selectAll('circle').data(pts.filter((d) => d.v != null)).join('circle').attr('cx', (d) => x(d.yr)).attr('cy', (d) => y(d.v)).attr('r', se.w + 1).attr('fill', se.c)
+        .on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(se.n)}</b>, ${ay(d.yr)}<br>${fmt(d.v)}`)).on('pointerleave', hideTip); });
+  }
+  function fate(host, rows, y) {
+    const PARTS = [['Paid within 21 days', (r) => col(r, y, 'paid21'), '#33405A'], ['Paid within 22 to 28 days', (r) => { const a = col(r, y, 'paid'), b = col(r, y, 'paid21'); return a == null || b == null || a < 0 || b < 0 ? null : a - b; }, '#7C8799'],
+      ['Withdrawn', (r) => col(r, y, 'withdrawn'), '#C5CCD8'], ['Prosecuted for non-payment', (r) => col(r, y, 'pros'), INK], ['Unresolved at the end of the year', (r) => col(r, y, 'unresolved'), '#fff']];
+    const el = add(host, 'div', 'ax-chart'), W = width(el), narrow = W < 560, lab = narrow ? 0 : 150, rh = narrow ? 54 : 40, H = rows.length * rh + 6, s = svg(el, W, H, 'What became of the penalty notices issued in ' + ay(y));
+    rows.forEach((r, k) => { const vs = PARTS.map((p) => { const v = p[1](r.rec); return v == null || v < 0 ? 0 : v; }), tot = d3.sum(vs); if (!tot) return; let acc = 0; const y0 = k * rh + (narrow ? 22 : 6), x = d3.scaleLinear([0, tot], [lab, W - 2]);
+      s.append('text').attr('x', narrow ? 0 : lab - 10).attr('y', narrow ? y0 - 7 : y0 + 19).attr('text-anchor', narrow ? 'start' : 'end').attr('class', 'strong').text(r.n);
+      vs.forEach((v, i) => { const share = 100 * v / tot; s.append('rect').attr('x', x(acc)).attr('y', y0).attr('width', Math.max(0, x(acc + v) - x(acc))).attr('height', 28).attr('fill', PARTS[i][2]).attr('stroke', SLATE).attr('stroke-width', 0.75)
+          .on('pointerenter pointermove', (ev) => showTip(ev, `<b>${esc(r.n)}</b><br>${PARTS[i][0]}: ${share.toFixed(0)}% of notices`)).on('pointerleave', hideTip);
+        if (x(acc + v) - x(acc) > 34) s.append('text').attr('x', (x(acc) + x(acc + v)) / 2).attr('y', y0 + 18).attr('text-anchor', 'middle').attr('pointer-events', 'none').style('fill', i === 2 || i === 4 ? INK : '#fff').text(share.toFixed(0) + '%');
+        acc += v; }); });
+    const k = add(host, 'div', 'ax-key'); PARTS.forEach((p) => add(k, 'span', null, `<i style="background:${p[2]};border:1px solid ${SLATE}"></i>${p[0]}`));
+  }
+  function place() {
+    const card = $('gx-enf-c'), q = new URLSearchParams(location.search), kind = q.get('k'), id = q.get('id'), rec = (kind === 'a' || kind === 'y') && D.areas[id], E = D.areas.E92000001, L = String(D.latest);
+    card.hidden = !(rec && rec.y[L]); area.innerHTML = ''; if (card.hidden) return;
+    const name = ($('gx-name') || {}).textContent || 'This area', rate = per(rec, L, 'issued', 100), erate = per(E, L, 'issued', 100), issued = col(rec, L, 'issued'), hols = col(rec, L, 'hols');
+    const share = issued > 0 && hols != null && hols >= 0 ? 100 * hols / issued : null, eshare = 100 * col(E, L, 'hols') / col(E, L, 'issued'), hol = rec.hol && rec.hol[L], ehol = E.hol && E.hol[L];
+    add(area, 'p', 'ax-sub', `Penalty notices issued to parents for unauthorised absence, and the other legal measures a local authority can use, in ${ay(L)}. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices and cases, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
+    const k = add(area, 'div', 'ax-kpis'), tile = (label, v, d) => add(k, 'div', 'ax-kpi', `<div class="k">${label}</div><div class="v">${v}</div><div class="d">${d}</div>`);
+    tile('Penalty notices issued', num(issued), ay(L));
+    tile('For every 100 pupils', rate == null ? '–' : rate.toFixed(1), 'England ' + erate.toFixed(1));
+    tile('Issued for unauthorised holiday', share == null ? '–' : share.toFixed(0) + '%', 'England ' + eshare.toFixed(0) + '%');
+    tile('Unauthorised holiday absence', hol == null ? '–' : (hol / 100).toFixed(2) + '%', 'of sessions · England ' + (ehol == null ? '–' : (ehol / 100).toFixed(2) + '%'));
+    if (issued === 0) add(area, 'p', 'ax-reading', `${esc(name)} recorded no penalty notices in ${ay(L)}.`);
+    else if (rate != null) { const rank = Object.keys(D.areas).filter((c) => /^E0|^E1[01]/.test(c)).map((c) => per(D.areas[c], L, 'issued', 100)).filter((v) => v != null), above = rank.filter((v) => v > rate).length;
+      add(area, 'p', 'ax-reading', `${esc(name)} issued <b>${num(issued)}</b> penalty notices in ${ay(L)}, <b>${rate.toFixed(1)}</b> for every 100 pupils, against ${erate.toFixed(1)} across England.`
+        + (kind === 'a' ? ` ${above} of the ${rank.length} local authorities issued more for their size.` : '')
+        + (share == null ? '' : ` <b>${share.toFixed(0)}%</b> were for unauthorised holiday.`)
+        + (hol == null || ehol == null ? '' : ` Unauthorised holiday took <b>${(hol / 100).toFixed(2)}%</b> of sessions in its schools, against ${(ehol / 100).toFixed(2)}% across England.`)); }
+    // year by year: notices for every 100 pupils, and unauthorised holiday absence
+    const years = Object.keys(E.y).filter((y) => +y >= 2013).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair');
+    lines(grid, 'Penalty notices for every 100 pupils', '', [{n: 'England', c: SLATE, w: 2, get: (y) => per(E, y, 'issued', 100)}, {n: name, c: INK, w: 3, get: (y) => per(rec, y, 'issued', 100)}], years, (v) => v.toFixed(1) + ' for every 100 pupils');
+    lines(grid, 'Unauthorised holiday absence, % of sessions', '%', [{n: 'England', c: SLATE, w: 2, get: (y) => (E.hol && E.hol[y] != null ? E.hol[y] / 100 : null)}, {n: name, c: INK, w: 3, get: (y) => (rec.hol && rec.hol[y] != null ? rec.hol[y] / 100 : null)}], years, (v) => v.toFixed(2) + '% of sessions');
+    const key = add(area, 'div', 'ax-key'); add(key, 'span', null, `<i style="background:${INK};height:3px"></i>${esc(name)}`); add(key, 'span', null, `<i style="background:${SLATE};height:2px"></i>England`);
+    add(area, 'p', 'ax-note', 'No figures were collected for 2019/20, and 2020/21 was a year of partial school closures. From August 2024 a national framework set one threshold and one scale of charges for every local authority, so 2024/25 is the first year counted on the same rules everywhere.');
+    // what became of the notices
+    if (issued >= 10) { add(area, 'h3', 'en-h', `What became of the notices issued in ${ay(L)}`); fate(area, [{n: name, rec}, {n: 'England', rec: E}], L); }
+    // the other measures
+    const ROWS = [['repeat', 'Second penalty notices to the same parent for the same child within three years'], ['pros_limit', 'Prosecutions because the limit of two notices had been reached'], ['cm', 'Cases entering attendance case management'],
+      ['cm_pros', 'Cases prosecuted after case management'], ['cm_improved', 'Cases withdrawn because attendance improved'], ['contracts', 'Parenting contracts offered'], ['contracts_acc', 'Parenting contracts accepted'],
+      ['orders', 'Parenting orders granted'], ['eso', 'Education supervision orders']];
+    add(area, 'h3', 'en-h', `Other measures, ${ay(L)}`);
+    const wrap = add(area, 'div', 'ax-tablewrap'), p10 = (r, c) => { const v = per(r, L, c, 10000); return v == null ? (col(r, L, c) < 0 ? 'under ' + (10 * 10000 / col(r, L, 'enrol')).toFixed(1) : '–') : v.toFixed(1); };
+    add(wrap, 'table', 'ax-table en-table', '<thead><tr><th>Measure</th><th class="n">Number</th><th class="n">For every 10,000 pupils</th><th class="n">England, for every 10,000</th></tr></thead><tbody>'
+      + ROWS.map(([c, n]) => `<tr><td>${n}</td><td class="n">${num(col(rec, L, c))}</td><td class="n">${p10(rec, c)}</td><td class="n">${p10(E, c)}</td></tr>`).join('') + '</tbody>');
+    add(area, 'p', 'ax-note', 'A dash means the local authority did not supply the figure. More enforcement is not in itself better or worse: the numbers reflect how much unauthorised absence there is, and also how each authority and its schools choose to respond to it. ' + SRC()
+      + ' <a href="/attendance/patterns/#sec-enforcement">Every local authority compared</a>.');
+  }
+
+  // ---------------------------------------------------------------- every local authority at once (Patterns)
+  const YS = [['hol', 'Unauthorised holiday absence', 'all pupils, % of sessions'], ['fsm', 'Pupils eligible for free school meals', 'overall absence'], ['nfsm', 'Pupils not eligible', 'overall absence'],
+    ['sen', 'Pupils with SEN support', 'overall absence'], ['ehcp', 'Pupils with an EHC plan', 'overall absence']];
+  const XS = [['hols', 'Notices for unauthorised holiday'], ['issued', 'All penalty notices'], ['cmp', 'Cases in case management']];
+  let ysel = 'hol', xsel = 'hols', LAS = null;
+  const rank = (a) => { const o = a.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]), r = new Array(a.length); for (let i = 0; i < o.length;) { let j = i; while (j + 1 < o.length && o[j + 1][0] === o[i][0]) j++; for (let k = i; k <= j; k++) r[o[k][1]] = (i + j) / 2; i = j + 1; } return r; };
+  const corr = (a, b) => { const ma = d3.mean(a), mb = d3.mean(b); let s = 0, sa = 0, sb = 0; a.forEach((v, i) => { s += (v - ma) * (b[i] - mb); sa += (v - ma) ** 2; sb += (b[i] - mb) ** 2; }); return s / Math.sqrt(sa * sb); };
+  const resid = (a, z) => { const mz = d3.mean(z), ma = d3.mean(a); let n = 0, d = 0; z.forEach((v, i) => { n += (v - mz) * (a[i] - ma); d += (v - mz) ** 2; }); const b = n / d; return a.map((v, i) => v - ma - b * (z[i] - mz)); };
+  const strength = (r) => { const a = Math.abs(r); return a < 0.15 ? 'no clear pattern' : (a < 0.35 ? 'a weak' : a < 0.6 ? 'a moderate' : 'a strong') + ' tendency'; };
+  function england() {
+    const L = String(D.latest), xname = XS.find((x) => x[0] === xsel)[1], yrow = YS.find((y) => y[0] === ysel), xcol = xsel === 'cmp' ? 'cm' : xsel;
+    const pts = LAS.map((r) => { const rec = D.areas[r.id], g = r.pg && r.pg.A, x = rec && per(rec, L, xcol, 100), y = ysel === 'hol' ? (rec && rec.hol && rec.hol[L] != null ? rec.hol[L] / 100 : null) : (g && g[ysel] && g[ysel][1] && g[ysel][1][0] != null ? g[ysel][1][0] / 100 : null);
+      return {r, x, y, n: rec ? col(rec, L, 'enrol') : 0}; }).filter((p) => p.x != null && p.y != null && p.n >= 2000);
+    all.innerHTML = '';
+    add(all, 'p', 'ax-sub', `Each circle is a local authority in ${ay(L)}. Across it runs how many ${xname.toLowerCase()} it had for every 100 pupils; up it runs ${yrow[1].toLowerCase()} (${yrow[2]}${ysel === 'hol' ? '' : ', autumn and spring terms'}). The two smallest authorities are left out.`);
+    const ctl = add(all, 'div', 'en-ctl'), seg = (label, opts, cur, set) => { const f = add(ctl, 'div', 'ax-field'), id = 'en-l-' + label.replace(/\W+/g, ''); add(f, 'span', null, label).id = id; const s = add(f, 'div', 'ax-seg'); s.setAttribute('role', 'group'); s.setAttribute('aria-labelledby', id);
+      opts.forEach(([v, n]) => { const b = add(s, 'button', null, n); b.type = 'button'; b.setAttribute('aria-pressed', String(v === cur)); b.addEventListener('click', () => { set(v); england(); }); }); };
+    seg('Enforcement', XS, xsel, (v) => { xsel = v; }); seg('Set against', YS.map((y) => [y[0], y[1]]), ysel, (v) => { ysel = v; });
+    const el = add(all, 'div', 'ax-chart'), W = width(el), narrow = W < 560, H = narrow ? 340 : 440, m = {l: 46, r: 14, t: 12, b: 42}, s = svg(el, W, H, `${xname} for every 100 pupils against ${yrow[1].toLowerCase()}, by local authority`);
+    const x = d3.scaleLinear([0, d3.max(pts, (p) => p.x)], [m.l, W - m.r]).nice(), y = d3.scaleLinear(d3.extent(pts, (p) => p.y), [H - m.b, m.t]).nice();
+    x.ticks(narrow ? 4 : 8).forEach((t) => { s.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', GRID); s.append('text').attr('x', x(t)).attr('y', H - m.b + 16).attr('text-anchor', 'middle').text(t); });
+    y.ticks(5).forEach((t) => { s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID); s.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').text(t + '%'); });
+    s.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text(xname + ' for every 100 pupils');
+    const rsz = d3.scaleSqrt([0, 260000], [3, narrow ? 9 : 13]), fmtY = (v) => v.toFixed(ysel === 'hol' ? 2 : 1) + '%';
+    const picked = (p) => { let e = all.querySelector('.ax-picked'); if (!e) e = add(all, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(p.r.name)}</b>: ${p.x.toFixed(1)} for every 100 pupils; ${fmtY(p.y)}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${p.r.id}#sec-enforcement">Open</a>`; };
+    s.append('g').selectAll('circle').data(pts.slice().sort((a, b) => b.n - a.n)).join('circle').attr('cx', (p) => x(p.x)).attr('cy', (p) => y(p.y)).attr('r', (p) => rsz(p.n)).attr('fill', SLATE).attr('fill-opacity', 0.45).attr('stroke', SLATE)
+      .on('pointerenter pointermove', (ev, p) => showTip(ev, `<b>${esc(p.r.name)}</b><br>${xname}: ${p.x.toFixed(1)} for every 100 pupils<br>${yrow[1]}: ${fmtY(p.y)}`)).on('pointerleave', hideTip).on('click', (ev, p) => picked(p));
+    const key = add(all, 'div', 'ax-key'); add(key, 'span', null, `<i style="background:${SLATE};opacity:.6;border-radius:50%;width:10px;height:10px"></i>A local authority, sized by its pupils`); add(key, 'span', null, 'Tap a circle to name it.');
+    // the reading: the rank correlation, and what is left once free school meals eligibility is allowed for
+    const ok = pts.filter((p) => { const g = p.r.pg.A; return g.fsm && g.nfsm && g.all && g.fsm[1] && g.all[1]; }), fs = (p) => { const g = p.r.pg.A, a = g.all[1][0], f = g.fsm[1][0], n = g.nfsm[1][0]; return f === n ? 0 : (a - n) / (f - n); };
+    const r0 = corr(rank(pts.map((p) => p.x)), rank(pts.map((p) => p.y))); let r1 = null;
+    if (ok.length > 100) { const z = rank(ok.map(fs)); r1 = corr(resid(rank(ok.map((p) => p.x)), z), resid(rank(ok.map((p) => p.y)), z)); }
+    const dir = (r) => (Math.abs(r) < 0.15 ? '' : r > 0 ? ': authorities with more of one tend to have more of the other' : ': authorities with more of one tend to have less of the other');
+    add(all, 'p', 'ax-reading', `Across ${pts.length} local authorities there is <b>${strength(r0)}</b>${dir(r0)} (rank correlation ${r0 >= 0 ? '+' : '−'}${Math.abs(r0).toFixed(2)}).`
+      + (r1 == null ? '' : ` Comparing authorities with a similar share of pupils eligible for free school meals, there is ${strength(r1)} (${r1 >= 0 ? '+' : '−'}${Math.abs(r1).toFixed(2)}).`));
+    add(all, 'p', 'ax-note', 'Read this as a pattern across areas and no more. A notice follows an absence, so more notices where there is more unauthorised holiday is what the rules would produce; it does not show that notices raise or lower absence. The DfE does not publish who receives notices by pupil group, so nothing here shows whether families of pupils eligible for free school meals or with special educational needs are fined more or less often than others. '
+      + 'The share eligible for free school meals is worked out from each authority’s published rates. ' + SRC());
+    // the map: notices for every 100 pupils
+    add(all, 'h3', 'en-h', `${xname} for every 100 pupils, ${ay(L)}`);
+    const mp = add(all, 'div', 'ax-chart'), H2 = LAS.filter((r) => r.q != null).map((r) => ({r, v: D.areas[r.id] ? per(D.areas[r.id], L, xcol, 100) : null})), cap = 480, MW = Math.min(cap, width(mp));
+    const qs = d3.extent(H2, (d) => d.r.q + (d.r.r & 1) / 2), rs = d3.extent(H2, (d) => d.r.r), size = (MW - 4) / ((qs[1] - qs[0] + 1) * Math.sqrt(3)), MH = Math.ceil((rs[1] - rs[0]) * 1.5 * size + 2 * size + 4);
+    const dpath = 'M' + d3.range(6).map((i) => { const t = Math.PI / 180 * (60 * i - 30); return (Math.cos(t) * (size - 0.6)).toFixed(2) + ',' + (Math.sin(t) * (size - 0.6)).toFixed(2); }).join('L') + 'Z';
+    const vmax = d3.quantile(H2.map((d) => d.v).filter((v) => v != null).sort(d3.ascending), 0.97) || 1, shade = (v) => (v == null ? '#fff' : d3.interpolateRgb('#EEF0F4', INK)(Math.min(1, v / vmax)));
+    const ms = svg(mp, MW, MH, `Map of local authorities shaded by ${xname.toLowerCase()} for every 100 pupils`); ms.style('max-width', cap + 'px').style('margin', '0 auto');
+    ms.append('g').selectAll('path').data(H2).join('path').attr('d', dpath).attr('transform', (d) => `translate(${(d.r.q + (d.r.r & 1) / 2 - qs[0] + 0.5) * Math.sqrt(3) * size + 2},${(rs[1] - d.r.r) * 1.5 * size + size + 2})`).attr('fill', (d) => shade(d.v)).attr('stroke', d3.rgb(SOFT)).attr('stroke-width', 0.5)
+      .on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : d.v.toFixed(1) + ' for every 100 pupils'}`)).on('pointerleave', hideTip)
+      .on('click', (ev, d) => { let e = mp.querySelector('.ax-picked'); if (!e) e = add(mp, 'p', 'ax-picked'); e.innerHTML = `<span><b>${esc(d.r.name)}</b>: ${d.v == null ? 'no figure' : d.v.toFixed(1) + ' for every 100 pupils'}</span> <a class="ax-btn" href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">Open</a>`; });
+    const mk = add(mp, 'div', 'ax-key'); add(mk, 'span', null, `0 <i style="background:linear-gradient(90deg,#EEF0F4,${INK});width:90px;border:1px solid ${SOFT}"></i>${vmax.toFixed(0)} or more for every 100 pupils`); add(mk, 'span', null, 'One hexagon for each local authority, placed roughly where it sits.');
+    // highest and lowest
+    const ord = H2.filter((d) => d.v != null && col(D.areas[d.r.id], L, 'enrol') >= 2000).sort((a, b) => b.v - a.v), row = (d) => `<tr><td><a href="/attendance/group/?k=a&id=${d.r.id}#sec-enforcement">${esc(d.r.name)}</a></td><td class="n">${d.v.toFixed(1)}</td><td class="n">${num(col(D.areas[d.r.id], L, xcol))}</td></tr>`;
+    const wrap = add(all, 'div', 'en-pair'), tbl = (title, list) => { const b = add(wrap, 'div', 'en-mini'); add(b, 'h3', null, title); add(add(b, 'div', 'ax-tablewrap'), 'table', 'ax-table en-table', `<thead><tr><th>Local authority</th><th class="n">For every 100 pupils</th><th class="n">Number</th></tr></thead><tbody>${list.map(row).join('')}</tbody>`); };
+    tbl('Most for their size', ord.slice(0, 8)); tbl('Fewest for their size', ord.slice(-8).reverse());
+  }
+
+  d3.json('/attendance/data/prm.json').then((j) => { D = j; j.cols.forEach((c, i) => { C[c] = i; });
+    if (area) { let last = ''; const go = () => { const sig = location.search + '|' + (($('gx-name') || {}).textContent || ''); if (sig === last) return; last = sig; place(); };
+      const nm = $('gx-name'); if (nm) new MutationObserver(go).observe(nm, {childList: true, characterData: true, subtree: true}); addEventListener('popstate', () => setTimeout(go, 50)); go();
+      let t = null; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { last = ''; go(); }, 200); }); }
+    if (all) d3.json('/attendance/data/grp/a_all.json').then((rows) => { LAS = rows; england(); let t = null, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(england, 200); }); });
+  }).catch(() => { const c = $('gx-enf-c') || $('px-enf-c'); if (c) c.hidden = true; });
+})();
