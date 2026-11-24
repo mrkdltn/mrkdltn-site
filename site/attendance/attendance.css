@@ -54,7 +54,9 @@
 .ax-chip{font:inherit;font-size:14px;display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);cursor:pointer}
 .ax-chip i{width:10px;height:10px;border-radius:50%}
 .ax-ofsted{margin:16px 0 0}
-.ax-grade{display:inline-block;padding:3px 9px;border-radius:4px;font-weight:600;color:#fff;margin:0 4px}
+/* an Ofsted grade: its colour as a swatch, its name in ink, so the colour is never altered and the text always reads */
+.ax-grade{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--ink);margin:0 4px;white-space:nowrap}
+.ax-grade i{width:14px;height:14px;border-radius:2px;display:inline-block}
 #sx-body:not([hidden]){display:flex;flex-direction:column;gap:22px}
 @media (max-width:480px){#sx-body:not([hidden]){gap:16px}}
 /* trusts and constituencies */

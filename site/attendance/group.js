@@ -85,10 +85,10 @@
     s.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', mid).attr('y2', mid).attr('stroke', GRID);
     x.ticks(W < 480 ? 4 : 8).forEach((t) => s.append('text').attr('x', x(t)).attr('y', H - 8).attr('text-anchor', 'middle').text((t / 100) + '%'));
     if (e) { s.append('line').attr('x1', x(e[M.b])).attr('x2', x(e[M.b])).attr('y1', m.t - 6).attr('y2', H - m.b).attr('stroke', MUTED).attr('stroke-width', 2); }
-    const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(placed).join('circle').attr('cx', (p) => p.cx).attr('cy', (p) => mid + p.cy).attr('r', (p) => p.r).attr('fill', (p) => (e ? AXc.div(p.s[M.s], e[M.b], e[M.b] * 0.5) : SOFT)).attr('stroke', '#fff');
+    const c = s.append('g').attr('class', 'ax-dots').selectAll('circle').data(placed).join('circle').attr('cx', (p) => p.cx).attr('cy', (p) => mid + p.cy).attr('r', (p) => p.r).attr('fill', SOFT).attr('stroke', MUTED);      // named schools take no green or rust (Mark, 24 November)
     tipOn(c, (p) => `<b>${esc(p.s[1])}</b><br>${esc(p.s[3])}<br>Overall absence ${pc(p.s[5])}<br>Persistent absence ${pc(p.s[6])}`);
     if (g) s.append('path').attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(g[M.b])},${m.t - 8})`).attr('fill', INK);
-    key(el, [`<i style="background:${AXc.VERD};border-radius:50%;width:10px"></i>A school with lower absence than England`, `<i style="background:${AXc.RUST};border-radius:50%;width:10px"></i>Higher (larger circle, more pupils)`].concat(g ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}, pooled`] : [], e ? [`<i style="background:${MUTED};width:2px;height:12px"></i>England ${PH[ph]}`] : []));
+    key(el, [`<i style="background:${SOFT};border:1px solid ${MUTED};border-radius:50%;width:10px"></i>A school (larger circle, more pupils)`].concat(g ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}, pooled`] : [], e ? [`<i style="background:${MUTED};width:2px;height:12px"></i>England ${PH[ph]}`] : []));
     const v = S.map((s) => s[M.s]).sort(d3.ascending), below = e ? S.filter((s) => s[M.s] < e[M.b]).length : null;
     $('gx-strip-r').innerHTML = `${M.n.replace(/^./, (ch) => ch.toUpperCase())} at these ${count(S.length)} schools ran from <b>${pc(v[0])}</b> to <b>${pc(v[v.length - 1])}</b>` + (e ? `; ${below === 0 ? 'none' : count(below)} had a lower rate than England’s ${PH[ph]} as a whole.` : '.');
   }

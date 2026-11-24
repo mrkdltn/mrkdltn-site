@@ -56,7 +56,7 @@
 
   <section data-nav="Circumstances" class="ax-card" id="px-scat-c">
     <h2>School by school, against its circumstances</h2>
-    <p class="ax-sub">Each dot is a school. The green line joins the middle school of each twentieth of schools along the axis.</p>
+    <p class="ax-sub">Each dot is a school. The dark line joins the middle school of each twentieth of schools along the axis.</p>
     <label class="ax-field" style="max-width:340px"><span>Across the page</span>
       <select id="px-x" class="ax-select"><option value="fsm">Eligible for free school meals</option><option value="sen">SEN support</option><option value="ehcp">Education, health and care plans</option><option value="eal">First language other than English</option></select></label>
     <div id="px-scat" class="ax-chart ax-pos"></div>
@@ -78,6 +78,13 @@
     <p class="ax-reading" id="px-reg-r"></p>
   </section>
   </div>
+
+  <section data-nav="Day by day" class="ax-card" id="px-cal-c">
+    <h2>The school year, one square a day</h2>
+    <p class="ax-sub">Every school day in England, from the registers schools share with the DfE each day: green where fewer sessions were missed than on the average day of the last full year, rust where more. Rows run Monday to Friday. The pattern of the week and of the terms shows at a glance. It follows the schools chosen above.</p>
+    <div id="px-cal" class="ax-chart"></div>
+    <p class="ax-reading" id="px-cal-r"></p>
+  </section>
 
   <section data-nav="Severe absence" class="ax-card" id="px-sev-c">
     <h2 id="px-sev-h">Severe absence, year by year</h2>
@@ -123,6 +130,7 @@
         <li>Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files: <span id="px-src-fy">full school years</span>; <span id="px-src-as">autumn and spring terms</span>.</li>
         <li>Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/school-pupils-and-their-characteristics">Schools, pupils and their characteristics</a>, school-level file for January 2026 (published June 2026).</li>
         <li>Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/special-educational-needs-in-england">Special educational needs in England</a>, school-level file for January 2026 (published June 2026).</li>
+        <li>Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-attendance-in-schools">Pupil attendance in schools</a>, the in-year figures from the registers schools share each day, for the day-by-day calendar only. These are official statistics and differ from the termly census statistics used everywhere else on this page.</li>
       </ul>
       <dl class="px-mdl">
         <dt>Which years</dt><dd>The charts over time use full school years, 2013/14 to <span class="px-fylast">2024/25</span>. No figures were published for 2019/20, so every chart leaves that year empty. The school-by-school chart and the match for similar schools use the autumn and spring terms <span class="px-latest">2025/26</span>.</dd>

@@ -63,7 +63,7 @@
       K.innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${esc(x[0])}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');
     }
     const O = $('sx-ofsted');
-    if (S.g) { const g = GRADES[S.g[0]]; O.innerHTML = `Ofsted graded attendance and behaviour <span class="ax-grade" style="background:${g[1]};color:${g[2]}">${g[0]}</span>` + (S.g[1] ? ` at the inspection of ${date(S.g[1])}.` : '.') + ` <a href="/explorer/school/${urn}/">See the full report card in the Ofsted Explorer</a>.`; O.hidden = false; }
+    if (S.g) { const g = GRADES[S.g[0]]; O.innerHTML = `Ofsted graded attendance and behaviour <span class="ax-grade"><i style="background:${g[1]}"></i>${g[0]}</span>` + (S.g[1] ? ` at the inspection of ${date(S.g[1])}.` : '.') + ` <a href="/explorer/school/${urn}/">See the full report card in the Ofsted Explorer</a>.`; O.hidden = false; }
     else { O.hidden = true; O.innerHTML = ''; }
   }
 
@@ -80,10 +80,10 @@
     rows.forEach((r, i) => { const y = m.t + i * rh + (narrow ? 40 : rh / 2), g = gap(mine, r[1]), col = AXc.gap(g);
       s.append('text').attr('x', narrow ? m.l : lab).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'start' : 'end').attr('class', 'strong').text(r[0] + (narrow ? ': ' + pc(r[1]) : ''));
       s.append('line').attr('x1', x(r[1])).attr('x2', x(mine)).attr('y1', y).attr('y2', y).attr('stroke', col).attr('stroke-width', 3);
-      s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', r[2] ? VERD : MUTED).attr('stroke-width', 3);
+      s.append('line').attr('x1', x(r[1])).attr('x2', x(r[1])).attr('y1', y - 11).attr('y2', y + 11).attr('stroke', MUTED).attr('stroke-width', 3);      // comparisons are slate; green and rust mean direction only (Mark, 24 November)
       s.append('path').attr('d', d3.symbol(d3.symbolDiamond, 110)()).attr('transform', `translate(${x(mine)},${y})`).attr('fill', INK);
       s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 22 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').style('fill', col).text(narrow ? (g === 0 ? 'same' : (g < 0 ? '−' : '+') + pts(g)) : pc(r[1]) + ' · ' + (g === 0 ? 'the same' : pts(g) + ' points ' + (g < 0 ? 'lower' : 'higher'))); });
-    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>England and the local authority`, `<i style="background:${VERD};width:3px;height:14px"></i>Schools like it`, `<i style="background:${AXc.VERD}"></i>Lower absence here`, `<i style="background:${AXc.RUST}"></i>Higher`]);
+    key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}, ${pc(mine)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>The comparison`, `<i style="background:${AXc.VERD}"></i>Lower absence here`, `<i style="background:${AXc.RUST}"></i>Higher`]);
     const gs = gap(mine, S.sim[M.b]);
     $('sx-read-r').innerHTML = `Across the 20 schools most like it, ${M.n} was <b>${pc(S.sim[M.b])}</b>. The school’s ${pc(mine)} is ` + (gs === 0 ? 'the same.' : `<b>${pts(gs)}</b> points ${gs < 0 ? 'lower' : 'higher'}.`) + (now[0] < 200 ? ` With ${now[0]} pupils on roll, one pupil is about ${(100 / now[0]).toFixed(1)} points of persistent absence, so small gaps mean little.` : '');
     const c = S.ctx; $('sx-ctx').textContent = c ? `Its circumstances, January 2026 census: ${c[4].toLocaleString('en-GB')} pupils; ${c[0].toFixed(1)}% eligible for free school meals; ${c[2].toFixed(1)}% with SEN support; ${c[3].toFixed(1)}% with an education, health and care plan; ${c[1].toFixed(1)}% with a first language other than English; ${c[5] ? 'rural' : 'urban'}.` : '';

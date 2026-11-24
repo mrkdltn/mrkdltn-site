@@ -63,8 +63,8 @@
     s.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 6).attr('text-anchor', 'middle').text('Pupils ' + XN[xf]);
     const sorted = idx.slice().sort((a, b) => xs[a] - xs[b]), bins = d3.range(20).map((k) => sorted.slice(Math.floor(k * sorted.length / 20), Math.floor((k + 1) * sorted.length / 20))).map((b) => ({x: d3.median(b, (i) => xs[i]), v: d3.median(b, (i) => ys[i])}));
     const line = d3.line().x((d) => x(d.x)).y((d) => y(d.v));
-    s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 5); s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', VERD).attr('stroke-width', 2.5);
-    const M = P.model && P.model.phases[phase], items = [`<i style="background:${SOFT};border-radius:50%;width:8px;height:8px"></i>${idx.length.toLocaleString('en-GB')} ${PH[phase]}`, `<i class="ln" style="border-color:${VERD}"></i>Middle school of each twentieth`];
+    s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 5); s.append('path').attr('d', line(bins)).attr('fill', 'none').attr('stroke', INK).attr('stroke-width', 2.5);
+    const M = P.model && P.model.phases[phase], items = [`<i style="background:${SOFT};border-radius:50%;width:8px;height:8px"></i>${idx.length.toLocaleString('en-GB')} ${PH[phase]}`, `<i class="ln" style="border-color:${INK}"></i>Middle school of each twentieth`];
     key(el, items);
     $('px-scat-r').innerHTML = `In the twentieth of ${PH[phase]} with the fewest pupils ${XN[xf]}, the middle school had ${MN[meas]} of <b>${pc(bins[0].v)}</b>; in the twentieth with the most, <b>${pc(bins[19].v)}</b>.`;
   }
@@ -186,13 +186,38 @@
     $('px-sev-r').innerHTML = a == null || b == null ? '' : `In ${ay(last)}, <b>${pc(b)}</b> of pupils in ${PH[phase]} missed half or more of their sessions. In 2018/19 it was <b>${pc(a)}</b>, so the share is ${(b / a).toFixed(1)} times what it was.`;
   }
 
+  // the school year day by day for England (the DfE's in-year data): one square a day, green below the year's average, rust above
+  let PULSE = null;
+  function calendar() {
+    const el = $('px-cal'); if (!PULSE) { d3.json('/attendance/data/pulse.json').then((j) => { PULSE = j; calendar(); }).catch(() => { $('px-cal-c').hidden = true; }); return; }
+    el.innerHTML = ''; const Pz = PULSE, D = Pz.england, ph = phase, yrsC = Pz.years.map(String).reverse(), full = yrsC[yrsC.length - 1], W = width(el), narrow = W < 520;
+    const fullVals = D[full][ph].abs.filter((v) => v != null), mid = d3.mean(fullVals), sorted = fullVals.slice().sort(d3.ascending), span = Math.max(d3.quantile(sorted, 0.97) - mid, mid - d3.quantile(sorted, 0.03));
+    const base = (y) => { const d = new Date(Date.UTC(+y, 8, 1)); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d; }, dow = (iso) => (new Date(iso + 'T00:00:00Z').getUTCDay() + 6) % 7;
+    const fmt = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+    const nW = 47, left = narrow ? 30 : 64, cw = (W - left) / nW, chh = narrow ? 13 : Math.min(18, cw), gp = Math.min(2, cw * 0.18), blockH = chh * 5, top = 36, pitch = blockH + 48, H = top + yrsC.length * pitch - 12;
+    const s = svg(el, W, H, 'Calendar of overall absence in England, one square per school day');
+    const months = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+    yrsC.forEach((yy, yi) => { const g = s.append('g').attr('transform', `translate(0,${top + yi * pitch})`).attr('class', 'ax-cells');
+      g.append('text').attr('x', 0).attr('y', -22).attr('class', 'strong').text(ay(yy));
+      if (!narrow) ['Mon', '', 'Wed', '', 'Fri'].forEach((t, i) => g.append('text').attr('x', left - 8).attr('y', i * chh + chh * 0.72).attr('text-anchor', 'end').text(t));
+      months.forEach((mo, mi) => { const d = new Date(Date.UTC(+yy + (mi > 3 ? 1 : 0), (8 + mi) % 12, 1)), ix = Math.floor((d - base(yy)) / 6048e5 + 0.99); if (ix < nW && (!narrow || mi % 2 === 0)) g.append('text').attr('x', left + ix * cw).attr('y', -6).text(mo); });
+      for (let wk = 0; wk < nW; wk++) for (let d = 0; d < 5; d++) g.append('rect').attr('x', left + wk * cw).attr('y', d * chh).attr('width', cw - gp).attr('height', chh - gp).attr('fill', 'none').attr('stroke', GRID).attr('pointer-events', 'none');
+      const cells = Pz.days[yy].map((iso, i) => ({iso, v: D[yy][ph].abs[i]})).filter((c) => c.v != null);
+      tipOn(g.selectAll('rect.c').data(cells).join('rect').attr('class', 'c').attr('x', (c) => left + Math.floor((Date.parse(c.iso + 'T00:00:00Z') - base(yy)) / 6048e5) * cw).attr('y', (c) => dow(c.iso) * chh).attr('width', cw - gp).attr('height', chh - gp).attr('fill', (c) => AXc.div(c.v, mid, span)),
+        (c) => `<b>${fmt(c.iso)}</b><br>Overall absence ${pc(c.v)}`); });
+    key(el, [AXc.legend(mid, span, 'the average day of ' + ay(full)), 'Blank squares are holidays, or days when under 80% of the usual pupils were due in' + (phase === 'S' ? '. In secondary schools that includes most days from June, once Year 11 has left' : '')]);
+    const by = [0, 1, 2, 3, 4].map((d) => d3.mean(Pz.days[full].map((iso, i) => (dow(iso) === d ? D[full][ph].abs[i] : null)).filter((v) => v != null))), midwk = d3.mean([by[1], by[2], by[3]]);
+    const mAvg = (m) => d3.mean(Pz.days[full].map((iso, i) => (+iso.slice(5, 7) === m ? D[full][ph].abs[i] : null)).filter((v) => v != null));
+    $('px-cal-r').innerHTML = `Across ${ay(full)} in England’s ${PH[phase]}, Fridays averaged <b>${pc(by[4])}</b> and Mondays <b>${pc(by[0])}</b>, against <b>${pc(midwk)}</b> from Tuesday to Thursday. September averaged ${pc(mAvg(9))}, December ${pc(mAvg(12))} and July ${pc(mAvg(7))}.`;
+  }
+
   let token = 0;
   function draw() {
     document.querySelectorAll('#px-phase button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === phase)));
     document.querySelectorAll('#px-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === meas)));
     const q = new URLSearchParams(); if (phase !== 'S') q.set('phase', phase); if (meas !== 'abs') q.set('m', meas); if (xf !== 'fsm') q.set('x', xf); if (rview !== 'now') q.set('rv', rview);
     history.replaceState(null, '', location.pathname + (q.toString() ? '#' + q : ''));
-    gradient(); spread(); regions(); severe(); model();
+    gradient(); spread(); regions(); severe(); model(); calendar();
     const t = ++token; getDist(phase).then((D) => { if (t === token) scatter(D); });
   }
 
