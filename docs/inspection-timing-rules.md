@@ -149,7 +149,11 @@ Ofsted publishes a usual point ("approximately", "around") but no range. The pan
 | --- | --- | --- | --- |
 | STD4, MON_NA | publication + 4 years | + 3 years | + 5 years, or the statutory limit if sooner |
 | RI25 | publication + 2.5 years | + 1.5 years | + 3.5 years, or the statutory limit if sooner |
-| NEW | (third year of operation) | opening + 2 years | opening + 3 years |
+| NEW | none: the whole third year is the usual period | opening + 2 years | the day before opening + 3 years |
+
+## How the panel serves it
+
+`build_data.py` writes one record per school to `site/explorer/data/it/<urn % 128>.json`, so a school page fetches only its own shard (largest 4.6 KB gzipped on 24 November 2026; 32 shards, as `nn/` uses, would be about 14 KB). Each shard's header carries the build date, the MI as-at date and the backtest figures for groups with at least 100 inspected schools. Totals by rule are in `build.json` under `inspection_timing`.
 
 ## Daily reads and MI
 

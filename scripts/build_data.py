@@ -193,7 +193,13 @@ def write_timing(raw, out, as_at):
         shards.setdefault(int(r['urn']) % IT_SHARDS, {})[r['urn']] = it.compact(rec)
     d = os.path.join(out, 'it')
     os.makedirs(d, exist_ok=True)
-    head = {'asat': as_at.isoformat(), 'mi': mi_as_at}
+    # the backtest's figures for the panel's one empirical line, only for rule groups with enough inspections
+    bt_path = os.path.join(raw, 'inspection_timing_backtest.json')
+    emp = {}
+    if os.path.exists(bt_path):
+        bt = json.load(open(bt_path))
+        emp = {k: dict(v, f=bt['window_from'], t=bt['window_to']) for k, v in bt['groups'].items() if v['n'] >= bt.get('min_n', 100)}
+    head = {'asat': as_at.isoformat(), 'mi': mi_as_at, 'emp': emp}
     for k in range(IT_SHARDS):
         with open(os.path.join(d, f'{k}.json'), 'w') as f:
             json.dump(dict(head, s=shards.get(k, {})), f, separators=(',', ':'))

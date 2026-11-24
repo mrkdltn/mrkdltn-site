@@ -391,3 +391,25 @@ html.oe-prd:not(.loaded) body.explorer #school .oe-actions{display:flex}
 /* report card tiles: the grade sits at the foot of each tile, so grades in a row line up when an area's name runs to two lines */
 body.explorer .oe-g{display:flex;flex-direction:column}
 body.explorer .oe-g b{margin-top:auto;padding-top:4px}
+/* Inspection timing (24 November 2026): a reading of published rules, drawn still, on the reading scale (never grade colours) */
+.oe-it{margin-top:var(--cds-gap-lg,28px)}
+.oe-it[hidden]{display:none}
+.oe-it.loading{min-height:190px}
+.oe .oe-it-s{font-size:16px;line-height:1.6;color:#33405A;max-width:86ch;margin:4px 0 12px}
+.oe-it-fig{width:100%}
+.oe-it-fig svg{display:block;width:100%;height:auto;overflow:visible}
+.oe-itsvg text{font-family:var(--sans);fill:#33405A;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.oe-itsvg .base{stroke:#8A96A8;stroke-width:2}
+.oe-itsvg .band{fill:#2F6F66;fill-opacity:.16}
+.oe-itsvg .lead{stroke:#C2C8D2;stroke-width:1}
+.oe-itsvg .m.k circle{fill:#fff;stroke:#0B1A2E;stroke-width:1.5}
+.oe-itsvg .m.usual line{stroke:#2F6F66;stroke-width:2.5}
+.oe-itsvg .m.usual text{fill:#1E544D;font-weight:600}
+.oe-itsvg .m.stat rect{fill:#0B1A2E}
+.oe-itsvg .m.stat text{fill:#0B1A2E;font-weight:600}
+.oe-itsvg .m.today line{stroke:#C9A24B;stroke-width:2;stroke-dasharray:3 2}
+.oe-itsvg .m.today text{fill:#7A5C14}
+.oe-itsvg .m.mon circle{fill:#fff;stroke:#55627A;stroke-width:1.5}
+.oe .oe-it-more p{font-size:14px;line-height:1.55;color:#55627A;margin:8px 0 0;max-width:86ch}
+.oe .oe-it-more p.oe-it-note{font-size:13px}
+@media print{.oe-it{break-inside:avoid}}

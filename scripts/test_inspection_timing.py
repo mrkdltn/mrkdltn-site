@@ -129,7 +129,7 @@ class Rules(unittest.TestCase):
         self.assertTrue(rec['new'])
         self.assertEqual((rec['pred_urn'], rec['pred_date']), ('999002', D(2021, 11, 9)))
         self.assertEqual(rec['anchor'], D(2024, 9, 1))
-        self.assertEqual((rec['earliest'], rec['usual'], rec['band_end']), (D(2026, 9, 1), D(2027, 3, 1), D(2027, 9, 1)))
+        self.assertEqual((rec['earliest'], rec['usual'], rec['band_end']), (D(2026, 9, 1), D(2027, 3, 1), D(2027, 8, 31)))
         self.assertIsNone(rec['statutory'])
 
     def test_never_inspected_new_provision(self):

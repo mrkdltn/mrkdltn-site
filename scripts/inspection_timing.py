@@ -162,6 +162,7 @@ def classify(row, gias=None, as_at=None):
         if opened:
             rec.update(rule='NEW', new=True)
             clock(opened, 'opened', 30, 6)   # third year of operation: from 2 to 3 years after opening
+            rec['band_end'] = rec['band_end'] - dt.timedelta(days=1)   # the third year ends the day before its anniversary
             return rec
         rec['why'] = 'no inspection and no open date'
         return rec
@@ -203,7 +204,8 @@ def iso(x):
 
 def compact(rec):
     """The record as served to a school page (site/explorer/data/it/<urn % N>.json)."""
-    out = {'r': rec['rule'], 'w': rec['why'] or None, 'a': iso(rec['anchor']), 'ak': rec['anchor_kind'] or None,
+    # the anchor's kind is not served: the page works it out (opened for NEW, else the last report's publication)
+    out = {'r': rec['rule'], 'w': rec['why'] or None, 'a': iso(rec['anchor']),
            'l': iso(rec['last']), 'lk': rec['last_kind'] or None, 'u': iso(rec['usual']), 'e': iso(rec['earliest']),
            'b': iso(rec['band_end']), 's': iso(rec['statutory']), 'm': rec['mon'] or None, 'mb': iso(rec['mon_by']),
            'n': 1 if rec['new'] else None, 'pu': rec['pred_urn'] or None, 'pd': iso(rec['pred_date']),

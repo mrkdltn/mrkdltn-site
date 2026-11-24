@@ -23,7 +23,7 @@ if (!urls.length) { console.error('usage: node scripts/measure.mjs URL [URL...] 
 const port = 9300 + Math.floor(Math.random() * 500);
 const profile = mkdtempSync(join(tmpdir(), 'oe-measure-'));
 const proc = spawn(chrome, ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`,
-  '--no-first-run', '--no-default-browser-check', '--disable-extensions', 'about:blank'], {stdio: 'ignore'});
+  ...(process.env.OE_NOSANDBOX ? ['--no-sandbox'] : []), '--no-first-run', '--no-default-browser-check', '--disable-extensions', 'about:blank'], {stdio: 'ignore'});
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function target() {
