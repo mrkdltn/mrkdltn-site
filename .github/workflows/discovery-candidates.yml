@@ -1,0 +1,59 @@
+name: Discovery candidates
+
+# Suggests discoveries by the fixed rules in scripts/discoveries/README.md and pushes any new `candidate` files to the
+# branch discovery-candidates, whose Cloudflare preview shows them behind the draft banner. Never pushes to main,
+# never publishes: a discovery is published only when Mark says so.
+# Becomes active once this file is merged to main (scheduled workflows run from the default branch).
+on:
+  schedule:
+    - cron: '41 5 * * 1'   # Mondays 05:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: discovery-candidates
+  cancel-in-progress: false
+
+jobs:
+  suggest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Build the data
+        env:
+          OE_PAGES_SAMPLE: '20'
+          OE_DISCOVERIES: preview
+        run: python3 scripts/build_data.py || true   # a partial build's metadata check can fail; the data are written first
+
+      - name: Suggest candidates
+        run: |
+          test -f site/explorer/data/ks4.json
+          python3 scripts/discoveries/candidates.py
+
+      - name: Check every discovery still reproduces
+        run: python3 scripts/discoveries/test_discoveries.py
+
+      - name: Push new candidates to the discovery-candidates branch
+        run: |
+          if ! git ls-files --others --exclude-standard -- content/discoveries | grep -q .; then
+            echo "No new candidates."; exit 0; fi
+          git config user.name "mrkdltn data bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B discovery-candidates
+          git add content/discoveries
+          git commit -m "Discovery candidates $(date -u +%F)"
+          git push --force origin discovery-candidates
