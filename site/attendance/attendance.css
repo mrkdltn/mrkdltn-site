@@ -286,3 +286,4 @@ body.explorer{background:#ECE9E1}
 .ax-kick{font:600 12px/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#7A5C14;margin:0 0 6px}
 .ax-kick + h2{max-width:34ch}
 @media print{.ax .ax-tab-off{display:revert!important}}
+.ax-clock{font-size:15px;line-height:1.55;color:#33405A;background:#F6F3EC;border-left:3px solid #C9A24B;padding:12px 14px;margin:16px 0 0;max-width:80ch}.ax-clock b{color:var(--ink)}.ax-clock a{color:var(--ink)}

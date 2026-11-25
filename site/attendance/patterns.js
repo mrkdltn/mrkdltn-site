@@ -220,7 +220,7 @@
     document.querySelectorAll('#px-phase button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === phase)));
     document.querySelectorAll('#px-meas button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === meas)));
     const q = new URLSearchParams(); if (phase !== 'S') q.set('phase', phase); if (meas !== 'abs') q.set('m', meas); if (xf !== 'fsm') q.set('x', xf); if (rview !== 'now') q.set('rv', rview);
-    history.replaceState(null, '', location.pathname + (q.toString() ? '#' + q : ''));
+    history.replaceState(null, '', location.pathname + location.search + (q.toString() ? '#' + q : ''));
     gradient(); spread(); regions(); severe(); model(); calendar();
     const t = ++token; getDist(phase).then((D) => { if (t === token) scatter(D); });
   }
@@ -235,7 +235,7 @@
     $('px-src-fy').textContent = `full school years ${ay(P.fy[0])} to ${ay(B.fy_last)}, published ${date(B.release.full_year.published)}`;
     $('px-src-as').textContent = `autumn and spring terms ${ay(B.latest)}, published ${date(B.release.autumn_spring.published)}`;
     document.querySelectorAll('.px-latest').forEach((n) => { n.textContent = ay(B.latest); }); document.querySelectorAll('.px-fylast').forEach((n) => { n.textContent = ay(B.fy_last); });
-    let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } });
+    let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } }); addEventListener('ax-redraw', draw);
     draw();
   }).catch((e) => { console.error(e); $('px-date').textContent = 'The data could not be loaded. Please try again shortly.'; });
 })();

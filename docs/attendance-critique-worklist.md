@@ -110,3 +110,6 @@ Mark rejected the cut-down school page on seeing it (24 Nov) and asked to roll b
 | The same treatment for county, trust, constituency, ward, school, Areas and Patterns pages | Not started; waits for Mark's view of the example |
 | Mark confirmed the example ("it is", 25 Nov) | Tabs and finding-headings carried to county, trust, constituency and ward pages and to the school page (Overview, Compare, Over time, Method). The school's summary heading now names England, the local authority and similar schools, so it can no longer point the opposite way to the section beneath. The measure choice on the school page sits beside each chart it changes |
 | Areas (in-year) and Patterns pages; the two-clocks line; controls beside what they change on area and trust pages; menus that open a list; (i) notes; an independent check of the new headings | Not started |
+| Areas and Patterns pages | Tabs on both (Areas: This year, Week by week, Reasons, Other areas, Method; Patterns: Disadvantage, Over time, Regions, Method). Finding-headings on Areas for reasons and for the comparison with last year; Patterns already had three |
+| The two clocks | A line under a local authority's summary gives this school year so far for the same phase, says it is a different period, and links to the week-by-week view |
+| Independent check of the new headings and the line | Under way |

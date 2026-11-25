@@ -90,6 +90,7 @@
     t += '.'; if (e) { const d = gap(now[0], e[0]); t += ` Across England’s ${PH[phase]} the figure was ${pc(e[0])}` + (d === 0 ? ', the same.' : `, so absence here was ${pts(d)} points ${d < 0 ? 'lower' : 'higher'}.`); }
     R.innerHTML = t + '<span class="ax-pills">' + (was ? AXc.pill(gap(now[0], was[0]), 'a year earlier') : '') + (e ? AXc.pill(gap(now[0], e[0]), 'England') : '') + '</span>' + focusLine();
     const k = [['Overall absence', pc(now[0]), was ? 'a year earlier ' + pc(was[0]) : ''], ['Persistent absence', pc(now[2]), was ? 'a year earlier ' + pc(was[2]) : ''], ['Severe absence', now[4] == null ? '–' : pc(now[4]), now[4] == null ? 'too few pupils to show' : was && was[4] != null ? 'a year earlier ' + pc(was[4]) : ''], ['Unauthorised absence', pc(now[1]), e ? 'England ' + pc(e[1]) : ''], ['England ' + PH[phase], e ? pc(e[0]) : '–', e ? 'persistent ' + pc(e[2]) + (e[4] != null ? ', severe ' + pc(e[4]) : '') : '']];
+    clock();
     K.innerHTML = k.map((x) => `<div class="ax-kpi"><div class="k">${esc(x[0])}</div><div class="v">${x[1]}</div><div class="d">${x[2] || '&nbsp;'}</div></div>`).join('');
   }
 
@@ -339,6 +340,20 @@
     if (mine2.length > 10) { const m = $('gx-more'); m.hidden = false; m.textContent = showAll ? 'Show the first 10' : `Show all ${mine2.length}`; m.onclick = () => { showAll = !showAll; table(); }; }
     list.forEach((s) => { const tr = b.appendChild(document.createElement('tr'));
       tr.innerHTML = `<td><a href="${AXsearch.href(s[0])}">${esc(s[1])}</a><small>${esc([PH1[s[2]], s[3], s[7] ? 'joined ' + month(s[7]) + (s[8] ? ' from ' + s[8] : '') : ''].filter(Boolean).join(' · '))}</small></td><td class="n">${pc(s[5])}</td><td class="n">${pc(s[6])}</td>`; });
+  }
+
+  // Two clocks, said once. The figures on this page are termly and stop at the last spring term; the DfE also publishes the
+  // current school year week by week for local authorities. A line under the summary gives that newer figure and says
+  // plainly that it is a different period, so the two are not read as disagreeing.
+  let PULSE = null, pulseAsked = false;
+  function clock() {
+    let el = $('gx-clock'); if (!el) { el = document.createElement('p'); el.id = 'gx-clock'; el.className = 'ax-clock'; $('gx-kpis').after(el); }
+    el.hidden = true; if (kind !== 'a' || !phase) return;
+    if (!PULSE) { if (!pulseAsked) { pulseAsked = true; d3.json('/attendance/data/pulse.json').then((j) => { PULSE = j; clock(); }).catch(() => {}); } return; }
+    const yr = String(PULSE.years[PULSE.years.length - 1]), a = PULSE.ytd[id] && PULSE.ytd[id][yr] && PULSE.ytd[id][yr][phase], e = PULSE.ytd[PULSE.areas[0].c][yr][phase], days = PULSE.days[yr], last = days && days[days.length - 1];
+    if (!a || !e || a.abs == null || !last) return; const d = gap(a.abs, e.abs);
+    el.innerHTML = `<b>This school year so far.</b> The figures above are the latest termly ones and end at Easter ${+B.latest.slice(0, 4) + 1}. Since September ${yr}, up to ${date(last)}, its ${PH[phase]} have missed <b>${pc(a.abs)}</b> of sessions, ${d === 0 ? 'the same as' : pts(d) + ' points ' + (d < 0 ? 'lower than' : 'higher than')} England’s ${pc(e.abs)}. That is a different and shorter period, so it will not match the figures above. <a href="/attendance/#area=${id}&phase=${phase}">See this year week by week</a>.`;
+    el.hidden = false;
   }
 
   function draw() {

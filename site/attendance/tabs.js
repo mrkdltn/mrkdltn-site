@@ -1,15 +1,16 @@
 /* Attendance Explorer: tabs for a long page. The same sections, organised: one part of the page is shown at a time under a
-   bar that travels with the reader, in place of the section menu. Nothing is removed. On every area and trust page
+   bar that travels with the reader, in place of the section menu. Nothing is removed. On every page of the tool
    (25 November 2026). A tab with nothing in it for a kind of place is not offered. Must load before chrome.js, which leaves the section menu alone when window.AXtabs exists.
    The tab is kept in the address (tab=), so a copied link opens the same part; an old link to #sec-<name> opens the tab that
    holds that section. Every tab is shown when the page is printed. */
 (function () {
   const q = new URLSearchParams(location.search), host = document.getElementById('ax-secnav'), main = document.querySelector('main.ax');
   if (!host || !main || q.get('brief') || !main.querySelector('section[data-nav]')) return;
-  const TABS = /\/attendance\/school\//.test(location.pathname)
-    ? [['overview', 'Overview', ['Summary', 'Three ways']], ['compare', 'Compare', ['Position', 'Side by side']], ['time', 'Over time', ['Year by year', 'Since 2018/19']], ['method', 'Method', ['Method', 'Feedback']]]
-    : [['overview', 'Overview', ['Summary', 'Side by side', 'Year by year', 'Compared']], ['pupils', 'Pupils', ['Pupil groups']], ['schools', 'Schools', ['School by school', 'The schools']],
-      ['enforcement', 'Enforcement', ['Enforcement']], ['method', 'Method', ['Method', 'Feedback']]];
+  const M = ['method', 'Method', ['Method', 'Feedback']], path = location.pathname;
+  const TABS = /\/attendance\/school\//.test(path) ? [['overview', 'Overview', ['Summary', 'Three ways']], ['compare', 'Compare', ['Position', 'Side by side']], ['time', 'Over time', ['Year by year', 'Since 2018/19']], M]
+    : /\/attendance\/patterns\//.test(path) ? [['overview', 'Disadvantage', ['Free school meals', 'Circumstances']], ['time', 'Over time', ['Distribution', 'Severe absence', 'Day by day']], ['regions', 'Regions', ['Regions', 'Enforcement']], M]
+    : /\/attendance\/(index\.html)?$/.test(path) ? [['overview', 'This year', ['Summary', 'Day by day']], ['weeks', 'Week by week', ['Week by week', 'Weekdays']], ['reasons', 'Reasons', ['Reasons']], ['areas', 'Other areas', ['Map', 'Against last year']], M]
+    : [['overview', 'Overview', ['Summary', 'Side by side', 'Year by year', 'Compared']], ['pupils', 'Pupils', ['Pupil groups']], ['schools', 'Schools', ['School by school', 'The schools']], ['enforcement', 'Enforcement', ['Enforcement']], M];
   const slug = (n) => 'sec-' + n.toLowerCase().replace(/[^a-z0-9]+/g, '-'), tabOf = (nav) => (TABS.find((t) => t[2].includes(nav)) || TABS[0])[0];
   const want = location.hash.replace(/^#/, ''), fromHash = TABS.find((t) => t[2].some((n) => slug(n) === want));
   const T = {current: fromHash ? fromHash[0] : TABS.some((t) => t[0] === q.get('tab')) ? q.get('tab') : 'overview'};

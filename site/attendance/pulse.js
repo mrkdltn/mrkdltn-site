@@ -41,7 +41,7 @@
     if (byCode.has(p.get('area'))) state.area = p.get('area'); if (PHASE[p.get('phase')]) state.phase = p.get('phase'); };
   const writeHash = () => { const p = new URLSearchParams();
     if (state.area !== P.areas[0].c) p.set('area', state.area); if (state.phase !== 'A') p.set('phase', state.phase);
-    const s = p.toString(); history.replaceState(null, '', location.pathname + (s ? '#' + s : '')); };
+    const s = p.toString(); history.replaceState(null, '', location.pathname + location.search + (s ? '#' + s : '')); };          // the search part holds the open tab
 
   const daily = (code) => {
     if (code === P.areas[0].c) return Promise.resolve(P.england);
@@ -54,6 +54,10 @@
   const dowIx = (iso) => (new Date(iso + 'T00:00:00Z').getUTCDay() + 6) % 7;
 
   // ---- headline
+  // A section's heading says what the section shows; the label it had becomes a small line above it.
+  const finding = (h2, label, text) => { if (!h2) return; let k = h2.previousElementSibling; if (!k || !k.classList.contains('ax-kick')) { k = document.createElement('p'); k.className = 'ax-kick'; h2.before(k); }
+    k.hidden = !text; k.textContent = label; h2.textContent = text || label; };
+
   function head() {
     const a = byCode.get(state.area), eng = P.areas[0].c, ph = state.phase;
     const y = P.ytd[a.c][cur][ph], yl = P.ytd[a.c][prev] && P.ytd[a.c][prev][ph], e = P.ytd[eng][cur][ph];
@@ -162,6 +166,7 @@
     const el = $('ax-reasons'), ph = state.phase, a = byCode.get(state.area), eng = P.areas[0].c, W = width(el), narrow = W < 560;
     const parts = [['Illness', (v) => v.ill, '#C3CAD6'], ['Other authorised', (v) => v.auth - v.ill, '#97A2B4'], ['Unauthorised holiday', (v) => v.hol_u, '#5F6E87'],
       ['Arrived after registers closed', (v) => v.late, '#3D4C68'], ['No reason given yet', (v) => v.none, '#22324D'], ['Other unauthorised', (v) => v.unauth - v.hol_u - v.late - v.none, INK]];
+    { const y = P.ytd[a.c][cur][ph]; finding(el.closest('section').querySelector('h2'), 'The reasons recorded for absence', y && y.abs ? `Illness accounts for ${Math.round(100 * y.ill / y.abs)}% of the absence recorded so far this year, and unauthorised holiday for ${Math.round(100 * y.hol_u / y.abs)}%` : null); }
     const rows = [[a.n + ', ' + ay(cur), P.ytd[a.c][cur][ph]], [a.n + ', same point ' + ay(prev), P.ytd[a.c][prev] && P.ytd[a.c][prev][ph]]];
     if (a.c !== eng) rows.push(['England, ' + ay(cur), P.ytd[eng][cur][ph]]);
     const R = rows.filter((r) => r[1]); if (!R.length) { el.innerHTML = ''; return; }
@@ -222,6 +227,7 @@
     if (me) tipOn(s.append('path').datum(me).attr('d', d3.symbol(d3.symbolDiamond, 150)()).attr('transform', `translate(${x(me.x)},${y(me.y)})`).attr('fill', INK).attr('stroke', '#fff'), html);
     const lower = las.filter((d) => d.y < d.x).length, higher = las.filter((d) => d.y > d.x).length;      // counted on the unrounded figures
     key(el, [`<i style="background:${AXc.VERD};border-radius:50%;width:10px"></i>Lower than last year`, `<i style="background:${AXc.RUST};border-radius:50%;width:10px"></i>Higher`, `<i style="background:${AXc.SLATE};border-radius:50%;width:10px"></i>The same`].concat(me ? [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${me.a.n}`] : []));
+    finding(el.closest('section').querySelector('h2'), 'Against the same point last year', `Absence is lower than at the same point last year in ${lower} of ${las.length} local authorities`);
     $('ax-change-r').innerHTML = `Overall absence in ${PHASE[ph]} is lower than at the same point last year in <b>${lower}</b> of ${las.length} local authorities and higher in <b>${higher}</b>.`;
   }
 
@@ -247,7 +253,7 @@
     const last = P.days[cur][P.days[cur].length - 1];
     $('ax-date').textContent = `Figures to ${fmtD(last)}. Published by the DfE on ${fmtD(P.release.published, {day: 'numeric', month: 'long', year: 'numeric'})}.`;
     $('ax-src').textContent = `version ${P.release.version}, published ${fmtD(P.release.published, {day: 'numeric', month: 'long', year: 'numeric'})}, covering ${fmtD(P.days[cur][0], {day: 'numeric', month: 'long'})} to ${fmtD(last, {day: 'numeric', month: 'long', year: 'numeric'})}`;
-    let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } });
+    let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } }); addEventListener('ax-redraw', draw);
     addEventListener('hashchange', () => { readHash(); sel.value = state.area; draw(); });
     draw();
     if (window.AXtools) { AXtools.renderPins($('ax-places')); const was = AXtools.seen('pulse', P.release.published);
