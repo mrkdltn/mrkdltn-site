@@ -238,7 +238,9 @@
   function prime(v) {
     if (v.dataset.loaded) return;
     v.dataset.loaded = '1';
-    v.src = portrait ? v.dataset.t : v.dataset.w;
+    var s = portrait ? v.dataset.t : v.dataset.w;
+    if (!s) { v.remove(); return; }   // some settings have a clip in one shape only
+    v.src = s;
     v.addEventListener('playing', function () { v.classList.add('on'); }, { once: true });
     v.addEventListener('error', function () { v.remove(); }, { once: true });
   }

@@ -3,6 +3,7 @@
 # Security headers: standard 15 in docs/site-standards.md. HSTS starts at one day (86400);
 # lengthen it after a clean week. The CSP is report-only until a week passes with no reports;
 # it allows the cookieless Cloudflare Web Analytics beacon and nothing else from another host.
+# The four hashes are the home page's inline setting scripts; rerun the hash after editing any of them.
 /*
   Cache-Control: public, max-age=0, must-revalidate
   X-Content-Type-Options: nosniff
@@ -11,7 +12,7 @@
   Content-Security-Policy: frame-ancestors 'self'
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), browsing-topics=()
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com 'sha256-9p4QMu+eFu1xRUl4jdmkiux3eyrZ3rGbLr1z5vMkB9g=' 'sha256-S4P/jXxM3py8yGsE8Y5L5rs5d57WejHv3kHWbF+kgLM=' 'sha256-o66pp6F1baPqsSrcjAij1kc96T+2ldCMb9EzVr7qDEk=' 'sha256-NI8tJi7J5z/ZSb2Xy1kRsXPHRE31TJexe/TrA+p3s10='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; manifest-src 'self'
 
 # Fingerprinted files (scripts/fingerprint.py): a new name whenever the content changes, so cache for a year.
 /static/*
