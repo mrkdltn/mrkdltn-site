@@ -14,3 +14,4 @@ site/static/
 site/assets/cards/
 site/explorer/explore/*/
 site/explorer/explore/card.png
+site/explorer/data/grades_context.json

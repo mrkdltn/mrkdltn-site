@@ -306,6 +306,12 @@ def main():
 
     timing = write_timing(RAW, OUT, datetime.date.today())
 
+    # grades and context (areas page): built weekly by scripts/analysis/grades_context.py, served as it stands
+    gc = os.path.join(os.path.dirname(os.path.abspath(RAW)), 'derived', 'grades_context.json')
+    if os.path.exists(gc):
+        import shutil
+        shutil.copyfile(gc, os.path.join(OUT, 'grades_context.json'))
+
     rc_dates = sorted(r['insp_date'] for r in rc if r.get('insp_date'))
     downloads = data_downloads.write(ks4, rc, rcols, model, OUT)
     now = datetime.datetime.now(datetime.timezone.utc)

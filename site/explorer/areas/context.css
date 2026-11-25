@@ -1,0 +1,22 @@
+/* Report card areas in context: the held-constant, inspected-so-far and settling sections (context.js) */
+.gc .gc-fig{margin:6px 0 0;min-height:120px}
+.gc .gc-fig svg{width:100%;height:auto;display:block;overflow:visible}
+.gc-svg .gc-ax{font-size:12.5px;fill:#55627A;font-family:var(--sans)}
+.gc-svg .gc-ax.gc-small{font-size:11.5px}
+.gc-svg .gc-ax.gc-t{fill:#55627A}
+.gc-svg .gc-lab{font-size:14.5px;fill:#0B1A2E;font-family:var(--sans)}
+.gc-svg .gc-name{font-weight:600}
+.gc-svg .gc-read{font-size:13px;font-weight:400;fill:#55627A;font-family:var(--sans)}
+.gc-svg .gc-val{font-size:13px;font-weight:600;fill:#0B1A2E;font-variant-numeric:tabular-nums;font-family:var(--sans);paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.gc .ar-key i.gc-k,.gc .gc-k{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid #2F6F66;background:#fff;box-sizing:border-box}
+.gc .ar-key i.gc-k.gc-k-ctl,.gc .ar-key i.gc-k.gc-k-ins{background:#0B1A2E;border-color:#0B1A2E}
+.gc .ar-key i.gc-k.gc-k-low{background:#8A96A8;border-color:#8A96A8}
+.gc .ar-key i.gc-k.gc-k-all{background:#fff;border-color:#2F6F66}
+.gc .ar-key i.gc-k{width:12px;height:12px;border-width:2px;border-style:solid}
+.gc-h3{font-family:var(--sans);font-size:17px;font-weight:600;margin:18px 0 8px}
+.gc #gc-method-live:empty{display:none}
+.gc #gc-method-live{margin-top:8px}
+.gc .ar-note:empty{display:none}
+.gc section,.ar .gc{scroll-margin-top:12px}
+.gc .oe-xsrc{font-size:12.5px;line-height:1.5;color:#55627A}
+.gc-svg .gc-lab,.gc-svg .gc-read{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
