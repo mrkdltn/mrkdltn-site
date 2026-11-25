@@ -8,7 +8,7 @@
   const MATCHED = new Set(['Close to', 'Above', 'Well above']);
   const MIN = 10;
   const pc = d3.format('.0f'), cnt = d3.format(',');
-  const INK = '#0B1A2E', MUTED = '#8A96A8', GRID = '#EEF1F5', AXIS = '#C5CCD8';
+  const INK = '#0B1A2E', MUTED = '#8A96A8';
 
   const expand = (j) => { const rows = new Array(j.n); for (let i = 0; i < j.n; i++) { const o = {}; j.cols.forEach((c) => { const v = j.data[c][i]; o[c] = v === null || v === undefined ? '' : (j.codes[c] ? j.codes[c][v] : String(v)); }); rows[i] = o; } return rows; };
   const graded = (r, k) => r[k] in GC;
@@ -19,29 +19,8 @@
   const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt !== undefined) e.textContent = txt; return e; };
   const rich = (e, s) => { s.split(/(\*\*[^*]+\*\*)/).forEach((p) => { if (/^\*\*/.test(p)) e.append(el('b', '', p.slice(2, -2))); else if (p) e.append(p); }); return e; };
 
-  // small chart: share below Expected standard across five groups, one or two series
-  function chart(box, series, xlabels, opts) {
-    const W = 300, H = 200, m = {t: 20, r: 40, b: 40, l: 40};
-    const ymax = opts.ymax || 50;
-    const x = d3.scalePoint().domain(d3.range(5)).range([m.l, W - m.r]).padding(0.25);
-    const y = d3.scaleLinear().domain([0, ymax]).range([H - m.b, m.t]);
-    const svg = d3.select(box).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', opts.aria);
-    [0, ymax / 2, ymax].forEach((t) => { svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', GRID);
-      svg.append('text').attr('x', m.l - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').attr('class', 'ax').text(t + '%'); });
-    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', AXIS);
-    xlabels.forEach((t, i) => svg.append('text').attr('x', x(i)).attr('y', H - m.b + 18).attr('text-anchor', 'middle').attr('class', 'ax').text(t));
-    if (opts.xtitle) svg.append('text').attr('x', (m.l + W - m.r) / 2).attr('y', H - 4).attr('text-anchor', 'middle').attr('class', 'ax t').text(opts.xtitle);
-    series.forEach((s) => {
-      const pts = s.pts.map((p, i) => ({...p, i})).filter((p) => p.v !== null && p.n >= MIN);
-      const line = d3.line().x((p) => x(p.i)).y((p) => y(p.v)).defined((p, k, a) => k === 0 || p.i === a[k - 1].i + 1);
-      svg.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', s.colour).attr('stroke-width', s.main ? 2.5 : 1.75).attr('stroke-dasharray', s.dash || null);
-      pts.forEach((p) => { svg.append('circle').attr('cx', x(p.i)).attr('cy', y(p.v)).attr('r', s.main ? 4 : 3).attr('fill', s.main ? s.colour : '#fff').attr('stroke', s.colour).attr('stroke-width', 1.5)
-        .append('title').text(`${s.name}, ${xlabels[p.i].toLowerCase()}: ${pc(p.v)}% below Expected standard (${cnt(p.n)} schools)`); });
-      const last = pts[pts.length - 1]; if (last && s.main) svg.append('text').attr('x', x(last.i) + 8).attr('y', y(last.v) + 4).attr('class', 'lab').attr('fill', s.colour).text(pc(last.v) + '%');
-      const first = pts[0]; if (first && s.main) svg.append('text').attr('x', x(first.i)).attr('y', y(first.v) - 10).attr('text-anchor', 'middle').attr('class', 'lab').attr('fill', s.colour).text(pc(first.v) + '%');
-    });
-    return svg;
-  }
+  // the two chart forms live in chart.js, shared with the Discoveries pages
+  const chart = (box, series, xlabels, opts) => OE.areaChart.line5(box, series, xlabels, opts);
 
   function render(rows, build) {
     const insp = rows.filter((r) => r.g_ach in GC);
@@ -71,7 +50,7 @@
       const Q = mode === 'dis' ? ['Fewest', '2', '3', '4', 'Most'] : ['Least', '2', '3', '4', 'Most'];
       AREAS.forEach(([k, lab]) => {
         const all = byG(mode, insp, k), mm = byG(mode, matched, k);
-        const card = el('figure', 'ar-fig'); card.append(el('figcaption', '', lab));
+        const card = el('figure', 'ar-fig'); card.dataset.k = k; card.append(el('figcaption', '', lab));
         const box = el('div', 'ar-ch'); card.append(box);
         chart(box, [{name: 'All inspected secondaries', pts: all, colour: MUTED, dash: '4 3'}, {name: 'Results close to or above similar schools', pts: mm, colour: INK, main: true}], Q,
           {aria: `${lab}: share below Expected standard by ${M.aria}`, xtitle: M.x, ymax: yA});
@@ -79,9 +58,11 @@
         card.append(el('p', 'ar-note', ok2 ? `Matched results: ${pc(mm[0].v)}% to ${pc(mm[4].v)}%, ${Q[0].toLowerCase()} to ${Q[4].toLowerCase()} (${cnt(mm[0].n)} and ${cnt(mm[4].n)} schools).` : 'Too few schools at one end to compare.'));
         ga.append(card); });
     };
-    drawA('idaci');
-    document.querySelectorAll('#ar-mode button').forEach((b) => b.addEventListener('click', () => {
-      document.querySelectorAll('#ar-mode button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); drawA(b.dataset.mode); }));
+    let modeNow = null;
+    const setMode = (mode) => { if (!MODES[mode]) mode = 'idaci'; document.querySelectorAll('#ar-mode button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.mode === mode)));
+      if (mode !== modeNow) { modeNow = mode; drawA(mode); } };
+    setMode(view().by);
+    document.querySelectorAll('#ar-mode button').forEach((b) => b.addEventListener('click', () => { keepView({by: b.dataset.mode === 'idaci' ? null : b.dataset.mode}); apply(false); /* redraws, keeping any focused area */ }));
 
     // B: grades travel together
     const gb = document.getElementById('ar-b');
@@ -91,17 +72,8 @@
     const alone = achLow.filter((r) => !others.some(([k]) => BELOW.has(r[k]))).length;
     const okMax = d3.max(others, ([k]) => { const s = share(achOk, k); return s.n >= MIN ? s.v : 0; });
     if (blead && achLow.length >= MIN) rich(blead, `Of the **${cnt(achLow.length)}** secondaries graded below Expected standard for achievement, **${pc(100 * alone / achLow.length)}%** have no other area below Expected standard. Where achievement is Expected standard or better, no other area is below Expected standard in more than **${pc(okMax)}%** of schools.`);
-    others.forEach(([k, lab]) => {
-      const a = share(achLow, k), b = share(achOk, k);
-      const row = el('div', 'tb-row'); row.append(el('div', 'tb-lab', lab));
-      const bars = el('div', 'tb-bars');
-      [[a, '#FF8341', 'Achievement below Expected standard'], [b, '#5CD168', 'Achievement Expected standard or better']].forEach(([s2, c, nm]) => {
-        const line = el('div', 'tb-line');
-        if (s2.n < MIN) { line.append(el('span', 'tb-na', 'Too few schools')); bars.append(line); return; }
-        const bar = el('span', 'tb-bar'); bar.style.width = Math.max(0.5, s2.v) + '%'; bar.style.background = c;
-        bar.title = `${lab}, ${nm.toLowerCase()}: ${pc(s2.v)}% below Expected standard (${cnt(s2.n)} schools)`;
-        line.append(bar, el('span', 'tb-v', pc(s2.v) + '%')); line.setAttribute('aria-label', bar.title); bars.append(line); });
-      row.append(bars); gb.append(row); });
+    OE.areaChart.pairs(gb, others.map(([k, lab]) => { const a = share(achLow, k), b = share(achOk, k); return {label: lab, k, values: [a.v, b.v], n: [a.n, b.n]}; }),
+      [['#FF8341', 'Achievement below Expected standard'], ['#5CD168', 'Achievement Expected standard or better']]);
 
     // C: other context
     const gc = document.getElementById('ar-c');
@@ -113,12 +85,28 @@
     const yC = top(ctxPts.flat());
     ctx.forEach(([k, lab, f, ft, xl], ci) => {
       const pts = ctxPts[ci];
-      const card = el('figure', 'ar-fig'); card.append(el('figcaption', '', `${lab}, by ${ft.charAt(0).toLowerCase() + ft.slice(1)}`));
+      const card = el('figure', 'ar-fig'); card.dataset.k = k; card.append(el('figcaption', '', `${lab}, by ${ft.charAt(0).toLowerCase() + ft.slice(1)}`));
       const box = el('div', 'ar-ch'); card.append(box);
       chart(box, [{name: 'Inspected secondaries', pts, colour: INK, main: true}], xl, {aria: `${lab}: share below Expected standard by fifths of ${ft}`, xtitle: 'Fifths of all secondaries', ymax: yC});
       card.append(el('p', 'ar-note', `${cnt(d3.sum(pts, (p) => p.n))} inspected secondaries; fifths drawn across all ${cnt(rows.length)} secondaries with results.`));
       gc.append(card); });
+
+    // a deep link (a Discovery's "Explore this") names the view in the hash: sec (section), by (grouping for the first
+    // section: idaci or dis), focus (an area, g_ach, g_ab...). The view is applied after drawing, and again on hashchange.
+    const apply = (scroll) => { const v = view(); setMode(v.by);
+      document.querySelectorAll('.ar-focus').forEach((e) => { e.classList.remove('ar-focus'); e.removeAttribute('aria-current'); });
+      const sec = v.sec && document.getElementById(v.sec);
+      const f = v.focus && (sec || document).querySelector(`[data-k="${CSS.escape(v.focus)}"]`);
+      if (f) { f.classList.add('ar-focus'); f.setAttribute('aria-current', 'true'); }
+      if (scroll && sec) requestAnimationFrame(() => (f && window.innerWidth < 700 ? f : sec).scrollIntoView({block: 'start'})); };
+    apply(true);
+    window.addEventListener('hashchange', () => { if (location.hash.includes('=')) apply(true); });
   }
+
+  // view state in the address, as in the Explorer (dash.js): only a hash with '=' is a view; '#results' stays an anchor
+  const view = () => { if (!location.hash.includes('=')) return {}; const o = {}; new URLSearchParams(location.hash.slice(1)).forEach((v, k) => { o[k] = v; }); return o; };
+  const keepView = (p) => { const o = Object.assign(view(), p); Object.keys(o).forEach((k) => { if (o[k] === null || o[k] === undefined || o[k] === '') delete o[k]; });
+    const s = new URLSearchParams(o).toString(); history.replaceState(null, '', location.pathname + location.search + (s ? '#' + s : '')); };
 
   Promise.all([d3.json('/explorer/data/ks4.json').then(expand), d3.json('/explorer/data/build.json').catch(() => null)])
     .then(([rows, build]) => { document.documentElement.classList.add('ar-ready'); render(rows, build); })
