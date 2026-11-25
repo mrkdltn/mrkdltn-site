@@ -1,0 +1,6218 @@
+{
+ "meta": {
+  "plan": "docs/analysis-plans/grades-context-plan.md",
+  "seed": 20261125,
+  "sources": {
+   "ofsted_mi": "Ofsted, Management information: state-funded schools, latest inspections as at 31 October 2026 (sha256 791eea96966d6a2de0a50687abd9ea74fd3fa32be6396c8c56ea7bf0f111d53f)",
+   "sen": "DfE, Special educational needs in England, school level data, January 2026 census, published 11 June 2026 (sha256 a339a409b811099bd200e09ddb3bcd7f9dffb2aa989297f1f27de8e4a749d653)",
+   "gias": "DfE, Get Information about Schools, daily extract 25 November 2026 (urban/rural fallback)",
+   "ks4": "Explorer data/raw/ks4_model_v3.csv: DfE KS4 performance 2024/25 final and 2025/26 provisional (28 October 2026); open replica of the similar-schools model",
+   "daily": "Report cards read from Ofsted reports published 2 to 23 November 2026 (data/raw/reports_daily.csv), sensitivity only"
+  },
+  "outcome": "Area graded Needs attention or Urgent improvement (below Expected standard)",
+  "estimate": "Average marginal effect, IDACI fifth 5 (most deprived) vs 1 (least), percentage points, 95% CI, HC1 robust SEs, delta method",
+  "materiality": "abs(AME) >= 5 pp and 95% CI excludes zero"
+ },
+ "counts": {
+  "Primary": {
+   "open": 16675,
+   "inspected": 2638
+  },
+  "Secondary": {
+   "open": 3423,
+   "inspected": 756
+  },
+  "Special": {
+   "open": 1125,
+   "inspected": 143
+  },
+  "Alternative provision": {
+   "open": 330,
+   "inspected": 38
+  },
+  "Nursery": {
+   "open": 373,
+   "inspected": 62
+  }
+ },
+ "safeguarding": {
+  "met": 3622,
+  "not_met": 15,
+  "note": "Descriptive only; not broken down by phase or context because counts are under 10."
+ },
+ "main": {
+  "Primary": {
+   "g_inc": {
+    "model": "M2",
+    "raw": {
+     "ame_pp": 2.6,
+     "lo": -0.8,
+     "hi": 6.0,
+     "p": 0.1336,
+     "n": 2638,
+     "events": 246,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 5.6,
+     "lo": 1.3,
+     "hi": 9.8,
+     "p": 0.0106,
+     "n": 2638,
+     "events": 246,
+     "label": "material",
+     "dropped_missing": 0,
+     "p_holm": 0.0958,
+     "robust_to_multiple_comparisons": false
+    }
+   },
+   "g_ct": {
+    "model": "M2",
+    "raw": {
+     "ame_pp": 9.2,
+     "lo": 4.4,
+     "hi": 14.1,
+     "p": 0.0002,
+     "n": 2638,
+     "events": 553,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 9.6,
+     "lo": 4.1,
+     "hi": 15.0,
+     "p": 0.0006,
+     "n": 2638,
+     "events": 553,
+     "label": "material",
+     "dropped_missing": 0,
+     "p_holm": 0.0064,
+     "robust_to_multiple_comparisons": true
+    }
+   },
+   "g_ach": {
+    "model": "M2",
+    "raw": {
+     "ame_pp": 18.3,
+     "lo": 13.1,
+     "hi": 23.5,
+     "p": 0.0,
+     "n": 2638,
+     "events": 740,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 17.2,
+     "lo": 11.4,
+     "hi": 23.0,
+     "p": 0.0,
+     "n": 2638,
+     "events": 740,
+     "label": "material",
+     "dropped_missing": 0,
+     "p_holm": 0.0,
+     "robust_to_multiple_comparisons": true
+    }
+   },
+   "g_ab": {
+    "model": "M2",
+    "raw": {
+     "ame_pp": 20.2,
+     "lo": 16.1,
+     "hi": 24.3,
+     "p": 0.0,
+     "n": 2638,
+     "events": 368,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 19.3,
+     "lo": 14.3,
+     "hi": 24.2,
+     "p": 0.0,
+     "n": 2638,
+     "events": 368,
+     "label": "material",
+     "dropped_missing": 0,
+     "p_holm": 0.0,
+     "robust_to_multiple_comparisons": true
+    }
+   },
+   "g_pd": {
+    "model": "M2r",
+    "raw": {
+     "ame_pp": 5.4,
+     "lo": 3.0,
+     "hi": 7.9,
+     "p": 0.0,
+     "n": 2638,
+     "events": 99,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 5.8,
+     "lo": 3.1,
+     "hi": 8.5,
+     "p": 0.0,
+     "n": 2638,
+     "events": 99,
+     "label": "material",
+     "dropped_missing": 0,
+     "p_holm": 0.0003,
+     "robust_to_multiple_comparisons": true
+    },
+    "full_M2_sensitivity": {
+     "ame_pp": 5.6,
+     "lo": 2.2,
+     "hi": 9.0,
+     "p": 0.0011,
+     "n": 2638,
+     "events": 99,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 0
+    }
+   },
+   "g_lg": {
+    "model": "M2",
+    "raw": {
+     "ame_pp": 7.0,
+     "lo": 2.8,
+     "hi": 11.2,
+     "p": 0.001,
+     "n": 2638,
+     "events": 380,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 6.1,
+     "lo": 1.3,
+     "hi": 11.0,
+     "p": 0.013,
+     "n": 2638,
+     "events": 380,
+     "label": "material",
+     "dropped_missing": 0,
+     "p_holm": 0.1037,
+     "robust_to_multiple_comparisons": false
+    }
+   },
+   "g_ey": {
+    "model": "M2",
+    "raw": {
+     "ame_pp": 5.3,
+     "lo": 1.3,
+     "hi": 9.3,
+     "p": 0.0092,
+     "n": 2453,
+     "events": 266,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 4.6,
+     "lo": -0.2,
+     "hi": 9.4,
+     "p": 0.0596,
+     "n": 2453,
+     "events": 266,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0,
+     "p_holm": 0.4173,
+     "robust_to_multiple_comparisons": false
+    }
+   }
+  },
+  "Secondary": {
+   "g_inc": {
+    "model": "M2r",
+    "raw": {
+     "ame_pp": 10.2,
+     "lo": 4.0,
+     "hi": 16.4,
+     "p": 0.0012,
+     "n": 756,
+     "events": 92,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "results_only": {
+     "ame_pp": 9.2,
+     "lo": 2.9,
+     "hi": 15.5,
+     "p": 0.0044,
+     "n": 724,
+     "events": 89,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "raw_same_sample": {
+     "ame_pp": 9.8,
+     "lo": 3.4,
+     "hi": 16.2,
+     "p": 0.0027,
+     "n": 724,
+     "events": 89,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 4.2,
+     "lo": -3.0,
+     "hi": 11.3,
+     "p": 0.2538,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32,
+     "p_holm": 1.0,
+     "robust_to_multiple_comparisons": false
+    },
+    "full_M2_sensitivity": {
+     "ame_pp": 2.8,
+     "lo": -5.4,
+     "hi": 11.0,
+     "p": 0.4993,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    }
+   },
+   "g_ct": {
+    "model": "M2r",
+    "raw": {
+     "ame_pp": 21.7,
+     "lo": 13.3,
+     "hi": 30.1,
+     "p": 0.0,
+     "n": 756,
+     "events": 174,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "results_only": {
+     "ame_pp": 19.0,
+     "lo": 10.4,
+     "hi": 27.5,
+     "p": 0.0,
+     "n": 724,
+     "events": 168,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "raw_same_sample": {
+     "ame_pp": 20.9,
+     "lo": 12.2,
+     "hi": 29.7,
+     "p": 0.0,
+     "n": 724,
+     "events": 168,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 7.4,
+     "lo": -2.4,
+     "hi": 17.2,
+     "p": 0.1385,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32,
+     "p_holm": 0.8312,
+     "robust_to_multiple_comparisons": false
+    },
+    "full_M2_sensitivity": {
+     "ame_pp": 1.9,
+     "lo": -8.7,
+     "hi": 12.6,
+     "p": 0.7218,
+     "n": 724,
+     "events": 168,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    }
+   },
+   "g_ach": {
+    "model": "M2",
+    "raw": {
+     "ame_pp": 37.9,
+     "lo": 29.3,
+     "hi": 46.6,
+     "p": 0.0,
+     "n": 756,
+     "events": 249,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "results_only": {
+     "ame_pp": 35.4,
+     "lo": 26.7,
+     "hi": 44.1,
+     "p": 0.0,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "raw_same_sample": {
+     "ame_pp": 38.4,
+     "lo": 29.4,
+     "hi": 47.5,
+     "p": 0.0,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 16.9,
+     "lo": 6.0,
+     "hi": 27.8,
+     "p": 0.0024,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32,
+     "p_holm": 0.0235,
+     "robust_to_multiple_comparisons": true
+    }
+   },
+   "g_ab": {
+    "model": "M2r",
+    "raw": {
+     "ame_pp": 17.4,
+     "lo": 8.9,
+     "hi": 25.9,
+     "p": 0.0001,
+     "n": 756,
+     "events": 170,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "results_only": {
+     "ame_pp": 14.6,
+     "lo": 6.0,
+     "hi": 23.2,
+     "p": 0.0009,
+     "n": 724,
+     "events": 164,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "raw_same_sample": {
+     "ame_pp": 15.8,
+     "lo": 6.9,
+     "hi": 24.7,
+     "p": 0.0005,
+     "n": 724,
+     "events": 164,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 4.0,
+     "lo": -5.4,
+     "hi": 13.4,
+     "p": 0.4037,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32,
+     "p_holm": 1.0,
+     "robust_to_multiple_comparisons": false
+    },
+    "full_M2_sensitivity": {
+     "ame_pp": 4.5,
+     "lo": -5.7,
+     "hi": 14.6,
+     "p": 0.3898,
+     "n": 724,
+     "events": 164,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    }
+   },
+   "g_pd": {
+    "model": "M2r",
+    "raw": {
+     "ame_pp": 3.5,
+     "lo": -2.1,
+     "hi": 9.1,
+     "p": 0.2174,
+     "n": 756,
+     "events": 55,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "results_only": {
+     "ame_pp": 2.9,
+     "lo": -3.2,
+     "hi": 8.9,
+     "p": 0.3509,
+     "n": 724,
+     "events": 53,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "raw_same_sample": {
+     "ame_pp": 3.4,
+     "lo": -2.5,
+     "hi": 9.3,
+     "p": 0.2628,
+     "n": 724,
+     "events": 53,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -2.1,
+     "lo": -9.8,
+     "hi": 5.7,
+     "p": 0.6033,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32,
+     "p_holm": 1.0,
+     "robust_to_multiple_comparisons": false
+    },
+    "full_M2_sensitivity": {
+     "ame_pp": -6.6,
+     "lo": -16.6,
+     "hi": 3.4,
+     "p": 0.197,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    }
+   },
+   "g_lg": {
+    "model": "M2r",
+    "raw": {
+     "ame_pp": 10.4,
+     "lo": 3.4,
+     "hi": 17.3,
+     "p": 0.0037,
+     "n": 756,
+     "events": 116,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "results_only": {
+     "ame_pp": 8.2,
+     "lo": 0.9,
+     "hi": 15.6,
+     "p": 0.0287,
+     "n": 724,
+     "events": 110,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "raw_same_sample": {
+     "ame_pp": 9.3,
+     "lo": 2.0,
+     "hi": 16.6,
+     "p": 0.0122,
+     "n": 724,
+     "events": 110,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 0.9,
+     "lo": -7.8,
+     "hi": 9.5,
+     "p": 0.8411,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32,
+     "p_holm": 1.0,
+     "robust_to_multiple_comparisons": false
+    },
+    "full_M2_sensitivity": {
+     "ame_pp": -0.5,
+     "lo": -10.1,
+     "hi": 9.1,
+     "p": 0.9153,
+     "n": 724,
+     "events": 110,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    }
+   },
+   "g_p16": {
+    "model": "M2r",
+    "raw": {
+     "ame_pp": 1.5,
+     "lo": -7.1,
+     "hi": 10.1,
+     "p": 0.7358,
+     "n": 386,
+     "events": 45,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "results_only": {
+     "ame_pp": 1.3,
+     "lo": -7.3,
+     "hi": 9.8,
+     "p": 0.7746,
+     "n": 384,
+     "events": 45,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 2
+    },
+    "raw_same_sample": {
+     "ame_pp": 1.5,
+     "lo": -7.2,
+     "hi": 10.2,
+     "p": 0.7354,
+     "n": 384,
+     "events": 45,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -2.6,
+     "lo": -11.7,
+     "hi": 6.5,
+     "p": 0.5771,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2,
+     "p_holm": 1.0,
+     "robust_to_multiple_comparisons": false
+    },
+    "full_M2_sensitivity": {
+     "ame_pp": -5.7,
+     "lo": -15.9,
+     "hi": 4.5,
+     "p": 0.2728,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    }
+   }
+  }
+ },
+ "descriptive": {
+  "Primary": {
+   "g_inc": {
+    "n": 2638,
+    "share_below": 9.3,
+    "by_idaci": {
+     "1": {
+      "n": 503,
+      "share_below": 7.8,
+      "lo": 5.7,
+      "hi": 10.4
+     },
+     "2": {
+      "n": 493,
+      "share_below": 8.9,
+      "lo": 6.7,
+      "hi": 11.8
+     },
+     "3": {
+      "n": 519,
+      "share_below": 11.8,
+      "lo": 9.3,
+      "hi": 14.8
+     },
+     "4": {
+      "n": 544,
+      "share_below": 7.7,
+      "lo": 5.8,
+      "hi": 10.3
+     },
+     "5": {
+      "n": 579,
+      "share_below": 10.4,
+      "lo": 8.1,
+      "hi": 13.1
+     },
+     "1-2": {
+      "n": 996,
+      "share_below": 8.3,
+      "lo": 6.8,
+      "hi": 10.2
+     },
+     "4-5": {
+      "n": 1123,
+      "share_below": 9.1,
+      "lo": 7.5,
+      "hi": 10.9
+     }
+    }
+   },
+   "g_ct": {
+    "n": 2638,
+    "share_below": 21.0,
+    "by_idaci": {
+     "1": {
+      "n": 503,
+      "share_below": 16.5,
+      "lo": 13.5,
+      "hi": 20.0
+     },
+     "2": {
+      "n": 493,
+      "share_below": 19.3,
+      "lo": 16.0,
+      "hi": 23.0
+     },
+     "3": {
+      "n": 519,
+      "share_below": 22.5,
+      "lo": 19.2,
+      "hi": 26.3
+     },
+     "4": {
+      "n": 544,
+      "share_below": 20.0,
+      "lo": 16.9,
+      "hi": 23.6
+     },
+     "5": {
+      "n": 579,
+      "share_below": 25.7,
+      "lo": 22.3,
+      "hi": 29.4
+     },
+     "1-2": {
+      "n": 996,
+      "share_below": 17.9,
+      "lo": 15.6,
+      "hi": 20.4
+     },
+     "4-5": {
+      "n": 1123,
+      "share_below": 23.0,
+      "lo": 20.6,
+      "hi": 25.5
+     }
+    }
+   },
+   "g_ach": {
+    "n": 2638,
+    "share_below": 28.1,
+    "by_idaci": {
+     "1": {
+      "n": 503,
+      "share_below": 18.3,
+      "lo": 15.2,
+      "hi": 21.9
+     },
+     "2": {
+      "n": 493,
+      "share_below": 22.7,
+      "lo": 19.2,
+      "hi": 26.6
+     },
+     "3": {
+      "n": 519,
+      "share_below": 29.3,
+      "lo": 25.5,
+      "hi": 33.3
+     },
+     "4": {
+      "n": 544,
+      "share_below": 31.6,
+      "lo": 27.9,
+      "hi": 35.6
+     },
+     "5": {
+      "n": 579,
+      "share_below": 36.6,
+      "lo": 32.8,
+      "hi": 40.6
+     },
+     "1-2": {
+      "n": 996,
+      "share_below": 20.5,
+      "lo": 18.1,
+      "hi": 23.1
+     },
+     "4-5": {
+      "n": 1123,
+      "share_below": 34.2,
+      "lo": 31.5,
+      "hi": 37.0
+     }
+    }
+   },
+   "g_ab": {
+    "n": 2638,
+    "share_below": 13.9,
+    "by_idaci": {
+     "1": {
+      "n": 503,
+      "share_below": 5.4,
+      "lo": 3.7,
+      "hi": 7.7
+     },
+     "2": {
+      "n": 493,
+      "share_below": 9.3,
+      "lo": 7.1,
+      "hi": 12.2
+     },
+     "3": {
+      "n": 519,
+      "share_below": 11.2,
+      "lo": 8.7,
+      "hi": 14.2
+     },
+     "4": {
+      "n": 544,
+      "share_below": 16.4,
+      "lo": 13.5,
+      "hi": 19.7
+     },
+     "5": {
+      "n": 579,
+      "share_below": 25.6,
+      "lo": 22.2,
+      "hi": 29.3
+     },
+     "1-2": {
+      "n": 996,
+      "share_below": 7.3,
+      "lo": 5.9,
+      "hi": 9.1
+     },
+     "4-5": {
+      "n": 1123,
+      "share_below": 21.1,
+      "lo": 18.8,
+      "hi": 23.6
+     }
+    }
+   },
+   "g_pd": {
+    "n": 2638,
+    "share_below": 3.8,
+    "by_idaci": {
+     "1": {
+      "n": 503,
+      "share_below": 2.0,
+      "lo": 1.1,
+      "hi": 3.6
+     },
+     "2": {
+      "n": 493,
+      "share_below": 2.2,
+      "lo": 1.3,
+      "hi": 4.0
+     },
+     "3": {
+      "n": 519,
+      "share_below": 3.9,
+      "lo": 2.5,
+      "hi": 5.9
+     },
+     "4": {
+      "n": 544,
+      "share_below": 2.8,
+      "lo": 1.7,
+      "hi": 4.5
+     },
+     "5": {
+      "n": 579,
+      "share_below": 7.4,
+      "lo": 5.6,
+      "hi": 9.9
+     },
+     "1-2": {
+      "n": 996,
+      "share_below": 2.1,
+      "lo": 1.4,
+      "hi": 3.2
+     },
+     "4-5": {
+      "n": 1123,
+      "share_below": 5.2,
+      "lo": 4.0,
+      "hi": 6.6
+     }
+    }
+   },
+   "g_lg": {
+    "n": 2638,
+    "share_below": 14.4,
+    "by_idaci": {
+     "1": {
+      "n": 503,
+      "share_below": 11.1,
+      "lo": 8.7,
+      "hi": 14.2
+     },
+     "2": {
+      "n": 493,
+      "share_below": 11.4,
+      "lo": 8.9,
+      "hi": 14.5
+     },
+     "3": {
+      "n": 519,
+      "share_below": 16.4,
+      "lo": 13.4,
+      "hi": 19.8
+     },
+     "4": {
+      "n": 544,
+      "share_below": 14.3,
+      "lo": 11.6,
+      "hi": 17.5
+     },
+     "5": {
+      "n": 579,
+      "share_below": 18.1,
+      "lo": 15.2,
+      "hi": 21.5
+     },
+     "1-2": {
+      "n": 996,
+      "share_below": 11.2,
+      "lo": 9.4,
+      "hi": 13.4
+     },
+     "4-5": {
+      "n": 1123,
+      "share_below": 16.3,
+      "lo": 14.3,
+      "hi": 18.6
+     }
+    }
+   },
+   "g_ey": {
+    "n": 2453,
+    "share_below": 10.8,
+    "by_idaci": {
+     "1": {
+      "n": 459,
+      "share_below": 9.4,
+      "lo": 7.0,
+      "hi": 12.4
+     },
+     "2": {
+      "n": 457,
+      "share_below": 8.8,
+      "lo": 6.5,
+      "hi": 11.7
+     },
+     "3": {
+      "n": 478,
+      "share_below": 11.3,
+      "lo": 8.8,
+      "hi": 14.4
+     },
+     "4": {
+      "n": 506,
+      "share_below": 9.5,
+      "lo": 7.2,
+      "hi": 12.4
+     },
+     "5": {
+      "n": 553,
+      "share_below": 14.6,
+      "lo": 11.9,
+      "hi": 17.8
+     },
+     "1-2": {
+      "n": 916,
+      "share_below": 9.1,
+      "lo": 7.4,
+      "hi": 11.1
+     },
+     "4-5": {
+      "n": 1059,
+      "share_below": 12.2,
+      "lo": 10.3,
+      "hi": 14.3
+     }
+    }
+   }
+  },
+  "Secondary": {
+   "g_inc": {
+    "n": 756,
+    "share_below": 12.2,
+    "by_idaci": {
+     "1": {
+      "n": 120,
+      "share_below": 4.2,
+      "lo": 1.8,
+      "hi": 9.4
+     },
+     "2": {
+      "n": 139,
+      "share_below": 7.2,
+      "lo": 4.0,
+      "hi": 12.7
+     },
+     "3": {
+      "n": 166,
+      "share_below": 15.7,
+      "lo": 10.9,
+      "hi": 22.0
+     },
+     "4": {
+      "n": 143,
+      "share_below": 16.8,
+      "lo": 11.5,
+      "hi": 23.8
+     },
+     "5": {
+      "n": 188,
+      "share_below": 14.4,
+      "lo": 10.1,
+      "hi": 20.1
+     },
+     "1-2": {
+      "n": 259,
+      "share_below": 5.8,
+      "lo": 3.5,
+      "hi": 9.3
+     },
+     "4-5": {
+      "n": 331,
+      "share_below": 15.4,
+      "lo": 11.9,
+      "hi": 19.7
+     }
+    }
+   },
+   "g_ct": {
+    "n": 756,
+    "share_below": 23.0,
+    "by_idaci": {
+     "1": {
+      "n": 120,
+      "share_below": 9.2,
+      "lo": 5.2,
+      "hi": 15.7
+     },
+     "2": {
+      "n": 139,
+      "share_below": 15.8,
+      "lo": 10.7,
+      "hi": 22.8
+     },
+     "3": {
+      "n": 166,
+      "share_below": 25.9,
+      "lo": 19.8,
+      "hi": 33.1
+     },
+     "4": {
+      "n": 143,
+      "share_below": 28.0,
+      "lo": 21.3,
+      "hi": 35.8
+     },
+     "5": {
+      "n": 188,
+      "share_below": 30.9,
+      "lo": 24.7,
+      "hi": 37.8
+     },
+     "1-2": {
+      "n": 259,
+      "share_below": 12.7,
+      "lo": 9.2,
+      "hi": 17.4
+     },
+     "4-5": {
+      "n": 331,
+      "share_below": 29.6,
+      "lo": 24.9,
+      "hi": 34.7
+     }
+    }
+   },
+   "g_ach": {
+    "n": 756,
+    "share_below": 32.9,
+    "by_idaci": {
+     "1": {
+      "n": 120,
+      "share_below": 8.3,
+      "lo": 4.6,
+      "hi": 14.7
+     },
+     "2": {
+      "n": 139,
+      "share_below": 23.7,
+      "lo": 17.4,
+      "hi": 31.5
+     },
+     "3": {
+      "n": 166,
+      "share_below": 34.9,
+      "lo": 28.1,
+      "hi": 42.5
+     },
+     "4": {
+      "n": 143,
+      "share_below": 42.7,
+      "lo": 34.8,
+      "hi": 50.9
+     },
+     "5": {
+      "n": 188,
+      "share_below": 46.3,
+      "lo": 39.3,
+      "hi": 53.4
+     },
+     "1-2": {
+      "n": 259,
+      "share_below": 16.6,
+      "lo": 12.6,
+      "hi": 21.6
+     },
+     "4-5": {
+      "n": 331,
+      "share_below": 44.7,
+      "lo": 39.4,
+      "hi": 50.1
+     }
+    }
+   },
+   "g_ab": {
+    "n": 756,
+    "share_below": 22.5,
+    "by_idaci": {
+     "1": {
+      "n": 120,
+      "share_below": 10.8,
+      "lo": 6.4,
+      "hi": 17.7
+     },
+     "2": {
+      "n": 139,
+      "share_below": 20.1,
+      "lo": 14.3,
+      "hi": 27.6
+     },
+     "3": {
+      "n": 166,
+      "share_below": 27.7,
+      "lo": 21.5,
+      "hi": 35.0
+     },
+     "4": {
+      "n": 143,
+      "share_below": 21.0,
+      "lo": 15.1,
+      "hi": 28.4
+     },
+     "5": {
+      "n": 188,
+      "share_below": 28.2,
+      "lo": 22.2,
+      "hi": 35.0
+     },
+     "1-2": {
+      "n": 259,
+      "share_below": 15.8,
+      "lo": 11.9,
+      "hi": 20.8
+     },
+     "4-5": {
+      "n": 331,
+      "share_below": 25.1,
+      "lo": 20.7,
+      "hi": 30.0
+     }
+    }
+   },
+   "g_pd": {
+    "n": 756,
+    "share_below": 7.3,
+    "by_idaci": {
+     "1": {
+      "n": 120,
+      "share_below": 5.0,
+      "lo": 2.3,
+      "hi": 10.5
+     },
+     "2": {
+      "n": 139,
+      "share_below": 3.6,
+      "lo": 1.5,
+      "hi": 8.1
+     },
+     "3": {
+      "n": 166,
+      "share_below": 8.4,
+      "lo": 5.1,
+      "hi": 13.7
+     },
+     "4": {
+      "n": 143,
+      "share_below": 9.8,
+      "lo": 5.9,
+      "hi": 15.8
+     },
+     "5": {
+      "n": 188,
+      "share_below": 8.5,
+      "lo": 5.3,
+      "hi": 13.4
+     },
+     "1-2": {
+      "n": 259,
+      "share_below": 4.2,
+      "lo": 2.4,
+      "hi": 7.4
+     },
+     "4-5": {
+      "n": 331,
+      "share_below": 9.1,
+      "lo": 6.4,
+      "hi": 12.6
+     }
+    }
+   },
+   "g_lg": {
+    "n": 756,
+    "share_below": 15.3,
+    "by_idaci": {
+     "1": {
+      "n": 120,
+      "share_below": 6.7,
+      "lo": 3.4,
+      "hi": 12.6
+     },
+     "2": {
+      "n": 139,
+      "share_below": 9.4,
+      "lo": 5.5,
+      "hi": 15.3
+     },
+     "3": {
+      "n": 166,
+      "share_below": 22.3,
+      "lo": 16.6,
+      "hi": 29.2
+     },
+     "4": {
+      "n": 143,
+      "share_below": 18.2,
+      "lo": 12.7,
+      "hi": 25.3
+     },
+     "5": {
+      "n": 188,
+      "share_below": 17.0,
+      "lo": 12.3,
+      "hi": 23.0
+     },
+     "1-2": {
+      "n": 259,
+      "share_below": 8.1,
+      "lo": 5.4,
+      "hi": 12.1
+     },
+     "4-5": {
+      "n": 331,
+      "share_below": 17.5,
+      "lo": 13.8,
+      "hi": 22.0
+     }
+    }
+   },
+   "g_ey": {
+    "n": 33,
+    "share_below": 3.0,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": "fewer than 10"
+     },
+     "4": {
+      "n": "fewer than 10"
+     },
+     "5": {
+      "n": 17,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 18.4
+     },
+     "1-2": {
+      "n": "fewer than 10"
+     },
+     "4-5": {
+      "n": 26,
+      "share_below": 3.8,
+      "lo": 0.7,
+      "hi": 18.9
+     }
+    }
+   },
+   "g_p16": {
+    "n": 386,
+    "share_below": 11.7,
+    "by_idaci": {
+     "1": {
+      "n": 73,
+      "share_below": 6.8,
+      "lo": 3.0,
+      "hi": 15.1
+     },
+     "2": {
+      "n": 81,
+      "share_below": 14.8,
+      "lo": 8.7,
+      "hi": 24.1
+     },
+     "3": {
+      "n": 92,
+      "share_below": 14.1,
+      "lo": 8.4,
+      "hi": 22.7
+     },
+     "4": {
+      "n": 68,
+      "share_below": 13.2,
+      "lo": 7.1,
+      "hi": 23.3
+     },
+     "5": {
+      "n": 72,
+      "share_below": 8.3,
+      "lo": 3.9,
+      "hi": 17.0
+     },
+     "1-2": {
+      "n": 154,
+      "share_below": 11.0,
+      "lo": 7.0,
+      "hi": 17.0
+     },
+     "4-5": {
+      "n": 140,
+      "share_below": 10.7,
+      "lo": 6.6,
+      "hi": 16.9
+     }
+    }
+   }
+  },
+  "Special": {
+   "g_inc": {
+    "n": 143,
+    "share_below": 7.7,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": 22,
+      "share_below": 4.5,
+      "lo": 0.8,
+      "hi": 21.8
+     },
+     "3": {
+      "n": 33,
+      "share_below": 9.1,
+      "lo": 3.1,
+      "hi": 23.6
+     },
+     "4": {
+      "n": 41,
+      "share_below": 4.9,
+      "lo": 1.3,
+      "hi": 16.1
+     },
+     "5": {
+      "n": 42,
+      "share_below": 9.5,
+      "lo": 3.8,
+      "hi": 22.1
+     },
+     "1-2": {
+      "n": 27,
+      "share_below": 7.4,
+      "lo": 2.1,
+      "hi": 23.4
+     },
+     "4-5": {
+      "n": 83,
+      "share_below": 7.2,
+      "lo": 3.4,
+      "hi": 14.9
+     }
+    }
+   },
+   "g_ct": {
+    "n": 143,
+    "share_below": 18.9,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": 22,
+      "share_below": 9.1,
+      "lo": 2.5,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 33,
+      "share_below": 21.2,
+      "lo": 10.7,
+      "hi": 37.8
+     },
+     "4": {
+      "n": 41,
+      "share_below": 14.6,
+      "lo": 6.9,
+      "hi": 28.4
+     },
+     "5": {
+      "n": 42,
+      "share_below": 26.2,
+      "lo": 15.3,
+      "hi": 41.1
+     },
+     "1-2": {
+      "n": 27,
+      "share_below": 11.1,
+      "lo": 3.9,
+      "hi": 28.1
+     },
+     "4-5": {
+      "n": 83,
+      "share_below": 20.5,
+      "lo": 13.2,
+      "hi": 30.4
+     }
+    }
+   },
+   "g_ach": {
+    "n": 143,
+    "share_below": 14.7,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": 22,
+      "share_below": 9.1,
+      "lo": 2.5,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 33,
+      "share_below": 15.2,
+      "lo": 6.7,
+      "hi": 30.9
+     },
+     "4": {
+      "n": 41,
+      "share_below": 12.2,
+      "lo": 5.3,
+      "hi": 25.5
+     },
+     "5": {
+      "n": 42,
+      "share_below": 19.0,
+      "lo": 10.0,
+      "hi": 33.3
+     },
+     "1-2": {
+      "n": 27,
+      "share_below": 11.1,
+      "lo": 3.9,
+      "hi": 28.1
+     },
+     "4-5": {
+      "n": 83,
+      "share_below": 15.7,
+      "lo": 9.4,
+      "hi": 25.0
+     }
+    }
+   },
+   "g_ab": {
+    "n": 143,
+    "share_below": 11.2,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": 22,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 14.9
+     },
+     "3": {
+      "n": 33,
+      "share_below": 6.1,
+      "lo": 1.7,
+      "hi": 19.6
+     },
+     "4": {
+      "n": 41,
+      "share_below": 14.6,
+      "lo": 6.9,
+      "hi": 28.4
+     },
+     "5": {
+      "n": 42,
+      "share_below": 19.0,
+      "lo": 10.0,
+      "hi": 33.3
+     },
+     "1-2": {
+      "n": 27,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 12.5
+     },
+     "4-5": {
+      "n": 83,
+      "share_below": 16.9,
+      "lo": 10.3,
+      "hi": 26.3
+     }
+    }
+   },
+   "g_pd": {
+    "n": 143,
+    "share_below": 4.9,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": 22,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 14.9
+     },
+     "3": {
+      "n": 33,
+      "share_below": 3.0,
+      "lo": 0.5,
+      "hi": 15.3
+     },
+     "4": {
+      "n": 41,
+      "share_below": 4.9,
+      "lo": 1.3,
+      "hi": 16.1
+     },
+     "5": {
+      "n": 42,
+      "share_below": 9.5,
+      "lo": 3.8,
+      "hi": 22.1
+     },
+     "1-2": {
+      "n": 27,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 12.5
+     },
+     "4-5": {
+      "n": 83,
+      "share_below": 7.2,
+      "lo": 3.4,
+      "hi": 14.9
+     }
+    }
+   },
+   "g_lg": {
+    "n": 143,
+    "share_below": 12.6,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": 22,
+      "share_below": 9.1,
+      "lo": 2.5,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 33,
+      "share_below": 9.1,
+      "lo": 3.1,
+      "hi": 23.6
+     },
+     "4": {
+      "n": 41,
+      "share_below": 14.6,
+      "lo": 6.9,
+      "hi": 28.4
+     },
+     "5": {
+      "n": 42,
+      "share_below": 14.3,
+      "lo": 6.7,
+      "hi": 27.8
+     },
+     "1-2": {
+      "n": 27,
+      "share_below": 11.1,
+      "lo": 3.9,
+      "hi": 28.1
+     },
+     "4-5": {
+      "n": 83,
+      "share_below": 14.5,
+      "lo": 8.5,
+      "hi": 23.6
+     }
+    }
+   },
+   "g_ey": {
+    "n": 38,
+    "share_below": 10.5,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": 10,
+      "share_below": 10.0,
+      "lo": 1.8,
+      "hi": 40.4
+     },
+     "4": {
+      "n": 14,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 21.5
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": "fewer than 10"
+     },
+     "4-5": {
+      "n": 19,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 16.8
+     }
+    }
+   },
+   "g_p16": {
+    "n": 65,
+    "share_below": 3.1,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": 17,
+      "share_below": 5.9,
+      "lo": 1.0,
+      "hi": 27.0
+     },
+     "4": {
+      "n": 18,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 17.6
+     },
+     "5": {
+      "n": 18,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 17.6
+     },
+     "1-2": {
+      "n": 12,
+      "share_below": 8.3,
+      "lo": 1.5,
+      "hi": 35.4
+     },
+     "4-5": {
+      "n": 36,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 9.6
+     }
+    }
+   }
+  },
+  "Alternative provision": {
+   "g_inc": {
+    "n": 35,
+    "share_below": 8.6,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": "fewer than 10"
+     },
+     "4": {
+      "n": "fewer than 10"
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 16,
+      "share_below": 6.2,
+      "lo": 1.1,
+      "hi": 28.3
+     },
+     "4-5": {
+      "n": 13,
+      "share_below": 15.4,
+      "lo": 4.3,
+      "hi": 42.2
+     }
+    }
+   },
+   "g_ct": {
+    "n": 35,
+    "share_below": 20.0,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": "fewer than 10"
+     },
+     "4": {
+      "n": "fewer than 10"
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 16,
+      "share_below": 18.8,
+      "lo": 6.6,
+      "hi": 43.0
+     },
+     "4-5": {
+      "n": 13,
+      "share_below": 23.1,
+      "lo": 8.2,
+      "hi": 50.3
+     }
+    }
+   },
+   "g_ach": {
+    "n": 35,
+    "share_below": 14.3,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": "fewer than 10"
+     },
+     "4": {
+      "n": "fewer than 10"
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 16,
+      "share_below": 12.5,
+      "lo": 3.5,
+      "hi": 36.0
+     },
+     "4-5": {
+      "n": 13,
+      "share_below": 15.4,
+      "lo": 4.3,
+      "hi": 42.2
+     }
+    }
+   },
+   "g_ab": {
+    "n": 35,
+    "share_below": 14.3,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": "fewer than 10"
+     },
+     "4": {
+      "n": "fewer than 10"
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 16,
+      "share_below": 6.2,
+      "lo": 1.1,
+      "hi": 28.3
+     },
+     "4-5": {
+      "n": 13,
+      "share_below": 23.1,
+      "lo": 8.2,
+      "hi": 50.3
+     }
+    }
+   },
+   "g_pd": {
+    "n": 35,
+    "share_below": 11.4,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": "fewer than 10"
+     },
+     "4": {
+      "n": "fewer than 10"
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 16,
+      "share_below": 12.5,
+      "lo": 3.5,
+      "hi": 36.0
+     },
+     "4-5": {
+      "n": 13,
+      "share_below": 15.4,
+      "lo": 4.3,
+      "hi": 42.2
+     }
+    }
+   },
+   "g_lg": {
+    "n": 35,
+    "share_below": 14.3,
+    "by_idaci": {
+     "1": {
+      "n": "fewer than 10"
+     },
+     "2": {
+      "n": "fewer than 10"
+     },
+     "3": {
+      "n": "fewer than 10"
+     },
+     "4": {
+      "n": "fewer than 10"
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 16,
+      "share_below": 6.2,
+      "lo": 1.1,
+      "hi": 28.3
+     },
+     "4-5": {
+      "n": 13,
+      "share_below": 23.1,
+      "lo": 8.2,
+      "hi": 50.3
+     }
+    }
+   }
+  },
+  "Nursery": {
+   "g_inc": {
+    "n": 62,
+    "share_below": 4.8,
+    "by_idaci": {
+     "1": {
+      "n": 16,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 19.4
+     },
+     "2": {
+      "n": 10,
+      "share_below": 0.0,
+      "lo": -0.0,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 12,
+      "share_below": 8.3,
+      "lo": 1.5,
+      "hi": 35.4
+     },
+     "4": {
+      "n": 16,
+      "share_below": 12.5,
+      "lo": 3.5,
+      "hi": 36.0
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 26,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 12.9
+     },
+     "4-5": {
+      "n": 24,
+      "share_below": 8.3,
+      "lo": 2.3,
+      "hi": 25.8
+     }
+    }
+   },
+   "g_ct": {
+    "n": 62,
+    "share_below": 11.3,
+    "by_idaci": {
+     "1": {
+      "n": 16,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 19.4
+     },
+     "2": {
+      "n": 10,
+      "share_below": 10.0,
+      "lo": 1.8,
+      "hi": 40.4
+     },
+     "3": {
+      "n": 12,
+      "share_below": 8.3,
+      "lo": 1.5,
+      "hi": 35.4
+     },
+     "4": {
+      "n": 16,
+      "share_below": 31.2,
+      "lo": 14.2,
+      "hi": 55.6
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 26,
+      "share_below": 3.8,
+      "lo": 0.7,
+      "hi": 18.9
+     },
+     "4-5": {
+      "n": 24,
+      "share_below": 20.8,
+      "lo": 9.2,
+      "hi": 40.5
+     }
+    }
+   },
+   "g_ach": {
+    "n": 62,
+    "share_below": 8.1,
+    "by_idaci": {
+     "1": {
+      "n": 16,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 19.4
+     },
+     "2": {
+      "n": 10,
+      "share_below": 0.0,
+      "lo": -0.0,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 12,
+      "share_below": 8.3,
+      "lo": 1.5,
+      "hi": 35.4
+     },
+     "4": {
+      "n": 16,
+      "share_below": 25.0,
+      "lo": 10.2,
+      "hi": 49.5
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 26,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 12.9
+     },
+     "4-5": {
+      "n": 24,
+      "share_below": 16.7,
+      "lo": 6.7,
+      "hi": 35.9
+     }
+    }
+   },
+   "g_ab": {
+    "n": 62,
+    "share_below": 6.5,
+    "by_idaci": {
+     "1": {
+      "n": 16,
+      "share_below": 6.2,
+      "lo": 1.1,
+      "hi": 28.3
+     },
+     "2": {
+      "n": 10,
+      "share_below": 0.0,
+      "lo": -0.0,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 12,
+      "share_below": 8.3,
+      "lo": 1.5,
+      "hi": 35.4
+     },
+     "4": {
+      "n": 16,
+      "share_below": 12.5,
+      "lo": 3.5,
+      "hi": 36.0
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 26,
+      "share_below": 3.8,
+      "lo": 0.7,
+      "hi": 18.9
+     },
+     "4-5": {
+      "n": 24,
+      "share_below": 8.3,
+      "lo": 2.3,
+      "hi": 25.8
+     }
+    }
+   },
+   "g_pd": {
+    "n": 62,
+    "share_below": 4.8,
+    "by_idaci": {
+     "1": {
+      "n": 16,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 19.4
+     },
+     "2": {
+      "n": 10,
+      "share_below": 0.0,
+      "lo": -0.0,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 12,
+      "share_below": 8.3,
+      "lo": 1.5,
+      "hi": 35.4
+     },
+     "4": {
+      "n": 16,
+      "share_below": 12.5,
+      "lo": 3.5,
+      "hi": 36.0
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 26,
+      "share_below": 0.0,
+      "lo": 0.0,
+      "hi": 12.9
+     },
+     "4-5": {
+      "n": 24,
+      "share_below": 8.3,
+      "lo": 2.3,
+      "hi": 25.8
+     }
+    }
+   },
+   "g_lg": {
+    "n": 62,
+    "share_below": 11.3,
+    "by_idaci": {
+     "1": {
+      "n": 16,
+      "share_below": 12.5,
+      "lo": 3.5,
+      "hi": 36.0
+     },
+     "2": {
+      "n": 10,
+      "share_below": 0.0,
+      "lo": -0.0,
+      "hi": 27.8
+     },
+     "3": {
+      "n": 12,
+      "share_below": 8.3,
+      "lo": 1.5,
+      "hi": 35.4
+     },
+     "4": {
+      "n": 16,
+      "share_below": 25.0,
+      "lo": 10.2,
+      "hi": 49.5
+     },
+     "5": {
+      "n": "fewer than 10"
+     },
+     "1-2": {
+      "n": 26,
+      "share_below": 7.7,
+      "lo": 2.1,
+      "hi": 24.1
+     },
+     "4-5": {
+      "n": 24,
+      "share_below": 16.7,
+      "lo": 6.7,
+      "hi": 35.9
+     }
+    }
+   }
+  }
+ },
+ "representativeness": {
+  "Primary": {
+   "n_all": 16675,
+   "n_inspected": 2638,
+   "share_inspected": 15.8,
+   "vars": {
+    "ehc": {
+     "mean_all": 4.23,
+     "mean_inspected": 4.41,
+     "smd_inspected_vs_not": 0.064,
+     "missing_all": 20
+    },
+    "sensup": {
+     "mean_all": 15.81,
+     "mean_inspected": 16.54,
+     "smd_inspected_vs_not": 0.128,
+     "missing_all": 20
+    },
+    "pupils": {
+     "mean_all": 267.95,
+     "mean_inspected": 256.23,
+     "smd_inspected_vs_not": -0.09,
+     "missing_all": 14
+    },
+    "urban": {
+     "mean_all": 0.72,
+     "mean_inspected": 0.73,
+     "smd_inspected_vs_not": 0.032,
+     "missing_all": 4
+    },
+    "academy": {
+     "mean_all": 0.5,
+     "mean_inspected": 0.48,
+     "smd_inspected_vs_not": -0.056,
+     "missing_all": 0
+    }
+   },
+   "idaci_share": {
+    "1": {
+     "all": 20.0,
+     "inspected": 19.1
+    },
+    "2": {
+     "all": 20.0,
+     "inspected": 18.7
+    },
+    "3": {
+     "all": 20.0,
+     "inspected": 19.7
+    },
+    "4": {
+     "all": 19.9,
+     "inspected": 20.6
+    },
+    "5": {
+     "all": 19.9,
+     "inspected": 21.9
+    }
+   },
+   "region_share": {
+    "East Midlands": {
+     "all": 9.9,
+     "inspected": 8.5
+    },
+    "East of England": {
+     "all": 11.9,
+     "inspected": 10.4
+    },
+    "London": {
+     "all": 10.5,
+     "inspected": 8.4
+    },
+    "North East, Yorkshire and the Humber": {
+     "all": 15.7,
+     "inspected": 15.0
+    },
+    "North West": {
+     "all": 14.6,
+     "inspected": 19.3
+    },
+    "South East": {
+     "all": 15.5,
+     "inspected": 14.5
+    },
+    "South West": {
+     "all": 11.3,
+     "inspected": 11.4
+    },
+    "West Midlands": {
+     "all": 10.7,
+     "inspected": 12.5
+    }
+   },
+   "oqe_share": {
+    "1": {
+     "all": 6.7,
+     "inspected": 2.1
+    },
+    "2": {
+     "all": 45.3,
+     "inspected": 33.3
+    },
+    "3": {
+     "all": 6.6,
+     "inspected": 13.3
+    },
+    "4": {
+     "all": 0.6,
+     "inspected": 1.3
+    },
+    "none": {
+     "all": 40.9,
+     "inspected": 50.0
+    }
+   }
+  },
+  "Secondary": {
+   "n_all": 3423,
+   "n_inspected": 756,
+   "share_inspected": 22.1,
+   "vars": {
+    "ehc": {
+     "mean_all": 3.74,
+     "mean_inspected": 4.02,
+     "smd_inspected_vs_not": 0.159,
+     "missing_all": 13
+    },
+    "sensup": {
+     "mean_all": 14.74,
+     "mean_inspected": 15.76,
+     "smd_inspected_vs_not": 0.221,
+     "missing_all": 13
+    },
+    "pupils": {
+     "mean_all": 1063.69,
+     "mean_inspected": 1016.69,
+     "smd_inspected_vs_not": -0.152,
+     "missing_all": 3
+    },
+    "urban": {
+     "mean_all": 0.87,
+     "mean_inspected": 0.88,
+     "smd_inspected_vs_not": 0.027,
+     "missing_all": 0
+    },
+    "academy": {
+     "mean_all": 0.84,
+     "mean_inspected": 0.82,
+     "smd_inspected_vs_not": -0.07,
+     "missing_all": 0
+    },
+    "pa": {
+     "mean_all": 2.2,
+     "mean_inspected": -0.78,
+     "smd_inspected_vs_not": -0.177,
+     "missing_all": 150
+    },
+    "nonmob": {
+     "mean_all": 95.84,
+     "mean_inspected": 95.53,
+     "smd_inspected_vs_not": -0.082,
+     "missing_all": 150
+    },
+    "ss": {
+     "mean_all": 0.15,
+     "mean_inspected": -0.27,
+     "smd_inspected_vs_not": -0.123,
+     "missing_all": 173
+    },
+    "dis_pct": {
+     "mean_all": 30.04,
+     "mean_inspected": 32.66,
+     "smd_inspected_vs_not": 0.223,
+     "missing_all": 150
+    }
+   },
+   "idaci_share": {
+    "1": {
+     "all": 20.0,
+     "inspected": 15.9
+    },
+    "2": {
+     "all": 19.9,
+     "inspected": 18.4
+    },
+    "3": {
+     "all": 20.0,
+     "inspected": 22.0
+    },
+    "4": {
+     "all": 20.0,
+     "inspected": 18.9
+    },
+    "5": {
+     "all": 20.0,
+     "inspected": 24.9
+    }
+   },
+   "region_share": {
+    "East Midlands": {
+     "all": 8.5,
+     "inspected": 7.3
+    },
+    "East of England": {
+     "all": 11.3,
+     "inspected": 9.4
+    },
+    "London": {
+     "all": 14.7,
+     "inspected": 12.7
+    },
+    "North East, Yorkshire and the Humber": {
+     "all": 14.3,
+     "inspected": 14.7
+    },
+    "North West": {
+     "all": 13.7,
+     "inspected": 18.3
+    },
+    "South East": {
+     "all": 15.2,
+     "inspected": 15.5
+    },
+    "South West": {
+     "all": 9.9,
+     "inspected": 10.2
+    },
+    "West Midlands": {
+     "all": 12.4,
+     "inspected": 12.0
+    }
+   },
+   "oqe_share": {
+    "1": {
+     "all": 11.6,
+     "inspected": 4.5
+    },
+    "2": {
+     "all": 45.2,
+     "inspected": 40.3
+    },
+    "3": {
+     "all": 11.6,
+     "inspected": 19.2
+    },
+    "4": {
+     "all": 1.6,
+     "inspected": 2.0
+    },
+    "none": {
+     "all": 30.0,
+     "inspected": 34.0
+    }
+   }
+  },
+  "Special": {
+   "n_all": 1125,
+   "n_inspected": 143,
+   "share_inspected": 12.7,
+   "vars": {
+    "ehc": {
+     "mean_all": 99.04,
+     "mean_inspected": 99.14,
+     "smd_inspected_vs_not": 0.025,
+     "missing_all": 9
+    },
+    "sensup": {
+     "mean_all": 0.83,
+     "mean_inspected": 0.85,
+     "smd_inspected_vs_not": 0.004,
+     "missing_all": 9
+    },
+    "pupils": {
+     "mean_all": 158.36,
+     "mean_inspected": 149.92,
+     "smd_inspected_vs_not": -0.108,
+     "missing_all": 2
+    },
+    "urban": {
+     "mean_all": 0.91,
+     "mean_inspected": 0.9,
+     "smd_inspected_vs_not": -0.054,
+     "missing_all": 4
+    },
+    "academy": {
+     "mean_all": 0.54,
+     "mean_inspected": 0.57,
+     "smd_inspected_vs_not": 0.064,
+     "missing_all": 52
+    }
+   },
+   "idaci_share": {
+    "1": {
+     "all": 4.7,
+     "inspected": "fewer than 10 schools"
+    },
+    "2": {
+     "all": 15.1,
+     "inspected": 15.4
+    },
+    "3": {
+     "all": 22.4,
+     "inspected": 23.1
+    },
+    "4": {
+     "all": 28.4,
+     "inspected": 28.7
+    },
+    "5": {
+     "all": 27.2,
+     "inspected": 29.4
+    }
+   },
+   "region_share": {
+    "East Midlands": {
+     "all": 7.7,
+     "inspected": "fewer than 10 schools"
+    },
+    "East of England": {
+     "all": 10.7,
+     "inspected": 11.9
+    },
+    "London": {
+     "all": 14.7,
+     "inspected": 13.3
+    },
+    "North East, Yorkshire and the Humber": {
+     "all": 13.9,
+     "inspected": 13.3
+    },
+    "North West": {
+     "all": 15.7,
+     "inspected": 14.7
+    },
+    "South East": {
+     "all": 16.8,
+     "inspected": 18.2
+    },
+    "South West": {
+     "all": 9.0,
+     "inspected": 9.8
+    },
+    "West Midlands": {
+     "all": 11.6,
+     "inspected": 14.0
+    }
+   },
+   "oqe_share": {
+    "1": {
+     "all": 9.2,
+     "inspected": "fewer than 10 schools"
+    },
+    "2": {
+     "all": 26.0,
+     "inspected": 21.7
+    },
+    "3": {
+     "all": 5.7,
+     "inspected": 12.6
+    },
+    "4": {
+     "all": 2.4,
+     "inspected": "fewer than 10 schools"
+    },
+    "none": {
+     "all": 56.6,
+     "inspected": 58.0
+    }
+   }
+  },
+  "Alternative provision": {
+   "n_all": 330,
+   "n_inspected": 38,
+   "share_inspected": 11.5,
+   "vars": {
+    "ehc": {
+     "mean_all": 35.08,
+     "mean_inspected": 26.04,
+     "smd_inspected_vs_not": -0.347,
+     "missing_all": 35
+    },
+    "sensup": {
+     "mean_all": 53.03,
+     "mean_inspected": 56.79,
+     "smd_inspected_vs_not": 0.137,
+     "missing_all": 35
+    },
+    "pupils": {
+     "mean_all": 49.69,
+     "mean_inspected": 48.63,
+     "smd_inspected_vs_not": -0.023,
+     "missing_all": 1
+    },
+    "urban": {
+     "mean_all": 0.96,
+     "mean_inspected": 0.89,
+     "smd_inspected_vs_not": -0.279,
+     "missing_all": 0
+    },
+    "academy": {
+     "mean_all": 0.56,
+     "mean_inspected": 0.58,
+     "smd_inspected_vs_not": 0.035,
+     "missing_all": 0
+    }
+   },
+   "idaci_share": {
+    "1": {
+     "all": 17.6,
+     "inspected": "fewer than 10 schools"
+    },
+    "2": {
+     "all": 17.6,
+     "inspected": "fewer than 10 schools"
+    },
+    "3": {
+     "all": 17.9,
+     "inspected": "fewer than 10 schools"
+    },
+    "4": {
+     "all": 18.5,
+     "inspected": "fewer than 10 schools"
+    },
+    "5": {
+     "all": 17.3,
+     "inspected": "fewer than 10 schools"
+    }
+   },
+   "region_share": {
+    "East Midlands": {
+     "all": 6.7,
+     "inspected": "fewer than 10 schools"
+    },
+    "East of England": {
+     "all": 10.9,
+     "inspected": "fewer than 10 schools"
+    },
+    "London": {
+     "all": 16.1,
+     "inspected": 26.3
+    },
+    "North East, Yorkshire and the Humber": {
+     "all": 15.8,
+     "inspected": "fewer than 10 schools"
+    },
+    "North West": {
+     "all": 15.2,
+     "inspected": "fewer than 10 schools"
+    },
+    "South East": {
+     "all": 12.7,
+     "inspected": "fewer than 10 schools"
+    },
+    "South West": {
+     "all": 10.0,
+     "inspected": "fewer than 10 schools"
+    },
+    "West Midlands": {
+     "all": 12.7,
+     "inspected": "fewer than 10 schools"
+    }
+   },
+   "oqe_share": {
+    "1": {
+     "all": 8.5,
+     "inspected": "fewer than 10 schools"
+    },
+    "2": {
+     "all": 36.1,
+     "inspected": "fewer than 10 schools"
+    },
+    "3": {
+     "all": 6.1,
+     "inspected": "fewer than 10 schools"
+    },
+    "4": {
+     "all": 3.0,
+     "inspected": "fewer than 10 schools"
+    },
+    "none": {
+     "all": 46.4,
+     "inspected": 52.6
+    }
+   }
+  },
+  "Nursery": {
+   "n_all": 373,
+   "n_inspected": 62,
+   "share_inspected": 16.6,
+   "vars": {
+    "ehc": {
+     "mean_all": 2.69,
+     "mean_inspected": 1.7,
+     "smd_inspected_vs_not": -0.213,
+     "missing_all": 0
+    },
+    "sensup": {
+     "mean_all": 16.58,
+     "mean_inspected": 15.64,
+     "smd_inspected_vs_not": -0.105,
+     "missing_all": 0
+    },
+    "pupils": {
+     "mean_all": 95.38,
+     "mean_inspected": 87.9,
+     "smd_inspected_vs_not": -0.271,
+     "missing_all": 0
+    },
+    "urban": {
+     "mean_all": 0.97,
+     "mean_inspected": 0.92,
+     "smd_inspected_vs_not": -0.302,
+     "missing_all": 0
+    },
+    "academy": {
+     "mean_all": 0.0,
+     "mean_inspected": 0.0,
+     "smd_inspected_vs_not": null,
+     "missing_all": 0
+    }
+   },
+   "idaci_share": {
+    "1": {
+     "all": 20.4,
+     "inspected": 25.8
+    },
+    "2": {
+     "all": 20.1,
+     "inspected": 16.1
+    },
+    "3": {
+     "all": 19.8,
+     "inspected": 19.4
+    },
+    "4": {
+     "all": 19.8,
+     "inspected": 25.8
+    },
+    "5": {
+     "all": 19.8,
+     "inspected": "fewer than 10 schools"
+    }
+   },
+   "region_share": {
+    "East Midlands": {
+     "all": 8.3,
+     "inspected": "fewer than 10 schools"
+    },
+    "East of England": {
+     "all": 10.2,
+     "inspected": "fewer than 10 schools"
+    },
+    "London": {
+     "all": 19.8,
+     "inspected": 22.6
+    },
+    "North East, Yorkshire and the Humber": {
+     "all": 14.5,
+     "inspected": "fewer than 10 schools"
+    },
+    "North West": {
+     "all": 16.6,
+     "inspected": "fewer than 10 schools"
+    },
+    "South East": {
+     "all": 11.0,
+     "inspected": 19.4
+    },
+    "South West": {
+     "all": 4.8,
+     "inspected": "fewer than 10 schools"
+    },
+    "West Midlands": {
+     "all": 14.7,
+     "inspected": "fewer than 10 schools"
+    }
+   },
+   "oqe_share": {
+    "1": {
+     "all": 11.0,
+     "inspected": "fewer than 10 schools"
+    },
+    "2": {
+     "all": 19.6,
+     "inspected": "fewer than 10 schools"
+    },
+    "3": {
+     "all": 2.4,
+     "inspected": "fewer than 10 schools"
+    },
+    "4": {
+     "all": 0.0,
+     "inspected": "fewer than 10 schools"
+    },
+    "none": {
+     "all": 67.0,
+     "inspected": 71.0
+    }
+   }
+  }
+ },
+ "ipw_models": {
+  "Primary": {
+   "ipw_context": {
+    "terms": [
+     "C(idaci, Treatment(1))",
+     "z_ehc",
+     "z_sensup",
+     "z_logsize",
+     "C(region)",
+     "urban",
+     "academy"
+    ],
+    "n": 16636,
+    "auc": 0.568,
+    "w_min": 0.6,
+    "w_max": 1.505
+   },
+   "ipw_prior_grade": {
+    "terms": [
+     "C(idaci, Treatment(1))",
+     "z_ehc",
+     "z_sensup",
+     "z_logsize",
+     "C(region)",
+     "urban",
+     "academy",
+     "C(oqe)"
+    ],
+    "n": 16636,
+    "auc": 0.642,
+    "w_min": 0.382,
+    "w_max": 3.368
+   }
+  },
+  "Secondary": {
+   "ipw_context": {
+    "terms": [
+     "C(idaci, Treatment(1))",
+     "z_ehc",
+     "z_sensup",
+     "z_logsize",
+     "C(region)",
+     "urban",
+     "academy",
+     "z_pa",
+     "z_nonmob"
+    ],
+    "n": 3273,
+    "auc": 0.596,
+    "w_min": 0.531,
+    "w_max": 1.765
+   },
+   "ipw_context_results": {
+    "terms": [
+     "C(idaci, Treatment(1))",
+     "z_ehc",
+     "z_sensup",
+     "z_logsize",
+     "C(region)",
+     "urban",
+     "academy",
+     "z_pa",
+     "z_nonmob",
+     "z_ss"
+    ],
+    "n": 3250,
+    "auc": 0.6,
+    "w_min": 0.509,
+    "w_max": 1.878
+   },
+   "ipw_prior_grade": {
+    "terms": [
+     "C(idaci, Treatment(1))",
+     "z_ehc",
+     "z_sensup",
+     "z_logsize",
+     "C(region)",
+     "urban",
+     "academy",
+     "z_pa",
+     "z_nonmob",
+     "C(oqe)"
+    ],
+    "n": 3273,
+    "auc": 0.634,
+    "w_min": 0.471,
+    "w_max": 2.916
+   }
+  }
+ },
+ "daily_sample": {
+  "reports_read": 570,
+  "replaced_a_report_card_in_mi": 5,
+  "first_report_card": 565,
+  "not_in_mi": 0
+ },
+ "sensitivity": {
+  "Primary": {
+   "g_inc": {
+    "ipw_context": {
+     "ame_pp": 5.9,
+     "lo": 1.7,
+     "hi": 10.1,
+     "p": 0.005728971204111761,
+     "n": 2638,
+     "events": 246,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 5.2,
+     "lo": 1.3,
+     "hi": 9.2,
+     "p": 0.0097309720458629,
+     "n": 2638,
+     "events": 246,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ordinal": {
+     "ame_pp": 3.2,
+     "lo": 0.8,
+     "hi": 5.5,
+     "p": 0.008952465368996498,
+     "n": 2638,
+     "events": 246,
+     "label": "small but distinguishable from zero",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 5.6,
+     "lo": 1.1,
+     "hi": 10.0,
+     "p": 0.013548466233314948,
+     "n": 2638,
+     "events": 246,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "exclude_predecessor": {
+     "ame_pp": 5.5,
+     "lo": 1.2,
+     "hi": 9.8,
+     "p": 0.011445313196844612,
+     "n": 2626,
+     "events": 245,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "with_daily_reports": {
+     "ame_pp": 5.4,
+     "lo": 1.5,
+     "hi": 9.3,
+     "p": 0.006229496083645798,
+     "n": 3074,
+     "events": 278,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 1.3,
+     "lo": 0.3,
+     "hi": 2.3,
+     "p": 0.010888164888855934,
+     "n": 2638,
+     "events": 246,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    }
+   },
+   "g_ct": {
+    "ipw_context": {
+     "ame_pp": 9.6,
+     "lo": 4.3,
+     "hi": 14.9,
+     "p": 0.00040615190567731444,
+     "n": 2638,
+     "events": 553,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 8.6,
+     "lo": 3.4,
+     "hi": 13.9,
+     "p": 0.0013114775253803127,
+     "n": 2638,
+     "events": 553,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ordinal": {
+     "ame_pp": 6.5,
+     "lo": 2.0,
+     "hi": 11.0,
+     "p": 0.004809363809053262,
+     "n": 2638,
+     "events": 553,
+     "label": "material",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 9.6,
+     "lo": 3.4,
+     "hi": 15.7,
+     "p": 0.0022616639084199796,
+     "n": 2638,
+     "events": 553,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "exclude_predecessor": {
+     "ame_pp": 9.4,
+     "lo": 3.9,
+     "hi": 14.9,
+     "p": 0.0007647788593209685,
+     "n": 2626,
+     "events": 550,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "with_daily_reports": {
+     "ame_pp": 8.1,
+     "lo": 3.1,
+     "hi": 13.0,
+     "p": 0.0015346258269577737,
+     "n": 3074,
+     "events": 625,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 2.3,
+     "lo": 0.9,
+     "hi": 3.6,
+     "p": 0.0008296138611317775,
+     "n": 2638,
+     "events": 553,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    }
+   },
+   "g_ach": {
+    "ipw_context": {
+     "ame_pp": 17.0,
+     "lo": 11.3,
+     "hi": 22.8,
+     "p": 5.780840660807711e-09,
+     "n": 2638,
+     "events": 740,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 16.0,
+     "lo": 10.2,
+     "hi": 21.8,
+     "p": 7.126972097012197e-08,
+     "n": 2638,
+     "events": 740,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ordinal": {
+     "ame_pp": 16.2,
+     "lo": 11.1,
+     "hi": 21.3,
+     "p": 3.6101335150079893e-10,
+     "n": 2638,
+     "events": 740,
+     "label": "material",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 17.2,
+     "lo": 10.1,
+     "hi": 24.3,
+     "p": 2.1617413492126717e-06,
+     "n": 2638,
+     "events": 740,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "exclude_predecessor": {
+     "ame_pp": 17.1,
+     "lo": 11.2,
+     "hi": 23.0,
+     "p": 1.0951646559084407e-08,
+     "n": 2626,
+     "events": 736,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "with_daily_reports": {
+     "ame_pp": 16.4,
+     "lo": 11.1,
+     "hi": 21.8,
+     "p": 1.5587735232351596e-09,
+     "n": 3074,
+     "events": 838,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 4.5,
+     "lo": 3.1,
+     "hi": 6.0,
+     "p": 4.4527291549420005e-10,
+     "n": 2638,
+     "events": 740,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    }
+   },
+   "g_ab": {
+    "ipw_context": {
+     "ame_pp": 19.5,
+     "lo": 14.5,
+     "hi": 24.5,
+     "p": 1.7718986858134516e-14,
+     "n": 2638,
+     "events": 368,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 19.7,
+     "lo": 14.6,
+     "hi": 24.9,
+     "p": 4.1757050487374724e-14,
+     "n": 2638,
+     "events": 368,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ordinal": {
+     "ame_pp": 13.8,
+     "lo": 10.1,
+     "hi": 17.5,
+     "p": 1.446609030196857e-13,
+     "n": 2638,
+     "events": 368,
+     "label": "material",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 19.3,
+     "lo": 12.9,
+     "hi": 25.6,
+     "p": 2.577835457340553e-09,
+     "n": 2638,
+     "events": 368,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "exclude_predecessor": {
+     "ame_pp": 19.2,
+     "lo": 14.2,
+     "hi": 24.1,
+     "p": 2.8412858266667126e-14,
+     "n": 2626,
+     "events": 368,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "with_daily_reports": {
+     "ame_pp": 18.5,
+     "lo": 14.0,
+     "hi": 23.0,
+     "p": 6.860132499777926e-16,
+     "n": 3074,
+     "events": 421,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 4.8,
+     "lo": 3.6,
+     "hi": 6.1,
+     "p": 2.0107631677856428e-14,
+     "n": 2638,
+     "events": 368,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    }
+   },
+   "g_pd": {
+    "ipw_context": {
+     "ame_pp": 5.4,
+     "lo": 3.0,
+     "hi": 7.9,
+     "p": 1.4778920491982443e-05,
+     "n": 2638,
+     "events": 99,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 4.3,
+     "lo": 2.0,
+     "hi": 6.6,
+     "p": 0.0002143205541119993,
+     "n": 2638,
+     "events": 99,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    },
+    "ordinal": {
+     "ame_pp": 1.8,
+     "lo": 0.7,
+     "hi": 2.8,
+     "p": 0.0010704721453340083,
+     "n": 2638,
+     "events": 99,
+     "label": "small but distinguishable from zero",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 5.8,
+     "lo": 2.9,
+     "hi": 8.7,
+     "p": 9.16440292792326e-05,
+     "n": 2638,
+     "events": 99,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "exclude_predecessor": {
+     "ame_pp": 5.8,
+     "lo": 3.1,
+     "hi": 8.5,
+     "p": 2.8040799012420513e-05,
+     "n": 2626,
+     "events": 99,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "with_daily_reports": {
+     "ame_pp": 5.3,
+     "lo": 2.8,
+     "hi": 7.7,
+     "p": 2.1734525642843412e-05,
+     "n": 3074,
+     "events": 116,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 1.3,
+     "lo": 0.7,
+     "hi": 2.0,
+     "p": 4.494185131442907e-05,
+     "n": 2638,
+     "events": 99,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    }
+   },
+   "g_lg": {
+    "ipw_context": {
+     "ame_pp": 5.6,
+     "lo": 0.9,
+     "hi": 10.3,
+     "p": 0.019174341130259304,
+     "n": 2638,
+     "events": 380,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 4.8,
+     "lo": 0.3,
+     "hi": 9.2,
+     "p": 0.0376670622489926,
+     "n": 2638,
+     "events": 380,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    },
+    "ordinal": {
+     "ame_pp": 5.0,
+     "lo": 1.5,
+     "hi": 8.5,
+     "p": 0.004831674832258832,
+     "n": 2638,
+     "events": 380,
+     "label": "material",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 6.1,
+     "lo": 0.4,
+     "hi": 11.9,
+     "p": 0.03732144806099225,
+     "n": 2638,
+     "events": 380,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "exclude_predecessor": {
+     "ame_pp": 6.1,
+     "lo": 1.2,
+     "hi": 10.9,
+     "p": 0.01501868627416707,
+     "n": 2626,
+     "events": 378,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "with_daily_reports": {
+     "ame_pp": 5.9,
+     "lo": 1.5,
+     "hi": 10.3,
+     "p": 0.008385246211504495,
+     "n": 3074,
+     "events": 419,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 1.7,
+     "lo": 0.5,
+     "hi": 2.8,
+     "p": 0.005694332411283095,
+     "n": 2638,
+     "events": 380,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    }
+   },
+   "g_ey": {
+    "ipw_context": {
+     "ame_pp": 4.7,
+     "lo": 0.0,
+     "hi": 9.4,
+     "p": 0.04810187365928421,
+     "n": 2453,
+     "events": 266,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 5.0,
+     "lo": 0.6,
+     "hi": 9.4,
+     "p": 0.025094301445342745,
+     "n": 2453,
+     "events": 266,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "ordinal": {
+     "ame_pp": 3.4,
+     "lo": 0.5,
+     "hi": 6.3,
+     "p": 0.021162957222502783,
+     "n": 2453,
+     "events": 266,
+     "label": "small but distinguishable from zero",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 4.6,
+     "lo": -0.0,
+     "hi": 9.2,
+     "p": 0.05147954272225844,
+     "n": 2453,
+     "events": 266,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "exclude_predecessor": {
+     "ame_pp": 4.5,
+     "lo": -0.3,
+     "hi": 9.3,
+     "p": 0.06648288929457724,
+     "n": 2442,
+     "events": 264,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "with_daily_reports": {
+     "ame_pp": 5.0,
+     "lo": 0.7,
+     "hi": 9.4,
+     "p": 0.022395345074869514,
+     "n": 2857,
+     "events": 297,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 1.1,
+     "lo": 0.0,
+     "hi": 2.2,
+     "p": 0.04947869844363648,
+     "n": 2453,
+     "events": 266,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 0
+    }
+   }
+  },
+  "Secondary": {
+   "g_inc": {
+    "ipw_context": {
+     "ame_pp": 3.3,
+     "lo": -3.5,
+     "hi": 10.1,
+     "p": 0.3473497142499943,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ipw_context_results": {
+     "ame_pp": 2.9,
+     "lo": -3.8,
+     "hi": 9.5,
+     "p": 0.399025584609461,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 1.7,
+     "lo": -5.1,
+     "hi": 8.4,
+     "p": 0.629288427051298,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ordinal": {
+     "ame_pp": -2.3,
+     "lo": -6.7,
+     "hi": 2.1,
+     "p": 0.3073411316411162,
+     "n": 724,
+     "events": 89,
+     "label": "no clear association (inconclusive)",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 4.2,
+     "lo": -2.4,
+     "hi": 10.8,
+     "p": 0.2168372798350526,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "exclude_predecessor": {
+     "ame_pp": 4.2,
+     "lo": -3.0,
+     "hi": 11.3,
+     "p": 0.2538174069474437,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 30
+    },
+    "with_daily_reports": {
+     "ame_pp": 3.4,
+     "lo": -3.4,
+     "hi": 10.3,
+     "p": 0.3268261724052715,
+     "n": 824,
+     "events": 106,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 38
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 0.7,
+     "lo": -1.0,
+     "hi": 2.5,
+     "p": 0.40266681586913877,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ss_band": {
+     "ame_pp": 4.5,
+     "lo": -2.7,
+     "hi": 11.7,
+     "p": 0.21757408293203434,
+     "n": 724,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "exclude_pa_imputed": {
+     "ame_pp": 4.1,
+     "lo": -3.1,
+     "hi": 11.3,
+     "p": 0.264787796175191,
+     "n": 723,
+     "events": 89,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 31
+    }
+   },
+   "g_ct": {
+    "ipw_context": {
+     "ame_pp": 6.9,
+     "lo": -2.2,
+     "hi": 16.1,
+     "p": 0.13753153036828394,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ipw_context_results": {
+     "ame_pp": 6.2,
+     "lo": -2.5,
+     "hi": 15.0,
+     "p": 0.16174428335346652,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 6.5,
+     "lo": -2.0,
+     "hi": 14.9,
+     "p": 0.13337880425895798,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ordinal": {
+     "ame_pp": -0.8,
+     "lo": -7.3,
+     "hi": 5.7,
+     "p": 0.807223347210682,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 7.4,
+     "lo": -2.3,
+     "hi": 17.1,
+     "p": 0.1346020558168057,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "exclude_predecessor": {
+     "ame_pp": 7.4,
+     "lo": -2.4,
+     "hi": 17.2,
+     "p": 0.1385260859439136,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 30
+    },
+    "with_daily_reports": {
+     "ame_pp": 7.2,
+     "lo": -2.1,
+     "hi": 16.5,
+     "p": 0.130950013777184,
+     "n": 824,
+     "events": 186,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 38
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 1.3,
+     "lo": -0.8,
+     "hi": 3.4,
+     "p": 0.23394028169215442,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association",
+     "dropped_missing": 32
+    },
+    "ss_band": {
+     "ame_pp": 9.0,
+     "lo": -0.5,
+     "hi": 18.4,
+     "p": 0.06227121718185422,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "exclude_pa_imputed": {
+     "ame_pp": 7.2,
+     "lo": -2.6,
+     "hi": 17.0,
+     "p": 0.14982773926403184,
+     "n": 723,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 31
+    }
+   },
+   "g_ach": {
+    "ipw_context": {
+     "ame_pp": 14.8,
+     "lo": 4.5,
+     "hi": 25.0,
+     "p": 0.004854232869380587,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "ipw_context_results": {
+     "ame_pp": 13.6,
+     "lo": 4.0,
+     "hi": 23.2,
+     "p": 0.0055485636176598714,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 14.5,
+     "lo": 4.8,
+     "hi": 24.3,
+     "p": 0.0034414667472397274,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "ordinal": {
+     "ame_pp": 7.7,
+     "lo": 0.7,
+     "hi": 14.7,
+     "p": 0.029974042357854454,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 16.9,
+     "lo": 7.3,
+     "hi": 26.6,
+     "p": 0.000579406835457989,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "exclude_predecessor": {
+     "ame_pp": 16.9,
+     "lo": 6.0,
+     "hi": 27.8,
+     "p": 0.002350789518999546,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 30
+    },
+    "with_daily_reports": {
+     "ame_pp": 16.0,
+     "lo": 6.0,
+     "hi": 26.0,
+     "p": 0.0017745277964683439,
+     "n": 824,
+     "events": 276,
+     "label": "material",
+     "dropped_missing": 38
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": 3.4,
+     "lo": 1.3,
+     "hi": 5.6,
+     "p": 0.0020388227345146297,
+     "n": 724,
+     "events": 242,
+     "label": "small but distinguishable from zero",
+     "dropped_missing": 32
+    },
+    "ss_band": {
+     "ame_pp": 19.3,
+     "lo": 8.9,
+     "hi": 29.6,
+     "p": 0.0002724365486460672,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32
+    },
+    "exclude_pa_imputed": {
+     "ame_pp": 16.6,
+     "lo": 5.6,
+     "hi": 27.6,
+     "p": 0.0031153609426042782,
+     "n": 723,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 31
+    }
+   },
+   "g_ab": {
+    "ipw_context": {
+     "ame_pp": 4.5,
+     "lo": -4.2,
+     "hi": 13.2,
+     "p": 0.3149089956083485,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ipw_context_results": {
+     "ame_pp": 3.9,
+     "lo": -4.6,
+     "hi": 12.3,
+     "p": 0.3680024174992458,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ipw_prior_grade": {
+     "ame_pp": 3.1,
+     "lo": -5.4,
+     "hi": 11.6,
+     "p": 0.471519706668532,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ordinal": {
+     "ame_pp": -5.1,
+     "lo": -11.7,
+     "hi": 1.4,
+     "p": 0.12202178281287773,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 4.0,
+     "lo": -7.9,
+     "hi": 16.0,
+     "p": 0.5107222700123772,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "exclude_predecessor": {
+     "ame_pp": 4.0,
+     "lo": -5.4,
+     "hi": 13.4,
+     "p": 0.40369947610118445,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 30
+    },
+    "with_daily_reports": {
+     "ame_pp": 5.7,
+     "lo": -3.2,
+     "hi": 14.5,
+     "p": 0.20866528714413432,
+     "n": 824,
+     "events": 187,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 38
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": -0.5,
+     "lo": -2.6,
+     "hi": 1.7,
+     "p": 0.65947192127835,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association",
+     "dropped_missing": 32
+    },
+    "ss_band": {
+     "ame_pp": 4.6,
+     "lo": -4.8,
+     "hi": 14.0,
+     "p": 0.33772869455715254,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "exclude_pa_imputed": {
+     "ame_pp": 3.9,
+     "lo": -5.6,
+     "hi": 13.3,
+     "p": 0.41987662623909555,
+     "n": 723,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 31
+    }
+   },
+   "g_pd": {
+    "ipw_context": {
+     "ame_pp": -1.7,
+     "lo": -8.9,
+     "hi": 5.5,
+     "p": 0.6473217884335387,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ipw_context_results": {
+     "ame_pp": -2.0,
+     "lo": -9.2,
+     "hi": 5.1,
+     "p": 0.5746847151992646,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ipw_prior_grade": {
+     "ame_pp": -2.5,
+     "lo": -9.7,
+     "hi": 4.8,
+     "p": 0.504407911693127,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ordinal": {
+     "ame_pp": -0.5,
+     "lo": -3.6,
+     "hi": 2.5,
+     "p": 0.7292985831127101,
+     "n": 724,
+     "events": 53,
+     "label": "no clear association",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": -2.1,
+     "lo": -10.9,
+     "hi": 6.8,
+     "p": 0.6488629738379108,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "exclude_predecessor": {
+     "ame_pp": -2.1,
+     "lo": -9.8,
+     "hi": 5.7,
+     "p": 0.60327666684752,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 30
+    },
+    "with_daily_reports": {
+     "ame_pp": -1.1,
+     "lo": -8.0,
+     "hi": 5.8,
+     "p": 0.7481790186248292,
+     "n": 824,
+     "events": 57,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 38
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": -0.2,
+     "lo": -1.7,
+     "hi": 1.4,
+     "p": 0.8366655100848933,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "ss_band": {
+     "ame_pp": -1.8,
+     "lo": -9.5,
+     "hi": 5.9,
+     "p": 0.6458202595719716,
+     "n": 724,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    },
+    "exclude_pa_imputed": {
+     "ame_pp": -2.1,
+     "lo": -9.9,
+     "hi": 5.7,
+     "p": 0.5931168752914528,
+     "n": 723,
+     "events": 53,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 31
+    }
+   },
+   "g_lg": {
+    "ipw_context": {
+     "ame_pp": 0.6,
+     "lo": -7.6,
+     "hi": 8.8,
+     "p": 0.8805062811828898,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ipw_context_results": {
+     "ame_pp": 0.0,
+     "lo": -8.0,
+     "hi": 8.0,
+     "p": 0.9971014187958909,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ipw_prior_grade": {
+     "ame_pp": -0.4,
+     "lo": -8.3,
+     "hi": 7.4,
+     "p": 0.9134556589563892,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "ordinal": {
+     "ame_pp": -3.7,
+     "lo": -9.0,
+     "hi": 1.7,
+     "p": 0.1762478164724287,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": 0.9,
+     "lo": -8.1,
+     "hi": 9.9,
+     "p": 0.8472323844727966,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "exclude_predecessor": {
+     "ame_pp": 0.9,
+     "lo": -7.8,
+     "hi": 9.5,
+     "p": 0.8411130004807523,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 30
+    },
+    "with_daily_reports": {
+     "ame_pp": 1.7,
+     "lo": -6.5,
+     "hi": 9.9,
+     "p": 0.6858026994012685,
+     "n": 824,
+     "events": 125,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 38
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": -0.3,
+     "lo": -2.1,
+     "hi": 1.6,
+     "p": 0.7850041069547231,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association",
+     "dropped_missing": 32
+    },
+    "ss_band": {
+     "ame_pp": 1.6,
+     "lo": -6.9,
+     "hi": 10.2,
+     "p": 0.7059691954273816,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    },
+    "exclude_pa_imputed": {
+     "ame_pp": 0.8,
+     "lo": -7.9,
+     "hi": 9.5,
+     "p": 0.8575128827054038,
+     "n": 723,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 31
+    }
+   },
+   "g_p16": {
+    "ipw_context": {
+     "ame_pp": -2.1,
+     "lo": -10.1,
+     "hi": 5.8,
+     "p": 0.6035316320141575,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "ipw_context_results": {
+     "ame_pp": -2.3,
+     "lo": -10.3,
+     "hi": 5.7,
+     "p": 0.5741449814095182,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "ipw_prior_grade": {
+     "ame_pp": -2.7,
+     "lo": -10.7,
+     "hi": 5.3,
+     "p": 0.5047195727220015,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "ordinal": {
+     "ame_pp": -0.3,
+     "lo": -5.4,
+     "hi": 4.7,
+     "p": 0.8961575473337889,
+     "n": 384,
+     "events": 45,
+     "label": "no clear association (inconclusive)",
+     "se_type": "HC1"
+    },
+    "cluster_la": {
+     "ame_pp": -2.6,
+     "lo": -11.9,
+     "hi": 6.7,
+     "p": 0.585505681300682,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "exclude_predecessor": {
+     "ame_pp": -2.6,
+     "lo": -11.7,
+     "hi": 6.5,
+     "p": 0.5771060268992326,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "with_daily_reports": {
+     "ame_pp": -1.1,
+     "lo": -9.6,
+     "hi": 7.4,
+     "p": 0.7981494282906344,
+     "n": 441,
+     "events": 47,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "idaci_linear_per_fifth": {
+     "ame_pp": -1.4,
+     "lo": -3.7,
+     "hi": 0.8,
+     "p": 0.21798174141956023,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "ss_band": {
+     "ame_pp": -3.2,
+     "lo": -12.4,
+     "hi": 6.0,
+     "p": 0.4931576538465351,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    },
+    "exclude_pa_imputed": {
+     "ame_pp": -2.6,
+     "lo": -11.7,
+     "hi": 6.5,
+     "p": 0.5771060268992326,
+     "n": 384,
+     "events": 45,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    }
+   }
+  }
+ },
+ "trend": {
+  "Primary": {
+   "g_inc": [
+    {
+     "to": "2026-01-31",
+     "n": 96,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 179,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 491,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 692,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 968,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 1439,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 7.0,
+     "lo": 1.8,
+     "hi": 12.3,
+     "p": 0.008926442566351443,
+     "n": 1732,
+     "events": 160,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 7.1,
+     "lo": 1.8,
+     "hi": 12.3,
+     "p": 0.008378068798421161,
+     "n": 1735,
+     "events": 161,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 6.4,
+     "lo": 1.8,
+     "hi": 11.1,
+     "p": 0.006520096356852635,
+     "n": 2304,
+     "events": 220,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 5.6,
+     "lo": 1.3,
+     "hi": 9.8,
+     "p": 0.010641148049157903,
+     "n": 2638,
+     "events": 246,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 5.4,
+     "lo": 1.5,
+     "hi": 9.3,
+     "p": 0.006229496083645798,
+     "n": 3074,
+     "events": 278,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_ct": [
+    {
+     "to": "2026-01-31",
+     "n": 96,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 179,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 491,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 692,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 12.6,
+     "lo": 4.0,
+     "hi": 21.3,
+     "p": 0.004228919913111452,
+     "n": 968,
+     "events": 228,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-05-31"
+    },
+    {
+     "ame_pp": 11.8,
+     "lo": 4.7,
+     "hi": 18.8,
+     "p": 0.0010967721235642066,
+     "n": 1439,
+     "events": 305,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-06-30"
+    },
+    {
+     "ame_pp": 9.7,
+     "lo": 3.0,
+     "hi": 16.4,
+     "p": 0.004335751671422904,
+     "n": 1732,
+     "events": 378,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 9.8,
+     "lo": 3.2,
+     "hi": 16.5,
+     "p": 0.003824478202018667,
+     "n": 1735,
+     "events": 379,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 10.0,
+     "lo": 4.2,
+     "hi": 15.8,
+     "p": 0.0006835253326985811,
+     "n": 2304,
+     "events": 494,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 9.6,
+     "lo": 4.1,
+     "hi": 15.0,
+     "p": 0.0005799375487255838,
+     "n": 2638,
+     "events": 553,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 8.1,
+     "lo": 3.1,
+     "hi": 13.0,
+     "p": 0.0015346258269577737,
+     "n": 3074,
+     "events": 625,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_ach": [
+    {
+     "to": "2026-01-31",
+     "n": 96,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 179,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 491,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 16.8,
+     "lo": 7.1,
+     "hi": 26.5,
+     "p": 0.0007062976988296658,
+     "n": 692,
+     "events": 205,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-04-30"
+    },
+    {
+     "ame_pp": 20.2,
+     "lo": 11.3,
+     "hi": 29.0,
+     "p": 8.801993840077408e-06,
+     "n": 968,
+     "events": 294,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-05-31"
+    },
+    {
+     "ame_pp": 19.0,
+     "lo": 11.6,
+     "hi": 26.5,
+     "p": 5.708188482961688e-07,
+     "n": 1439,
+     "events": 417,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-06-30"
+    },
+    {
+     "ame_pp": 16.7,
+     "lo": 9.6,
+     "hi": 23.7,
+     "p": 3.3317586810579705e-06,
+     "n": 1732,
+     "events": 507,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 16.8,
+     "lo": 9.8,
+     "hi": 23.8,
+     "p": 2.7798076384363406e-06,
+     "n": 1735,
+     "events": 508,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 17.7,
+     "lo": 11.5,
+     "hi": 23.8,
+     "p": 2.0356666479595667e-08,
+     "n": 2304,
+     "events": 656,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 17.2,
+     "lo": 11.4,
+     "hi": 23.0,
+     "p": 7.451156712129026e-09,
+     "n": 2638,
+     "events": 740,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 16.4,
+     "lo": 11.1,
+     "hi": 21.8,
+     "p": 1.5587735232351596e-09,
+     "n": 3074,
+     "events": 838,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_ab": [
+    {
+     "to": "2026-01-31",
+     "n": 96,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 179,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 491,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 692,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 968,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 19.6,
+     "lo": 13.1,
+     "hi": 26.1,
+     "p": 3.3289702921266013e-09,
+     "n": 1439,
+     "events": 199,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-06-30"
+    },
+    {
+     "ame_pp": 20.5,
+     "lo": 14.5,
+     "hi": 26.4,
+     "p": 1.439067872253487e-11,
+     "n": 1732,
+     "events": 246,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 20.5,
+     "lo": 14.6,
+     "hi": 26.5,
+     "p": 1.1725553173772573e-11,
+     "n": 1735,
+     "events": 247,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 20.8,
+     "lo": 15.5,
+     "hi": 26.1,
+     "p": 1.5209824215204962e-14,
+     "n": 2304,
+     "events": 328,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 19.3,
+     "lo": 14.3,
+     "hi": 24.2,
+     "p": 1.8277805894504857e-14,
+     "n": 2638,
+     "events": 368,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 18.5,
+     "lo": 14.0,
+     "hi": 23.0,
+     "p": 6.860132499777926e-16,
+     "n": 3074,
+     "events": 421,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_pd": [
+    {
+     "to": "2026-01-31",
+     "n": 96,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 179,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 491,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 692,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 968,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 1439,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 6.5,
+     "lo": 2.9,
+     "hi": 10.1,
+     "p": 0.0003727901665923586,
+     "n": 1732,
+     "events": 70,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 6.5,
+     "lo": 2.9,
+     "hi": 10.1,
+     "p": 0.0003801419631384617,
+     "n": 1735,
+     "events": 70,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 5.8,
+     "lo": 2.9,
+     "hi": 8.7,
+     "p": 7.219199513501142e-05,
+     "n": 2304,
+     "events": 86,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 5.8,
+     "lo": 3.1,
+     "hi": 8.5,
+     "p": 2.5969005841780173e-05,
+     "n": 2638,
+     "events": 99,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 5.3,
+     "lo": 2.8,
+     "hi": 7.7,
+     "p": 2.1734525642843412e-05,
+     "n": 3074,
+     "events": 116,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_lg": [
+    {
+     "to": "2026-01-31",
+     "n": 96,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 179,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 491,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 692,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 968,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 10.9,
+     "lo": 4.7,
+     "hi": 17.1,
+     "p": 0.0005747857983026436,
+     "n": 1439,
+     "events": 210,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-06-30"
+    },
+    {
+     "ame_pp": 7.8,
+     "lo": 1.9,
+     "hi": 13.7,
+     "p": 0.009156111158798453,
+     "n": 1732,
+     "events": 260,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 7.9,
+     "lo": 2.0,
+     "hi": 13.8,
+     "p": 0.008450144790248136,
+     "n": 1735,
+     "events": 261,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 8.1,
+     "lo": 3.0,
+     "hi": 13.3,
+     "p": 0.001940586356026118,
+     "n": 2304,
+     "events": 342,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 6.1,
+     "lo": 1.3,
+     "hi": 11.0,
+     "p": 0.012962256092885007,
+     "n": 2638,
+     "events": 380,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 5.9,
+     "lo": 1.5,
+     "hi": 10.3,
+     "p": 0.008385246211504495,
+     "n": 3074,
+     "events": 419,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_ey": [
+    {
+     "to": "2026-01-31",
+     "n": 91,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 173,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 469,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 656,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 908,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 1344,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 5.2,
+     "lo": -1.1,
+     "hi": 11.5,
+     "p": 0.10775167788342571,
+     "n": 1615,
+     "events": 193,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 5.2,
+     "lo": -1.1,
+     "hi": 11.5,
+     "p": 0.10677175391779234,
+     "n": 1618,
+     "events": 193,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 4.9,
+     "lo": -0.4,
+     "hi": 10.3,
+     "p": 0.07081462191887623,
+     "n": 2146,
+     "events": 250,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 4.6,
+     "lo": -0.2,
+     "hi": 9.4,
+     "p": 0.05960997410610315,
+     "n": 2453,
+     "events": 266,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 5.0,
+     "lo": 0.7,
+     "hi": 9.4,
+     "p": 0.022395345074869514,
+     "n": 2857,
+     "events": 297,
+     "label": "material",
+     "dropped_missing": 0,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ]
+  },
+  "Secondary": {
+   "g_inc": [
+    {
+     "to": "2026-01-31",
+     "n": 28,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 43,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 86,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 147,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 272,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 435,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-07-31",
+     "n": 525,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-08-31",
+     "n": 528,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-09-30",
+     "n": 657,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-10-31",
+     "n": 724,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 3.4,
+     "lo": -3.4,
+     "hi": 10.3,
+     "p": 0.3268261724052715,
+     "n": 824,
+     "events": 106,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 38,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_ct": [
+    {
+     "to": "2026-01-31",
+     "n": 28,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 43,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 86,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 147,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 272,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 4.1,
+     "lo": -8.0,
+     "hi": 16.2,
+     "p": 0.5037170806881247,
+     "n": 435,
+     "events": 108,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 14,
+     "to": "2026-06-30"
+    },
+    {
+     "ame_pp": 5.5,
+     "lo": -5.5,
+     "hi": 16.6,
+     "p": 0.3263549985992208,
+     "n": 525,
+     "events": 122,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 19,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 5.6,
+     "lo": -5.4,
+     "hi": 16.6,
+     "p": 0.3212767969589474,
+     "n": 528,
+     "events": 122,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 19,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 6.7,
+     "lo": -3.3,
+     "hi": 16.6,
+     "p": 0.19062988742203876,
+     "n": 657,
+     "events": 154,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 29,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 7.4,
+     "lo": -2.4,
+     "hi": 17.2,
+     "p": 0.1385260859439136,
+     "n": 724,
+     "events": 168,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 7.2,
+     "lo": -2.1,
+     "hi": 16.5,
+     "p": 0.130950013777184,
+     "n": 824,
+     "events": 186,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 38,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_ach": [
+    {
+     "to": "2026-01-31",
+     "n": 28,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 43,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 86,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 147,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 272,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 435,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-07-31",
+     "n": 525,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-08-31",
+     "n": 528,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 16.6,
+     "lo": 5.4,
+     "hi": 27.7,
+     "p": 0.003682954975772032,
+     "n": 657,
+     "events": 220,
+     "label": "material",
+     "dropped_missing": 29,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 16.9,
+     "lo": 6.0,
+     "hi": 27.8,
+     "p": 0.002350789518999546,
+     "n": 724,
+     "events": 242,
+     "label": "material",
+     "dropped_missing": 32,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 16.0,
+     "lo": 6.0,
+     "hi": 26.0,
+     "p": 0.0017745277964683439,
+     "n": 824,
+     "events": 276,
+     "label": "material",
+     "dropped_missing": 38,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_ab": [
+    {
+     "to": "2026-01-31",
+     "n": 28,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 43,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 86,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 147,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 272,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": 0.0,
+     "lo": -11.1,
+     "hi": 11.1,
+     "p": 0.9978626798979946,
+     "n": 435,
+     "events": 97,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 14,
+     "to": "2026-06-30"
+    },
+    {
+     "ame_pp": 3.9,
+     "lo": -6.4,
+     "hi": 14.2,
+     "p": 0.459325074035457,
+     "n": 525,
+     "events": 115,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 19,
+     "to": "2026-07-31"
+    },
+    {
+     "ame_pp": 3.9,
+     "lo": -6.4,
+     "hi": 14.2,
+     "p": 0.4562130495440994,
+     "n": 528,
+     "events": 115,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 19,
+     "to": "2026-08-31"
+    },
+    {
+     "ame_pp": 0.9,
+     "lo": -9.1,
+     "hi": 10.8,
+     "p": 0.8642953179019677,
+     "n": 657,
+     "events": 148,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 29,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 4.0,
+     "lo": -5.4,
+     "hi": 13.4,
+     "p": 0.40369947610118445,
+     "n": 724,
+     "events": 164,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 5.7,
+     "lo": -3.2,
+     "hi": 14.5,
+     "p": 0.20866528714413432,
+     "n": 824,
+     "events": 187,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 38,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_pd": [
+    {
+     "to": "2026-01-31",
+     "n": 28,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 43,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 86,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 147,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 272,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 435,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-07-31",
+     "n": 525,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-08-31",
+     "n": 528,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-09-30",
+     "n": 657,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-10-31",
+     "n": 724,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": -1.1,
+     "lo": -8.0,
+     "hi": 5.8,
+     "p": 0.7481790186248292,
+     "n": 824,
+     "events": 57,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 38,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_lg": [
+    {
+     "to": "2026-01-31",
+     "n": 28,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 43,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 86,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 147,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 272,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 435,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-07-31",
+     "n": 525,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-08-31",
+     "n": 528,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": -0.8,
+     "lo": -9.8,
+     "hi": 8.1,
+     "p": 0.8528470216560888,
+     "n": 657,
+     "events": 99,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 29,
+     "to": "2026-09-30"
+    },
+    {
+     "ame_pp": 0.9,
+     "lo": -7.8,
+     "hi": 9.5,
+     "p": 0.8411130004807523,
+     "n": 724,
+     "events": 110,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32,
+     "to": "2026-10-31"
+    },
+    {
+     "ame_pp": 1.7,
+     "lo": -6.5,
+     "hi": 9.9,
+     "p": 0.6858026994012685,
+     "n": 824,
+     "events": 125,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 38,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ],
+   "g_p16": [
+    {
+     "to": "2026-01-31",
+     "n": 12,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-02-28",
+     "n": 15,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-03-31",
+     "n": 32,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-04-30",
+     "n": 67,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-05-31",
+     "n": 160,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-06-30",
+     "n": 267,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-07-31",
+     "n": 313,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-08-31",
+     "n": 314,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-09-30",
+     "n": 355,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "to": "2026-10-31",
+     "n": 384,
+     "label": "below minimum sample or events: not reported"
+    },
+    {
+     "ame_pp": -1.1,
+     "lo": -9.6,
+     "hi": 7.4,
+     "p": 0.7981494282906344,
+     "n": 441,
+     "events": 47,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2,
+     "to": "2026-11-23 (with daily-read reports)"
+    }
+   ]
+  }
+ },
+ "exploratory_other_context_per_sd": {
+  "Primary": {
+   "g_inc": {
+    "z_ehc": {
+     "ame_pp_per_sd": 0.8,
+     "lo": -0.1,
+     "hi": 1.7
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 0.1,
+     "lo": -0.9,
+     "hi": 1.2
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -2.1,
+     "lo": -3.5,
+     "hi": -0.7
+    }
+   },
+   "g_ct": {
+    "z_ehc": {
+     "ame_pp_per_sd": 3.2,
+     "lo": 1.7,
+     "hi": 4.7
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 3.0,
+     "lo": 1.5,
+     "hi": 4.5
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -2.9,
+     "lo": -4.8,
+     "hi": -0.9
+    }
+   },
+   "g_ach": {
+    "z_ehc": {
+     "ame_pp_per_sd": 4.2,
+     "lo": 2.5,
+     "hi": 5.9
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 5.2,
+     "lo": 3.5,
+     "hi": 7.0
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -2.4,
+     "lo": -4.6,
+     "hi": -0.3
+    }
+   },
+   "g_ab": {
+    "z_ehc": {
+     "ame_pp_per_sd": 1.5,
+     "lo": 0.3,
+     "hi": 2.7
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 2.7,
+     "lo": 1.4,
+     "hi": 4.0
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -1.7,
+     "lo": -3.5,
+     "hi": 0.0
+    }
+   },
+   "g_pd": {
+    "z_ehc": {
+     "ame_pp_per_sd": 0.3,
+     "lo": -0.3,
+     "hi": 0.9
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 0.6,
+     "lo": -0.0,
+     "hi": 1.3
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -1.1,
+     "lo": -2.0,
+     "hi": -0.2
+    }
+   },
+   "g_lg": {
+    "z_ehc": {
+     "ame_pp_per_sd": 1.1,
+     "lo": -0.1,
+     "hi": 2.2
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 1.8,
+     "lo": 0.6,
+     "hi": 3.1
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -2.0,
+     "lo": -3.7,
+     "hi": -0.3
+    }
+   },
+   "g_ey": {
+    "z_ehc": {
+     "ame_pp_per_sd": 1.0,
+     "lo": -0.0,
+     "hi": 2.1
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 1.4,
+     "lo": 0.2,
+     "hi": 2.6
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -1.8,
+     "lo": -3.3,
+     "hi": -0.3
+    }
+   }
+  },
+  "Secondary": {
+   "g_inc": {
+    "z_ehc": {
+     "ame_pp_per_sd": -0.5,
+     "lo": -2.9,
+     "hi": 1.9
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 0.0,
+     "lo": -2.8,
+     "hi": 2.8
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": 2.5,
+     "lo": -0.1,
+     "hi": 5.1
+    },
+    "z_pa": {
+     "ame_pp_per_sd": -7.5,
+     "lo": -11.1,
+     "hi": -3.9
+    },
+    "z_ss": {
+     "ame_pp_per_sd": -8.5,
+     "lo": -11.0,
+     "hi": -6.1
+    }
+   },
+   "g_ct": {
+    "z_ehc": {
+     "ame_pp_per_sd": 0.1,
+     "lo": -3.5,
+     "hi": 3.6
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 1.7,
+     "lo": -1.7,
+     "hi": 5.1
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": 2.7,
+     "lo": -0.7,
+     "hi": 6.1
+    },
+    "z_pa": {
+     "ame_pp_per_sd": -13.5,
+     "lo": -17.9,
+     "hi": -9.0
+    },
+    "z_ss": {
+     "ame_pp_per_sd": -15.7,
+     "lo": -18.4,
+     "hi": -13.0
+    }
+   },
+   "g_ach": {
+    "z_ehc": {
+     "ame_pp_per_sd": 1.2,
+     "lo": -1.2,
+     "hi": 3.6
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 3.0,
+     "lo": -0.7,
+     "hi": 6.7
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": 1.3,
+     "lo": -2.2,
+     "hi": 4.8
+    },
+    "z_pa": {
+     "ame_pp_per_sd": -15.8,
+     "lo": -20.4,
+     "hi": -11.2
+    },
+    "z_nonmob": {
+     "ame_pp_per_sd": -6.0,
+     "lo": -9.5,
+     "hi": -2.6
+    },
+    "z_ss": {
+     "ame_pp_per_sd": -22.5,
+     "lo": -25.0,
+     "hi": -20.0
+    }
+   },
+   "g_ab": {
+    "z_ehc": {
+     "ame_pp_per_sd": 1.0,
+     "lo": -2.1,
+     "hi": 4.1
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 5.4,
+     "lo": 1.9,
+     "hi": 9.0
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": 2.9,
+     "lo": -0.4,
+     "hi": 6.2
+    },
+    "z_pa": {
+     "ame_pp_per_sd": -10.4,
+     "lo": -14.8,
+     "hi": -6.0
+    },
+    "z_ss": {
+     "ame_pp_per_sd": -11.2,
+     "lo": -14.1,
+     "hi": -8.4
+    }
+   },
+   "g_pd": {
+    "z_ehc": {
+     "ame_pp_per_sd": -0.3,
+     "lo": -2.3,
+     "hi": 1.7
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 0.7,
+     "lo": -1.5,
+     "hi": 3.0
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": 1.8,
+     "lo": -0.1,
+     "hi": 3.7
+    },
+    "z_pa": {
+     "ame_pp_per_sd": -5.1,
+     "lo": -8.3,
+     "hi": -1.9
+    },
+    "z_ss": {
+     "ame_pp_per_sd": -5.4,
+     "lo": -7.6,
+     "hi": -3.3
+    }
+   },
+   "g_lg": {
+    "z_ehc": {
+     "ame_pp_per_sd": 0.7,
+     "lo": -2.2,
+     "hi": 3.5
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": 2.0,
+     "lo": -1.0,
+     "hi": 4.9
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": 3.6,
+     "lo": 0.8,
+     "hi": 6.5
+    },
+    "z_pa": {
+     "ame_pp_per_sd": -8.9,
+     "lo": -12.7,
+     "hi": -5.0
+    },
+    "z_ss": {
+     "ame_pp_per_sd": -11.2,
+     "lo": -13.7,
+     "hi": -8.6
+    }
+   },
+   "g_p16": {
+    "z_ehc": {
+     "ame_pp_per_sd": -1.8,
+     "lo": -5.6,
+     "hi": 2.0
+    },
+    "z_sensup": {
+     "ame_pp_per_sd": -0.7,
+     "lo": -4.4,
+     "hi": 3.1
+    },
+    "z_logsize": {
+     "ame_pp_per_sd": -2.7,
+     "lo": -5.9,
+     "hi": 0.5
+    },
+    "z_pa": {
+     "ame_pp_per_sd": -9.6,
+     "lo": -15.6,
+     "hi": -3.6
+    },
+    "z_ss": {
+     "ame_pp_per_sd": -2.7,
+     "lo": -6.1,
+     "hi": 0.7
+    }
+   }
+  }
+ },
+ "exploratory_strong_or_above": {
+  "note": "AME (IDACI 5 vs 1) on the probability of Strong standard or Exceptional",
+  "Primary": {
+   "g_inc": {
+    "raw": {
+     "ame_pp": -0.8,
+     "lo": -6.5,
+     "hi": 4.8,
+     "p": 0.77169055156019,
+     "n": 2638,
+     "events": 863,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -7.5,
+     "lo": -14.0,
+     "hi": -0.9,
+     "p": 0.025596320846847712,
+     "n": 2638,
+     "events": 863,
+     "label": "material",
+     "dropped_missing": 0
+    }
+   },
+   "g_ct": {
+    "raw": {
+     "ame_pp": -0.7,
+     "lo": -5.0,
+     "hi": 3.6,
+     "p": 0.7494196327028295,
+     "n": 2638,
+     "events": 378,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -0.9,
+     "lo": -6.2,
+     "hi": 4.3,
+     "p": 0.7234882546521717,
+     "n": 2638,
+     "events": 378,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    }
+   },
+   "g_ach": {
+    "raw": {
+     "ame_pp": -6.8,
+     "lo": -11.2,
+     "hi": -2.5,
+     "p": 0.0021360750339886733,
+     "n": 2638,
+     "events": 382,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -7.7,
+     "lo": -12.7,
+     "hi": -2.6,
+     "p": 0.003153544694395516,
+     "n": 2638,
+     "events": 382,
+     "label": "material",
+     "dropped_missing": 0
+    }
+   },
+   "g_ab": {
+    "raw": {
+     "ame_pp": -20.0,
+     "lo": -25.3,
+     "hi": -14.6,
+     "p": 4.0098292166561243e-13,
+     "n": 2638,
+     "events": 756,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -18.9,
+     "lo": -25.1,
+     "hi": -12.7,
+     "p": 2.066610976891653e-09,
+     "n": 2638,
+     "events": 756,
+     "label": "material",
+     "dropped_missing": 0
+    }
+   },
+   "g_pd": {
+    "raw": {
+     "ame_pp": -6.9,
+     "lo": -12.7,
+     "hi": -1.1,
+     "p": 0.02064278903030288,
+     "n": 2638,
+     "events": 1015,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -9.6,
+     "lo": -16.1,
+     "hi": -3.2,
+     "p": 0.0035158045543511487,
+     "n": 2638,
+     "events": 1015,
+     "label": "material",
+     "dropped_missing": 0
+    }
+   },
+   "g_lg": {
+    "raw": {
+     "ame_pp": -2.9,
+     "lo": -7.8,
+     "hi": 1.9,
+     "p": 0.23803075762995235,
+     "n": 2638,
+     "events": 534,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -5.2,
+     "lo": -11.0,
+     "hi": 0.5,
+     "p": 0.0744838685271215,
+     "n": 2638,
+     "events": 534,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    }
+   },
+   "g_ey": {
+    "raw": {
+     "ame_pp": -7.5,
+     "lo": -12.9,
+     "hi": -2.0,
+     "p": 0.007336491332251665,
+     "n": 2453,
+     "events": 653,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -5.3,
+     "lo": -11.6,
+     "hi": 1.1,
+     "p": 0.104014797237153,
+     "n": 2453,
+     "events": 653,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    }
+   }
+  },
+  "Secondary": {
+   "g_inc": {
+    "raw": {
+     "ame_pp": -8.3,
+     "lo": -19.3,
+     "hi": 2.6,
+     "p": 0.13657538473408304,
+     "n": 756,
+     "events": 250,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 6.5,
+     "lo": -3.5,
+     "hi": 16.5,
+     "p": 0.20401668119837407,
+     "n": 724,
+     "events": 241,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    }
+   },
+   "g_ct": {
+    "raw": {
+     "ame_pp": -5.8,
+     "lo": -15.1,
+     "hi": 3.5,
+     "p": 0.2240918632488491,
+     "n": 756,
+     "events": 148,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 8.0,
+     "lo": 0.6,
+     "hi": 15.4,
+     "p": 0.03315117891178391,
+     "n": 724,
+     "events": 143,
+     "label": "material",
+     "dropped_missing": 32
+    }
+   },
+   "g_ach": {
+    "raw": {
+     "ame_pp": -12.4,
+     "lo": -22.3,
+     "hi": -2.6,
+     "p": 0.01315419868378576,
+     "n": 756,
+     "events": 161,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 2.7,
+     "lo": -5.6,
+     "hi": 11.1,
+     "p": 0.5187354016805293,
+     "n": 724,
+     "events": 157,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 32
+    }
+   },
+   "g_ab": {
+    "raw": {
+     "ame_pp": -10.8,
+     "lo": -21.4,
+     "hi": -0.3,
+     "p": 0.044743482939239076,
+     "n": 756,
+     "events": 225,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 12.4,
+     "lo": 3.2,
+     "hi": 21.6,
+     "p": 0.008493886954245744,
+     "n": 724,
+     "events": 212,
+     "label": "material",
+     "dropped_missing": 32
+    }
+   },
+   "g_pd": {
+    "raw": {
+     "ame_pp": -19.8,
+     "lo": -30.9,
+     "hi": -8.6,
+     "p": 0.0005171149147174277,
+     "n": 756,
+     "events": 278,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 0.1,
+     "lo": -10.9,
+     "hi": 11.1,
+     "p": 0.9874788222570771,
+     "n": 724,
+     "events": 263,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 32
+    }
+   },
+   "g_lg": {
+    "raw": {
+     "ame_pp": -5.2,
+     "lo": -15.4,
+     "hi": 4.9,
+     "p": 0.3132326314894289,
+     "n": 756,
+     "events": 199,
+     "label": "no clear association (inconclusive)",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": 9.2,
+     "lo": 0.0,
+     "hi": 18.3,
+     "p": 0.049889993136544,
+     "n": 724,
+     "events": 194,
+     "label": "material",
+     "dropped_missing": 32
+    }
+   },
+   "g_p16": {
+    "raw": {
+     "ame_pp": -23.0,
+     "lo": -37.6,
+     "hi": -8.5,
+     "p": 0.0019490235279490144,
+     "n": 386,
+     "events": 113,
+     "label": "material",
+     "dropped_missing": 0
+    },
+    "controlled": {
+     "ame_pp": -5.4,
+     "lo": -18.7,
+     "hi": 8.0,
+     "p": 0.4334474137584643,
+     "n": 384,
+     "events": 112,
+     "label": "low events per variable: not assessed for materiality",
+     "flag": "low_epv",
+     "dropped_missing": 2
+    }
+   }
+  }
+ },
+ "exploratory_secondary_decomposition": {
+  "g_inc": {
+   "idaci_plus_pa": {
+    "ame_pp": 5.3,
+    "lo": -1.7,
+    "hi": 12.3,
+    "p": 0.14115755535756327,
+    "n": 726,
+    "events": 89,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 30
+   },
+   "idaci_plus_ss": {
+    "ame_pp": 9.2,
+    "lo": 2.9,
+    "hi": 15.5,
+    "p": 0.004415103977301953,
+    "n": 724,
+    "events": 89,
+    "label": "material",
+    "dropped_missing": 32
+   },
+   "idaci_plus_pa_ss": {
+    "ame_pp": 5.2,
+    "lo": -1.9,
+    "hi": 12.3,
+    "p": 0.15204527778517868,
+    "n": 724,
+    "events": 89,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 32
+   },
+   "idaci_plus_sen_size": {
+    "ame_pp": 9.5,
+    "lo": 3.5,
+    "hi": 15.5,
+    "p": 0.0020087120059201482,
+    "n": 754,
+    "events": 90,
+    "label": "material",
+    "dropped_missing": 2
+   }
+  },
+  "g_ct": {
+   "idaci_plus_pa": {
+    "ame_pp": 9.6,
+    "lo": -0.3,
+    "hi": 19.5,
+    "p": 0.05645203314164665,
+    "n": 726,
+    "events": 168,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 30
+   },
+   "idaci_plus_ss": {
+    "ame_pp": 19.0,
+    "lo": 10.4,
+    "hi": 27.5,
+    "p": 1.4172836398590001e-05,
+    "n": 724,
+    "events": 168,
+    "label": "material",
+    "dropped_missing": 32
+   },
+   "idaci_plus_pa_ss": {
+    "ame_pp": 8.4,
+    "lo": -1.3,
+    "hi": 18.2,
+    "p": 0.09088718656146647,
+    "n": 724,
+    "events": 168,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 32
+   },
+   "idaci_plus_sen_size": {
+    "ame_pp": 19.0,
+    "lo": 10.6,
+    "hi": 27.5,
+    "p": 9.099667399216447e-06,
+    "n": 754,
+    "events": 172,
+    "label": "material",
+    "dropped_missing": 2
+   }
+  },
+  "g_ach": {
+   "idaci_plus_pa": {
+    "ame_pp": 21.8,
+    "lo": 11.3,
+    "hi": 32.2,
+    "p": 4.253360301270149e-05,
+    "n": 726,
+    "events": 242,
+    "label": "material",
+    "dropped_missing": 30
+   },
+   "idaci_plus_ss": {
+    "ame_pp": 35.4,
+    "lo": 26.7,
+    "hi": 44.1,
+    "p": 1.5742725739237521e-15,
+    "n": 724,
+    "events": 242,
+    "label": "material",
+    "dropped_missing": 32
+   },
+   "idaci_plus_pa_ss": {
+    "ame_pp": 17.9,
+    "lo": 7.4,
+    "hi": 28.3,
+    "p": 0.0007816515295329257,
+    "n": 724,
+    "events": 242,
+    "label": "material",
+    "dropped_missing": 32
+   },
+   "idaci_plus_sen_size": {
+    "ame_pp": 33.5,
+    "lo": 24.8,
+    "hi": 42.1,
+    "p": 2.850880458669984e-14,
+    "n": 754,
+    "events": 247,
+    "label": "material",
+    "dropped_missing": 2
+   }
+  },
+  "g_ab": {
+   "idaci_plus_pa": {
+    "ame_pp": 5.1,
+    "lo": -4.8,
+    "hi": 15.1,
+    "p": 0.31377884629743796,
+    "n": 726,
+    "events": 164,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 30
+   },
+   "idaci_plus_ss": {
+    "ame_pp": 14.6,
+    "lo": 6.0,
+    "hi": 23.2,
+    "p": 0.0008586818977891047,
+    "n": 724,
+    "events": 164,
+    "label": "material",
+    "dropped_missing": 32
+   },
+   "idaci_plus_pa_ss": {
+    "ame_pp": 4.7,
+    "lo": -5.2,
+    "hi": 14.5,
+    "p": 0.3521162142963352,
+    "n": 724,
+    "events": 164,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 32
+   },
+   "idaci_plus_sen_size": {
+    "ame_pp": 13.4,
+    "lo": 5.1,
+    "hi": 21.7,
+    "p": 0.0015582563995260614,
+    "n": 754,
+    "events": 168,
+    "label": "material",
+    "dropped_missing": 2
+   }
+  },
+  "g_pd": {
+   "idaci_plus_pa": {
+    "ame_pp": -0.8,
+    "lo": -8.2,
+    "hi": 6.5,
+    "p": 0.8203220512527014,
+    "n": 726,
+    "events": 53,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 30
+   },
+   "idaci_plus_ss": {
+    "ame_pp": 2.9,
+    "lo": -3.2,
+    "hi": 8.9,
+    "p": 0.35094819965262847,
+    "n": 724,
+    "events": 53,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 32
+   },
+   "idaci_plus_pa_ss": {
+    "ame_pp": -1.0,
+    "lo": -8.5,
+    "hi": 6.6,
+    "p": 0.8008683614582861,
+    "n": 724,
+    "events": 53,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 32
+   },
+   "idaci_plus_sen_size": {
+    "ame_pp": 2.7,
+    "lo": -3.0,
+    "hi": 8.3,
+    "p": 0.3560643065375652,
+    "n": 754,
+    "events": 53,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 2
+   }
+  },
+  "g_lg": {
+   "idaci_plus_pa": {
+    "ame_pp": 2.6,
+    "lo": -5.7,
+    "hi": 11.0,
+    "p": 0.5366457741324886,
+    "n": 726,
+    "events": 110,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 30
+   },
+   "idaci_plus_ss": {
+    "ame_pp": 8.2,
+    "lo": 0.9,
+    "hi": 15.6,
+    "p": 0.028736438278711852,
+    "n": 724,
+    "events": 110,
+    "label": "material",
+    "dropped_missing": 32
+   },
+   "idaci_plus_pa_ss": {
+    "ame_pp": 2.1,
+    "lo": -6.6,
+    "hi": 10.8,
+    "p": 0.6371551713454495,
+    "n": 724,
+    "events": 110,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 32
+   },
+   "idaci_plus_sen_size": {
+    "ame_pp": 8.7,
+    "lo": 1.7,
+    "hi": 15.7,
+    "p": 0.015180435075487313,
+    "n": 754,
+    "events": 114,
+    "label": "material",
+    "dropped_missing": 2
+   }
+  },
+  "g_p16": {
+   "idaci_plus_pa": {
+    "ame_pp": -3.2,
+    "lo": -12.8,
+    "hi": 6.4,
+    "p": 0.51995853294272,
+    "n": 385,
+    "events": 45,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 1
+   },
+   "idaci_plus_ss": {
+    "ame_pp": 1.3,
+    "lo": -7.3,
+    "hi": 9.8,
+    "p": 0.7745534253210955,
+    "n": 384,
+    "events": 45,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 2
+   },
+   "idaci_plus_pa_ss": {
+    "ame_pp": -2.8,
+    "lo": -12.2,
+    "hi": 6.6,
+    "p": 0.5579549797965677,
+    "n": 384,
+    "events": 45,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 2
+   },
+   "idaci_plus_sen_size": {
+    "ame_pp": 0.4,
+    "lo": -7.9,
+    "hi": 8.7,
+    "p": 0.926257863839871,
+    "n": 386,
+    "events": 45,
+    "label": "no clear association (inconclusive)",
+    "dropped_missing": 0
+   }
+  }
+ }
+}
