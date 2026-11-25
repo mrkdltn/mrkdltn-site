@@ -99,3 +99,12 @@ Mark said the tool appears overly complex and asked for a fresh review of the wh
 Mark accepted the direction on 24 Nov ("Ok go"). School page rebuilt as the example: 3.1 phone screens with "More detail" closed (was 7.7), four sections (was eight), no controls, the answer at about half a screen. Search now matches whole words and ranks schools properly ("st mary" finds St Mary's schools). Awaiting Mark's view before the trust page is started.
 
 Mark rejected the cut-down school page on seeing it (24 Nov) and asked to roll back and refine and organise instead. Rolled back; the search fix is kept. Next: Mark to choose how the fuller content should be organised.
+
+### Refining without cutting, 25 November 2026
+
+| Item | State |
+| --- | --- |
+| Tabs on the local authority page | Built as the example: Overview, Pupils, Schools, Enforcement, Method. Longest tab on a phone is Enforcement at 8.8 screens; the page was 16.6 in one run. Awaiting Mark |
+| Headings that state a finding | Built on the same page: summary, year by year, compared with other authorities, pupil groups, school by school and enforcement. Awaiting Mark |
+| Summary that names every comparison; one line reconciling this year so far with last year's two terms; controls beside what they change; menus that open a list, not a random place; (i) notes in place of paragraphs | Not started |
+| The same treatment for county, trust, constituency, ward, school, Areas and Patterns pages | Not started; waits for Mark's view of the example |

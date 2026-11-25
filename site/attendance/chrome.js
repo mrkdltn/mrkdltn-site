@@ -2,7 +2,7 @@
    It lists the sections on screen (those marked data-nav and not hidden), keeps the current one underlined,
    and rebuilds itself when a view shows or hides a section. */
 (function () {
-  const host = document.getElementById('ax-secnav'); if (!host) return;
+  const host = document.getElementById('ax-secnav'); if (!host || window.AXtabs) return;          // a page organised into tabs (tabs.js) has its own bar
   let sig = '', io = null, links = [];
   const secs = () => [...document.querySelectorAll('main.ax section[data-nav]')].filter((s) => !s.hidden && s.offsetParent !== null);
   const build = () => {

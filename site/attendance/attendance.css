@@ -278,3 +278,11 @@ body.explorer{background:#ECE9E1}
 @media (max-width:560px){.en-other th:nth-child(3),.en-other td:nth-child(3){display:none}.ax-table td.en-qc{padding-left:8px}.en-other td:first-child{max-width:112px}.en-other .en-ql{font-size:13px}}
 .en-qr{display:none}
 @media (max-width:560px){.en-other th:nth-child(5),.en-other td.en-qreg{display:none}.en-qr{display:block;font-size:13px;color:var(--muted);margin-top:2px}}
+/* Tabs for a long page (tabs.js) and headings that state a finding */
+.ax .ax-tab-off{display:none!important}
+.ax-secnav[role=tablist] a,.ax-secnav .in[role=tablist] a{padding:15px 14px 13px;font-size:15px;min-height:44px;box-sizing:border-box}
+.ax-secnav .in[role=tablist] a:first-child{padding-left:0}
+.ax-secnav .in[role=tablist] a:focus-visible{outline:2px solid #0B1A2E;outline-offset:-2px}
+.ax-kick{font:600 12px/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#7A5C14;margin:0 0 6px}
+.ax-kick + h2{max-width:34ch}
+@media print{.ax .ax-tab-off{display:revert!important}}

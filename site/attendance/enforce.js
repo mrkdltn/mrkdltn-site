@@ -75,6 +75,11 @@
     const card = $('gx-enf-c'), q = new URLSearchParams(location.search), kind = q.get('k'), id = q.get('id'), rec = (kind === 'a' || kind === 'y') && D.areas[id], E = D.areas.E92000001, L = String(D.latest);
     card.hidden = !(rec && rec.y[L]); area.innerHTML = ''; if (card.hidden) return;
     const name = ($('gx-name') || {}).textContent || 'This area', issued = col(rec, L, 'issued');
+    // the heading says where the two kinds of notice stand against England, for the authority's size
+    { const h2 = card.querySelector('h2'), label = 'Penalty notices and other legal measures'; let k = h2.previousElementSibling; if (!k || !k.classList.contains('ax-kick')) { k = document.createElement('p'); k.className = 'ax-kick'; h2.before(k); }
+      const w = (c) => { const v = col(rec, L, c), r = per(rec, L, c, 1000), e = per(E, L, c, 1000); return v == null ? null : v === 0 ? 'none' : v < 0 ? 'fewer than 10' : r > e * 1.1 ? 'more' : r < e * 0.9 ? 'fewer' : 'about as many'; }, a = w('hols'), b = w('other');
+      const on = kind === 'a' && a && b, cap1 = (t) => t.replace(/^./, (c) => c.toUpperCase()), vs = (x) => (x === 'none' || x === 'fewer than 10' ? '' : x === 'about as many' ? ' as across England for its size' : ' than across England for its size');
+      k.hidden = !on; k.textContent = label; h2.textContent = on ? `${cap1(a)} penalty notices for term-time holiday${vs(a)}, and ${b} for other unauthorised absence${a === b || vs(a) ? '' : vs(b)}` : label; }
     add(area, 'p', 'ax-sub', `Penalty notices to parents in ${ay(L)}, kept in two separate strands because they answer different things: notices for a holiday taken in term time without the school’s agreement, and notices for other unauthorised absence from school. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
     const years = Object.keys(E.y).filter((y) => +y >= 2016).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair en-strands');
     const strand = (c, title, noun, absKey, absName, absNote) => { const box = add(grid, 'div', 'en-strand'); add(box, 'h3', 'en-st', title);
@@ -153,7 +158,7 @@
   d3.json('/attendance/data/prm.json').then((j) => { D = j; j.cols.forEach((c, i) => { C[c] = i; });
     if (area) { let last = ''; const go = () => { const sig = location.search + '|' + (($('gx-name') || {}).textContent || ''); if (sig === last) return; last = sig; place(); };
       const nm = $('gx-name'); if (nm) new MutationObserver(go).observe(nm, {childList: true, characterData: true, subtree: true}); addEventListener('popstate', () => setTimeout(go, 50)); go();
-      let t = null; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { last = ''; go(); }, 200); }); }
+      let t = null; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { last = ''; go(); }, 200); }); addEventListener('ax-redraw', () => { last = ''; go(); }); }
     if (all) { england(); let t = null, w = innerWidth; addEventListener('resize', () => { if (innerWidth === w) return; w = innerWidth; clearTimeout(t); t = setTimeout(england, 200); }); }
   }).catch(() => { const c = $('gx-enf-c') || $('px-enf-c'); if (c) c.hidden = true; });
 })();

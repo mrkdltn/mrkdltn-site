@@ -52,6 +52,12 @@
   const of = () => (kind === 't' ? 'of ' + G.name : 'in ' + G.name);
 
   // what the controls above have chosen, said in the summary so their effect is never out of sight
+  // A section's heading says what the section shows; the label it had becomes a small line above it. Local authority pages
+  // first. Where there is nothing to say (a change view, or no figure) the heading falls back to the label.
+  const finding = (h2, label, text) => { if (!h2) return; let k = h2.previousElementSibling; if (!k || !k.classList.contains('ax-kick')) { k = document.createElement('p'); k.className = 'ax-kick'; h2.before(k); }
+    const on = kind === 'a' && !!text; k.hidden = !on; k.textContent = label; h2.textContent = on ? text : label; };
+  const hl = (d) => (d === 0 ? 'the same as' : d < 0 ? 'lower than' : 'higher than');
+
   function focusLine() {
     if (!phase || (meas === 'abs' && view === 'now' && !pgOn())) return '';
     const M = MEAS[meas], L = B.latest, P0 = view === 'yr' ? prevP() : null, i = pgi(), d = (a, b) => (a == null || b == null ? null : rd(a, b));
@@ -75,6 +81,7 @@
     $('gx-period').textContent = 'Absence in the ' + period(L); $('gx-table-p').textContent = period(L);
     $('gx-src').textContent = `“${B.release.autumn_spring.title}” (published ${date(B.release.autumn_spring.published)}) and “${B.release.full_year.title}” (published ${date(B.release.full_year.published)})`;
     const R = $('gx-reading'), K = $('gx-kpis'), now = phase && mine(L), was = phase && prevP && mine(prevP), e = phase && eng(phase, L);
+    finding($('gx-period'), 'Absence in the ' + period(L), now && e ? `Absence in its ${PH[phase]} is ${hl(gap(now[0], e[0]))} across England` + (was ? `, and ${gap(now[0], was[0]) === 0 ? 'unchanged from' : hl(gap(now[0], was[0]))} a year earlier` : '') : null);
     if (!now) { K.innerHTML = '';
       R.textContent = kind === 't' && !G.pooled ? `${G.name} has ${count(G.n)} schools. A figure for all of a trust’s schools taken together is given only for trusts with five or more, so its schools are listed below without one.`
         : `There are too few schools of any one phase here for a figure across them, so the schools are listed below without one.`; return; }
@@ -92,6 +99,8 @@
     card.querySelector('.ax-sub').hidden = meas === 'sev';
     if (meas === 'sev') { card.hidden = !phase; el.innerHTML = ''; $('gx-strip-r').textContent = 'Severe absence is never shown for a single school, where it usually describes a handful of children. Choose overall or persistent absence to see each school.'; return; }
     card.hidden = S.length < 2; if (S.length < 2) return;
+    { const ev = (eng(ph, L) || [])[M.b], above = ev == null ? null : S.filter((x) => x[M.s] > ev).length;
+      finding(card.querySelector('h2'), 'School by school', above == null ? null : `${above === S.length ? 'All' : above === 0 ? 'None' : above} of its ${S.length} ${PH[ph]} ${above === 1 ? 'has' : 'have'} higher ${M.n} than England’s ${PH[ph]} taken together`); }
     document.querySelectorAll('.gx-phase-n').forEach((n) => { n.textContent = PH[ph]; }); document.querySelectorAll('.gx-meas-n').forEach((n) => { n.textContent = M.n + ' in the ' + period(L); });
     const W = width(el), m = {t: 22, r: 18, b: 30, l: 18}, e = eng(ph, L), g = phase && mine(L);
     const ext = d3.extent(S.map((s) => s[M.s]).concat(e ? [e[M.b]] : [], g ? [g[M.b]] : [])), pad = Math.max(40, (ext[1] - ext[0]) * 0.08);
@@ -115,6 +124,8 @@
   function hist() {
     const card = $('gx-hist-c'), el = $('gx-hist'), M = MEAS[meas]; card.hidden = !(phase && G.bench[phase]); if (card.hidden) return;
     $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' || kind === 'a' ? 'Its schools taken together, for each full school year.' : kind === 't' ? !(G.bench_in && G.bench_in[phase]) ? 'The schools it holds today, taken together for each full school year, including years before they joined it. No joining dates are recorded for them, so the trust’s own record cannot be drawn separately.' : 'The solid line takes together only the schools that were in the trust in each year. It is the trust’s own record. The dashed line takes together the schools it holds today in every year, including the years before they joined.' : 'The schools located in the constituency, taken together for each full school year.') + ' No figures were published for 2019/20.';
+    { const a = (mine(B.fy_last) || [])[M.b], b = (mine(B.base) || [])[M.b], ea = (eng(phase, B.fy_last) || [])[M.b], eb = (eng(phase, B.base) || [])[M.b], d = a == null || b == null ? null : gap(a, b), de = ea == null || eb == null ? null : gap(ea, eb);
+      finding(card.querySelector('h2'), 'Year by year', d == null ? null : `${cap(M.n)} was ${d === 0 ? 'the same' : pts(d) + ' points ' + (d > 0 ? 'higher' : 'lower')} in ${ay(B.fy_last)} ${d === 0 ? 'as' : 'than'} in ${ay(B.base)}, before the pandemic` + (de == null || de === 0 ? '' : `; across England it ${de > 0 ? 'rose' : 'fell'} by ${pts(de)}`)); }
     const W = width(el), H = Math.round(Math.min(360, Math.max(230, W * 0.46))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const inT = kind === 't' && G.bench_in && G.bench_in[phase], at = (p) => (inT && inT[p]) || null;
@@ -194,7 +205,10 @@
     const has = new Set(H2.map((d) => d.r.id)), blank = ALL.filter((r) => !has.has(r.id) && r.q != null).map((r) => ({r, v: null}));
     const g = s.append('g').attr('class', 'ax-hexes').selectAll('path').data(blank.concat(H2)).join('path').attr('d', dpath).attr('transform', (d) => `translate(${px(d)},${py(d)})`).attr('fill', (d) => AXc.div(d.v, mid, span));
     g.on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : cap(vname()) + ': ' + fv(d.v)}`)).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); if (d.r.id === id) return; picked(el, d.r.name, d.v == null ? 'no figure' : fv(d.v), glink(kind, d.r.id)); });
-    const me = H2.find((d) => d.r.id === id); if (me) s.append('path').attr('d', dpath).attr('transform', `translate(${px(me)},${py(me)}) scale(${kind === 'c' ? 1.6 : 1.15})`).attr('fill', 'none').attr('stroke', BRASS).attr('stroke-width', 2.5).attr('pointer-events', 'none');
+    const me = H2.find((d) => d.r.id === id);
+    if (kind === 'a') { const others = H2.filter((d) => d.v != null && d.r.id !== id), lower = me && me.v != null ? others.filter((d) => d.v < me.v).length : null;
+      finding($('gx-over-h'), 'Every local authority in England', view === 'now' && lower != null ? `${cap(vname())} is higher here than in ${lower} of the other ${others.length} local authorities` : null); }
+    if (me) s.append('path').attr('d', dpath).attr('transform', `translate(${px(me)},${py(me)}) scale(${kind === 'c' ? 1.6 : 1.15})`).attr('fill', 'none').attr('stroke', BRASS).attr('stroke-width', 2.5).attr('pointer-events', 'none');
     key(el, [AXc.legend(mid, span, 'England', view === 'now' ? null : (v) => sign(v) + ' points'), `<i style="background:none;border:2px solid ${BRASS}"></i>${esc(G.name)}`]);
     const below = me ? H2.filter((d) => d.v < me.v).length : null;
     $('gx-over-r').innerHTML = !me ? '' : view === 'now' ? `<b>${below}</b> of the other ${H2.length - 1} ${what[1]} had a lower rate than ${esc(G.name)} and <b>${H2.length - below - 1}</b> a higher one.`
@@ -279,6 +293,8 @@
       s.append('text').attr('x', narrow ? W - m.r : W - m.r + 10).attr('y', narrow ? y - 20 : y + 4).attr('text-anchor', narrow ? 'end' : 'start').style('fill', col).text(fv(r.v) + (r.e == null || narrow ? '' : ' · England ' + fv(r.e))); });
     key(el, [`<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(G.name)}`, `<i style="background:${MUTED};width:3px;height:14px"></i>England`, `<i style="background:${AXc.VERD}"></i>Lower than England`, `<i style="background:${AXc.RUST}"></i>Higher`].concat(view === 'now' ? [`<i style="background:${SOFT};width:2px;height:12px"></i>Other ${kind === 'a' ? 'local authorities' : 'counties'}`] : []));
     const f = R.find((r) => r.g === 'fsm'), nf = R.find((r) => r.g === 'nfsm'), eh = R.find((r) => r.g === 'ehcp'), ss = R.find((r) => r.g === 'sen'); let t = '';
+    { const d = f && nf ? gap(f.v, nf.v) : null, de = f && nf && f.e != null && nf.e != null ? gap(f.e, nf.e) : null;
+      finding(card.querySelector('h2'), 'By pupil group', view === 'now' && d != null && d !== 0 ? `${cap(MEAS[meas].n)} is ${pts(d)} points ${d > 0 ? 'higher' : 'lower'} among pupils eligible for free school meals than among other pupils` + (de == null ? '' : d > de ? ', a wider gap than across England' : d < de ? ', a narrower gap than across England' : ', the same gap as across England') : null); }
     if (view === 'now' && f && nf) { const d = gap(f.v, nf.v), de = f.e != null && nf.e != null ? gap(f.e, nf.e) : null; t += `Pupils eligible for free school meals had ${MEAS[meas].n} of <b>${pc(f.v)}</b>, against <b>${pc(nf.v)}</b> for other pupils. That is a gap of <b>${pts(d)}</b> points` + (de == null ? '.' : `, against ${pts(de)} across England.`); }
     if (view === 'now' && (ss || eh)) t += ` For pupils with SEN support it was ${fv(ss && ss.v)} and for those with an education, health and care plan ${fv(eh && eh.v)}` + (ss && ss.e != null && eh && eh.e != null ? ` (England ${pc(ss.e)} and ${pc(eh.e)}).` : '.');
     if (view !== 'now' && f) t = `For pupils eligible for free school meals, ${MEAS[meas].n} ${f.v > 0 ? 'rose' : f.v < 0 ? 'fell' : 'did not change'}${f.v ? ' by <b>' + (Math.abs(f.v) / 100).toFixed(1) + '</b> points' : ''}` + (f.e == null ? '.' : `, against ${sign(f.e)} points across England.`) + (nf ? ` For other pupils the change was ${sign(nf.v)} points.` : '');
@@ -330,6 +346,7 @@
     document.querySelectorAll('#gx-view button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
     document.querySelectorAll('#gx-pgs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.g === pgsel)));
     const p = new URLSearchParams({k: kind, id}); if (phase) p.set('phase', phase); if (meas !== 'abs') p.set('m', meas); if (view !== 'now') p.set('v', view); if (pgOn()) p.set('g', pgsel); if (VS.length) p.set('vs', VS.map((o) => o.id).join(','));
+    if (window.AXtabs && AXtabs.current !== 'overview') p.set('tab', AXtabs.current);
     history.replaceState(null, '', location.pathname + '?' + p.toString());      // always: a copied link must open this place
     head(); compare(); groups(); strip(); hist(); over(); table();
   }
@@ -364,7 +381,7 @@
         $('gx-pgs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { pgsel = b.dataset.g; draw(); } });
         d3.json('/attendance/data/pg.json').then((j) => { PGE = j; draw(); }); }
       $('gx-body').hidden = false; draw();
-      let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } });
+      let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; draw(); } }); addEventListener('ax-redraw', draw);
     });
   }).catch((e) => { console.error(e); $('gx-meta').textContent = 'The data could not be loaded. Please try again shortly.'; });
 })();
