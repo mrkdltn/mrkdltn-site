@@ -40,6 +40,12 @@
   const getDist = (ph) => { if (!dists.has(ph)) dists.set(ph, d3.json('/attendance/data/dist_' + ph + '.json')); return dists.get(ph); };
   const bench = (area, ph, p) => (B.bench[area] && B.bench[area][ph] && B.bench[area][ph][p]) || null;
 
+  // A section's heading says what the section shows; the label it had becomes a small line above it.
+  const finding = (h2, label, text) => { if (!h2) return; let k = h2.previousElementSibling; if (!k || !k.classList.contains('ax-kick')) { k = document.createElement('p'); k.className = 'ax-kick'; h2.before(k); }
+    k.hidden = !text; k.textContent = label; h2.textContent = text || label; };
+  const cap = (t) => t.replace(/^./, (c) => c.toUpperCase()), joinAnd = (a) => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
+  const stamp = () => { if (window.AXtabs) AXtabs.stamp(); };          // keep the open tab in the address when the page rewrites it
+
   function head() {
     const L = B.latest, prevP = B.periods.filter((p) => p.endsWith('AS') && p < L).pop(), now = S.h[L], was = prevP && S.h[prevP];
     const la = B.la_names[S.la] || '', e = bench('E', S.ph, L), l = bench(S.la, S.ph, L);
@@ -49,8 +55,11 @@
     const link = (t, k, id) => (id ? `<a href="${AXsearch.ghref(k, id)}">${esc(t)}</a>` : esc(t));
     $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') + (S.tj ? esc(', joined ' + month(S.tj) + (S.tprev ? ' from ' + S.tprev : '')) : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
     document.title = S.n + ': attendance · Attendance Explorer · Mark Dalton';
-    $('sx-period').textContent = 'Absence in the ' + period(L);
-    $('sx-phase-n').textContent = PH[S.ph]; $('sx-base-n').textContent = ay(B.base) + ' and ' + ay(B.fy_last);
+    { const cmp = [['England', e && e[0]], [la || 'its local authority', l && l[3] >= 3 ? l[0] : null], ['similar schools', S.sim ? S.sim[0] : null]].filter((c) => c[1] != null), groups = [];
+      if (now && now[1] != null) cmp.forEach((c) => { const t = gap(now[1], c[1]), w = Math.abs(t) < 3 ? 'close to' : t > 0 ? 'higher than' : 'lower than', g = groups.find((x) => x.w === w); if (g) g.names.push(c[0]); else groups.push({w, names: [c[0]]}); });
+      const parts = groups.map((g) => g.w + ' ' + joinAnd(g.names));
+      finding($('sx-period'), 'Absence in the ' + period(L), parts.length ? 'Absence is ' + (parts.length < 2 ? parts[0] : parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1]) : null); }
+    { const pn = $('sx-phase-n'); if (pn) pn.textContent = PH[S.ph]; } $('sx-base-n').textContent = ay(B.base) + ' and ' + ay(B.fy_last);
     $('sx-src').textContent = `“${B.release.autumn_spring.title}” (${B.release.autumn_spring.release}, published ${date(B.release.autumn_spring.published)}) and “${B.release.full_year.title}” (${B.release.full_year.release}, published ${date(B.release.full_year.published)})`;
     const R = $('sx-reading'), K = $('sx-kpis');
     if (!now) { R.textContent = `No rate is shown for this school for the ${period(L)}. It had fewer than ${B.min_enrol} pupils on roll, or no figures were published.`; K.innerHTML = ''; }
@@ -74,6 +83,7 @@
   function readings() {
     const card = $('sx-read-c'), el = $('sx-read'), M = MEAS[meas], L = B.latest, now = S.h[L]; card.hidden = !(now && S.sim); if (card.hidden) return;
     const mine = now[M.i], e = bench('E', S.ph, L), l = bench(S.la, S.ph, L);
+    { const d = mine == null || S.sim[M.b] == null ? null : gap(mine, S.sim[M.b]); finding(card.querySelector('h2'), 'Read three ways', d == null ? null : d === 0 ? `${cap(M.n)} is the same as across its 20 similar schools` : `${cap(M.n)} is ${pts(d)} points ${d > 0 ? 'higher' : 'lower'} than across its 20 similar schools`); }
     const rows = [['England ' + PH[S.ph], e && e[M.b]], [(B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph], l && l[M.b]], ['The 20 similar schools', S.sim[M.b], true]].filter((r) => r[1] != null);
     const W = width(el), narrow = W < 560, rh = narrow ? 62 : 46, lab = narrow ? 0 : 250, m = {l: lab + 8, r: narrow ? 12 : 200, t: 8, b: 26}, H = m.t + rows.length * rh + m.b, s = svg(el, W, H, 'The school beside three comparisons');
     const all = rows.map((r) => r[1]).concat([mine]), pad = (d3.max(all) - d3.min(all)) * 0.15 + 30;
@@ -123,6 +133,7 @@
     const mine = now ? now[M.i] : null;
     const v = strip(el, dist[meas], mine, laIx == null ? [] : ticks, M.step, 'Distribution of ' + M.n + ' across ' + PH[S.ph], (t, own) => (own ? pc(t) : (t / 100) + '%'));
     key(el, [`<i style="background:${SOFT}"></i>All ${PH[S.ph]} in England (${v.length.toLocaleString('en-GB')})`, `<i style="background:${MUTED};width:2px;height:12px"></i>Others in ${esc(B.la_names[S.la] || 'the local authority')} (${ticks.length})`, `<i style="background:${INK};transform:rotate(45deg);width:10px"></i>${esc(S.n)}`]);
+    { const h = el.closest('section').querySelector('h2'), label = 'Where it sits among ' + PH[S.ph]; finding(h, label, mine == null ? null : `${Math.round(100 * (v.length - d3.bisectRight(v, mine)) / v.length)}% of ${PH[S.ph]} had higher ${M.n} than this school`); }
     if (mine == null) { $('sx-dist-r').textContent = ''; return; }
     const lower = d3.bisectLeft(v, mine), share = Math.round(100 * (v.length - d3.bisectRight(v, mine)) / v.length), below = Math.round(100 * lower / v.length);
     const med = d3.median(v);
@@ -133,6 +144,8 @@
   function yearChart(others) {
     const el = $('sx-hist'), M = MEAS[meas], W = width(el), H = Math.round(Math.min(380, Math.max(240, W * 0.5))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
+    { const p1 = B.fy[B.fy.length - 1], p0 = B.fy[B.fy.length - 2], a = S.h[p1] && S.h[p1][M.i], b = S.h[p0] && S.h[p0][M.i], d = a == null || b == null ? null : gap(a, b);
+      finding(el.closest('section').querySelector('h2'), 'Year by year', d == null ? null : d === 0 ? `${cap(M.n)} was the same over the full year ${ay(p1)} as the year before` : `${cap(M.n)} ${d < 0 ? 'fell' : 'rose'} by ${pts(d)} points between the full years ${ay(p0)} and ${ay(p1)}`); }
     const ser = (h, i) => yrs.map((p) => ({p, v: h[p] ? h[p][i] : null}));
     const lines = [{d: yrs.map((p) => ({p, v: (bench('E', S.ph, p) || [])[M.b]})), c: MUTED, w: 2, n: 'England ' + PH[S.ph]},
       {d: yrs.map((p) => ({p, v: (bench(S.la, S.ph, p) || [])[M.b]})), c: MUTED, w: 2, dash: '2 3', n: (B.la_names[S.la] || 'Local authority') + ' ' + PH[S.ph]}]
@@ -166,6 +179,7 @@
     const v = strip(el, dist.chg, mine, ticks, 25, 'Change in overall absence since ' + ay(B.base), (t, own) => (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 100).toFixed(own ? 1 : (Math.abs(t) % 100 ? 1 : 0)) + (own ? ' points' : ''), true);
     key(el, [`<i style="background:${SOFT}"></i>${PH[S.ph].replace(/^./, (c) => c.toUpperCase())} with figures for both years (${v.length.toLocaleString('en-GB')})`, `<i style="background:${MUTED};width:2px;height:12px"></i>Other schools in its local authority`]);
     const med = d3.median(v), up = Math.round(100 * v.filter((x) => x > 0).length / v.length);
+    { const d = a && b && a[1] != null && b[1] != null ? gap(b[1], a[1]) : null; finding(el.closest('section').querySelector('h2'), 'Since before the pandemic', d == null ? null : `Overall absence is ${d === 0 ? 'the same as' : pts(d) + ' points ' + (d > 0 ? 'higher than' : 'lower than')} in ${ay(B.base)}; it is higher at ${up}% of ${PH[S.ph]}`); }
     $('sx-chg-r').innerHTML = (mine == null ? `This school does not have figures for both years, so it is not marked. ` : `Overall absence here ${gap(b[1], a[1]) === 0 ? 'was unchanged' : (mine > 0 ? 'rose' : 'fell') + ` by <b>${pts(gap(b[1], a[1]))}</b> points`} between ${ay(B.base)} and ${ay(B.fy_last)}. `)
       + `Absence was higher in ${ay(B.fy_last)} than in ${ay(B.base)} at <b>${up}%</b> of ${PH[S.ph]}. At the middle school it ${med >= 0 ? 'rose' : 'fell'} by ${(Math.abs(med) / 100).toFixed(1)} points.`;
   }
@@ -195,14 +209,14 @@
     Promise.all(vs.map((u) => school(u).then((s) => (s ? {u, s} : null)))).then((o) => { if (t !== token) return; const others = o.filter(Boolean);
       head(); side(others); readings(); position(); yearChart(others); changed(); chips(others); });
   }
-  function go() { random = false; const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); draw(); }
+  function go() { random = false; const h = vs.length ? '#vs=' + vs.join(',') : ''; history.replaceState(null, '', AXsearch.href(urn, h)); stamp(); draw(); }
   function open(u, push) {
     school(u).then((s) => { if (!s) { $('sx-name').textContent = 'School not found'; $('sx-meta').textContent = 'No school with that number is in the newest release. It may have closed or changed. Search for it by name below.'; $('sx-body').hidden = true; return; }
       urn = String(u); S = s; if (push) random = false;
       // the address always names the school on screen, so a copied link opens the same school for the next person
       if (!push) history.replaceState(null, '', AXsearch.href(urn, vs.length ? '#vs=' + vs.join(',') : '')); vs = vs.filter((x) => x !== urn); $('sx-body').hidden = false; dist = null;
       if (push) history.pushState(null, '', AXsearch.href(urn, vs.length ? '#vs=' + vs.join(',') : ''));
-      draw(); getDist(S.ph).then((d) => { if (urn === String(u)) { dist = d; position(); changed(); } }); });
+      stamp(); draw(); getDist(S.ph).then((d) => { if (urn === String(u)) { dist = d; position(); changed(); } }); });
   }
 
   d3.json('/attendance/data/bench.json').then((j) => {
@@ -210,8 +224,8 @@
     vs = (new URLSearchParams(location.hash.slice(1)).get('vs') || '').split(',').filter((x) => /^\d{5,7}$/.test(x)).slice(0, 4);
     AXsearch($('sx-q'), $('sx-list'), (r) => { if (r.kind) { AXsearch.go(r); return; } open(r.urn, true); scrollTo({top: 0}); }, true);
     AXsearch($('sx-q2'), $('sx-list2'), (r) => { const k = String(r.urn); if (k !== urn && !vs.includes(k) && vs.length < 4) { vs.push(k); go(); } });
-    document.querySelector('.sx-meas').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { meas = b.dataset.m; draw(); } });
-    let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; if (S) draw(); } });
+    document.addEventListener('click', (e) => { const b = e.target.closest('.sx-meas button'); if (b && b.dataset.m !== meas) { meas = b.dataset.m; draw(); } });          // the choice sits beside each chart it changes
+    let w = innerWidth; addEventListener('resize', () => { if (innerWidth !== w) { w = innerWidth; if (S) draw(); } }); addEventListener('ax-redraw', () => { if (S) { draw(); if (dist) { position(); changed(); } } });
     addEventListener('popstate', () => { const p = AXsearch.urn(); if (p) open(p, false); });
     // with no school chosen, open on a secondary picked at random, as the Ofsted Explorer does; the address stays unchanged until someone chooses
     const another = () => getDist('S').then((d) => { random = true; vs = []; open(d.urn[Math.floor(Math.random() * d.urn.length)], false); });

@@ -9,6 +9,7 @@ const { chromium } = require('playwright');
   console.log('random landing address names a school:', /urn=\d+/.test(p.url()));
   await p.fill('#sx-q', 'chase high'); await p.waitForTimeout(1500); await p.keyboard.press('Enter'); await p.waitForTimeout(1500);
   console.log('after search:', await p.locator('#sx-name').textContent(), '|', p.url().split('8765')[1]);
+  console.log('tabs (school):', (await p.locator('#ax-secnav a:visible').allTextContents()).join(' | ')); await p.locator('#ax-secnav a', { hasText: 'Compare' }).click(); await p.waitForTimeout(700);          // comparing lives in its own tab
   await p.fill('#sx-q2', 'knole'); await p.waitForTimeout(1200); await p.keyboard.press('Enter'); await p.waitForTimeout(1500);
   console.log('after add:', p.url().split('8765')[1], '| rows', await p.locator('#sx-cmp tbody tr').count(), '| chips', await p.locator('#sx-chips button').count());
   await p.goBack(); await p.waitForTimeout(1200); console.log('after Back:', await p.locator('#sx-name').textContent());

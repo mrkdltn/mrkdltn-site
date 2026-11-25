@@ -6,8 +6,10 @@
 (function () {
   const q = new URLSearchParams(location.search), host = document.getElementById('ax-secnav'), main = document.querySelector('main.ax');
   if (!host || !main || q.get('brief') || !main.querySelector('section[data-nav]')) return;
-  const TABS = [['overview', 'Overview', ['Summary', 'Side by side', 'Year by year', 'Compared']], ['pupils', 'Pupils', ['Pupil groups']], ['schools', 'Schools', ['School by school', 'The schools']],
-    ['enforcement', 'Enforcement', ['Enforcement']], ['method', 'Method', ['Method', 'Feedback']]];
+  const TABS = /\/attendance\/school\//.test(location.pathname)
+    ? [['overview', 'Overview', ['Summary', 'Three ways']], ['compare', 'Compare', ['Position', 'Side by side']], ['time', 'Over time', ['Year by year', 'Since 2018/19']], ['method', 'Method', ['Method', 'Feedback']]]
+    : [['overview', 'Overview', ['Summary', 'Side by side', 'Year by year', 'Compared']], ['pupils', 'Pupils', ['Pupil groups']], ['schools', 'Schools', ['School by school', 'The schools']],
+      ['enforcement', 'Enforcement', ['Enforcement']], ['method', 'Method', ['Method', 'Feedback']]];
   const slug = (n) => 'sec-' + n.toLowerCase().replace(/[^a-z0-9]+/g, '-'), tabOf = (nav) => (TABS.find((t) => t[2].includes(nav)) || TABS[0])[0];
   const want = location.hash.replace(/^#/, ''), fromHash = TABS.find((t) => t[2].some((n) => slug(n) === want));
   const T = {current: fromHash ? fromHash[0] : TABS.some((t) => t[0] === q.get('tab')) ? q.get('tab') : 'overview'};
@@ -22,17 +24,19 @@
   let busy = false;
   const apply = () => { if (busy) return; busy = true;
     const list = secs(); list.forEach((s) => { if (!s.id) s.id = slug(s.dataset.nav); });
-    TABS.forEach(([key]) => { btn[key].hidden = !list.some((s) => tabOf(s.dataset.nav) === key && !s.hidden); });
-    const now = btn[wanted].hidden ? 'overview' : wanted, moved = now !== T.current; T.current = now;
+    TABS.forEach(([key]) => { btn[key].hidden = !list.some((s) => tabOf(s.dataset.nav) === key && !s.closest('[hidden]')); });
+    const open1 = TABS.map((t) => t[0]).find((k) => !btn[k].hidden) || 'overview', now = btn[wanted].hidden ? open1 : wanted, moved = now !== T.current; T.current = now;
     list.forEach((s) => s.classList.toggle('ax-tab-off', tabOf(s.dataset.nav) !== T.current));
     const bar = main.querySelector('.ax-controls'); if (bar) bar.classList.toggle('ax-tab-off', T.current === 'method');
     const foot = document.getElementById('ax-places-foot'); if (foot) foot.classList.toggle('ax-tab-off', T.current !== 'overview');
     TABS.forEach(([key]) => { const on = key === T.current; btn[key].classList.toggle('on', on); btn[key].setAttribute('aria-selected', String(on)); btn[key].tabIndex = on ? 0 : -1; });
     busy = false; if (moved) dispatchEvent(new Event('ax-redraw')); };
   T.show = (key, byUser) => { if (!btn[key] || btn[key].hidden) return; const changed = key !== T.current; wanted = key; T.current = key; apply();
-    const u = new URL(location.href); if (key === 'overview') u.searchParams.delete('tab'); else u.searchParams.set('tab', key); history.replaceState(null, '', u.pathname + u.search);
+    T.stamp();
     if (byUser) { const top = main.getBoundingClientRect().top + scrollY - host.parentNode.offsetHeight; if (scrollY > top) scrollTo(0, top); if (host.scrollWidth > host.clientWidth) host.scrollTo({left: btn[key].offsetLeft - 40}); }
     if (changed) dispatchEvent(new Event('ax-redraw')); };          // charts drawn while their tab was closed had no width to draw into
+  // write the open tab into the address, keeping whatever else the page holds there
+  T.stamp = () => { const u = new URL(location.href); if (T.current === 'overview') u.searchParams.delete('tab'); else u.searchParams.set('tab', T.current); history.replaceState(history.state, '', u.pathname + u.search + (/^#(sec-|tab-)/.test(u.hash) ? '' : u.hash)); };
   let t = null; new MutationObserver(() => { clearTimeout(t); t = setTimeout(apply, 60); }).observe(main, {subtree: true, childList: true, attributes: true, attributeFilter: ['hidden']});
   apply();
   // an old link to a section: once the page has drawn, bring that section into view
