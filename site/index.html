@@ -47,9 +47,7 @@
     pic.querySelector('source').srcset = at(pic, 't');
     var img = pic.querySelector('img');
     img.src = at(pic, 'w'); img.alt = at(pic, 'alt');
-    var v = pic.parentNode.querySelector('video.mv');
-    if (v && name !== 'classic') { v.setAttribute('data-w', at(pic, 'vw') || ''); v.setAttribute('data-t', at(pic, 'vt') || ''); }
-  };
+  };   // day.js picks the matching clip from the same attributes
 })();
 </script>
 <link rel="stylesheet" href="/assets/site.css">
