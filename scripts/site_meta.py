@@ -440,6 +440,11 @@ def write_sitemap():
     school = max((d for k, d in dates.items() if any(k == s or k.startswith(s + '/') for s in SCHOOL_SOURCES)),
                  default=None)
     urls, n_school, undated = [], 0, []
+    try:
+        with open(os.path.join(SITE, 'explorer', 'discoveries', 'index.json'), encoding='utf-8') as f:
+            disc_dates = json.load(f).get('pages', {})
+    except (OSError, ValueError):
+        disc_dates = {}
     for root, dirs, files in os.walk(SITE):
         dirs.sort(key=lambda d: (d.isdigit(), int(d) if d.isdigit() else 0, d))
         if 'index.html' not in files:
@@ -453,6 +458,12 @@ def write_sitemap():
         # Explore a measure's per-view pages are built from the data too (build_explore_pages.py): dated like the schools,
         # or by their template if that changed later
         built = re.match(r'explorer/explore/[^/]+/', rel) is not None
+        if rel.startswith('explorer/discoveries/'):  # built from content/discoveries/: dated by the discovery
+            d = disc_dates.get(url_path(rel))
+            if not d:
+                undated.append(rel)
+            urls.append((ORIGIN + url_path(rel), d))
+            continue
         d = school if is_school else max(filter(None, [school, dates.get('site/explorer/explore/index.html')]), default=None) if built else dates.get('site/' + rel)
         if not d:
             undated.append(rel)

@@ -16,6 +16,8 @@
   const school = () => { const s = dash.data('school'); return s.status === 'ok' && s.data && s.data[0] ? s.data[0] : null; };
   const slug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
   const save = (blob, name) => { const a = el('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+  // a figure frozen at publication (a Discovery) names its own data version: cfg.version()
+  const ver = (cfg) => (cfg.version ? cfg.version() : VER);
   const cap = (t) => String(t).charAt(0).toUpperCase() + String(t).slice(1);
   const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
 
@@ -44,7 +46,7 @@
     const FW = W, FH = Math.round(fig.h * W / fig.w);
     const tl = wrap(cfg.title(), 22, W), sl = s ? wrap(s.name + (s.la ? ', ' + s.la : '') + (s.urn ? ' (URN ' + s.urn + ')' : ''), 14, W) : [];
     const kl = cfg.key ? wrap(cfg.key(), 13, W) : [];
-    const src = wrap('Source: ' + cap(cfg.source()) + ' Data version ' + (VER || 'unknown') + '. mrkdltn.com/explorer', 12, W);
+    const src = wrap('Source: ' + cap(cfg.source()) + ' Data version ' + (ver(cfg) || 'unknown') + '. mrkdltn.com/explorer', 12, W);
     const top = pad + tl.length * 28 + sl.length * 19 + kl.length * 18 + 24, H = top + FH + 18 + src.length * 17 + pad;
     const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('xmlns', NS); svg.setAttribute('width', W + 2 * pad); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W + 2 * pad} ${H}`);
     const st = document.createElementNS(NS, 'style'); st.textContent = await fonts(); svg.append(st);
@@ -60,7 +62,7 @@
     return {str: new XMLSerializer().serializeToString(svg), w: W + 2 * pad, h: H}; };
 
   const figure = async (cfg) => { const f = await cfg.svg(); if (!f) return null; if (f.live) { const c = f.node.cloneNode(true); inline(f.node, c); c.querySelectorAll('[class]').forEach((n) => n.removeAttribute('class')); return {node: c, w: f.w, h: f.h}; } return f; };
-  const fname = (cfg, ext) => { const s = cfg.noSchool ? null : school(); return 'ofsted-explorer-' + cfg.name + (s ? '-' + s.urn + '-' + slug(s.name) : '') + (VER ? '-' + VER : '') + '.' + ext; };
+  const fname = (cfg, ext) => { const s = cfg.noSchool ? null : school(); return 'ofsted-explorer-' + cfg.name + (s ? '-' + s.urn + '-' + slug(s.name) : '') + (ver(cfg) ? '-' + ver(cfg) : '') + '.' + ext; };
 
   OE.exhibit = (cfg) => {
     const host = cfg.host; if (!host || host.dataset.exhibit) return; host.dataset.exhibit = cfg.name;
@@ -74,7 +76,7 @@
       const tb = el('table'); if (t.caption) tb.append(el('caption', 'sr-only', t.caption)); const th = el('thead'), hr = el('tr'); t.cols.forEach((c, i) => { const h = el('th', t.num && t.num[i] ? 'n' : '', c); h.scope = 'col'; hr.append(h); }); th.append(hr); tb.append(th);
       const body = el('tbody'); t.rows.forEach((r) => { const tr = el('tr'); if (r.self) tr.className = 'self'; r.cells.forEach((v, i) => tr.append(el('td', t.num && t.num[i] ? 'n' : '', v === null || v === undefined || v === '' ? '—' : String(v)))); body.append(tr); }); tb.append(body); tw.append(tb);
       if (t.note) tw.append(el('p', 'oe-note', t.note)); };
-    const setSrc = () => { srcP.replaceChildren('Source: ' + cap(cfg.source()) + (VER ? ' Data version ' + VER + '. ' : ' '), Object.assign(el('a', '', 'About this data'), {href: '/explorer/data/'})); };
+    const setSrc = () => { srcP.replaceChildren('Source: ' + cap(cfg.source()) + (ver(cfg) ? ' Data version ' + ver(cfg) + '. ' : ' '), Object.assign(el('a', '', 'About this data'), {href: '/explorer/data/'})); };
     verP.then(setSrc); setSrc();
     const show = (table) => { bC.setAttribute('aria-pressed', String(!table)); bT.setAttribute('aria-pressed', String(table)); host.hidden = table; (cfg.hideAlso || []).forEach((e) => { if (e) e.hidden = table; }); tw.hidden = !table; if (table) fill(); else if (cfg.onChart) cfg.onChart(); };
     bC.addEventListener('click', () => show(false)); bT.addEventListener('click', () => show(true));
@@ -87,7 +89,7 @@
       const cv = el('canvas'); cv.width = o.w * k; cv.height = o.h * k; const x = cv.getContext('2d'); x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, cv.width, cv.height); x.drawImage(img, 0, 0, cv.width, cv.height);
       save(await new Promise((r) => cv.toBlob(r, 'image/png')), fname(cfg, 'png')); }));
     bV.addEventListener('click', busy(bV, async () => { await verP; const t = cfg.table(); if (!t) return; const s = school();
-      const head = (t.csvCols || t.cols).concat(['source', 'data_version']); const rows = (t.csv || t.rows.map((r) => r.cells)).map((r) => r.concat([cfg.source(), VER]));
+      const head = (t.csvCols || t.cols).concat(['source', 'data_version']); const rows = (t.csv || t.rows.map((r) => r.cells)).map((r) => r.concat([cfg.source(), ver(cfg)]));
       const body = [head].concat(rows).map((r) => r.map(q).join(',')).join('\n') + '\n'; save(new Blob([body], {type: 'text/csv;charset=utf-8'}), fname(cfg, 'csv')); }));
     // options: noTable (the figure already is a table), kinds (which downloads)
     const kinds = cfg.kinds || ['PNG', 'SVG', 'CSV']; [bP, bS, bV].forEach((b) => { if (!kinds.includes(b.textContent)) b.remove(); });

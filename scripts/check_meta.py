@@ -11,7 +11,8 @@ description and must not carry a canonical. Run by build_data.py, so a missing t
 Standards 3 and 10: every page links the Atom feed from its head; the home page carries Person
 JSON-LD with sameAs to LinkedIn; every article carries Article JSON-LD with author, dates and image.
 feed.xml must parse as Atom with the full text of every article, and sitemap.xml must list every
-indexable page with a date.
+indexable page with a date. Discoveries (og:type article) are in their own feed, explorer/discoveries/feed.xml,
+which must parse as Atom with complete entries.
 """
 import json
 import os
@@ -148,6 +149,20 @@ def site_problems(pages, articles):
                 probs.append(f'feed.xml: no entry for {url}')
             elif len(en.find(ATOM + 'content').text or '') < 3000:
                 probs.append(f'feed.xml: {url} is not full text')
+    # the discoveries feed, where any discovery is built: Atom, one full entry per discovery page
+    dfeed = os.path.join(SITE, 'explorer', 'discoveries', 'feed.xml')
+    if os.path.exists(dfeed):
+        try:
+            df = ET.parse(dfeed).getroot()
+        except ET.ParseError as ex:
+            probs.append(f'explorer/discoveries/feed.xml: {ex}')
+        else:
+            if df.tag != ATOM + 'feed':
+                probs.append('explorer/discoveries/feed.xml: not an Atom feed')
+            for en in df.findall(ATOM + 'entry'):
+                for k in ('title', 'id', 'published', 'updated', 'content'):
+                    if en.find(ATOM + k) is None or not (en.find(ATOM + k).text or '').strip():
+                        probs.append(f'explorer/discoveries/feed.xml: an entry has no {k}')
     try:
         sm = ET.parse(os.path.join(SITE, 'sitemap.xml')).getroot()
     except (OSError, ET.ParseError) as ex:
@@ -182,8 +197,10 @@ def main():
                     failures.append(f'{rel}: {prob}')
                 if name == 'index.html':
                     url = 'https://mrkdltn.com/' + rel[:-len('index.html')]
-                    pages.append(url)
-                    if not rel.startswith('explorer/school/') and '<meta property="og:type" content="article">' in head(p):
+                    # a noindex page (a draft discovery on a preview build) is left out of the sitemap, as site_meta does
+                    if not re.search(r'<meta name="robots" content="[^"]*noindex', head(p)):
+                        pages.append(url)
+                    if not rel.startswith(('explorer/school/', 'explorer/discoveries/')) and '<meta property="og:type" content="article">' in head(p):
                         articles.append(url)
     failures += site_problems(pages, articles)
     if failures:

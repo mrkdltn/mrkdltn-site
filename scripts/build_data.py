@@ -342,6 +342,13 @@ def main():
     import build_pages
     build_pages.main(ks4, rc)
 
+    # Discoveries (/explorer/discoveries/): production builds published ones only; every build re-checks each
+    # frozen figure against today's data and lists any that moved in build.json, for review
+    from discoveries import build as discoveries_build
+    meta['discoveries'] = discoveries_build.build()
+    with open(os.path.join(OUT, 'build.json'), 'w') as f:
+        json.dump(meta, f, indent=1)
+
     # share cards for the main site, then fail the build if any page lacks its share tags
     import site_meta
     import check_meta

@@ -14,3 +14,9 @@ site/static/
 site/assets/cards/
 site/explorer/explore/*/
 site/explorer/explore/card.png
+# Discoveries: built from content/discoveries/ by scripts/discoveries/build.py
+site/explorer/discoveries/*/
+site/explorer/discoveries/index.html
+site/explorer/discoveries/index.json
+site/explorer/discoveries/feed.xml
+site/explorer/discoveries/card.png

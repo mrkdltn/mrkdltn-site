@@ -413,3 +413,9 @@ body.explorer .oe-g b{margin-top:auto;padding-top:4px}
 .oe .oe-it-more p{font-size:14px;line-height:1.55;color:#55627A;margin:8px 0 0;max-width:86ch}
 .oe .oe-it-more p.oe-it-note{font-size:13px}
 @media print{.oe-it{break-inside:avoid}}
+/* related discoveries (related.js): quiet links at the foot of a section, never a banner */
+.oe-disc-rel{margin:22px 0 0;padding:2px 0 2px 14px;border-left:2px solid #C9A24B;font-family:var(--sans);font-size:14.5px;line-height:1.45;max-width:60em}
+.oe-disc-rel p{margin:0 0 4px;font-size:14.5px;line-height:1.45}
+.oe-disc-rel p.oe-disc-h{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:#7A5C14;font-weight:600;margin-bottom:2px}
+.oe-disc-rel a{color:#0B1A2E;text-decoration-color:#C9A24B}
+.oe-disc-draft{color:#55627A}
