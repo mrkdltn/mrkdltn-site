@@ -55,7 +55,7 @@
   // A section's heading says what the section shows; the label it had becomes a small line above it. Local authority pages
   // first. Where there is nothing to say (a change view, or no figure) the heading falls back to the label.
   const finding = (h2, label, text) => { if (!h2) return; let k = h2.previousElementSibling; if (!k || !k.classList.contains('ax-kick')) { k = document.createElement('p'); k.className = 'ax-kick'; h2.before(k); }
-    const on = kind === 'a' && !!text; k.hidden = !on; k.textContent = label; h2.textContent = on ? text : label; };
+    const on = !!text; k.hidden = !on; k.textContent = label; h2.textContent = on ? text : label; };
   const hl = (d) => (d === 0 ? 'the same as' : d < 0 ? 'lower than' : 'higher than');
 
   function focusLine() {
@@ -125,7 +125,7 @@
     const card = $('gx-hist-c'), el = $('gx-hist'), M = MEAS[meas]; card.hidden = !(phase && G.bench[phase]); if (card.hidden) return;
     $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' || kind === 'a' ? 'Its schools taken together, for each full school year.' : kind === 't' ? !(G.bench_in && G.bench_in[phase]) ? 'The schools it holds today, taken together for each full school year, including years before they joined it. No joining dates are recorded for them, so the trust’s own record cannot be drawn separately.' : 'The solid line takes together only the schools that were in the trust in each year. It is the trust’s own record. The dashed line takes together the schools it holds today in every year, including the years before they joined.' : 'The schools located in the constituency, taken together for each full school year.') + ' No figures were published for 2019/20.';
     { const a = (mine(B.fy_last) || [])[M.b], b = (mine(B.base) || [])[M.b], ea = (eng(phase, B.fy_last) || [])[M.b], eb = (eng(phase, B.base) || [])[M.b], d = a == null || b == null ? null : gap(a, b), de = ea == null || eb == null ? null : gap(ea, eb);
-      finding(card.querySelector('h2'), 'Year by year', d == null ? null : `${cap(M.n)} was ${d === 0 ? 'the same' : pts(d) + ' points ' + (d > 0 ? 'higher' : 'lower')} in ${ay(B.fy_last)} ${d === 0 ? 'as' : 'than'} in ${ay(B.base)}, before the pandemic` + (de == null || de === 0 ? '' : `; across England it ${de > 0 ? 'rose' : 'fell'} by ${pts(de)}`)); }
+      finding(card.querySelector('h2'), 'Year by year', d == null ? null : `${cap(M.n)} was ${d === 0 ? 'the same' : pts(d) + ' points ' + (d > 0 ? 'higher' : 'lower')} in ${ay(B.fy_last)} ${d === 0 ? 'as' : 'than'} in ${ay(B.base)}, before the pandemic${kind === 't' ? ', across the schools it holds today' : ''}` + (de == null || de === 0 ? '' : `; across England it ${de > 0 ? 'rose' : 'fell'} by ${pts(de)}`)); }
     const W = width(el), H = Math.round(Math.min(360, Math.max(230, W * 0.46))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const inT = kind === 't' && G.bench_in && G.bench_in[phase], at = (p) => (inT && inT[p]) || null;
@@ -175,9 +175,12 @@
     const card = $('gx-over-c'), el = $('gx-over'), M = MEAS[meas]; card.hidden = !(phase && ALL); if (card.hidden) return;
     if (kind === 'w') { wardMap(el, M); return; }
     const rows = ALL.filter((r) => r[phase]).map((r) => ({r, n: r[phase][1], v: pgOn() ? pgVal(r.pg) : val(r[phase])})).filter((d) => d.v != null);
-    if (kind === 'y') { ordered(el, rows); return; }
-    if (kind === 'c' || kind === 'a') { hexMap(el, rows); return; }
-    if (view === 'now') { funnel(el, M, rows); return; }
+    // the heading: where this place stands among the others of its kind, by count and never by name
+    const among = (plural) => { const h = $('gx-over-h'), label = h.textContent, meR = rows.find((d) => d.r.id === id), others = rows.filter((d) => d.r.id !== id);
+      finding(h, label, view === 'now' && meR && others.length ? `${cap(vname())} is higher here than in ${others.filter((d) => d.v < meR.v).length} of the other ${others.length} ${plural}` : null); };
+    if (kind === 'y') { ordered(el, rows); among('ceremonial counties'); return; }
+    if (kind === 'c' || kind === 'a') { hexMap(el, rows); among(kind === 'c' ? 'constituencies' : 'local authorities'); return; }
+    if (view === 'now') { funnel(el, M, rows); among(`trusts with at least three ${PH[phase]}`); return; }
     $('gx-over-h').textContent = 'Among trusts'; $('gx-over-s').textContent = `Each dot is a trust with at least three ${PH[phase]}, placed by ${vname()}, for the schools it holds today. Tap a dot to name the trust.`;
     el.innerHTML = ''; const W = width(el), H = 120, m = {t: 30, r: 16, b: 30, l: 16}, s = svg(el, W, H, 'Trusts by ' + vname()), mid = engVal(phase);
     const x = d3.scaleLinear(d3.extent(rows.map((d) => d.v).concat([mid])), [m.l, W - m.r]).nice();
@@ -206,8 +209,6 @@
     const g = s.append('g').attr('class', 'ax-hexes').selectAll('path').data(blank.concat(H2)).join('path').attr('d', dpath).attr('transform', (d) => `translate(${px(d)},${py(d)})`).attr('fill', (d) => AXc.div(d.v, mid, span));
     g.on('pointerenter pointermove', (ev, d) => showTip(ev, `<b>${esc(d.r.name)}</b><br>${d.v == null ? 'No figure' : cap(vname()) + ': ' + fv(d.v)}`)).on('pointerleave', hideTip).on('click', (ev, d) => { ev.stopPropagation(); if (d.r.id === id) return; picked(el, d.r.name, d.v == null ? 'no figure' : fv(d.v), glink(kind, d.r.id)); });
     const me = H2.find((d) => d.r.id === id);
-    if (kind === 'a') { const others = H2.filter((d) => d.v != null && d.r.id !== id), lower = me && me.v != null ? others.filter((d) => d.v < me.v).length : null;
-      finding($('gx-over-h'), 'Every local authority in England', view === 'now' && lower != null ? `${cap(vname())} is higher here than in ${lower} of the other ${others.length} local authorities` : null); }
     if (me) s.append('path').attr('d', dpath).attr('transform', `translate(${px(me)},${py(me)}) scale(${kind === 'c' ? 1.6 : 1.15})`).attr('fill', 'none').attr('stroke', BRASS).attr('stroke-width', 2.5).attr('pointer-events', 'none');
     key(el, [AXc.legend(mid, span, 'England', view === 'now' ? null : (v) => sign(v) + ' points'), `<i style="background:none;border:2px solid ${BRASS}"></i>${esc(G.name)}`]);
     const below = me ? H2.filter((d) => d.v < me.v).length : null;

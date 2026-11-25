@@ -1,11 +1,11 @@
 /* Attendance Explorer: tabs for a long page. The same sections, organised: one part of the page is shown at a time under a
-   bar that travels with the reader, in place of the section menu. Nothing is removed. On local authority pages first
-   (25 November 2026). Must load before chrome.js, which leaves the section menu alone when window.AXtabs exists.
+   bar that travels with the reader, in place of the section menu. Nothing is removed. On every area and trust page
+   (25 November 2026). A tab with nothing in it for a kind of place is not offered. Must load before chrome.js, which leaves the section menu alone when window.AXtabs exists.
    The tab is kept in the address (tab=), so a copied link opens the same part; an old link to #sec-<name> opens the tab that
    holds that section. Every tab is shown when the page is printed. */
 (function () {
   const q = new URLSearchParams(location.search), host = document.getElementById('ax-secnav'), main = document.querySelector('main.ax');
-  if (!host || !main || q.get('k') !== 'a' || q.get('brief')) return;
+  if (!host || !main || q.get('brief') || !main.querySelector('section[data-nav]')) return;
   const TABS = [['overview', 'Overview', ['Summary', 'Side by side', 'Year by year', 'Compared']], ['pupils', 'Pupils', ['Pupil groups']], ['schools', 'Schools', ['School by school', 'The schools']],
     ['enforcement', 'Enforcement', ['Enforcement']], ['method', 'Method', ['Method', 'Feedback']]];
   const slug = (n) => 'sec-' + n.toLowerCase().replace(/[^a-z0-9]+/g, '-'), tabOf = (nav) => (TABS.find((t) => t[2].includes(nav)) || TABS[0])[0];
