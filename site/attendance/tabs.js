@@ -14,7 +14,7 @@
   const slug = (n) => 'sec-' + n.toLowerCase().replace(/[^a-z0-9]+/g, '-'), tabOf = (nav) => (TABS.find((t) => t[2].includes(nav)) || TABS[0])[0];
   const want = location.hash.replace(/^#/, ''), fromHash = TABS.find((t) => t[2].some((n) => slug(n) === want));
   const T = {current: fromHash ? fromHash[0] : TABS.some((t) => t[0] === q.get('tab')) ? q.get('tab') : 'overview'};
-  let wanted = T.current;          // the tab asked for; shown as soon as its sections have something in them
+  let wanted = T.current; Object.defineProperty(T, 'wanted', {get: () => wanted});          // the tab asked for; shown as soon as its sections have something in them
   window.AXtabs = T;
   host.setAttribute('role', 'tablist'); host.setAttribute('aria-label', 'Parts of this page');
   const btn = {}; TABS.forEach(([key, label]) => { const a = document.createElement('a'); a.href = '#tab-' + key; a.textContent = label; a.setAttribute('role', 'tab'); a.id = 'axt-' + key;
@@ -30,6 +30,7 @@
     list.forEach((s) => s.classList.toggle('ax-tab-off', tabOf(s.dataset.nav) !== T.current));
     const bar = main.querySelector('.ax-controls'); if (bar) bar.classList.toggle('ax-tab-off', T.current === 'method');
     const foot = document.getElementById('ax-places-foot'); if (foot) foot.classList.toggle('ax-tab-off', T.current !== 'overview');
+    TABS.forEach(([key]) => { const ids = list.filter((x) => tabOf(x.dataset.nav) === key).map((x) => x.id).join(' '); if (ids) btn[key].setAttribute('aria-controls', ids); });
     TABS.forEach(([key]) => { const on = key === T.current; btn[key].classList.toggle('on', on); btn[key].setAttribute('aria-selected', String(on)); btn[key].tabIndex = on ? 0 : -1; });
     busy = false; if (moved) dispatchEvent(new Event('ax-redraw')); };
   T.show = (key, byUser) => { if (!btn[key] || btn[key].hidden) return; const changed = key !== T.current; wanted = key; T.current = key; apply();
@@ -37,9 +38,9 @@
     if (byUser) { const top = main.getBoundingClientRect().top + scrollY - host.parentNode.offsetHeight; if (scrollY > top) scrollTo(0, top); if (host.scrollWidth > host.clientWidth) host.scrollTo({left: btn[key].offsetLeft - 40}); }
     if (changed) dispatchEvent(new Event('ax-redraw')); };          // charts drawn while their tab was closed had no width to draw into
   // write the open tab into the address, keeping whatever else the page holds there
-  T.stamp = () => { const u = new URL(location.href); if (T.current === 'overview') u.searchParams.delete('tab'); else u.searchParams.set('tab', T.current); history.replaceState(history.state, '', u.pathname + u.search + (/^#(sec-|tab-)/.test(u.hash) ? '' : u.hash)); };
+  T.stamp = () => { const u = new URL(location.href); if (wanted === 'overview') u.searchParams.delete('tab'); else u.searchParams.set('tab', wanted); history.replaceState(history.state, '', u.pathname + u.search + (/^#(sec-|tab-)/.test(u.hash) ? '' : u.hash)); };
   let t = null; new MutationObserver(() => { clearTimeout(t); t = setTimeout(apply, 60); }).observe(main, {subtree: true, childList: true, attributes: true, attributeFilter: ['hidden']});
   apply();
   // an old link to a section: once the page has drawn, bring that section into view
-  if (fromHash) addEventListener('load', () => setTimeout(() => { const s = document.getElementById(want); if (s) s.scrollIntoView({block: 'start'}); }, 1500));
+  if (fromHash) addEventListener('load', () => setTimeout(() => { const s = secs().find((x) => slug(x.dataset.nav) === want); if (s) { const y = s.getBoundingClientRect().top + scrollY - host.parentNode.offsetHeight - 8; scrollTo(0, y); } }, 1800));
 })();

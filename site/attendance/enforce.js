@@ -79,7 +79,9 @@
     { const h2 = card.querySelector('h2'), label = 'Penalty notices and other legal measures'; let k = h2.previousElementSibling; if (!k || !k.classList.contains('ax-kick')) { k = document.createElement('p'); k.className = 'ax-kick'; h2.before(k); }
       const w = (c) => { const v = col(rec, L, c), r = per(rec, L, c, 1000), e = per(E, L, c, 1000); return v == null ? null : v === 0 ? 'none' : v < 0 ? 'fewer than 10' : r > e * 1.1 ? 'more' : r < e * 0.9 ? 'fewer' : 'about as many'; }, a = w('hols'), b = w('other');
       const on = a && b, cap1 = (t) => t.replace(/^./, (c) => c.toUpperCase()), vs = (x) => (x === 'none' || x === 'fewer than 10' ? '' : x === 'about as many' ? ' as across England for its size' : ' than across England for its size');
-      k.hidden = !on; k.textContent = label; h2.textContent = on ? `${cap1(a)} penalty notices for term-time holiday${vs(a)}, and ${b} for other unauthorised absence${a === b || vs(a) ? '' : vs(b)}` : label; }
+      const lead = (x) => (x === 'none' ? 'No' : cap1(x));
+      k.hidden = !on; k.textContent = label; h2.textContent = !on ? label : a === 'none' && b === 'none' ? 'No penalty notices for term-time holiday or for other unauthorised absence'
+        : `${lead(a)} penalty notices for term-time holiday${vs(a)}, and ${b} for other unauthorised absence${a === b || vs(a) ? '' : vs(b)}`; }
     add(area, 'p', 'ax-sub', `Penalty notices to parents in ${ay(L)}, kept in two separate strands because they answer different things: notices for a holiday taken in term time without the school’s agreement, and notices for other unauthorised absence from school. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
     const years = Object.keys(E.y).filter((y) => +y >= 2016).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair en-strands');
     const strand = (c, title, noun, absKey, absName, absNote) => { const box = add(grid, 'div', 'en-strand'); add(box, 'h3', 'en-st', title);

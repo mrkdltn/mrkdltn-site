@@ -56,9 +56,9 @@
     $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') + (S.tj ? esc(', joined ' + month(S.tj) + (S.tprev ? ' from ' + S.tprev : '')) : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
     document.title = S.n + ': attendance · Attendance Explorer · Mark Dalton';
     { const cmp = [['England', e && e[0]], [la || 'its local authority', l && l[3] >= 3 ? l[0] : null], ['similar schools', S.sim ? S.sim[0] : null]].filter((c) => c[1] != null), groups = [];
-      if (now && now[1] != null) cmp.forEach((c) => { const t = gap(now[1], c[1]), w = Math.abs(t) < 3 ? 'close to' : t > 0 ? 'higher than' : 'lower than', g = groups.find((x) => x.w === w); if (g) g.names.push(c[0]); else groups.push({w, names: [c[0]]}); });
+      if (now && now[1] != null) cmp.forEach((c) => { const t = gap(now[1], c[1]), w = Math.abs(t) < 3 ? 'close to' : t > 0 ? 'higher than' : 'lower than',          /* 'close to' is a gap shown as 0.2 points or less, so the word never sits beside a figure of 0.3 */ g = groups.find((x) => x.w === w); if (g) g.names.push(c[0]); else groups.push({w, names: [c[0]]}); });
       const parts = groups.map((g) => g.w + ' ' + joinAnd(g.names));
-      finding($('sx-period'), 'Absence in the ' + period(L), parts.length ? 'Absence is ' + (parts.length < 2 ? parts[0] : parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1]) : null); }
+      finding($('sx-period'), 'Absence in the ' + period(L), parts.length ? 'Overall absence is ' + (parts.length < 2 ? parts[0] : parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1]) : null); }
     { const pn = $('sx-phase-n'); if (pn) pn.textContent = PH[S.ph]; } $('sx-base-n').textContent = ay(B.base) + ' and ' + ay(B.fy_last);
     $('sx-src').textContent = `“${B.release.autumn_spring.title}” (${B.release.autumn_spring.release}, published ${date(B.release.autumn_spring.published)}) and “${B.release.full_year.title}” (${B.release.full_year.release}, published ${date(B.release.full_year.published)})`;
     const R = $('sx-reading'), K = $('sx-kpis');
@@ -179,7 +179,7 @@
     const v = strip(el, dist.chg, mine, ticks, 25, 'Change in overall absence since ' + ay(B.base), (t, own) => (t > 0 ? '+' : t < 0 ? '−' : '') + (Math.abs(t) / 100).toFixed(own ? 1 : (Math.abs(t) % 100 ? 1 : 0)) + (own ? ' points' : ''), true);
     key(el, [`<i style="background:${SOFT}"></i>${PH[S.ph].replace(/^./, (c) => c.toUpperCase())} with figures for both years (${v.length.toLocaleString('en-GB')})`, `<i style="background:${MUTED};width:2px;height:12px"></i>Other schools in its local authority`]);
     const med = d3.median(v), up = Math.round(100 * v.filter((x) => x > 0).length / v.length);
-    { const d = a && b && a[1] != null && b[1] != null ? gap(b[1], a[1]) : null; finding(el.closest('section').querySelector('h2'), 'Since before the pandemic', d == null ? null : `Overall absence is ${d === 0 ? 'the same as' : pts(d) + ' points ' + (d > 0 ? 'higher than' : 'lower than')} in ${ay(B.base)}; it is higher at ${up}% of ${PH[S.ph]}`); }
+    { const d = a && b && a[1] != null && b[1] != null ? gap(b[1], a[1]) : null; finding(el.closest('section').querySelector('h2'), 'Since before the pandemic', d == null ? null : `Overall absence is ${d === 0 ? 'the same as' : pts(d) + ' points ' + (d > 0 ? 'higher than' : 'lower than')} in ${ay(B.base)}; across England, ${up}% of ${PH[S.ph]} are higher than they were`); }
     $('sx-chg-r').innerHTML = (mine == null ? `This school does not have figures for both years, so it is not marked. ` : `Overall absence here ${gap(b[1], a[1]) === 0 ? 'was unchanged' : (mine > 0 ? 'rose' : 'fell') + ` by <b>${pts(gap(b[1], a[1]))}</b> points`} between ${ay(B.base)} and ${ay(B.fy_last)}. `)
       + `Absence was higher in ${ay(B.fy_last)} than in ${ay(B.base)} at <b>${up}%</b> of ${PH[S.ph]}. At the middle school it ${med >= 0 ? 'rose' : 'fell'} by ${(Math.abs(med) / 100).toFixed(1)} points.`;
   }

@@ -81,7 +81,7 @@
     $('gx-period').textContent = 'Absence in the ' + period(L); $('gx-table-p').textContent = period(L);
     $('gx-src').textContent = `“${B.release.autumn_spring.title}” (published ${date(B.release.autumn_spring.published)}) and “${B.release.full_year.title}” (published ${date(B.release.full_year.published)})`;
     const R = $('gx-reading'), K = $('gx-kpis'), now = phase && mine(L), was = phase && prevP && mine(prevP), e = phase && eng(phase, L);
-    finding($('gx-period'), 'Absence in the ' + period(L), now && e ? `Absence in its ${PH[phase]} is ${hl(gap(now[0], e[0]))} across England` + (was ? `, and ${gap(now[0], was[0]) === 0 ? 'unchanged from' : hl(gap(now[0], was[0]))} a year earlier` : '') : null);
+    finding($('gx-period'), 'Absence in the ' + period(L), now && e ? `Overall absence in its ${PH[phase]} is ${hl(gap(now[0], e[0]))} across England` + (was ? `, and ${gap(now[0], was[0]) === 0 ? 'unchanged from' : hl(gap(now[0], was[0]))} a year earlier` : '') : null);
     if (!now) { K.innerHTML = '';
       R.textContent = kind === 't' && !G.pooled ? `${G.name} has ${count(G.n)} schools. A figure for all of a trust’s schools taken together is given only for trusts with five or more, so its schools are listed below without one.`
         : `There are too few schools of any one phase here for a figure across them, so the schools are listed below without one.`; return; }
@@ -98,7 +98,7 @@
     const card = $('gx-strip-c'), el = $('gx-strip'), M = MEAS[meas], L = B.latest;
     const ph = phase || (G.schools[0] && G.schools[0][2]), S = G.schools.filter((s) => s[2] === ph && s[M.s] != null);
     card.querySelector('.ax-sub').hidden = meas === 'sev';
-    if (meas === 'sev') { card.hidden = !phase; el.innerHTML = ''; $('gx-strip-r').textContent = 'Severe absence is never shown for a single school, where it usually describes a handful of children. Choose overall or persistent absence to see each school.'; return; }
+    if (meas === 'sev') { card.hidden = !phase; el.innerHTML = ''; finding(card.querySelector('h2'), 'School by school', null); $('gx-strip-r').textContent = 'Severe absence is never shown for a single school, where it usually describes a handful of children. Choose overall or persistent absence to see each school.'; return; }
     card.hidden = S.length < 2; if (S.length < 2) return;
     { const ev = (eng(ph, L) || [])[M.b], above = ev == null ? null : S.filter((x) => x[M.s] > ev).length;
       finding(card.querySelector('h2'), 'School by school', above == null ? null : `${above === S.length ? 'All' : above === 0 ? 'None' : above} of its ${S.length} ${PH[ph]} ${above === 1 ? 'has' : 'have'} higher ${M.n} than England’s ${PH[ph]} taken together`); }
@@ -126,7 +126,7 @@
     const card = $('gx-hist-c'), el = $('gx-hist'), M = MEAS[meas]; card.hidden = !(phase && G.bench[phase]); if (card.hidden) return;
     $('gx-hist-s').textContent = (kind === 'w' || kind === 'y' || kind === 'a' ? 'Its schools taken together, for each full school year.' : kind === 't' ? !(G.bench_in && G.bench_in[phase]) ? 'The schools it holds today, taken together for each full school year, including years before they joined it. No joining dates are recorded for them, so the trust’s own record cannot be drawn separately.' : 'The solid line takes together only the schools that were in the trust in each year. It is the trust’s own record. The dashed line takes together the schools it holds today in every year, including the years before they joined.' : 'The schools located in the constituency, taken together for each full school year.') + ' No figures were published for 2019/20.';
     { const a = (mine(B.fy_last) || [])[M.b], b = (mine(B.base) || [])[M.b], ea = (eng(phase, B.fy_last) || [])[M.b], eb = (eng(phase, B.base) || [])[M.b], d = a == null || b == null ? null : gap(a, b), de = ea == null || eb == null ? null : gap(ea, eb);
-      finding(card.querySelector('h2'), 'Year by year', d == null ? null : `${cap(M.n)} was ${d === 0 ? 'the same' : pts(d) + ' points ' + (d > 0 ? 'higher' : 'lower')} in ${ay(B.fy_last)} ${d === 0 ? 'as' : 'than'} in ${ay(B.base)}, before the pandemic${kind === 't' ? ', across the schools it holds today' : ''}` + (de == null || de === 0 ? '' : `; across England it ${de > 0 ? 'rose' : 'fell'} by ${pts(de)}`)); }
+      finding(card.querySelector('h2'), 'Year by year', d == null ? null : `${cap(M.n)} was ${d === 0 ? 'the same' : pts(d) + ' points ' + (d > 0 ? 'higher' : 'lower')} in ${ay(B.fy_last)} ${d === 0 ? 'as' : 'than'} in ${ay(B.base)}, before the pandemic${kind === 't' ? ', across the schools it holds today' : ''}` + (de == null || de === 0 ? '' : `; across England it ${de > 0 ? 'rose' : 'fell'} by ${pts(de)} points`)); }
     const W = width(el), H = Math.round(Math.min(360, Math.max(230, W * 0.46))), m = {t: 14, r: 16, b: 30, l: 42};
     const yrs = d3.range(+B.fy[0], +B.fy_last + 1).map(String), s = svg(el, W, H, M.n + ' by school year');
     const inT = kind === 't' && G.bench_in && G.bench_in[phase], at = (p) => (inT && inT[p]) || null;
@@ -177,11 +177,11 @@
     if (kind === 'w') { wardMap(el, M); return; }
     const rows = ALL.filter((r) => r[phase]).map((r) => ({r, n: r[phase][1], v: pgOn() ? pgVal(r.pg) : val(r[phase])})).filter((d) => d.v != null);
     // the heading: where this place stands among the others of its kind, by count and never by name
-    const among = (plural) => { const h = $('gx-over-h'), label = h.textContent, meR = rows.find((d) => d.r.id === id), others = rows.filter((d) => d.r.id !== id);
+    const among = (plural, own) => { const h = $('gx-over-h'), label = own || h.textContent, meR = rows.find((d) => d.r.id === id), others = rows.filter((d) => d.r.id !== id);
       finding(h, label, view === 'now' && meR && others.length ? `${cap(vname())} is higher here than in ${others.filter((d) => d.v < meR.v).length} of the other ${others.length} ${plural}` : null); };
     if (kind === 'y') { ordered(el, rows); among('ceremonial counties'); return; }
     if (kind === 'c' || kind === 'a') { hexMap(el, rows); among(kind === 'c' ? 'constituencies' : 'local authorities'); return; }
-    if (view === 'now') { funnel(el, M, rows); among(`trusts with at least three ${PH[phase]}`); return; }
+    if (view === 'now') { funnel(el, M, rows); among(`trusts with at least three ${PH[phase]}`, 'Among trusts'); return; }
     $('gx-over-h').textContent = 'Among trusts'; $('gx-over-s').textContent = `Each dot is a trust with at least three ${PH[phase]}, placed by ${vname()}, for the schools it holds today. Tap a dot to name the trust.`;
     el.innerHTML = ''; const W = width(el), H = 120, m = {t: 30, r: 16, b: 30, l: 16}, s = svg(el, W, H, 'Trusts by ' + vname()), mid = engVal(phase);
     const x = d3.scaleLinear(d3.extent(rows.map((d) => d.v).concat([mid])), [m.l, W - m.r]).nice();
@@ -362,7 +362,7 @@
     document.querySelectorAll('#gx-view button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
     document.querySelectorAll('#gx-pgs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.g === pgsel)));
     const p = new URLSearchParams({k: kind, id}); if (phase) p.set('phase', phase); if (meas !== 'abs') p.set('m', meas); if (view !== 'now') p.set('v', view); if (pgOn()) p.set('g', pgsel); if (VS.length) p.set('vs', VS.map((o) => o.id).join(','));
-    if (window.AXtabs && AXtabs.current !== 'overview') p.set('tab', AXtabs.current);
+    if (window.AXtabs && AXtabs.wanted !== 'overview') p.set('tab', AXtabs.wanted);
     history.replaceState(null, '', location.pathname + '?' + p.toString());      // always: a copied link must open this place
     head(); compare(); groups(); strip(); hist(); over(); table();
   }

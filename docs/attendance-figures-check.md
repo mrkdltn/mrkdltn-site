@@ -562,3 +562,84 @@ Not reproduced, or needing a word:
 ### Not checked
 
 The DfE's statutory guidance itself (gov.uk unreachable); the hexagon map's colours; county pages' absence figures against a DfE county figure (the DfE publishes none); the phone layout of the tables; anything committed after `e8328b5`.
+
+## Sixth pass: headings, tabs and the clock line
+
+Run on 25 November 2026 against commit `f625d5d` ("tabs on the Areas and Patterns pages; one line reconciling the two clocks"), with the data as built on 24 November. The DfE files were downloaded again and every figure recomputed from them before the headings were read. Pages were rendered with Playwright at 390 px, opening every tab in turn and then again in reverse.
+
+Sample, seed 20261128: 43 schools (11 primary, 11 secondary and 9 special at random, 5 in an authority with fewer than three schools of their phase, 5 with 10 to 30 pupils, 2 with fewer than 10), each with overall and with persistent absence chosen; 25 local authorities (including the two with one school each), 8 counties, 12 trusts, 10 constituencies and 8 wards, each at its default, in every phase it has with persistent absence chosen, and with severe absence chosen, and local authorities in every phase at the default as well; the in-year page for England and 10 authorities in all four phase views; and Patterns. 419 pages, 2,000 tab views.
+
+**Every finding-heading is true: 1,791 of 1,791, with every count, percentage, direction word and "more / fewer / about as many" right.** The faults are in how the headings behave, not in their arithmetic. Three are bugs, and five headings should be reworded.
+
+### Counts
+
+| | Checked | True or working | Not |
+| --- | --- | --- | --- |
+| (a) School headings: summary, similar schools, position, year by year, since 2018/19 | 388 | 388 | 0 |
+| (a) Local authority headings: summary, school by school, year by year, compared, pupil groups, enforcement | 891 | 891 | 0 |
+| (a) County headings | 145 | 145 | 0 |
+| (a) Constituency headings | 158 | 158 | 0 |
+| (a) Trust headings | 155 | 155 | 0 |
+| (a) Ward headings | 54 | 54 | 0 |
+| (a) "Close to" in the school summary, against a band of under 0.3 points | 103 gaps | 100 | 3 (item 5) |
+| (b) Area and trust summary heading, read against the measure chosen, when that is persistent or severe absence | 191 | 112 | 79 would read differently (item 1) |
+| (d) Clock line: dates, phase, the area's rate, England's rate, the gap | 68 authority-and-phase pairs, 340 figures | 340 | 0 |
+| (d) Clock line absent where it should be: counties, trusts, constituencies, wards; other tabs | 145 pages | 145 | 0 |
+| (e) In-year "illness accounts for …%, and unauthorised holiday for …%" | 43 | 43 | 0 |
+| (e) In-year "lower than at the same point last year in N of M local authorities" | 44 | 44 | 0 |
+| (f) Every section reachable in some tab, eight kinds of page | 69 sections | 69 | 0 |
+| (f) An address with `tab=` opens that tab | 24 | 24 | 0 |
+| (f) The address a page shows after it has opened | 4 kinds of page | 3 | 1: school pages (item 2) |
+| (f) Old `#sec-<name>` links open the right tab | 34 | 34 | 0 |
+| (f) Old `#sec-<name>` links bring the section into view | 34 | 25 | 9 (item 4) |
+| (f) Every tab printed | 8 kinds of page | 8 | 0 (the feedback form is left out of print) |
+| (f) Keyboard: arrow keys move between tabs and focus follows; Enter opens a tab; Tab reaches the tab's content | 8 kinds of page | 8 | 0 |
+| (g) Console errors | 419 pages | 419 clean | 0 |
+| (g) Sideways scroll at 390 px | 2,000 tab views | 2,000 | 0 |
+| (g) Charts drawn at full width, first time and after switching away and back | 2,858 each way | 2,797 | 61, all intended: the school-by-school chart is empty under severe absence (60) and one weekday chart had too few sessions |
+| (g) Controls inside a tab: phase, persistent, severe, school measure, in-year phase | 5 changes | 4 | 1 (item 3) |
+
+What "true" rests on. Counts such as "185 of its 293 primary schools", "higher here than in 138 of the other 150 local authorities", "35% of secondary schools had higher" and "it is higher at 98% of secondary schools" were recounted from the DfE's school and area figures. Differences were taken from unrounded figures and rounded once. The 20-similar-schools figure is the tool's own and was not rebuilt; the heading's gap from it was. Ward pages have no "compared" heading, so none was checked.
+
+The clock line. The area and England rates match the DfE's daily rows summed from 7 September to 6 November 2026 in all 68 pairs, and the DfE's own year-to-date percentage wherever that is given to enough places to tell. "Since September 2026, up to 6 November 2026" is right. "End at Easter 2026" is right: the DfE's autumn and spring terms 2025/26 run to Easter. It appears only on local authority pages, only on the Overview tab, and not where the authority has no in-year figure for the phase (2 pairs). It speaks of overall absence whatever measure is chosen, and says "missed … of sessions", which makes that plain. The nine authorities whose special-school year-to-date figure differs from the DfE's (fourth pass, item 4) were not in this sample; nothing has changed there.
+
+### What is wrong
+
+**1. The summary heading speaks of overall absence whatever measure is chosen, and it misleads. Page.** "Absence in its secondary schools is lower than across England, and lower than a year earlier" is computed from overall absence. With persistent or severe absence chosen, every other heading on the page follows the choice and this one does not. In 79 of 191 such views the words would be different for the measure on screen. Example, `/attendance/group/?k=a&id=E10000019&phase=S&m=pa`: the heading says "lower than across England, and lower than a year earlier"; persistent absence there is higher than across England and unchanged. The heading is true of overall absence and does not say that is what it means.
+
+**2. A school page opened at a tab or a section shows `tab=method` in its address. Page (`tabs.js` with `school.js`).** Open `/attendance/school/?urn=141741&tab=compare`: the Compare tab opens, and the address becomes `?urn=141741&tab=method`. The same happens for `tab=time` and for every `#sec-` link (10 of 10 tried). The address is stamped while only the Method section has anything in it and is not corrected when the wanted tab opens. A link copied from that page opens Method. Clicking a tab puts it right. Area, in-year and Patterns pages keep the right address.
+
+**3. The school-by-school heading goes stale under severe absence. Page (`strip()` in `group.js`).** Choose persistent absence and then severe: the section says "Severe absence is never shown for a single school", under a heading that still reads "54 of its 89 secondary schools have higher persistent absence than England's secondary schools taken together" (`k=a&id=E08000025&phase=S`, Schools tab). Opened directly with severe chosen, the heading is the plain label, as it should be.
+
+**4. Nine old section links open the right tab but not the section.** `tabs.js` looks for an element whose id is `sec-<name>`, and gives that id only to a section with no id of its own. Sections that already have one (`gx-hist-c`, `gx-over-c`, `gx-cmp-c`, `sx-read-c`, `px-cal-c`, `px-sev-c`, `px-enf-c`, `px-scat-c`) are not found, so the page stays at the top of the tab. On a local authority page `#sec-year-by-year` leaves the section 2,200 px down and `#sec-compared` 2,750 px down. `#sec-enforcement`, which the tool's own links use, lands in view because that section leads its tab.
+
+**5. "Close to" stops at 0.25, not 0.3.** The test is on the rounded gap, so 0.2 is the last "close to". Three of 103 gaps lie between 0.25 and 0.3 and are called higher or lower: school 146404 against England (+0.29), 119536 against its authority (−0.29), 110733 against similar schools (−0.25).
+
+### Headings I would reword, and why
+
+| Now | Why | Suggested |
+| --- | --- | --- |
+| "Absence in its secondary schools is lower than across England, and lower than a year earlier" (areas and trusts) | Item 1. It is about overall absence and does not say so | "Overall absence in its secondary schools …", or follow the measure chosen as the other headings do |
+| "Absence is lower than England and Hampshire" (schools) | "Absence" is overall absence; "lower than England" compares a school with a country | "Overall absence is lower than across England's primary schools and Hampshire's" |
+| "Overall absence is 0.4 points lower than in 2018/19; it is higher at 88% of primary schools" (schools) | "It" reads as this school, so the second half seems to contradict the first. 22 of the 86 sampled read this way | "…; across England it is higher than in 2018/19 at 88% of primary schools" |
+| "None penalty notices for term-time holiday, and none for other unauthorised absence" (`k=y&id=city-of-london`) | Not English | "No penalty notices for term-time holiday or for other unauthorised absence" |
+| "… before the pandemic; across England it rose by 1.2" (areas and trusts) | The unit is missing from the second figure | "… it rose by 1.2 points" |
+
+Two labels to look at as well. On trust pages the small line above the "compared" heading reads "Among trusts, allowing for size", but the heading beneath is a plain count of trusts with a lower rate, which makes no allowance for size. And a heading that is a rank ("higher here than in 138 of the other 150 local authorities") is a reading of figures, not a judgement, but it is the nearest thing on the site to a league-table line; the count is exact, so if it stays it is at least right.
+
+### (b) and (c) in brief
+
+- Apart from items 1 and 3, no heading contradicts the sentence, table or chart beneath it. Where a heading and its sentence give the same figure (the position percentage, the gap from similar schools, the change since 2018/19) they agree in all 43 schools and every area checked.
+- The school "year by year" heading gives the change between the last two full years, while the sentence under the chart gives the change since 2018/19. Both are true and they do not conflict, but they answer different questions.
+- "Since before the pandemic" on a school page is always overall absence, and its heading says "Overall absence", so it does not mislead when persistent absence is chosen elsewhere.
+- No heading reads as a judgement of a named school or place, and none implies cause. "Before the pandemic" is a date, not an explanation. The enforcement heading says "for its size" and stops there.
+
+### Smaller points
+
+- The page tabs carry `role="tab"` inside a `role="tablist"` but have no `aria-controls` and no `role="tabpanel"` on what they show. Keyboard use works; a screen reader is told less than it could be.
+- At 390 px the phase and measure buttons are replaced by drop-downs. They work inside every tab.
+- Patterns and the in-year page keep their old static headings apart from the two new ones checked under (e).
+
+### Not checked
+
+The similar-schools figure itself; the wording of sections that have no finding-heading; screen-reader behaviour beyond roles and focus; widths other than 390 px; anything committed after `f625d5d`.
