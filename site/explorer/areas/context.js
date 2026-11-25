@@ -57,7 +57,7 @@
     const out = [];
     if (clear.length) {
       const t = clear[0];
-      let s = `Among **${cnt(n)}** inspected ${PLURAL[ph]}, those in the most deprived fifth were more likely than those in the least deprived fifth to be graded below Expected standard for ${lcArea(t.name)}, by **${ciTxt(t.controlled)}**, with ${held} held constant`;
+      let s = `Among **${cnt(t.n || n)}** inspected ${PLURAL[ph]}, those in the most deprived fifth were more likely than those in the least deprived fifth to be graded below Expected standard for ${lcArea(t.name)}, by **${ciTxt(t.controlled)}**, with ${held} held constant`;
       if (ph === 'Secondary' && t.raw) s += `. Before anything was held constant the gap was ${pp(t.raw[0])} points`;
       const more = clear.slice(1).map((r) => `${lcArea(r.name)} (${pp(r.controlled[0])})`);
       if (more.length) s += `. The gap is also clear for ${list(more)}`;
