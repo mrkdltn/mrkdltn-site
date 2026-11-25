@@ -23,7 +23,7 @@ import build  # noqa: E402
 import content  # noqa: E402
 import figures  # noqa: E402
 
-FIXED = {'50', '2024', '25', '10', '2025', '26'}  # 50 similar schools; 2024/25 and 2025/26 results; groups of 10
+FIXED = {'50', '2024', '25', '10', '2025', '26', '95'}  # 50 similar schools; 2024/25 and 2025/26 results; groups of 10; 95% intervals
 fails = []
 
 

@@ -95,3 +95,10 @@
   .dc-filter .ml{flex-basis:100%}
 }
 @media print{.dc-draft{background:none;color:#000;border:2px solid #000}.dc-cta .btn{display:none}}
+/* dot and whisker (grades and context held constant) */
+.dc-page svg .rl{font-size:14px;fill:#0B1A2E;font-family:var(--sans);font-weight:600}
+.dc-legend i.dc-dot{width:12px;height:12px;border:2px solid #2F6F66;border-radius:50%;background:#fff;box-sizing:border-box}
+.dc-legend i.dc-dot-ctl{background:#0B1A2E;border-color:#0B1A2E}
+.dc-legend i.dc-dot-low{background:#8A96A8;border-color:#8A96A8}
+.dc-ch-wide{max-width:none}
+.dc-page svg .rl,.dc-page svg .rd{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}

@@ -71,8 +71,10 @@ def long_date(iso):
 def fmt(v, unit, dp=0):
     if v is None:
         return 'not given'
-    if unit == 'schools':
+    if unit in ('schools', 'estimates'):
         return f'{int(v):,}'
+    if unit == 'p':
+        return f'{v:.3f}'
     x = f'{v:.{dp}f}'
     if unit == '%':
         return x + '%'
@@ -86,7 +88,7 @@ def big(v, unit):
     if unit == 'schools':
         return f'{int(v):,}'
     if unit == 'pp':
-        return f'{v:.0f} pts'
+        return f'{v:+.1f}'.replace('-', '−') + ' pts'
     return f'{v:.0f}%' if unit == '%' else f'{v:.0f}'
 
 
@@ -121,7 +123,7 @@ def live_check(d, data):
         except KeyError as ex:
             raise SystemExit(f'{d["_file"]}: {ex}')
         fig['_live'] = r
-        if fig.get('unit') == 'schools' or r['value'] is None or fig.get('value') is None:
+        if fig.get('unit') not in ('%', 'pp') or r['value'] is None or fig.get('value') is None:
             continue
         a, b = float(fig['value']), float(r['value'])
         flip = fig.get('unit') == 'pp' and a * b < 0
@@ -175,7 +177,7 @@ def card(d, fonts, draft, out_path):
         for i, fig in enumerate(figs):
             x = M + i * col
             dr.text((x, y), big(fig['value'], fig.get('unit')), font=vf, fill=INK)
-            ly = y + (102 if len(lines) < 3 else 86)
+            ly = y + (114 if len(lines) < 3 else 96)  # clear of the descenders in 'pts'
             for ln in wrap(dr, typo(fig['label']), lf, col - 40)[:2]:
                 dr.text((x, ly), ln, font=lf, fill=MUTED)
                 ly += 27
@@ -229,6 +231,8 @@ def list_card(newest, fonts, out_path, preview=False):
 
 def short_source(d):
     """The card's source line: the data sets and their dates, without the long release titles."""
+    if d.get('card_source'):
+        return d['card_source']
     srcs = d['chart'].get('source') or d['figures'][0]['source']
     out = []
     if 'Ofsted' in srcs:
@@ -297,7 +301,7 @@ def banner(d):
 
 def chart_json(d, small=False):
     ch = d['chart']
-    spec = {k: ch.get(k) for k in ('form', 'title', 'x', 'xtitle', 'ymax', 'series', 'rows', 'legend') if ch.get(k) is not None}
+    spec = {k: ch.get(k) for k in ('form', 'title', 'x', 'xtitle', 'ymax', 'series', 'rows', 'legend', 'threshold') if ch.get(k) is not None}
     spec.update({'id': d['id'], 'source': chart_source(d), 'version': ch.get('data_version') or ''})
     if small:
         spec['small'] = True
@@ -312,7 +316,11 @@ def chart_source(d):
 
 def legend(d):
     ch = d['chart']
-    if ch['form'] == 'pairs':
+    if ch['form'] == 'whisker':
+        items = ['<span><i class="dc-dot dc-dot-raw"></i>Deprivation alone</span>',
+                 '<span><i class="dc-dot dc-dot-ctl"></i>Other context held constant</span>',
+                 '<span><i class="dc-dot dc-dot-low"></i>Too few schools to read</span>']
+    elif ch['form'] == 'pairs':
         items = [f'<span><b style="background:{c}"></b>{e(n)}</span>' for c, n in ch.get('legend') or []]
     else:
         items = ['<span><i{}></i>{}</span>'.format('' if s.get('main') else ' class="d"', e(s['name'])) for s in ch.get('series') or []]
@@ -325,6 +333,14 @@ def chart_table(d):
     """The chart's figures as a plain table, in the page itself: readable with no script, and in the feed."""
     ch = d['chart']
     pc = lambda v: '—' if v is None else f'{v:.0f}%'
+    if ch['form'] == 'whisker':
+        ci = lambda c: '{} ({} to {})'.format(*[('+' if x > 0 else '−' if x < 0 else '') + f'{abs(x):.1f}' for x in c])
+        head = ('<tr><th scope="col">Area</th><th scope="col">Deprivation alone</th><th scope="col">Context held constant</th>'
+                '<th scope="col">Reading</th></tr>')
+        body = ''.join(f'<tr><th scope="row">{e(r["label"])}</th><td>{ci(r["raw"])} <small>({r["n_raw"]:,})</small></td>'
+                       f'<td>{ci(r["controlled"])} <small>({r["n"]:,})</small></td><td>{e(r["reading"])}</td></tr>' for r in ch['rows'])
+        return (f'<table class="dc-ftable"><caption>{e(ch["title"])}: percentage points, 95% confidence interval (schools)</caption>'
+                f'<thead>{head}</thead><tbody>{body}</tbody></table>')
     if ch['form'] == 'pairs':
         names = [n for _, n in ch.get('legend') or []]
         head = '<tr><th scope="col">Area</th>' + ''.join(f'<th scope="col">{e(n)}</th>' for n in names) + '</tr>'
@@ -346,7 +362,7 @@ def method_items(d, today):
         fn = figures.FIGURES.get(fig['compute'])
         how = ' '.join((fn.__doc__ or '').split()) if fn else ''
         live = since_line(fig, today) if fig.get('_moved') else ''
-        schools = '' if fig.get('unit') == 'schools' else ' ({:,} schools)'.format(int(fig['n']))
+        schools = ' ({:,} schools)'.format(int(fig['n'])) if fig.get('unit') in ('%', 'pp', 'p') else ''
         out.append(f'<li><p class="dc-ml"><b>{e(typo(fig["label"]))}</b>: {fmt(fig["value"], fig.get("unit"), 1)}'
                    f'{schools}</p>'
                    f'<p>{e(typo(how))}</p>'

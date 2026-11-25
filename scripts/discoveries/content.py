@@ -24,7 +24,7 @@ THEMES = {'achievement-and-context': 'Achievement and context', 'attendance-and-
           'inclusion': 'Inclusion', 'later-report-language': 'Later report language'}
 NAME = re.compile(r'^\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$')
 ORDER = ['id', 'date', 'title', 'standfirst', 'status', 'theme', 'figures', 'chart', 'explore', 'related',
-         'limitation', 'supersedes', 'superseded_by', 'published', 'approved_by']
+         'limitation', 'card_source', 'supersedes', 'superseded_by', 'published', 'approved_by']
 
 
 # ---------- reading ----------

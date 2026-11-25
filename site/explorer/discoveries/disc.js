@@ -10,7 +10,10 @@
     let spec; try { spec = JSON.parse(box.dataset.chart); } catch (e) { console.error(e); return null; }
     if (!AC) return spec;
     box.replaceChildren();
-    if (spec.form === 'pairs') {
+    if (spec.form === 'whisker') {
+      AC.whisker(box, spec.rows, {threshold: spec.threshold, aria: spec.title});
+      if (spec.small) { const s = box.querySelector('svg'); if (s) { s.setAttribute('aria-hidden', 'true'); s.removeAttribute('role'); s.querySelectorAll('title').forEach((t) => t.remove()); } }
+    } else if (spec.form === 'pairs') {
       AC.pairs(box, spec.rows.map((r) => ({label: r.label, k: r.k, values: r.values, n: r.n})), spec.legend);
     } else {
       const series = spec.series.map((s) => ({name: s.name, main: !!s.main, colour: s.main ? INK : MUTED, dash: s.main ? null : '4 3',
@@ -22,7 +25,16 @@
     return spec;
   };
 
+  const sgn = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
   const tableOf = (spec) => {
+    if (spec.form === 'whisker') {
+      const c = (v) => `${sgn(v[0])} (${sgn(v[1])} to ${sgn(v[2])})`;
+      return {caption: spec.title, cols: ['Area', 'Deprivation alone, points (95% CI)', 'Schools', 'Context held constant, points (95% CI)', 'Schools', 'Reading'],
+        num: [false, true, true, true, true, false],
+        rows: spec.rows.map((r) => ({cells: [r.label, c(r.raw), r.n_raw, c(r.controlled), r.n, r.reading]})),
+        csvCols: ['area', 'raw_pp', 'raw_lo', 'raw_hi', 'schools_raw', 'controlled_pp', 'controlled_lo', 'controlled_hi', 'schools_controlled', 'reading'],
+        csv: spec.rows.map((r) => [r.label, ...r.raw, r.n_raw, ...r.controlled, r.n, r.reading])};
+    }
     if (spec.form === 'pairs') {
       const names = (spec.legend || []).map((l) => l[1]);
       return {caption: spec.title, cols: ['Area'].concat(names.flatMap((n) => [n + ': % below Expected standard', 'Schools'])), num: [false, true, true, true, true],

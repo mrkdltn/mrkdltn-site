@@ -304,6 +304,82 @@ def n_inspected(d):
     return {'value': len(d.inspected), 'n': len(d.inspected)}
 
 
+# ---------- seed 4: grades and context, held constant (the pre-registered analysis) ----------
+# These figures are read, not re-estimated: the models are fitted by scripts/analysis/grades_context.py (branch
+# areas-context-2) to the plan committed beforehand (docs/analysis-plans/grades-context-plan.md, commit 801f11b), and
+# written to data/derived/grades_context.json. Each function returns the frozen estimate from that file, so a re-run of
+# the analysis that moves an estimate shows on the discovery's page through the live check.
+
+GC_PATH = os.path.join(ROOT, 'data', 'derived', 'grades_context.json')
+
+
+def _gc(d):
+    if getattr(d, '_gc', None) is None:
+        if not os.path.exists(GC_PATH):
+            raise SystemExit(f'{GC_PATH} is missing (it comes from the grades and context analysis)')
+        with open(GC_PATH, encoding='utf-8') as f:
+            d._gc = json.load(f)
+    return d._gc
+
+
+def _gc_row(d, phase, area):
+    return next(r for r in _gc(d)['held'][phase] if r['area'] == area)
+
+
+def gc_ach_raw(d):
+    """Secondary achievement: the gap in the chance of a below Expected grade (Needs attention or Urgent improvement)
+    between schools in the most and least deprived IDACI fifths, with deprivation alone, in percentage points (an
+    average marginal effect from a logistic model, on every inspected secondary)."""
+    r = _gc_row(d, 'Secondary', 'g_ach')
+    return {'value': r['raw'][0], 'n': r['n_raw']}
+
+
+def gc_ach_controlled(d):
+    """The same gap with other context held constant: 2024/25 results against 50 similar schools, prior attainment,
+    SEN (EHC plan and SEN support shares), pupil stability, size, region, urban or rural setting and governance. On the
+    inspected secondaries with all of these (those without 2024/25 results against similar schools drop out)."""
+    r = _gc_row(d, 'Secondary', 'g_ach')
+    return {'value': r['controlled'][0], 'n': r['n']}
+
+
+def gc_ach_controlled_lo(d):
+    """Lower end of the 95% confidence interval for the controlled gap (robust HC1 standard errors, delta method)."""
+    r = _gc_row(d, 'Secondary', 'g_ach')
+    return {'value': r['controlled'][1], 'n': r['n']}
+
+
+def gc_ach_controlled_hi(d):
+    """Upper end of the 95% confidence interval for the controlled gap."""
+    r = _gc_row(d, 'Secondary', 'g_ach')
+    return {'value': r['controlled'][2], 'n': r['n']}
+
+
+def gc_ach_holm(d):
+    """Holm-adjusted p-value for the controlled gap, correcting for all the estimates in the pre-registered family."""
+    r = _gc_row(d, 'Secondary', 'g_ach')
+    return {'value': r['p_holm'], 'n': r['n']}
+
+
+def gc_family(d):
+    """The number of controlled estimates in the pre-registered family (seven areas in primaries, seven in secondaries),
+    all corrected together."""
+    n = _gc(d)['family_size']
+    return {'value': n, 'n': n}
+
+
+READINGS = {'clear': 'Clear', 'clear_single': 'Clear on its own, not after correction', 'inconclusive': 'Too uncertain to call',
+            'low_events': 'Too few schools below Expected to read', 'not_fitted': 'Too few schools'}
+
+
+def chart_gc_secondary(d):
+    """Every secondary area: the gap with deprivation alone and with other context held constant, with 95% intervals."""
+    g = _gc(d)
+    rows = [{'label': r['name'], 'k': r['area'], 'raw': r['raw'], 'controlled': r['controlled'], 'n_raw': r['n_raw'],
+             'n': r['n'], 'reading': READINGS.get(r['reading'], r['reading']),
+             'low': r['reading'] in ('low_events', 'not_fitted')} for r in g['held']['Secondary']]
+    return {'rows': rows, 'threshold': g['threshold_pp']}
+
+
 # ---------- general figures for the candidate generator (named with their arguments: fifth_share__g_inc__idaci__5) ----
 
 # the groupings the areas page can show: (label, how a school is placed, page section, x labels)
@@ -410,7 +486,21 @@ SOURCES = {'sr': ('ofsted', 'ks4_25'), 'gt': ('ofsted',), 'sb': ('ofsted', 'ks4_
            'chart_sr': ('ofsted', 'ks4_25'), 'chart_gt': ('ofsted',), 'chart_sb': ('ofsted', 'ks4_26')}
 
 
+def grades_context_source(d):
+    g = _gc(d)
+    mi = long_date(g['sources']['mi']['as_at'])
+    plan = g['plan']
+    return (f'Ofsted, State-funded school inspections and outcomes: management information, latest inspections as at {mi}; '
+            'DfE, Special educational needs in England: school level data, January 2026; '
+            'DfE, Key stage 4 performance 2024/25 (final), read against the open similar-schools replica; '
+            'DfE, Get Information about Schools, extract of 25 November 2026; '
+            f'analysis as pre-registered in docs/analysis-plans/grades-context-plan.md (commit {plan["commit"][:7]}, '
+            f'{long_date(plan["committed"][:10])})')
+
+
 def source_for(name, d):
+    if name.startswith(('gc_', 'chart_gc')):
+        return grades_context_source(d)
     keys = SOURCES.get(name) or SOURCES.get(name.split('_')[0]) or ('ofsted',)
     if '__' in name:
         args = name.split('__')[1:]
@@ -420,14 +510,21 @@ def source_for(name, d):
     return '; '.join(parts[k] for k in keys)
 
 
+def as_at_for(name, d):
+    """What a figure is 'as at': for the grades and context analysis, the date of the MI release it was fitted to."""
+    if name.startswith(('gc_', 'chart_gc')):
+        return str(_gc(d)['as_at'])[:10]
+    return as_at(d)
+
+
 def as_at(d):
     """What a frozen figure is 'as at': the last report card publication in the data (the daily read), or failing
     that the latest inspection."""
     return str(d.build.get('latest_published') or d.build.get('latest_inspection') or '')[:10]
 
 
-FIGURES = {k: v for k, v in globals().items() if callable(v) and k.split('_')[0] in ('sr', 'gt', 'sb', 'n') and not k.startswith('_')}
-CHARTS = {'chart_sr': chart_sr, 'chart_gt': chart_gt, 'chart_sb': chart_sb}
+FIGURES = {k: v for k, v in globals().items() if callable(v) and k.split('_')[0] in ('sr', 'gt', 'sb', 'n', 'gc') and not k.startswith('_')}
+CHARTS = {'chart_sr': chart_sr, 'chart_gt': chart_gt, 'chart_sb': chart_sb, 'chart_gc_secondary': chart_gc_secondary}
 
 
 def compute(name, d):

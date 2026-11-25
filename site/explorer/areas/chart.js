@@ -48,5 +48,43 @@
       row.append(box); host.append(row); });
   }
 
-  window.OE.areaChart = {line5, pairs, MIN};
+  // rows: [{label, raw: [est, lo, hi], controlled: [est, lo, hi], n_raw, n, reading, low}]; opts: {threshold, aria}
+  // A dot-and-whisker chart in the style of the areas page's "Context, held constant": open verdigris circle for the
+  // gap with deprivation alone, filled midnight circle with other context held constant (grey where too few schools
+  // below Expected to read), 95% intervals as lines, the materiality threshold as a dashed brass line.
+  function whisker(box, rows, opts) {
+    const NS = 'http://www.w3.org/2000/svg', VERD = '#2F6F66', INK = '#0B1A2E', SOFT = '#8A96A8', BRASS = '#C9A24B';
+    const sv = (t, a, p) => { const e = document.createElementNS(NS, t); Object.entries(a || {}).forEach(([k, v]) => e.setAttribute(k, v)); if (p) p.append(e); return e; };
+    const txt = (p, x, y, s, cls, a) => { const t = sv('text', Object.assign({x, y, class: cls}, a || {}), p); t.textContent = s; return t; };
+    const pp = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+    const W = Math.max(300, Math.round(box.clientWidth || 300)), narrow = W < 600;
+    const L = narrow ? 8 : 250, R = 16, T = 30, B = 46, RH = narrow ? 64 : 48;
+    const H = T + rows.length * RH + B;
+    const vals = rows.flatMap((r) => [r.raw, r.controlled].filter(Boolean).flatMap((c) => [c[1], c[2]]));
+    const lo = Math.min(-10, Math.floor(Math.min(...vals) / 10) * 10), hi = Math.max(30, Math.ceil(Math.max(...vals) / 10) * 10);
+    const x = (v) => L + (v - lo) / (hi - lo) * (W - L - R);
+    const svg = sv('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': opts.aria}, box);
+    for (let t = lo; t <= hi; t += 10) {
+      sv('line', {x1: x(t), x2: x(t), y1: T - 6, y2: H - B + 4, stroke: t === 0 ? AXIS : GRID, 'stroke-width': t === 0 ? 1.5 : 1}, svg);
+      txt(svg, x(t), H - B + 20, (t > 0 ? '+' : t < 0 ? '−' : '') + Math.abs(t), 'ax', {'text-anchor': 'middle'});
+    }
+    if (opts.threshold) { sv('line', {x1: x(opts.threshold), x2: x(opts.threshold), y1: T - 6, y2: H - B + 4, stroke: BRASS, 'stroke-width': 1, 'stroke-dasharray': '3 3'}, svg);
+      txt(svg, x(opts.threshold) + 4, T - 12, `${opts.threshold}-point threshold`, 'ax'); }
+    txt(svg, (L + W - R) / 2, H - 8, 'Percentage points, most vs least deprived fifth', 'ax t', {'text-anchor': 'middle'});
+    rows.forEach((r, i) => {
+      const top = T + i * RH, y0 = narrow ? top + 46 : top + RH / 2;
+      if (narrow) { txt(svg, L, top + 15, r.label, 'rl'); txt(svg, L, top + 30, r.reading, 'ax rd'); }
+      else { txt(svg, 0, y0 - 3, r.label, 'rl'); txt(svg, 0, y0 + 14, r.reading, 'ax rd'); }
+      if (i) sv('line', {x1: narrow ? L : 0, x2: W - R, y1: top, y2: top, stroke: GRID}, svg);
+      const mark = (c, dy, colour, filled, name, n) => { if (!c) return; const g = sv('g', {}, svg);
+        sv('line', {x1: x(c[1]), x2: x(c[2]), y1: y0 + dy, y2: y0 + dy, stroke: colour, 'stroke-width': filled ? 2.5 : 1.75, 'stroke-linecap': 'round'}, g);
+        sv('circle', {cx: x(c[0]), cy: y0 + dy, r: filled ? 5.5 : 4.5, fill: filled ? colour : '#FFFFFF', stroke: colour, 'stroke-width': 1.75}, g);
+        const t = sv('title', {}, g); t.textContent = `${r.label}, ${name}: ${pp(c[0])} points (95% CI ${pp(c[1])} to ${pp(c[2])}), ${cnt(n)} schools`; };
+      mark(r.raw, -7, VERD, false, 'deprivation alone', r.n_raw);
+      mark(r.controlled, 7, r.low ? SOFT : INK, true, 'other context held constant' + (r.low ? ' (too few schools to read)' : ''), r.n);
+    });
+    return svg;
+  }
+
+  window.OE.areaChart = {line5, pairs, whisker, MIN};
 })();

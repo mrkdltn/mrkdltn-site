@@ -21,8 +21,10 @@ FROZEN = ('approved', 'published', 'superseded')
 def rounded(v, unit):
     if v is None:
         return None
-    if unit == 'schools':
+    if unit in ('schools', 'estimates'):
         return int(round(v))
+    if unit == 'p':
+        return round(float(v), 4)
     return round(float(v), 2)
 
 
@@ -38,12 +40,12 @@ def freeze(meta, d):
         fig['value'] = rounded(r['value'], fig.get('unit'))
         fig['n'] = int(r['n'])
         fig['source'] = figures.source_for(fig['compute'], d)
-        fig['as_at'] = stamp
+        fig['as_at'] = figures.as_at_for(fig['compute'], d)
     ch = meta.get('chart') or {}
     if ch.get('compute'):
         ch.update(figures.compute(ch['compute'], d))
         ch['source'] = figures.source_for(ch['compute'], d)
-        ch['as_at'] = stamp
+        ch['as_at'] = figures.as_at_for(ch['compute'], d)
         ch['data_version'] = d.build.get('version') or ''
     return meta
 
