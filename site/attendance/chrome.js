@@ -140,3 +140,20 @@
     btn.disabled = false;
   });
 })();
+
+/* How to read a chart, on request. The paragraph above each chart explains how it is drawn; now that each heading says what
+   the chart shows, that paragraph is folded under "How to read this" and opens on a tap. Nothing is removed, the same element
+   is kept (so pages go on writing to it), and it is opened for printing. Summary and Method keep their text in the open. */
+(function () {
+  const main = document.querySelector('main.ax'); if (!main || document.documentElement.classList.contains('ax-brief')) return;
+  const chartAfter = (p) => { let n = p.nextElementSibling, i = 0; while (n && i++ < 3) { if (n.matches('.ax-chart, .ax-multi, .ax-tablewrap, .en-pair') || n.querySelector('.ax-chart')) return true; if (!n.matches('.ax-seg, .ax-field, .ax-controls, .en-ctl')) return false; n = n.nextElementSibling; } return false; };
+  const fold = () => { main.querySelectorAll('section[data-nav] p.ax-sub').forEach((p) => { const sec = p.closest('section[data-nav]'), nav = sec.dataset.nav;
+      if (nav === 'Summary' || nav === 'Method' || p.classList.length > 1 || p.parentNode.classList.contains('ax-how')) return;
+      if ((p.textContent || '').trim().length < 120 || !chartAfter(p)) return;
+      const d = document.createElement('details'); d.className = 'ax-how'; const s = document.createElement('summary'); s.textContent = 'How to read this'; p.before(d); d.appendChild(s); d.appendChild(p); });
+    main.querySelectorAll('details.ax-how').forEach((d) => { const p = d.querySelector('p'); d.hidden = !p || p.hidden || !(p.textContent || '').trim(); }); };
+  let t = null; new MutationObserver(() => { clearTimeout(t); t = setTimeout(fold, 80); }).observe(main, {subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['hidden']});
+  fold();
+  addEventListener('beforeprint', () => main.querySelectorAll('details.ax-how').forEach((d) => { d.dataset.was = d.open ? '1' : ''; d.open = true; }));
+  addEventListener('afterprint', () => main.querySelectorAll('details.ax-how').forEach((d) => { d.open = d.dataset.was === '1'; }));
+})();

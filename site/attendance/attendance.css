@@ -287,3 +287,10 @@ body.explorer{background:#ECE9E1}
 .ax-kick + h2{max-width:34ch}
 @media print{.ax .ax-tab-off{display:revert!important}}
 .ax-clock{font-size:15px;line-height:1.55;color:#33405A;background:#F6F3EC;border-left:3px solid #C9A24B;padding:12px 14px;margin:16px 0 0;max-width:80ch}.ax-clock b{color:var(--ink)}.ax-clock a{color:var(--ink)}
+.ax-how{margin:0 0 12px}
+.ax-how summary{display:inline-flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;font:14px/1.2 var(--sans);color:var(--muted);list-style:none}
+.ax-how summary::-webkit-details-marker{display:none}
+.ax-how summary::before{content:"i";display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1.5px solid var(--muted);border-radius:50%;font:italic 600 13px/1 Georgia,serif;color:var(--muted)}
+.ax-how[open] summary{color:var(--ink)}.ax-how[open] summary::before{border-color:var(--ink);color:var(--ink)}
+.ax-how summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ax-how p.ax-sub{margin:2px 0 6px}

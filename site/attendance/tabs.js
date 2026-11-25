@@ -28,7 +28,10 @@
     TABS.forEach(([key]) => { btn[key].hidden = !list.some((s) => tabOf(s.dataset.nav) === key && !s.closest('[hidden]')); });
     const open1 = TABS.map((t) => t[0]).find((k) => !btn[k].hidden) || 'overview', now = btn[wanted].hidden ? open1 : wanted, moved = now !== T.current; T.current = now;
     list.forEach((s) => s.classList.toggle('ax-tab-off', tabOf(s.dataset.nav) !== T.current));
-    const bar = main.querySelector('.ax-controls'); if (bar) bar.classList.toggle('ax-tab-off', T.current === 'method');
+    // controls show only where they change something: none on Method or Enforcement (penalty notices are not published
+    // by phase, pupil group or measure), and no choice of pupil group on Schools, where no pupil-group figure is published
+    const bar = main.querySelector('.ax-controls'); if (bar) bar.classList.toggle('ax-tab-off', T.current === 'method' || T.current === 'enforcement');
+    const pgf = document.getElementById('gx-pg-f'); if (pgf) pgf.classList.toggle('ax-tab-off', T.current === 'schools');
     const foot = document.getElementById('ax-places-foot'); if (foot) foot.classList.toggle('ax-tab-off', T.current !== 'overview');
     TABS.forEach(([key]) => { const ids = list.filter((x) => tabOf(x.dataset.nav) === key).map((x) => x.id).join(' '); if (ids) btn[key].setAttribute('aria-controls', ids); });
     TABS.forEach(([key]) => { const on = key === T.current; btn[key].classList.toggle('on', on); btn[key].setAttribute('aria-selected', String(on)); btn[key].tabIndex = on ? 0 : -1; });
