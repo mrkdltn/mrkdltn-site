@@ -104,18 +104,23 @@ def weekly(series, weeks):
     return out
 
 
-def to_date(series, last):
-    """Year to date rates up to and including the date `last` (ISO)."""
-    s = [0] * len(COLS)
-    for d, v in series.items():
-        if d <= last:
-            for i, x in enumerate(v):
-                s[i] += x
+def rates_of(s):
+    """Rates from one row of counts [possible, absent, ...]; None where there are too few sessions to show."""
     if s[0] < MIN_SESSIONS * 5:
         return None
     out = {k: rate(s[i + 1], s[0]) for i, k in enumerate(RATES)}
     out['x'] = {k: rate2(s[i + 1], s[0]) for i, k in enumerate(RATES)}      # as plain hundredths, for the figures shown to two decimal places
     return out
+
+
+def to_date(series, last):
+    """Year to date rates up to and including the date `last` (ISO), from the days added up."""
+    s = [0] * len(COLS)
+    for d, v in series.items():
+        if d <= last:
+            for i, x in enumerate(v):
+                s[i] += x
+    return rates_of(s)
 
 
 def main():
@@ -156,8 +161,20 @@ def main():
                    'daily': {str(y): {p: daily(data[y].get(c, {}).get(p, {}), days[y]) for p in PH} for y in years}}
             json.dump(one, open(os.path.join(OUT, 'area', c + '.json'), 'w'), separators=(',', ':'))
             n += 1
+    # The current year so far is the DfE's own year-to-date total where it publishes one. Adding up the days gives a
+    # different answer in a few areas, mostly for special schools, because the DfE withholds some days. Last year at the
+    # same point is still the days added up: the DfE publishes no such figure for an earlier year.
+    ypath, used = os.path.join(RAW, 'pulse_ytd.csv'), 0
+    if os.path.exists(ypath):
+        for r in csv.DictReader(open(ypath, encoding='utf-8')):
+            if r['year'] == str(cur) and r['code'] in pulse['ytd'] and r['phase'] in PH:
+                own = rates_of([int(r[c] or 0) for c in COLS])
+                if own:
+                    pulse['ytd'][r['code']][str(cur)][r['phase']] = own
+                    used += 1
     path = os.path.join(OUT, 'pulse.json')
     json.dump(pulse, open(path, 'w'), separators=(',', ':'))
+    print(f"attendance: the DfE's own year-to-date totals used for {used} area and phase figures")
     e = pulse['ytd'][eng][str(cur)]['A']
     print(f'attendance: {path} {os.path.getsize(path) // 1024} KB, {n} area files; England {cur}/{cur % 100 + 1} to {last}: '
           f"overall absence {e['abs'] / 100:.2f}%")

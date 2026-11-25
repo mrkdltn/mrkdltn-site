@@ -50,11 +50,11 @@ def main():
         meta = json.load(urllib.request.urlopen(urllib.request.Request(API, headers={'User-Agent': UA}), timeout=60))
         version = meta['latestVersion']
         url = API + '/csv'
-    table, areas = {}, {}
+    table, areas, ytd = {}, {}, {}
     for r in open_csv(url):
         col = KEEP.get(r['attendance_reason'])
         ph = PHASE.get(r['education_phase'])
-        if not col or not ph or r['time_frame'] not in DAYS:
+        if not col or not ph or (r['time_frame'] not in DAYS and r['time_frame'] != 'Year to date'):
             continue
         lvl = r['geographic_level']
         code = r['new_la_code'] if lvl == 'Local authority' else r['region_code'] if lvl == 'Regional' else r['country_code']
@@ -67,6 +67,10 @@ def main():
         try:
             n = int(float(r['session_count']))
         except ValueError:
+            continue
+        if r['time_frame'] == 'Year to date':
+            # the DfE's own total for the year so far: it can differ from the days added up, because some days are withheld
+            ytd.setdefault((code, ph), {})[col] = n
             continue
         table.setdefault((r['reference_date'], code, ph), {})[col] = n
     if not table:
@@ -82,6 +86,13 @@ def main():
             v = table[k]
             if v.get('poss'):
                 w.writerow(list(k) + [v.get(c, '') for c in COLS])
+    if ytd and version:
+        with open(os.path.join(OUT, 'pulse_ytd.csv'), 'w', newline='', encoding='utf-8') as f:
+            w = csv.writer(f, lineterminator='\n')
+            w.writerow(['year', 'code', 'phase'] + COLS)
+            for k in sorted(ytd):
+                if ytd[k].get('poss'):
+                    w.writerow([year] + list(k) + [ytd[k].get(c, '') for c in COLS])
     # areas: keep any already known (earlier years), add or refresh the ones in this file
     apath = os.path.join(OUT, 'areas.csv')
     known = {r['code']: r for r in csv.DictReader(open(apath, encoding='utf-8'))} if os.path.exists(apath) else {}
