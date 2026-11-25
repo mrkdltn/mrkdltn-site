@@ -148,6 +148,12 @@ html.loaded .oe-loading{display:none}
     <div class="oe-spine" data-draw="spine" data-source="school neigh"></div></div>
   <h2>Report card <span class="i" tabindex="0" data-tip="Ofsted's renewed framework (from November 2025) grades each evaluation area on five points: Exceptional, Strong standard, Expected standard, Needs attention and Urgent improvement. Safeguarding is Met or Not met. There is no overall grade.">i</span></h2>
   <div class="oe-grades" data-draw="sgrades"></div>
+  <div class="oe-it" id="oe-it">
+    <h2 id="oe-it-h">Inspection timing <span class="i" tabindex="0" data-tip="When Ofsted's published rules say this school's next full inspection would normally fall, and the latest date the law allows. A reading of policy, not a forecast: Ofsted does not publish its schedule and can inspect at any time. The rules and their sources are under Method, Inspection timing.">i</span></h2>
+    <p class="oe-it-s" id="oe-it-s" data-draw="timing" data-source="school"></p>
+    <div class="oe-it-fig"></div>
+    <div class="oe-it-more"></div>
+  </div>
   <h2 class="oe-ks4h" style="margin-top:var(--cds-gap-lg)">Intake and context <span class="i" tabindex="0" data-tip="The public stand-ins for the factors in the DfE and Ofsted model. Prior attainment carries almost half the weight (0.46), then disadvantage (0.14). Hover over each for its weight and source.">i</span></h2>
   <div class="oe-ctx" data-draw="sctx"></div>
 </section>
@@ -266,6 +272,7 @@ html.loaded .oe-loading{display:none}
     <button role="tab" id="mt-cv" aria-controls="mp-cv" aria-selected="false" tabindex="-1">Contextual model</button>
     <button role="tab" id="mt-rd" aria-controls="mp-rd" aria-selected="false" tabindex="-1">Readings</button>
     <button role="tab" id="mt-ar" aria-controls="mp-ar" aria-selected="false" tabindex="-1">Report card areas</button>
+    <button role="tab" id="mt-it" aria-controls="mp-it" aria-selected="false" tabindex="-1">Inspection timing</button>
     <button role="tab" id="mt-src" aria-controls="mp-src" aria-selected="false" tabindex="-1">Data and sources</button>
     <button role="tab" id="mt-lim" aria-controls="mp-lim" aria-selected="false" tabindex="-1">Limits and terms</button>
     <button role="tab" id="mt-cite" aria-controls="mp-cite" aria-selected="false" tabindex="-1">Cite</button>
@@ -326,13 +333,51 @@ html.loaded .oe-loading{display:none}
     <p>Every group shows how many schools it contains. Small groups move a lot as new report cards are published, so read them with care.</p>
   </div>
 
+  <div class="oe-mpanel" role="tabpanel" id="mp-it" aria-labelledby="mt-it" hidden>
+    <p class="lead">The Inspection timing panel reads Ofsted&rsquo;s published rules and the inspection regulations. It is not a forecast. Ofsted does not publish its schedule and can inspect at any time, and the panel is not a judgement on any school.</p>
+    <table class="oe-mtable">
+      <thead><tr><th>Situation</th><th>Next full inspection, in Ofsted&rsquo;s words</th></tr></thead>
+      <tbody>
+        <tr><td>Most schools</td><td>&ldquo;Schools are inspected approximately once every 4 years, except if they are in one of our monitoring programmes.&rdquo; The panel counts four years from the publication of the last full or ungraded report. (<a href="https://www.gov.uk/government/publications/school-inspection-toolkit-operating-guide-and-information/inspection-information-for-state-funded-schools-for-use-from-september-2026">Inspection information for state-funded schools</a>, September 2026)</td></tr>
+        <tr><td>Requires improvement, or an ungraded inspection with concerns</td><td>&ldquo;A full inspection around 2.5 years from the publication of its most recent ungraded or graded inspection report&rdquo;, for: a school judged requires improvement overall at a graded inspection before September 2024; a school judged requires improvement in at least one key or provision judgement after September 2024; a good or outstanding school whose last ungraded inspection, before September 2024, could not confirm it would keep its grade; and one whose ungraded inspection after September 2024 found &ldquo;aspects of the school&rsquo;s work may not be as strong&rdquo;. (Inspection information)</td></tr>
+        <tr><td>An area graded needs attention</td><td>&ldquo;A single on-site monitoring inspection within 24 months of publication of the last full inspection report card.&rdquo; The next full inspection &ldquo;will typically be approximately 4 years following the publication of the report card&rdquo;. Monitoring inspections are not full inspections and do not restart the clock. (<a href="https://www.gov.uk/government/publications/school-inspection-toolkit-operating-guide-and-information/school-monitoring-operating-guide-for-inspectors-for-use-from-september-2026">School monitoring operating guide</a>, September 2026)</td></tr>
+        <tr><td>A category of concern</td><td>Requires significant improvement: &ldquo;up to 5 on-site monitoring inspections within 18 months&rdquo;; special measures: &ldquo;up to 6 &hellip; within 24 months&rdquo;, &ldquo;usually scheduled termly&rdquo;. The next full inspection &ldquo;will typically take place during the term following the end of the monitoring programme&rdquo;, or sooner if a monitoring inspection is deemed a full one. Schools in serious weaknesses or special measures at the end of October 2025 follow the same pattern. No date is published, so the panel shows none. (Monitoring guide)</td></tr>
+        <tr><td>New school</td><td>&ldquo;If a school receives a new URN &hellip; it becomes a new school for inspection purposes&rdquo;, including academy converters, sponsored academies and mergers with a new URN. &ldquo;We usually carry out a full inspection of a new school in its third year of operation.&rdquo; The clock runs from the open date in Get Information about Schools. A predecessor&rsquo;s last inspection is shown as context only. (Inspection information)</td></tr>
+        <tr><td>Proposed to close</td><td>A school &ldquo;within 6 months of confirmed closure&rdquo; can give that as a reason an inspection should not take place. Where Get Information about Schools records a school as proposed to close within six months, the panel shows no timing. (Inspection information)</td></tr>
+      </tbody>
+    </table>
+    <h3 class="oe-mh">The latest date by law</h3>
+    <p>&ldquo;The statutory timeframe requires all schools to be inspected within 5 school years from the end of the school year in which the previous inspection took place.&rdquo; In the <a href="https://www.legislation.gov.uk/uksi/2005/2038/regulation/2">Education (School Inspection) (England) Regulations 2005</a>, as amended in 2015, 2021 and 2024, a school year is &ldquo;the period of 12 months commencing on 1st August&rdquo;. So the panel finds the 31 July that ends the school year in which the last full or ungraded inspection began, and adds five years. An inspection that began in October 2022 gives 31 July 2028; one in July 2022 gives 31 July 2027. Ungraded inspections count, because since 2024 the regulations count any section 8 inspection that checks whether the quality of education has been maintained. Where the inspection began between 1 August 2014 and 27 April 2021 the period is seven years (a coronavirus extension still in force). The regulations set no deadline for a new school&rsquo;s first inspection, so none is shown.</p>
+    <h3 class="oe-mh">Checked against what happened</h3>
+    <p>The rules were applied to every school as it stood on 31 October 2025, before renewed-framework inspections began, and compared with the full inspections that started between 1 December 2025 and 3 November 2026 (Ofsted management information, with report cards read since).</p>
+    <div class="oe-tw"><table class="oe-mtable">
+      <thead><tr><th>Situation</th><th>Inspected</th><th>Half were inspected between</th></tr></thead>
+      <tbody>
+        <tr><td>Most schools (four-year rule)</td><td>2,711</td><td>3.9 and 4.2 years after the last report</td></tr>
+        <tr><td>Requires improvement overall, before September 2024</td><td>462</td><td>2.3 and 2.6 years after the last report</td></tr>
+        <tr><td>New school with an inspected predecessor</td><td>347</td><td>2.8 and 3.2 years after opening</td></tr>
+        <tr><td>Ungraded inspection with concerns, before September 2024</td><td>73</td><td>2.0 and 2.4 years after the last report</td></tr>
+      </tbody>
+    </table></div>
+    <p>No school was inspected after the latest date the law allows, and none passed it without an inspection. These figures describe schools that were inspected in that window, not the chance that a particular school is inspected at a particular time. The panel quotes one only where at least 100 schools are in the same position.</p>
+    <h3 class="oe-mh">What the panel cannot know</h3>
+    <ul class="oe-msrc">
+      <li>Ofsted&rsquo;s own scheduling and risk assessment, which it does not publish.</li>
+      <li>Complaints and other information that can bring an inspection forward.</li>
+      <li>Deferrals and pauses, and whether a monitoring inspection will be deemed a full inspection.</li>
+      <li>Monitoring inspection dates, which are not in Ofsted&rsquo;s management information.</li>
+    </ul>
+    <p>Covers every state-funded school in Ofsted&rsquo;s management information. Independent schools and 16 to 19 academies are inspected under other arrangements and are not included. The &ldquo;earliest likely&rdquo; point and the soft band on the timeline are the Explorer&rsquo;s convention (a year either side of the usual point, or the third year of operation for a new school), not Ofsted&rsquo;s.</p>
+  </div>
+
   <div class="oe-mpanel" role="tabpanel" id="mp-src" aria-labelledby="mt-src" hidden>
     <ul class="oe-msrc">
       <li>DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), institution level, with 2024/25 and 2023/24 final.</li>
       <li>DfE, Schools, pupils and their characteristics, January 2026.</li>
       <li>DfE, Special educational needs in England, January 2026.</li>
       <li>Ofsted, management information, latest inspections as at 31 October 2026, with report cards published since then read from Ofsted&rsquo;s reports site each morning<span class="oe-fresh-src"></span>.</li>
-      <li>DfE, Get Information about Schools, daily extract, for local authority, region, trust and location.</li>
+      <li>DfE, Get Information about Schools, daily extract, for local authority, region, trust and location, and for each school&rsquo;s open date, proposed closure and predecessor.</li>
+      <li>Ofsted, Inspection information for state-funded schools and School monitoring operating guide for inspectors (September 2026); the Education (School Inspection) (England) Regulations 2005, as amended, for inspection timing.</li>
       <li>DfE and Ofsted, Similar schools model for attainment: technical note (16 July 2026).</li>
       <li>Ofsted, Considering the context of schools in challenging circumstances (2025/26).</li>
     </ul>
@@ -403,6 +448,7 @@ html.loaded .oe-loading{display:none}
 <script src="/explorer/spine.js"></script>
 <script src="/explorer/exhibit.js"></script>
 <script src="/explorer/exhibits.js"></script>
+<script src="/explorer/timing.js"></script>
 <script src="/explorer/start.js"></script>
 </body>
 </html>

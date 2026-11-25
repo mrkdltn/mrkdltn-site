@@ -154,5 +154,18 @@ html:not(.js) .bds{display:none}
 @media(orientation:portrait) and (max-width:699px){.stop .pc{margin-top:-84px}.hero-cards .pc.intro{margin-top:-84px}.pc .src{font-size:11.5px}.pc h2{font-size:27px}.pc .fig{font-size:56px}.pc .fig.two{font-size:48px}}
 .hero .plate::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(248,244,236,.62) 0%,rgba(248,244,236,.34) 26%,rgba(248,244,236,0) 46%)}
 @media(orientation:landscape){.hero .plate::after{background:linear-gradient(100deg,rgba(248,244,236,.78) 0%,rgba(248,244,236,.45) 34%,rgba(248,244,236,0) 58%),linear-gradient(180deg,rgba(248,244,236,.35),rgba(248,244,236,0) 45%)}.hero h1{font-size:clamp(40px,4.9vw,70px)}}
+/* Landscape hero: headline, then the two cards, in flow over the picture, so on short screens (laptops at 125%) the hero grows rather than the cards covering the headline */
+@media(orientation:landscape){
+  .hero{display:grid;grid-template-columns:100%;grid-template-rows:auto 1fr auto;min-height:596px;min-height:calc(max(540px,100vh) + 56px);min-height:calc(max(540px,100svh) + 56px)}
+  .hero .plate{display:contents}
+  .hero .frame,.hero .plate::after{bottom:56px}
+  .hero-copy{position:relative;grid-row:1;box-sizing:border-box;width:100%;margin:0 auto}
+  .hero-cards{position:relative;grid-row:3;bottom:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:28px 4% 5vh}
+  .hero-cards .pc{position:relative;left:auto;right:auto;bottom:auto;width:min(440px,calc(34% / .92))}
+}
+@media(orientation:landscape){.hero-cards .explorer.sheet{width:min(500px,calc(36% / .92))}}
+@media(max-width:1100px) and (orientation:landscape){.hero-cards .pc{width:min(420px,calc(36% / .92))}}
 @media(orientation:portrait){.hero-cards .pc.explorer{margin-top:14px}.hero-cards .ex-row{flex-direction:column}}
 @media(orientation:portrait) and (min-width:700px){.stop .pc{margin:-240px 0 0 44px;width:min(620px,74%);max-width:none}.hero-cards .pc.intro,.hero-cards .pc.explorer{margin-top:-200px}.hero-cards{align-items:start}}
+/* Phone portrait: the role line fell on the roofline, and the intro card's first sentence already says it; headline keeps to clear sky without an orphaned last word */
+@media(orientation:portrait) and (max-width:699px){.hero .role{display:none}.hero h1{max-width:none;text-wrap:balance}}

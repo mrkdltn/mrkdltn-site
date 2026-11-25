@@ -13,9 +13,11 @@ The site is static. Cloudflare Pages builds and serves it from this repository: 
 | --- | --- |
 | `site/` | The website as served (HTML, CSS, JavaScript, images) |
 | `site/explorer/` | The Ofsted Explorer: `dash.js` (data loading and view state), `app.js` and `extra.js` (the page), `explorer.css` |
-| `data/raw/` | The Explorer's inputs: `ks4_model_v3.csv` (3,298 secondaries: results, context, similar-schools model), `ofsted_rc.csv` (report cards, all phases), `fig3.csv` (Ofsted's published validation split), `reports_daily.csv` (report cards read since the last monthly release) |
+| `data/raw/` | The Explorer's inputs: `ks4_model_v3.csv` (3,298 secondaries: results, context, similar-schools model), `ofsted_rc.csv` (report cards, all phases), `fig3.csv` (Ofsted's published validation split), `reports_daily.csv` (report cards read since the last monthly release), `ofsted_mi_latest.csv` (Ofsted's monthly MI, latest inspections, every state-funded school, renewed and original framework fields; `ofsted_mi_meta.json` names the release), `gias_slim.csv` (GIAS: place, status, open and close dates, predecessor and successor links), `inspection_timing_backtest.json` (the backtest's figures for the Inspection timing panel) |
 | `scripts/build_data.py` | Builds the compact data the Explorer loads (`site/explorer/data/ks4.json`, `rc.json`, `nn/`, `build.json`). Runs on every Cloudflare build |
 | `scripts/fetch_reports.py` | Reads newly published report cards from Ofsted's reports website |
+| `scripts/fetch_mi.py` | Fetches the newest monthly MI file (latest inspections) and keeps the columns the Explorer needs, checking Ofsted's real headers |
+| `scripts/inspection_timing.py` | The Inspection timing rules: where each school stands under Ofsted's published policy and the inspection regulations. Quoted and sourced in `docs/inspection-timing-rules.md`; tested by `scripts/test_inspection_timing.py`; checked against what happened in `docs/inspection-timing-backtest.md` |
 | `scripts/test_loader.mjs` | Checks that the built data reproduces the inputs exactly |
 | `.github/workflows/daily-report-cards.yml` | Runs the reader every morning and commits anything new |
 
@@ -31,6 +33,10 @@ The site is static. Cloudflare Pages builds and serves it from this repository: 
 - **Similar schools** are an open replica of the DfE and Ofsted similar-schools model for attainment, rebuilt
   from its published technical note using the closest public data. It is an approximation; the official
   groups use pupil-level data that is not public.
+
+- **Inspection timing** is a reading of Ofsted's published policy and the inspection regulations, recomputed on
+  every build from the monthly MI (refreshed with `python3 scripts/fetch_mi.py`), the daily report-card reads and
+  GIAS. It is not a forecast: Ofsted does not publish its schedule and can inspect at any time.
 
 `site/explorer/data/build.json` records when the data was built, from which input files (with SHA-256
 checksums) and the latest inspection it includes.

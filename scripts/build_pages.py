@@ -280,6 +280,8 @@ def main(rows, rc_rows=(), only=None):
     nat_mean = round(sum(nats) / len(nats), 2) if nats else None
 
     sample = int(os.environ.get('OE_PAGES_SAMPLE') or 0)
+    if os.environ.get('OE_PAGES_ONLY') and not only:  # local checks: OE_PAGES_ONLY="100000 100001"
+        only = set(os.environ['OE_PAGES_ONLY'].replace(',', ' ').split())
     if sample and not only:
         only = {r['urn'] for r in rows[:sample]}
     out = os.path.join(EXPLORER, 'school')
