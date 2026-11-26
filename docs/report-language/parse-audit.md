@@ -81,3 +81,12 @@ For the separately pre-registered national consistency analysis, the parser conv
 ## Re-running the audit
 
 Once the backfill is complete: run `scripts/language/parse.py`, then `scripts/language/audit_sample.py --label complete` for a fresh draw of 50 from the full corpus, repeat the checks above and add the results here.
+
+## Accepted
+
+Mark accepted this audit on 26 November 2026, in the live conversation, with two rules:
+
+- People named as curriculum content (artists, authors, explorers and other public figures taught in school) are kept. They are not personal data in this context.
+- Month-and-year mentions ("appointed in September 2025") are kept. Full dates are replaced with [date].
+
+The audit is re-drawn on the complete corpus (`audit_sample.py --label complete`) before any analysis, and its result is added here.
