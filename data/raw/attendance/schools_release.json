@@ -1,0 +1,15 @@
+{
+ "full_year": {
+  "id": "889f9166-e3bf-4d3a-afb2-d86e4aecc70a",
+  "title": "Absence rates by school level",
+  "release": "Academic year 2024/25",
+  "published": "2026-03-26"
+ },
+ "autumn_spring": {
+  "id": "b01feede-e832-43ce-a806-8e70ec0a9d0a",
+  "title": "Absence - school level - autumn and spring terms combined",
+  "release": "Autumn and spring term 2025/26",
+  "published": "2026-10-15"
+ },
+ "gias": "20261124"
+}

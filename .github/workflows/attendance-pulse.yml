@@ -1,0 +1,60 @@
+name: Attendance in-year data
+
+# Fetches the DfE's fortnightly in-year attendance data ("Reasons for absence and attendance") and commits it if a new
+# release has appeared. Cloudflare Pages rebuilds the Attendance Explorer's data on every push to main.
+# The termly school-level files are not refreshed here: they need the similar-schools model re-run and an
+# independent check of the figures, so they stay a job done by hand (see CLAUDE.md).
+# A scheduled workflow runs only from the default branch, so this does nothing until it is on main.
+on:
+  schedule:
+    - cron: '23 10 * * 4,5'   # 10:23 UTC on Thursdays and Fridays; the DfE publishes at 09:30 on Thursdays
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: attendance-pulse
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build requirements
+        run: pip install -r requirements.txt
+
+      - name: Fetch the latest in-year release
+        run: python3 scripts/fetch_attendance.py
+
+      - name: Stop if nothing is new
+        id: changed
+        run: |
+          if git diff --quiet -- data/raw/attendance; then echo "No new release."; echo "new=no" >> "$GITHUB_OUTPUT"; else echo "new=yes" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Check the data still builds
+        if: steps.changed.outputs.new == 'yes'
+        env:
+          OE_PAGES_SAMPLE: '60'
+        run: |
+          python3 scripts/build_data.py
+          npm install --no-save --silent d3-dsv@3
+          node scripts/test_loader.mjs
+          python3 scripts/check_attendance_pulse.py
+
+      - name: Commit the new release
+        if: steps.changed.outputs.new == 'yes'
+        run: |
+          git config user.name "mrkdltn data bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw/attendance/pulse_*.csv data/raw/attendance/pulse_release.json data/raw/attendance/areas.csv
+          git commit -m "Attendance: in-year data to $(python3 -c "import json;print(json.load(open('data/raw/attendance/pulse_release.json'))['to'])")"
+          git pull --rebase
+          git push
