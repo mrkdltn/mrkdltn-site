@@ -282,7 +282,8 @@ def main(rows, rc_rows=(), only=None):
     sample = int(os.environ.get('OE_PAGES_SAMPLE') or 0)
     if os.environ.get('OE_PAGES_ONLY') and not only:  # local checks: OE_PAGES_ONLY="100000 100001"
         only = set(os.environ['OE_PAGES_ONLY'].replace(',', ' ').split())
-    if sample and not only:
+    sampled = bool(sample and not only)  # a sample of school pages (the daily check) still builds every other page
+    if sampled:
         only = {r['urn'] for r in rows[:sample]}
     out = os.path.join(EXPLORER, 'school')
     jobs, n_pages = [], 0
@@ -314,7 +315,7 @@ def main(rows, rc_rows=(), only=None):
         home_pick(template, pre)
 
     # sitemap.xml is written by site_meta.py from the pages that exist, with git dates
-    if not only:
+    if not only or sampled:
         import build_explore_pages
         build_explore_pages.main([r for r in rows if not r.get('rc_only')], fonts)
     print(f'school pages: {n_pages} pages ({len(extra)} without results), {n_img} share images, England A8 mean {nat_mean}')

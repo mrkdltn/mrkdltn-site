@@ -3,8 +3,8 @@
     python3 scripts/discoveries/test_discoveries.py
 
 1. Every discovery file is sound (content.problems) and reads the same with PyYAML, where installed.
-2. Every frozen figure, and every chart value, reproduces from its compute function on today's data. A published
-   discovery is checked within the live-check tolerance instead (its figures are allowed to age).
+2. Every frozen figure, and every chart value, reproduces from its compute function on today's data. With --strict a
+   difference fails; without it (as the weekly workflow runs) a difference is reported as stale, since data move daily.
 3. Every number in a title, standfirst, body or limitation is one of the discovery's figures, or a fixed part of a
    definition (50 similar schools, 2024/25 results).
 4. A production build builds no candidate, draft or approved discovery; a preview build builds them behind the banner.
@@ -25,6 +25,8 @@ import figures  # noqa: E402
 
 FIXED = {'50', '2024', '25', '10', '2025', '26', '95'}  # 50 similar schools; 2024/25 and 2025/26 results; groups of 10; 95% intervals
 fails = []
+stale = []
+STRICT = '--strict' in sys.argv
 
 
 def check(ok, msg):
@@ -52,22 +54,20 @@ def main():
             check(yaml.safe_load(raw) == {k: v for k, v in d.items() if not k.startswith('_')}, f'{f}: PyYAML reads it differently')
         except ImportError:
             pass
-        tol = build.TOLERANCE if d['status'] in build.PUBLIC else 0.005
+        # data move daily, so a draft frozen yesterday may differ today: that is reported as stale (run freeze.py),
+        # and fails only with --strict. A published discovery's drift is the live check's job (build.json review).
         allowed = set(FIXED)
         for fig in d['figures']:
             r = figures.compute(fig['compute'], data)
-            if fig.get('unit') == 'schools':
-                check(d['status'] in build.PUBLIC or r['value'] == fig['value'], f'{f}: {fig["compute"]} is {r["value"]}, frozen {fig["value"]}')
-            else:
-                check(r['value'] is not None and abs(r['value'] - fig['value']) <= tol,
-                      f'{f}: {fig["compute"]} is {r["value"]}, frozen {fig["value"]}')
-            check(d['status'] in build.PUBLIC or r['n'] == fig['n'], f'{f}: {fig["compute"]} n is {r["n"]}, frozen {fig["n"]}')
+            check(r['value'] is not None, f'{f}: {fig["compute"]} gives no figure')
+            if r['value'] is not None and (abs(r['value'] - fig['value']) > 0.005 or r['n'] != fig['n']):
+                stale.append(f'{f}: {fig["compute"]} is {r["value"]:.2f} (n {r["n"]}), frozen {fig["value"]} (n {fig["n"]})')
             v = fig['value']
             allowed |= {f'{abs(v):.0f}', f'{abs(v):.1f}', str(abs(v)), f'{int(fig["n"])}'}  # a difference is quoted as a size
-        if d['status'] not in build.PUBLIC:
-            live = figures.compute(d['chart']['compute'], data)
-            for k, v in live.items():
-                check(d['chart'].get(k) == v, f'{f}: chart {k} does not reproduce from {d["chart"]["compute"]}')
+        live = figures.compute(d['chart']['compute'], data)
+        for k, v in live.items():
+            if d['chart'].get(k) != v:
+                stale.append(f'{f}: chart {k} differs from {d["chart"]["compute"]} on today\'s data')
         text = ' '.join([d['title'], d['standfirst'], d['_body'], d['limitation']])
         for n in numbers(text.replace(',', '')):
             check(n in allowed, f'{f}: the number {n} in the text is not one of its figures')
@@ -106,10 +106,19 @@ def main():
         moved = build.live_check(d, data)
         check(any(x['compute'] == fig['compute'] for x in moved), 'live check missed a 5-point move')
         _, h = build.page(d, {}, '2026-12-01', False)
-        check('Since publication, with 12 more inspections, this figure is now' in h, 'no dated live-check line on the page')
+        more = figures.compute(fig['compute'], data)['n'] - fig['n']
+        check(f'Since publication, with {more:,} more inspections, this figure is now' in h, 'no dated live-check line on the page')
         d2 = copy.deepcopy(pcts[0])
-        check(not build.live_check(d2, data) or d2['status'] in build.PUBLIC, 'live check flags an unmoved draft')
+        if not stale:
+            check(not build.live_check(d2, data), 'live check flags an unmoved draft')
 
+    if stale:
+        print(f'discoveries: {len(stale)} figures differ from today\'s data (refreeze drafts with freeze.py; '
+              'published ones are flagged by the live check)')
+        for x in stale:
+            print('  stale ' + x)
+        if STRICT:
+            fails.extend(stale)
     if fails:
         print(f'discoveries: {len(fails)} problems')
         for x in fails:

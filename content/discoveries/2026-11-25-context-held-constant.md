@@ -114,7 +114,7 @@ chart:
   threshold: 5.0
   source: "Ofsted, State-funded school inspections and outcomes: management information, latest inspections as at 31 October 2026; DfE, Special educational needs in England: school level data, January 2026; DfE, Key stage 4 performance 2024/25 (final), read against the open similar-schools replica; DfE, Get Information about Schools, extract of 25 November 2026; analysis as pre-registered in docs/analysis-plans/grades-context-plan.md (commit 801f11b, 25 November 2026)"
   as_at: "2026-10-31"
-  data_version: 2026-11-25-b00450c5
+  data_version: 2026-11-26-c762f61b
 explore: "/explorer/areas/#sec=held&phase=secondary"
 related: ["/explorer/areas/#held"]
 limitation: These are associations in a first set of inspections that is not a random sample, they cannot allow for what no public data records, and the results gap comes from an open replica.

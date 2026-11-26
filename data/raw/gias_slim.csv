@@ -15303,7 +15303,7 @@ urn,la,region,mat,town,postcode,status,open_date,close_date,opened_as,pred,succ
 143050,Suffolk,East of England,ST EDMUNDSBURY AND IPSWICH DIOCESAN MULTI-ACADEMY TRUST,Halesworth,IP19 9HZ,Open,2016-08-01,,New Provision,124722,
 143051,Solihull,West Midlands,CENTRAL SCHOOLS TRUST,Solihull,B92 9LX,Open,2016-08-01,,New Provision,104055,
 143052,Sheffield,Yorkshire and the Humber,FIVE RIVERS MULTI ACADEMY TRUST,Sheffield,S3 9AN,Open,2016-08-01,,New Provision,133325,
-143053,Norfolk,East of England,SYNERGY MULTI ACADEMY TRUST,Norwich,NR10 4JP,Open,2016-08-01,,New Provision,120845,
+143053,Norfolk,East of England,SYNERGY MULTI ACADEMY TRUST,Norwich,NR10 4JP,Open,2016-08-01,,New Provision,120845,145299
 143054,Rotherham,Yorkshire and the Humber,WICKERSLEY PARTNERSHIP TRUST,Sheffield,S26 2AX,Open,2016-08-01,,Academy Converter,106925,
 143055,Rotherham,Yorkshire and the Humber,WICKERSLEY PARTNERSHIP TRUST,Sheffield,S26 2BL,Open,2016-08-01,,Academy Converter,106888,
 143056,Suffolk,East of England,THE TILIAN PARTNERSHIP,Bury St Edmunds,IP31 1AD,Open,2016-08-01,,Academy Converter,124687,
@@ -17028,7 +17028,7 @@ urn,la,region,mat,town,postcode,status,open_date,close_date,opened_as,pred,succ
 145287,Middlesbrough,North East,SPARK EDUCATION TRUST,Middlesbrough,TS7 0JL,Open,2017-11-01,,Fresh Start,138656,
 145288,Wolverhampton,West Midlands,ST CHAD'S ACADEMIES TRUST,Wolverhampton,WV10 0UB,Open,2019-03-01,,Academy Converter,131439,
 145297,Hertfordshire,East of England,GENERATIONS MULTI ACADEMY TRUST,Waltham Cross,EN8 9LY,Open,2017-12-01,,Academy Converter,117596,
-145299,Norfolk,East of England,SYNERGY MULTI ACADEMY TRUST,Norwich,NR11 6QG,Open,2018-01-01,,New Provision,120799,
+145299,Norfolk,East of England,,Norwich,NR11 6QG,Closed,2018-01-01,2026-08-31,New Provision,120799 143053,
 145300,Shropshire,West Midlands,DIOCESE OF HEREFORD MULTI ACADEMY TRUST,Shrewsbury,SY5 7JL,Open,2017-12-01,,New Provision,123545,
 145301,Norfolk,East of England,CLARION CORVUS TRUST,Norwich,NR8 6EP,Open,2017-12-01,,New Provision,131278,
 145302,Cambridgeshire,East of England,GRACE SCHOOLS,Peterborough,PE7 3AR,Open,2018-02-01,,New Provision,110811,

@@ -10,39 +10,39 @@ figures:
     unit: "%"
     key: true
     compute: sb_least
-    value: 32.29
-    n: 192
-    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 23 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
-    as_at: "2026-11-23"
+    value: 31.79
+    n: 195
+    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 26 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
+    as_at: "2026-11-26"
   - label: Most stable fifth, graded below Expected for attendance and behaviour
     unit: "%"
     key: true
     compute: sb_most
-    value: 4.84
-    n: 124
-    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 23 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
-    as_at: "2026-11-23"
+    value: 4.72
+    n: 127
+    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 26 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
+    as_at: "2026-11-26"
   - label: Difference between the least and most stable fifths
     unit: pp
     compute: sb_gap
-    value: 27.45
-    n: 316
-    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 23 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
-    as_at: "2026-11-23"
+    value: 27.07
+    n: 322
+    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 26 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
+    as_at: "2026-11-26"
   - label: Top of the least stable fifth (pupils who joined at the usual time)
     unit: "%"
     compute: sb_cut_low
     value: 94.1
     n: 3298
-    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 23 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
-    as_at: "2026-11-23"
+    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 26 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
+    as_at: "2026-11-26"
   - label: Bottom of the most stable fifth (pupils who joined at the usual time)
     unit: "%"
     compute: sb_cut_high
     value: 98.5
     n: 3298
-    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 23 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
-    as_at: "2026-11-23"
+    source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 26 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
+    as_at: "2026-11-26"
 chart:
   form: line5
   compute: chart_sb
@@ -53,17 +53,17 @@ chart:
   series:
     - name: Inspected secondaries
       main: true
-      values: [32.29, 31.94, 19.87, 16.67, 4.84]
-      n: [192, 191, 151, 168, 124]
-  source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 23 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
-  as_at: "2026-11-23"
-  data_version: 2026-11-25-b00450c5
+      values: [31.7949, 32.1244, 19.6078, 17.341, 4.7244]
+      n: [195, 193, 153, 173, 127]
+  source: "Ofsted, State-funded school inspections and outcomes: management information (latest inspections as at 31 October 2026), with report cards published to 26 November 2026 read from reports.ofsted.gov.uk; DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026)"
+  as_at: "2026-11-26"
+  data_version: 2026-11-26-c762f61b
 explore: "/explorer/areas/#sec=context&focus=g_ab"
 related: ["/explorer/areas/#context"]
 limitation: Less stable intakes are also more often in deprived areas, and this chart does not separate the two.
 supersedes: null
 superseded_by: null
-rule: gradient:g_ab:nonmob
+rule: "gradient:g_ab:nonmob"
 ---
 
 The DfE records how many pupils in each GCSE year group joined their school at the usual time. Where 94.1% or fewer did, 32% of inspected secondaries were graded below Expected standard for attendance and behaviour. Where more than 98.5% did, 5% were, a difference of 27 percentage points.

@@ -35,6 +35,7 @@ html.loaded .oe-loading{display:none}
 .ar-mode button[aria-pressed="true"]{background:#0B1A2E;color:#fff;border-color:#0B1A2E}
 </style>
 <link rel="stylesheet" href="/explorer/explorer.css">
+<link rel="stylesheet" href="/explorer/areas/context.css">
 <style>
 .ar{max-width:1100px;margin:0 auto}
 .ar-hero{padding:8px 0 18px}
@@ -116,7 +117,7 @@ html.loaded .oe-loading{display:none}
 <section id="care">
   <h2>Reading this carefully</h2>
   <ul class="care">
-    <li>These are associations, not evidence of bias. Deprivation, mobility, prior attainment and need overlap heavily, and inspection judges more than any one of them.</li>
+    <li>These are associations in a non-random set of inspections, not evidence of bias. That holds for the models too: holding some context constant does not show that any grade is wrong. Deprivation, mobility, prior attainment and need overlap heavily, and inspection judges more than any one of them.</li>
     <li>The first year of report cards is not a random sample of schools: who was inspected first depends on Ofsted's scheduling.</li>
     <li>Results are one year of provisional data matched to an open replica of the similar-schools model, not the official list. "Close to or above" uses the 2024/25 results inspectors would have seen.</li>
     <li>Groups of fewer than 10 schools are not plotted. On a computer, hover over a point for its exact share and the number of schools behind it.</li>
@@ -124,6 +125,53 @@ html.loaded .oe-loading{display:none}
   </ul>
   <p class="back"><a href="/explorer/">Open the Ofsted Explorer</a> to see any school's report card beside comparable schools.</p>
 </section>
+<details id="deeper" class="gc-deeper">
+<summary><span class="t">Going deeper: the models behind these patterns</span><span class="s">How much of each gap remains once other context is held constant, who has been inspected so far, and whether the pattern is settling. For readers who want the statistics.</span></summary>
+<p class="gc-origin">This extends <a href="/writing/ofsted-report-cards/">I checked every Ofsted report card. Results alone don&rsquo;t explain the gap</a><span id="gc-li"></span>.</p>
+<section id="held" class="gc">
+  <h2>Context, held constant</h2>
+  <p class="lead gc-lead" id="gc-held-lead">The model results are loading.</p>
+  <p class="sub">Each row is one report card area. The open circle is the gap in the chance of a below Expected grade between schools in the most and least deprived IDACI fifths, with deprivation alone. The filled circle is the same gap with other context held constant: for primaries, SEN, size, region, urban or rural setting and governance; for secondaries, also prior attainment, pupil stability and 2024/25 results against 50 similar schools. Lines show 95% confidence intervals. A gap is read as clear only if it is at least 5 points and its interval excludes zero, a rule set before any result was seen.</p>
+  <div class="gc-phase ar-mode" role="group" aria-label="Phase"><span class="ml">Phase</span><button type="button" data-phase="primary" aria-pressed="true">Primary</button><button type="button" data-phase="secondary" aria-pressed="false">Secondary</button></div>
+  <div class="ar-key"><span><i class="gc-k gc-k-raw"></i>Deprivation alone</span><span><i class="gc-k gc-k-ctl"></i>Other context held constant</span><span><i class="gc-k gc-k-low"></i>Too few schools to read</span></div>
+  <div class="gc-fig" id="gc-held"></div>
+  <p class="ar-note" id="gc-others"></p>
+</section>
+<section id="inspected" class="gc">
+  <h2>Who has been inspected so far</h2>
+  <p class="lead gc-lead" id="gc-insp-lead"></p>
+  <p class="sub">Ofsted does not inspect schools in a random order, so the first report cards may not represent every school. Each row compares the schools with a report card so far with every open state-funded school in the phase. Categories with fewer than 10 inspected schools are not shown.</p>
+  <div class="gc-phase ar-mode" role="group" aria-label="Phase"><span class="ml">Phase</span><button type="button" data-phase="primary" aria-pressed="true">Primary</button><button type="button" data-phase="secondary" aria-pressed="false">Secondary</button></div>
+  <div class="ar-key"><span><i class="gc-k gc-k-all"></i>All schools in the phase</span><span><i class="gc-k gc-k-ins"></i>Inspected so far</span></div>
+  <div class="gc-fig" id="gc-insp"></div>
+</section>
+<section id="settling" class="gc">
+  <h2>Is the pattern settling?</h2>
+  <p class="lead gc-lead" id="gc-settle-lead"></p>
+  <p class="sub">The gap with context held constant, re-estimated on the report cards published by the end of each month. The shaded band is the 95% confidence interval. Months with too few schools below Expected standard for the model are not drawn.</p>
+  <div class="gc-phase ar-mode" role="group" aria-label="Phase"><span class="ml">Phase</span><button type="button" data-phase="primary" aria-pressed="true">Primary</button><button type="button" data-phase="secondary" aria-pressed="false">Secondary</button></div>
+  <div class="gc-fig" id="gc-settle"></div>
+</section>
+<section id="gc-method" class="gc">
+  <h2>How these estimates were made</h2>
+  <p class="sub" id="gc-asat"></p>
+  <ul class="care">
+    <li>The analysis was planned in writing before any grade was set against any context: the <a href="https://github.com/mrkdltn/mrkdltn-site/blob/801f11bcc2652163da1e3e2a0bf018baa1b136ea/docs/analysis-plans/grades-context-plan.md">pre-registered plan</a> was committed on 25 November 2026 at 16:00 UTC (commit 801f11b). The <a href="https://github.com/mrkdltn/mrkdltn-site/blob/a79cde89e2eaeda4f6c690265ef21b3c59300bcf/docs/analysis-plans/grades-context-results.md">results file</a> reports every pre-registered estimate, including the nulls, and the robustness checks.</li>
+    <li>Each area is modelled with a logistic regression of being graded below Expected standard (Needs attention or Urgent improvement). The gap is the average marginal effect of being in the most rather than the least deprived IDACI fifth, with robust (HC1) standard errors. Areas with fewer than 10 schools below Expected standard per model term use a reduced model; where even that is short, the estimate is drawn in grey and not read. Ethnicity, trust and inspector identifiers are never used.</li>
+    <li>The models are re-run each week on the latest public releases by open <a href="https://github.com/mrkdltn/mrkdltn-site/blob/main/scripts/analysis/grades_context.py">code</a>; the <a href="/explorer/data/grades_context.json">numbers behind these charts</a> record each source, its release and its checksum.</li>
+  </ul>
+  <ul class="care" id="gc-method-live"></ul>
+  <h3 class="gc-h3">Limits</h3>
+  <ul class="care">
+    <li>Unobserved factors: inspection judges much that no public data set records, and anything left out of the models may sit behind the gaps.</li>
+    <li>Deprivation, pupil mobility, prior attainment and SEN overlap, so holding some constant also removes part of what deprivation describes. In secondaries, prior attainment accounts for most of the fall from the raw to the controlled gap.</li>
+    <li>Selection into inspection: the weights adjust for what is observed about who has been inspected, not for anything else in Ofsted&rsquo;s scheduling.</li>
+    <li>Primary context is thin: there is no public school-level measure of primary prior attainment, mobility or results.</li>
+    <li>Secondary results are 2024/25 gaps against an open replica of the similar-schools model, not the official list.</li>
+    <li>Ofsted&rsquo;s data holds only each school&rsquo;s latest full inspection.</li>
+  </ul>
+</section>
+</details>
 </div></main>
 <footer class="site-foot noprint"><div class="wrap">
   <span>© 2026 Mark Dalton. Built from public DfE and Ofsted data. Views are my own.</span>
@@ -132,6 +180,8 @@ html.loaded .oe-loading{display:none}
 <script src="/assets/d3.min.js"></script>
 <script src="/explorer/areas/chart.js"></script>
 <script src="/explorer/areas/areas.js"></script>
+<script src="/explorer/areas/context.js"></script>
+<script src="/explorer/exhibit.js"></script>
 <script src="/explorer/related.js"></script>
 </body>
 </html>

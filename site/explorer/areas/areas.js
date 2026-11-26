@@ -93,7 +93,10 @@
 
     // a deep link (a Discovery's "Explore this") names the view in the hash: sec (section), by (grouping for the first
     // section: idaci or dis), focus (an area, g_ach, g_ab...). The view is applied after drawing, and again on hashchange.
+    // sections in the "Going deeper" fold (#held, #inspected, #settling) are context.js's: it opens the fold, reads
+    // sec and phase, and scrolls; this reader leaves them, and their keys, alone
     const apply = (scroll) => { const v = view(); setMode(v.by);
+      if (v.sec && document.getElementById(v.sec) && document.getElementById(v.sec).closest('#deeper')) return;
       document.querySelectorAll('.ar-focus').forEach((e) => { e.classList.remove('ar-focus'); e.removeAttribute('aria-current'); });
       const sec = v.sec && document.getElementById(v.sec);
       const f = v.focus && (sec || document).querySelector(`[data-k="${CSS.escape(v.focus)}"]`);

@@ -118,7 +118,7 @@ def ok(f):
 
 
 def r1(x):
-    return None if x is None else round(x, 2)  # two places, so a whole-number label rounds as the page rounds it
+    return None if x is None else round(x, 4)  # four places, so a whole-number label rounds as the page rounds it
 
 
 def top(points):
