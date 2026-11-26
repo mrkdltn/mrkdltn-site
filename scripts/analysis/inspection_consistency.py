@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """How consistent is inspection? The pre-registered analysis.
 
-Plan: docs/analysis-plans/inspection-consistency-plan.md (commit 196d50c, approved by Mark on 26 November 2026,
+Plan: docs/analysis-plans/inspection-consistency-plan.md (commit 196d50c, with Amendment 1 at 9ca9c0b: region x
+school term sensitivity run, and the headline reading stated only against the permutation benchmark; approved by Mark on 26 November 2026,
 before any inspector code had been fitted or any grade looked at by inspector). This script implements that plan
 and nothing else; anything added later must be labelled exploratory in the results.
 
@@ -47,7 +48,7 @@ ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 
 SEED = 20261126
-PLAN = {'path': 'docs/analysis-plans/inspection-consistency-plan.md', 'commit': '196d50c',
+PLAN = {'path': 'docs/analysis-plans/inspection-consistency-plan.md', 'commit': '196d50c', 'amendment_1': '9ca9c0b',
         'approved': '26 November 2026, by Mark in the live conversation'}
 OUT_DIR = os.path.join(ROOT, 'docs', 'analysis-plans')
 OUT_BASE = 'inspection-consistency-results'
@@ -86,7 +87,8 @@ MODELS = {
     'main': (MAIN_PHASES, 'region+month', MIN_REPORTS, 'Primaries and secondaries pooled; codes with fewer than 5 report cards pooled'),
     'min10': (MAIN_PHASES, 'region+month', 10, 'As main; codes with fewer than 10 report cards pooled'),
     'all_codes': (MAIN_PHASES, 'region+month', 1, 'As main; every code its own inspector, no pooling'),
-    'region_x_month': (MAIN_PHASES, 'region*month', MIN_REPORTS, 'As main, with region x month terms in place of region and month'),
+    # Amendment 1 (26 Nov 2026): region x school term, not region x month, so the run can meet the events rule
+    'region_x_term': (MAIN_PHASES, 'region*term', MIN_REPORTS, 'As main, with region x school term terms in place of region and month'),
     'secondary_full': (('Secondary',), 'region+month', MIN_REPORTS, 'Secondaries only, with the full results controls'),
 }
 
@@ -267,13 +269,20 @@ def model_frame(df, area, phases):
             d[z] = np.where(sec, (v - v[sec].mean()) / v[sec].std(ddof=0), 0.0) if sec.any() else 0.0
         else:
             d[z] = (d[raw] - d[raw].mean()) / d[raw].std(ddof=0)
-    d['rm'] = d['region'] + '|' + d['month']
+    d['rt'] = d['region'] + '|' + d['month'].map(term)
     return d, n0 - len(d)
+
+
+def term(month):
+    """School term of an inspection month (Amendment 1): autumn September to December, spring January to March,
+    summer April to August."""
+    m = int(month[5:7])
+    return f"{month[:4]}-autumn" if m >= 9 else (f"{month[:4]}-spring" if m <= 3 else f"{month[:4]}-summer")
 
 
 def formula(d, timing):
     terms = list(SHARED)
-    terms += ['C(region)', 'C(month)'] if timing == 'region+month' else ['C(rm)']
+    terms += ['C(region)', 'C(month)'] if timing == 'region+month' else ['C(rt)']
     phases = set(d['phase'])
     if phases == {'Primary', 'Secondary'}:
         terms += ['secondary'] + SEC_ONLY           # phase, and secondary-only controls interacted with phase
@@ -303,9 +312,9 @@ def typical_row(d):
         t[c] = float(np.median(d.loc[sec, c])) if t['secondary'] == 1 and sec.any() else 0.0
     t['region'] = d['region'].value_counts().idxmax()
     t['month'] = sorted(d['month'])[(len(d) - 1) // 2]
-    t['rm'] = t['region'] + '|' + t['month']
-    if t['rm'] not in set(d['rm']):
-        t['rm'] = d['rm'].value_counts().idxmax()
+    t['rt'] = t['region'] + '|' + term(t['month'])
+    if t['rt'] not in set(d['rt']):
+        t['rt'] = d['rt'].value_counts().idxmax()
     t['y'] = 0
     t['phase'] = 'Secondary' if t['secondary'] == 1 else 'Primary'
     return pd.DataFrame([t])
@@ -425,11 +434,15 @@ def permutation_benchmark(d, X, y, threshold, perms=PERMS, seed=SEED):
         sh[i] = ml_sigma(X, y, gi, Ji)
     below, ties = (sh < obs - 1e-6).sum(), (np.abs(sh - obs) <= 1e-6).sum()
     q = np.percentile(sh, [2.5, 50, 97.5])
+    p95 = float(np.percentile(sh, 95))
+    distinct = obs > p95 + 1e-9
     out = {'estimator': 'maximum likelihood, Gauss-Hermite quadrature (30 nodes)', 'shuffles': perms,
            'strata': 'region x month x phase', 'observed_sd_ml': round(obs, 3),
            'shuffled_sd_median': round(float(q[1]), 3), 'shuffled_sd_2_5': round(float(q[0]), 3),
            'shuffled_sd_97_5': round(float(q[2]), 3),
+           'shuffled_sd_95': round(p95, 3),
            'observed_percentile': round(100 * (below + 0.5 * ties) / perms, 1),
+           'reading': chance_reading(distinct),
            'shuffles_at_or_above_observed': int((sh >= obs - 1e-6).sum())}
     del sh
     return out
@@ -438,6 +451,11 @@ def permutation_benchmark(d, X, y, threshold, perms=PERMS, seed=SEED):
 # ---------------------------------------------------------------------------------------------------------------
 # the reported figures
 # ---------------------------------------------------------------------------------------------------------------
+
+def chance_reading(distinct):
+    """Amendment 1: the headline reading for an area, stated only against the permutation benchmark."""
+    return 'distinguishable from chance' if distinct else 'not distinguishable from chance'
+
 
 def mor(sigma):
     return np.exp(math.sqrt(2.0) * np.asarray(sigma) * Q75)
@@ -508,6 +526,7 @@ def run_model(df, area, name, fit_kw, perms=0):
     if perms:
         t0 = time.time()
         out['permutation'] = permutation_benchmark(d, X.to_numpy(), y, thr, perms=perms, seed=fit_kw.get('seed', SEED))
+        out['reading'] = out['permutation']['reading']      # Amendment 1: the headline reading for the area
         out['seconds_permutation'] = round(time.time() - t0, 1)
     return out
 
@@ -623,18 +642,19 @@ def render_md(res):
           f"(report cards per inspector: minimum {rp['min']}, median {rp['median']:g}, maximum {rp['max']}; "
           f"{s['inspectors_with_5_or_more']} inspectors led 5 or more, {s['inspectors_with_10_or_more']} led 10 or more).", '']
     L += ['## Main model, by area', '',
-          '| Area | Schools (below Expected) | Inspector SD | Median odds ratio | Reading | Typical school, 25th to 75th percentile inspector | Spread (pp) | Latent ICC | Permutation percentile |',
-          '| --- | --- | --- | --- | --- | --- | --- | --- | --- |']
+          '| Area | Schools (below Expected) | Reading against chance | Permutation percentile | Inspector SD | Median odds ratio | MOR band | Typical school, 25th to 75th percentile inspector | Spread (pp) | Latent ICC |',
+          '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
     for blk in ('areas', 'other_areas'):
         for a, r in res[blk].items():
             m = r.get('main', r)
             if m.get('status') != 'fitted':
-                L.append(f"| {r['area']} | {m.get('schools', '')} ({m.get('events', '')}) | {m.get('status')} | | | | | | |")
+                L.append(f"| {r['area']} | {m.get('schools', '')} ({m.get('events', '')}) | {m.get('status')} | | | | | | | |")
                 continue
             p = m.get('permutation', {})
-            L.append(f"| {r['area']} | {m['schools']} ({m['events']}) | {fmt(m['inspector_sd'])} | {fmt(m['median_odds_ratio'])} | "
+            L.append(f"| {r['area']} | {m['schools']} ({m['events']}) | {m.get('reading', 'no benchmark run')} | {p.get('observed_percentile', '')} | "
+                     f"{fmt(m['inspector_sd'])} | {fmt(m['median_odds_ratio'])} | "
                      f"{m['mor_reading']} | {m['typical_school_p25_pct']['median']}% to {m['typical_school_p75_pct']['median']}% | "
-                     f"{fmt(m['spread_pp'])} | {fmt(m['icc_latent'])} | {p.get('observed_percentile', '')} |")
+                     f"{fmt(m['spread_pp'])} | {fmt(m['icc_latent'])} |")
     L += ['', 'Convergence: R-hat below 1.01 and effective sample size above 400 required for every parameter kept.', '']
     for a, r in res['areas'].items():
         m = r['main']
@@ -643,7 +663,7 @@ def render_md(res):
             L.append(f"- {r['area']}: R-hat max {c['rhat_max']:.3f}, ESS min {c['ess_min']:.0f}, divergences {c['divergences']}, converged {c['converged']}.")
             if p:
                 L.append(f"  Permutation ({p['shuffles']} shuffles within {p['strata']}): observed ML SD {p['observed_sd_ml']}, shuffled median {p['shuffled_sd_median']} "
-                         f"(2.5th to 97.5th percentile {p['shuffled_sd_2_5']} to {p['shuffled_sd_97_5']}); observed at the {p['observed_percentile']}th percentile.")
+                         f"(2.5th to 97.5th percentile {p['shuffled_sd_2_5']} to {p['shuffled_sd_97_5']}; 95th percentile {p['shuffled_sd_95']}); observed at the {p['observed_percentile']}th percentile: {p['reading']}.")
     L += ['', '## Sensitivity runs', '', '| Area | Run | Status | Inspector SD | Median odds ratio | Reading |', '| --- | --- | --- | --- | --- | --- |']
     for a, r in res['areas'].items():
         for n, m in r.get('sensitivity', {}).items():
@@ -655,7 +675,10 @@ def render_md(res):
     for ph, r in res['described_only'].items():
         L.append(f"- {ph}: {r['schools']} report cards.")
     L += ['', 'MOR reading, set before the analysis: below 1.2 little association with the lead inspector; 1.2 to 1.5 modest; above 1.5 substantial. '
-          'A reading is stated only where the whole 95% interval falls within one band.', '']
+          'A band is stated only where the whole 95% interval falls within one band.', '',
+          'Reading against chance (Amendment 1, 26 November 2026): an inspector effect is reported as distinguishable from chance only where the observed '
+          'maximum-likelihood inspector SD is above the 95th percentile of its 200 shuffled values; otherwise the reading for that area is '
+          '"not distinguishable from chance", whatever the MOR band. The MOR, its interval and its band are reported in full in every case.', '']
     return '\n'.join(L)
 
 

@@ -7,7 +7,9 @@
 What is checked:
   - the maximum-likelihood fit (used for the permutation benchmark) recovers a known inspector SD of 0 and 0.5;
   - the PyMC model recovers a known SD of 0 and 0.5, with converged chains, and the MOR reading follows;
-  - the permutation benchmark puts the observed SD near the middle when the true SD is 0, and at the top when it is 0.5;
+  - the permutation benchmark puts the observed SD near the middle when the true SD is 0, and at the top when it is 0.5,
+    and the Amendment 1 reading follows: "not distinguishable from chance" at SD 0, "distinguishable from chance" at 0.5;
+  - region x school term (Amendment 1) maps months to terms as written;
   - shuffling keeps every code's number of reports within each region x month x phase stratum;
   - the derived figures (MOR, ICC, MOR bands with the whole-interval rule) are computed as pre-registered;
   - the events rule stops a model when there are too few schools below Expected;
@@ -132,16 +134,32 @@ class MaximumLikelihood(unittest.TestCase):
 @unittest.skipIf(QUICK, 'slow')
 class Permutation(unittest.TestCase):
     def test_null_and_signal(self):
-        pct = []
+        pct, read0 = [], []
         for s in range(21, 29):
             _, d, X, y = ml_on(ic.simulate(sigma=0.0, seed=s))
-            pct.append(ic.permutation_benchmark(d, X, y, 5, perms=40, seed=s)['observed_percentile'])
-        _, d, X, y = ml_on(ic.simulate(sigma=0.5, seed=30))
-        sig = ic.permutation_benchmark(d, X, y, 5, perms=40, seed=30)
+            p = ic.permutation_benchmark(d, X, y, 5, perms=40, seed=s)
+            pct.append(float(p['observed_percentile']))
+            read0.append(p['reading'])
+        read5, sig = [], None
+        for s in (30, 31, 32):
+            _, d, X, y = ml_on(ic.simulate(sigma=0.5, seed=s))
+            sig = ic.permutation_benchmark(d, X, y, 5, perms=40, seed=s)
+            read5.append(sig['reading'])
+        nd = sum(r == 'not distinguishable from chance' for r in read0)
         print(f'\n  observed percentile, true SD 0 (8 datasets, 40 shuffles each): {pct}; mean {np.mean(pct):.1f}')
-        print(f'  true SD 0.5: observed ML SD {sig["observed_sd_ml"]}, shuffled median {sig["shuffled_sd_median"]}, percentile {sig["observed_percentile"]}')
+        print(f'  true SD 0: "not distinguishable from chance" in {nd} of 8 datasets')
+        print(f'  true SD 0.5: readings {read5}; last: observed ML SD {sig["observed_sd_ml"]}, shuffled 95th percentile {sig["shuffled_sd_95"]}')
         self.assertTrue(25 <= np.mean(pct) <= 75)
-        self.assertGreaterEqual(sig['observed_percentile'], 97.5)
+        self.assertGreaterEqual(nd, 7)                      # at a 95th-percentile rule, about 1 in 20 null datasets reads distinguishable
+        self.assertTrue(all(r == 'distinguishable from chance' for r in read5))
+
+    def test_reading_rule(self):
+        self.assertEqual(ic.chance_reading(True), 'distinguishable from chance')
+        self.assertEqual(ic.chance_reading(False), 'not distinguishable from chance')
+
+    def test_term(self):
+        self.assertEqual([ic.term(m) for m in ('2025-11', '2026-01', '2026-03', '2026-04', '2026-08', '2026-09')],
+                         ['2025-autumn', '2026-spring', '2026-spring', '2026-summer', '2026-summer', '2026-autumn'])
 
 
 @unittest.skipIf(QUICK, 'slow')
@@ -178,6 +196,8 @@ class EndToEnd(unittest.TestCase):
         self.assertFalse(any(c in text for c in set(df['code'])))
         self.assertFalse(any(u in set(df['urn']) for u in ic.SIX.findall(text)))
         self.assertEqual(res['areas']['g_ach']['main']['status'], 'fitted')
+        self.assertIn(res['areas']['g_ach']['main']['reading'], ('distinguishable from chance', 'not distinguishable from chance'))
+        self.assertIn('Reading against chance', open(md).read() if os.path.exists(md) else ic.render_md(res))
         # a planted code must stop the write
         res['run']['when'] = 'x ' + df['code'].iloc[0]
         with tempfile.TemporaryDirectory() as t:
