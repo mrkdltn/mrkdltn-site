@@ -27,6 +27,22 @@ RENEWED = '2025-11-10'
 TYPE = {'Nursery': 20, 'Primary': 21, 'Alternative provision': 22, 'Secondary': 23, 'Special': 25}
 
 
+# Ofsted files some schools under a category other than their phase's (all-through schools under 28, for example);
+# when the expected page is missing, try the others in turn
+OTHER_TYPES = [28, 21, 23, 25, 22, 20, 24, 26, 27, 29, 30, 31, 32]
+
+
+def provider_page(t):
+    first = TYPE.get(t['phase'], 21)
+    for ty in [first] + [x for x in OTHER_TYPES if x != first]:
+        try:
+            return fr.get(f"{fr.BASE}/provider/{ty}/{t['urn']}")
+        except Exception as e:  # noqa: BLE001
+            if '404' not in str(e):
+                raise
+    raise RuntimeError('no provider page under any category')
+
+
 def targets():
     out = {}
     for r in csv.DictReader(open(os.path.join(RAW, 'ofsted_mi_latest.csv'), encoding='utf-8')):
@@ -59,7 +75,7 @@ def main():
         try:
             pdf, link_date = t['pdf'], ''
             if not pdf:
-                pdf, link_date = fr.latest_inspection_pdf(fr.get(f"{fr.BASE}/provider/{TYPE.get(t['phase'], 21)}/{t['urn']}"))
+                pdf, link_date = fr.latest_inspection_pdf(provider_page(t))
             if not pdf:
                 raise RuntimeError('no School inspection document on the provider page')
             b = fr.get(pdf, binary=True)
