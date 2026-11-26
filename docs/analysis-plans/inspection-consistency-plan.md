@@ -85,3 +85,14 @@ Some apparent clustering by inspector arises by chance and from how inspections 
 - **The lead inspector does not grade alone.** Team members and Ofsted's quality assurance and moderation also shape the final grades.
 - **Unobserved school differences.** Whatever no public data records stays in the inspector term if it happens to be clustered by inspector.
 - **Few reports per inspector.** With only a year of renewed-framework inspections, many inspectors have led few report cards. The inspector standard deviation will be estimated with wide uncertainty, and that is the honest result.
+
+## Amendment 1, 26 November 2026 (before any real data was fitted)
+
+Approved by Mark in the live conversation on 26 November 2026. At the time of this amendment the analysis code had been run only on synthetic data; no lead-inspector code had been read or fitted. The real run had not taken place and was blocked by the completeness guard (45% of the corpus).
+
+**1. The allocation sensitivity run uses region × school term, not region × month.** Region × month adds about 96 terms, and the events rule (10 schools below Expected standard per fixed-effect parameter) would need more than 1,100 such schools per area. That is out of reach, so the run could never be fitted. Region × term (autumn: September to December; spring: January to March; summer: April to August), about 24 terms, keeps the allocation check within the events rule. The main model is unchanged and still has region and month terms.
+
+**2. The headline reading is stated only against the chance benchmark.** On synthetic data with no true inspector effect, chance clustering among inspectors who lead few reports still gave a median odds ratio of 1.25 (95% interval 1.04 to 1.42). The bands alone would have read that as "uncertain between little and modest". So:
+- An inspector effect is reported as distinguishable from chance only where the observed inspector SD (maximum-likelihood fit) is above the 95th percentile of the 200 shuffled values.
+- Otherwise the reading for that area is "not distinguishable from chance", whatever the MOR band.
+- The MOR, its interval and its band are still reported in full in every case.
