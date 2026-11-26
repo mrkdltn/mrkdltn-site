@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compare schools · Ofsted Explorer · Mark Dalton</title>
+<meta name="description" content="Set two or three secondary schools side by side: report cards, results and intake, each read against its own similar schools, England and a contextual model.">
+<link rel="canonical" href="https://mrkdltn.com/explorer/compare/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mark Dalton">
+<meta property="og:title" content="Compare schools: the Ofsted Explorer">
+<meta property="og:description" content="Two or three secondary schools side by side, each read against its own comparators. Free, built from public data.">
+<meta property="og:url" content="https://mrkdltn.com/explorer/compare/">
+<meta property="og:image" content="https://mrkdltn.com/writing/ofsted-report-cards/img/explorer-card.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta property="og:image:alt" content="Ofsted Explorer: a scatter of 3,298 secondary schools, Attainment 8 against their 50 similar schools' average, coloured by Ofsted achievement grade.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="Mark Dalton: writing" href="/feed.xml">
+<meta name="theme-color" content="#0B1A2E">
+<link rel="preload" href="/assets/fonts/libre-caslon-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>
+.cm{font-family:var(--sans)}
+.prose-sheet.cm{max-width:1100px}
+.cm .lede{font-size:15.5px;line-height:1.55;margin:0 0 14px;color:#0B1A2E}
+.cm .pick{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-start;margin:0 0 8px}
+.cm .srch{position:relative;flex:1 1 320px;max-width:560px}
+.cm input{font:inherit;font-size:15px;padding:8px 10px;border:1px solid #D8DDE5;border-radius:2px;background:#fff;color:#0B1A2E;min-height:42px;width:100%;box-sizing:border-box}
+.cm .res{position:absolute;left:0;right:0;top:100%;background:#fff;border:1px solid #D8DDE5;border-top:0;z-index:5;max-height:320px;overflow:auto;margin:0;padding:0;list-style:none;box-shadow:0 6px 18px rgba(11,26,46,.08)}
+.cm .res[hidden]{display:none}
+.cm .res li{padding:9px 12px;cursor:pointer;font-size:14.5px;border-bottom:1px solid #EEF0F3;margin:0}
+.cm .res li small{color:#55627A;margin-left:6px}
+.cm .res li[aria-selected=true],.cm .res li:hover{background:#F4F1EA}
+.cm .sugg{font-size:14px;color:#55627A;margin:6px 0 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cm .sugg[hidden]{display:none}
+.cm button{font:inherit;font-size:14px;padding:7px 12px;border:1px solid #D8DDE5;background:#fff;color:#0B1A2E;cursor:pointer;min-height:38px}
+.cm button:hover{border-color:#7A5C14}.cm button:focus-visible,.cm input:focus-visible{outline:2px solid #C9A24B;outline-offset:1px}
+.cm .tw{overflow-x:auto}
+.cm table{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums;table-layout:fixed}
+.cm thead th{vertical-align:bottom;text-align:left;padding:8px;border-bottom:2px solid #0B1A2E;font-weight:600}
+.cm thead th a{color:#0B1A2E;text-decoration-color:#C9A24B;text-underline-offset:3px;font:400 19px/1.2 var(--display)}
+.cm thead th .sub{display:block;font-weight:400;font-size:13px;color:#55627A;margin-top:4px}
+.cm thead th button{margin-top:6px;font-size:12.5px;min-height:30px;padding:3px 9px}
+.cm th.lab{width:28%}
+.cm tbody th{text-align:left;font-weight:500;color:#0B1A2E;padding:9px 8px;border-bottom:1px solid #EEF0F3;vertical-align:top}
+.cm tbody th small{display:block;font-weight:400;color:#55627A;font-size:12.5px;margin-top:2px}
+.cm td{padding:9px 8px;border-bottom:1px solid #EEF0F3;vertical-align:top}
+.cm tr.sec th{font:600 13px/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#7A5C14;padding-top:22px;border-bottom:1px solid #55627A}
+.cm .v{font-weight:600}
+.cm .rg{display:block;font-size:12.5px;color:#55627A}
+.cm .rd{display:block;font-size:13px;font-weight:600}
+.cm .chip{display:inline-block;width:12px;height:12px;margin-right:7px;vertical-align:-1px;border:1px solid rgba(11,26,46,.15)}
+.cm .na{color:#55627A}
+.cm .more{margin:14px 0 0;display:flex;gap:10px;flex-wrap:wrap}
+.cm .more[hidden]{display:none}
+.cm .note{font-size:13.5px;color:#55627A;margin:14px 0 0;line-height:1.5}
+.cm .note a,.cm .lede a{color:#7A5C14}
+.cm .src{font-size:13px;color:#55627A;border-top:1px solid #D8DDE5;padding-top:12px;margin-top:22px}
+@media(max-width:640px){.cm table{font-size:13.5px}
+  .cm tr.sec th{padding-top:18px}
+  .cm tbody tr.rl th{border-bottom:0;padding:10px 4px 0;font-size:12.5px;color:#55627A;font-weight:500}
+  .cm tbody tr:not(.sec):not(.rl) td{padding:3px 4px 9px}
+  .cm thead th{padding:6px 4px}.cm thead th a{font-size:16px}.cm thead th .sub{font-size:12px}}
+</style>
+</head>
+<body class="stone">
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-head band midnight"><div class="wrap">
+  <a class="brand" href="/">Mark Dalton</a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/" aria-current="page"><span class="nav-long">Ofsted </span>Explorer</a><a href="/#about">About</a><a href="/contact/">Contact</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+<main id="main">
+<div class="band midnight article-band"><div class="wrap"><header class="article-head"><p class="label">Ofsted Explorer &middot; Compare schools</p><h1>Two or three schools, side by side</h1><p class="standfirst">Each school&rsquo;s report card, results and intake, with every result read against that school&rsquo;s own comparators: England, its 50 similar schools and a contextual model.</p></header></div></div>
+<div class="wrap"><div class="prose prose-sheet cm">
+<p class="lede">Schools serve different intakes, so the fairest comparison is how far each sits from schools like it, not the raw gap between them. Where a likely range includes zero, the gap is within what chance alone could give.</p>
+<div class="pick"><div class="srch"><input id="cm-q" type="search" role="combobox" aria-expanded="false" aria-controls="cm-res" aria-autocomplete="list" autocomplete="off" aria-label="Add a secondary school" placeholder="Add a secondary school by name, town or local authority"><ul class="res" id="cm-res" role="listbox" aria-label="Matching schools" hidden></ul></div></div>
+<div class="sugg" id="cm-sugg" hidden></div>
+<p class="lede" id="cm-status" aria-live="polite">Loading every secondary school&hellip;</p>
+<div class="tw" id="cm-out"></div>
+<p class="more" id="cm-act" hidden><button type="button" id="cm-csv">Download this comparison (CSV)</button><button type="button" id="cm-share" title="A link to these schools; on a phone, opens the share menu">Share this view</button></p>
+<p class="note">Likely ranges are 95%: against England, chance variation in one year&rsquo;s pupils; against similar schools, that plus the spread of the 50; against the contextual model, the in-line band for a year group of that size. Report card grades are Ofsted&rsquo;s, as published, in Ofsted&rsquo;s colours. Secondary schools with 2025/26 GCSE results only. This is a reading of the data, not a judgement on any school. <a href="/explorer/#method">How the comparisons are built</a> &middot; <a href="/explorer/data/">Get the data</a>.</p>
+<p class="src">Sources: DfE, Key stage 4 performance 2025/26 (provisional, 28 October 2026), 2024/25 (final) and 2023/24 (Progress 8, the last year published); Ofsted report cards as published; DfE and Ofsted similar-schools model (technical note, 16 July 2026), open replica; the Explorer&rsquo;s contextual model. <span id="cm-ver"></span></p>
+</div></div>
+</main>
+<footer class="site-foot"><div class="wrap">
+  <span>© 2026 Mark Dalton. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/writing/">Writing</a> · <a href="/explorer/">Ofsted Explorer</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<script src="/assets/d3.min.js"></script>
+<script src="/explorer/share.js"></script>
+<script src="/explorer/compare/compare.js"></script>
+</body>
+</html>

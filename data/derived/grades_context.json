@@ -1,0 +1,1835 @@
+{
+ "schema": 1,
+ "as_at": "2026-10-31",
+ "report_cards": 3637,
+ "daily": {
+  "to": "2026-11-23",
+  "reports_read": 570,
+  "replaced_a_report_card_in_mi": 5,
+  "first_report_card": 565,
+  "not_in_mi": 0
+ },
+ "counts": {
+  "Primary": {
+   "open": 16675,
+   "inspected": 2638
+  },
+  "Secondary": {
+   "open": 3423,
+   "inspected": 756
+  },
+  "Special": {
+   "open": 1125,
+   "inspected": 143
+  },
+  "Alternative provision": {
+   "open": 330,
+   "inspected": 38
+  },
+  "Nursery": {
+   "open": 373,
+   "inspected": 62
+  }
+ },
+ "plan": {
+  "path": "docs/analysis-plans/grades-context-plan.md",
+  "commit": "801f11bcc2652163da1e3e2a0bf018baa1b136ea",
+  "committed": "2026-11-25T16:00:29Z",
+  "results_commit": "a79cde89e2eaeda4f6c690265ef21b3c59300bcf"
+ },
+ "family_size": 14,
+ "threshold_pp": 5.0,
+ "min_events_per_parameter": 10,
+ "sources": {
+  "mi": {
+   "title": "Management information - state-funded schools - latest inspections as at 31 October 2026",
+   "url": "https://assets.publishing.service.gov.uk/media/6af2dfeb8b63641b15a5c8ba/Management_information_-_state-funded_schools_-_latest_inspections_as_at_31_October_2026.csv",
+   "as_at": "2026-10-31",
+   "fetched": "2026-11-25",
+   "sha256": "791eea96966d6a2de0a50687abd9ea74fd3fa32be6396c8c56ea7bf0f111d53f",
+   "pre_registered": true
+  },
+  "sen": {
+   "title": "Special educational needs in England: School level data - 2026",
+   "url": "https://explore-education-statistics.service.gov.uk/data-catalogue/data-set/c5490fd8-6cf3-469e-9f60-0b4262134cb5/csv",
+   "dataset_id": "c5490fd8-6cf3-469e-9f60-0b4262134cb5",
+   "fetched": "2026-11-25",
+   "sha256": "a339a409b811099bd200e09ddb3bcd7f9dffb2aa989297f1f27de8e4a749d653",
+   "pre_registered": true
+  },
+  "gias": {
+   "title": "Get Information about Schools, extract 20261125",
+   "url": "https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/edubasealldata20261125.csv",
+   "fetched": "2026-11-25",
+   "sha256": "fdbc554c0861a6d1712594ddfc38f5a82a9bb3eec84a0b4a2ecbbc10de4ce955"
+  },
+  "ks4": "DfE key stage 4 performance 2024/25 (final) and 2025/26 (provisional, 28 October 2026), via the Explorer; open replica of the DfE and Ofsted similar-schools model",
+  "daily": "Report cards read from Ofsted's published reports, to 2026-11-23"
+ },
+ "held": {
+  "Primary": [
+   {
+    "area": "g_inc",
+    "name": "Inclusion",
+    "n": 2638,
+    "below": 246,
+    "model": "M2",
+    "raw": [
+     2.6,
+     -0.8,
+     6.0
+    ],
+    "n_raw": 2638,
+    "results_only": null,
+    "controlled": [
+     5.6,
+     1.3,
+     9.8
+    ],
+    "reading": "clear_single",
+    "p_holm": 0.0958,
+    "ordinal": [
+     3.2,
+     0.8,
+     5.5
+    ],
+    "weighted": {
+     "ipw_context": [
+      5.9,
+      1.7,
+      10.1
+     ],
+     "ipw_prior_grade": [
+      5.2,
+      1.3,
+      9.2
+     ]
+    }
+   },
+   {
+    "area": "g_ct",
+    "name": "Curriculum and teaching",
+    "n": 2638,
+    "below": 553,
+    "model": "M2",
+    "raw": [
+     9.2,
+     4.4,
+     14.1
+    ],
+    "n_raw": 2638,
+    "results_only": null,
+    "controlled": [
+     9.6,
+     4.1,
+     15.0
+    ],
+    "reading": "clear",
+    "p_holm": 0.0064,
+    "ordinal": [
+     6.5,
+     2.0,
+     11.0
+    ],
+    "weighted": {
+     "ipw_context": [
+      9.6,
+      4.3,
+      14.9
+     ],
+     "ipw_prior_grade": [
+      8.6,
+      3.4,
+      13.9
+     ]
+    }
+   },
+   {
+    "area": "g_ach",
+    "name": "Achievement",
+    "n": 2638,
+    "below": 740,
+    "model": "M2",
+    "raw": [
+     18.3,
+     13.1,
+     23.5
+    ],
+    "n_raw": 2638,
+    "results_only": null,
+    "controlled": [
+     17.2,
+     11.4,
+     23.0
+    ],
+    "reading": "clear",
+    "p_holm": 0.0,
+    "ordinal": [
+     16.2,
+     11.1,
+     21.3
+    ],
+    "weighted": {
+     "ipw_context": [
+      17.0,
+      11.3,
+      22.8
+     ],
+     "ipw_prior_grade": [
+      16.0,
+      10.2,
+      21.8
+     ]
+    }
+   },
+   {
+    "area": "g_ab",
+    "name": "Attendance and behaviour",
+    "n": 2638,
+    "below": 368,
+    "model": "M2",
+    "raw": [
+     20.2,
+     16.1,
+     24.3
+    ],
+    "n_raw": 2638,
+    "results_only": null,
+    "controlled": [
+     19.3,
+     14.3,
+     24.2
+    ],
+    "reading": "clear",
+    "p_holm": 0.0,
+    "ordinal": [
+     13.8,
+     10.1,
+     17.5
+    ],
+    "weighted": {
+     "ipw_context": [
+      19.5,
+      14.5,
+      24.5
+     ],
+     "ipw_prior_grade": [
+      19.7,
+      14.6,
+      24.9
+     ]
+    }
+   },
+   {
+    "area": "g_pd",
+    "name": "Personal development and wellbeing",
+    "n": 2638,
+    "below": 99,
+    "model": "M2r",
+    "raw": [
+     5.4,
+     3.0,
+     7.9
+    ],
+    "n_raw": 2638,
+    "results_only": null,
+    "controlled": [
+     5.8,
+     3.1,
+     8.5
+    ],
+    "reading": "clear",
+    "p_holm": 0.0003,
+    "ordinal": [
+     1.8,
+     0.7,
+     2.8
+    ],
+    "weighted": {
+     "ipw_context": [
+      5.4,
+      3.0,
+      7.9
+     ],
+     "ipw_prior_grade": [
+      4.3,
+      2.0,
+      6.6
+     ]
+    }
+   },
+   {
+    "area": "g_lg",
+    "name": "Leadership and governance",
+    "n": 2638,
+    "below": 380,
+    "model": "M2",
+    "raw": [
+     7.0,
+     2.8,
+     11.2
+    ],
+    "n_raw": 2638,
+    "results_only": null,
+    "controlled": [
+     6.1,
+     1.3,
+     11.0
+    ],
+    "reading": "clear_single",
+    "p_holm": 0.1037,
+    "ordinal": [
+     5.0,
+     1.5,
+     8.5
+    ],
+    "weighted": {
+     "ipw_context": [
+      5.6,
+      0.9,
+      10.3
+     ],
+     "ipw_prior_grade": [
+      4.8,
+      0.3,
+      9.2
+     ]
+    }
+   },
+   {
+    "area": "g_ey",
+    "name": "Early years",
+    "n": 2453,
+    "below": 266,
+    "model": "M2",
+    "raw": [
+     5.3,
+     1.3,
+     9.3
+    ],
+    "n_raw": 2453,
+    "results_only": null,
+    "controlled": [
+     4.6,
+     -0.2,
+     9.4
+    ],
+    "reading": "inconclusive",
+    "p_holm": 0.4173,
+    "ordinal": [
+     3.4,
+     0.5,
+     6.3
+    ],
+    "weighted": {
+     "ipw_context": [
+      4.7,
+      0.0,
+      9.4
+     ],
+     "ipw_prior_grade": [
+      5.0,
+      0.6,
+      9.4
+     ]
+    }
+   }
+  ],
+  "Secondary": [
+   {
+    "area": "g_inc",
+    "name": "Inclusion",
+    "n": 724,
+    "below": 89,
+    "model": "M2r",
+    "raw": [
+     10.2,
+     4.0,
+     16.4
+    ],
+    "n_raw": 756,
+    "results_only": [
+     9.2,
+     2.9,
+     15.5
+    ],
+    "controlled": [
+     4.2,
+     -3.0,
+     11.3
+    ],
+    "reading": "low_events",
+    "p_holm": 1.0,
+    "ordinal": [
+     -2.3,
+     -6.7,
+     2.1
+    ],
+    "weighted": {
+     "ipw_context": [
+      3.3,
+      -3.5,
+      10.1
+     ],
+     "ipw_context_results": [
+      2.9,
+      -3.8,
+      9.5
+     ],
+     "ipw_prior_grade": [
+      1.7,
+      -5.1,
+      8.4
+     ]
+    }
+   },
+   {
+    "area": "g_ct",
+    "name": "Curriculum and teaching",
+    "n": 724,
+    "below": 168,
+    "model": "M2r",
+    "raw": [
+     21.7,
+     13.3,
+     30.1
+    ],
+    "n_raw": 756,
+    "results_only": [
+     19.0,
+     10.4,
+     27.5
+    ],
+    "controlled": [
+     7.4,
+     -2.4,
+     17.2
+    ],
+    "reading": "inconclusive",
+    "p_holm": 0.8312,
+    "ordinal": [
+     -0.8,
+     -7.3,
+     5.7
+    ],
+    "weighted": {
+     "ipw_context": [
+      6.9,
+      -2.2,
+      16.1
+     ],
+     "ipw_context_results": [
+      6.2,
+      -2.5,
+      15.0
+     ],
+     "ipw_prior_grade": [
+      6.5,
+      -2.0,
+      14.9
+     ]
+    }
+   },
+   {
+    "area": "g_ach",
+    "name": "Achievement",
+    "n": 724,
+    "below": 242,
+    "model": "M2",
+    "raw": [
+     37.9,
+     29.3,
+     46.6
+    ],
+    "n_raw": 756,
+    "results_only": [
+     35.4,
+     26.7,
+     44.1
+    ],
+    "controlled": [
+     16.9,
+     6.0,
+     27.8
+    ],
+    "reading": "clear",
+    "p_holm": 0.0235,
+    "ordinal": [
+     7.7,
+     0.7,
+     14.7
+    ],
+    "weighted": {
+     "ipw_context": [
+      14.8,
+      4.5,
+      25.0
+     ],
+     "ipw_context_results": [
+      13.6,
+      4.0,
+      23.2
+     ],
+     "ipw_prior_grade": [
+      14.5,
+      4.8,
+      24.3
+     ]
+    }
+   },
+   {
+    "area": "g_ab",
+    "name": "Attendance and behaviour",
+    "n": 724,
+    "below": 164,
+    "model": "M2r",
+    "raw": [
+     17.4,
+     8.9,
+     25.9
+    ],
+    "n_raw": 756,
+    "results_only": [
+     14.6,
+     6.0,
+     23.2
+    ],
+    "controlled": [
+     4.0,
+     -5.4,
+     13.4
+    ],
+    "reading": "inconclusive",
+    "p_holm": 1.0,
+    "ordinal": [
+     -5.1,
+     -11.7,
+     1.4
+    ],
+    "weighted": {
+     "ipw_context": [
+      4.5,
+      -4.2,
+      13.2
+     ],
+     "ipw_context_results": [
+      3.9,
+      -4.6,
+      12.3
+     ],
+     "ipw_prior_grade": [
+      3.1,
+      -5.4,
+      11.6
+     ]
+    }
+   },
+   {
+    "area": "g_pd",
+    "name": "Personal development and wellbeing",
+    "n": 724,
+    "below": 53,
+    "model": "M2r",
+    "raw": [
+     3.5,
+     -2.1,
+     9.1
+    ],
+    "n_raw": 756,
+    "results_only": [
+     2.9,
+     -3.2,
+     8.9
+    ],
+    "controlled": [
+     -2.1,
+     -9.8,
+     5.7
+    ],
+    "reading": "low_events",
+    "p_holm": 1.0,
+    "ordinal": [
+     -0.5,
+     -3.6,
+     2.5
+    ],
+    "weighted": {
+     "ipw_context": [
+      -1.7,
+      -8.9,
+      5.5
+     ],
+     "ipw_context_results": [
+      -2.0,
+      -9.2,
+      5.1
+     ],
+     "ipw_prior_grade": [
+      -2.5,
+      -9.7,
+      4.8
+     ]
+    }
+   },
+   {
+    "area": "g_lg",
+    "name": "Leadership and governance",
+    "n": 724,
+    "below": 110,
+    "model": "M2r",
+    "raw": [
+     10.4,
+     3.4,
+     17.3
+    ],
+    "n_raw": 756,
+    "results_only": [
+     8.2,
+     0.9,
+     15.6
+    ],
+    "controlled": [
+     0.9,
+     -7.8,
+     9.5
+    ],
+    "reading": "inconclusive",
+    "p_holm": 1.0,
+    "ordinal": [
+     -3.7,
+     -9.0,
+     1.7
+    ],
+    "weighted": {
+     "ipw_context": [
+      0.6,
+      -7.6,
+      8.8
+     ],
+     "ipw_context_results": [
+      0.0,
+      -8.0,
+      8.0
+     ],
+     "ipw_prior_grade": [
+      -0.4,
+      -8.3,
+      7.4
+     ]
+    }
+   },
+   {
+    "area": "g_p16",
+    "name": "Post-16 provision",
+    "n": 384,
+    "below": 45,
+    "model": "M2r",
+    "raw": [
+     1.5,
+     -7.1,
+     10.1
+    ],
+    "n_raw": 386,
+    "results_only": [
+     1.3,
+     -7.3,
+     9.8
+    ],
+    "controlled": [
+     -2.6,
+     -11.7,
+     6.5
+    ],
+    "reading": "low_events",
+    "p_holm": 1.0,
+    "ordinal": [
+     -0.3,
+     -5.4,
+     4.7
+    ],
+    "weighted": {
+     "ipw_context": [
+      -2.1,
+      -10.1,
+      5.8
+     ],
+     "ipw_context_results": [
+      -2.3,
+      -10.3,
+      5.7
+     ],
+     "ipw_prior_grade": [
+      -2.7,
+      -10.7,
+      5.3
+     ]
+    }
+   }
+  ]
+ },
+ "weight_shift_max": {
+  "Primary": 1.5,
+  "Secondary": 3.3
+ },
+ "inspected": {
+  "Primary": {
+   "all": 16675,
+   "inspected": 2638,
+   "rows": [
+    {
+     "key": "idaci5",
+     "label": "Most deprived IDACI fifth",
+     "all": 19.9,
+     "inspected": 21.9,
+     "unit": "%"
+    },
+    {
+     "key": "idaci1",
+     "label": "Least deprived IDACI fifth",
+     "all": 20.0,
+     "inspected": 19.1,
+     "unit": "%"
+    },
+    {
+     "key": "ehc",
+     "label": "Pupils with an EHC plan (average share)",
+     "all": 4.23,
+     "inspected": 4.41,
+     "unit": "%"
+    },
+    {
+     "key": "sensup",
+     "label": "Pupils on SEN support (average share)",
+     "all": 15.81,
+     "inspected": 16.54,
+     "unit": "%"
+    },
+    {
+     "key": "academy",
+     "label": "Academies",
+     "all": 50.0,
+     "inspected": 48.0,
+     "unit": "%"
+    },
+    {
+     "key": "urban",
+     "label": "Urban schools",
+     "all": 72.0,
+     "inspected": 73.0,
+     "unit": "%"
+    },
+    {
+     "key": "oqe3",
+     "label": "Last OEIF quality of education: Requires improvement",
+     "all": 6.6,
+     "inspected": 13.3,
+     "unit": "%"
+    },
+    {
+     "key": "oqe1",
+     "label": "Last OEIF quality of education: Outstanding",
+     "all": 6.7,
+     "inspected": 2.1,
+     "unit": "%"
+    },
+    {
+     "key": "pupils",
+     "label": "Pupils (average)",
+     "all": 268,
+     "inspected": 256,
+     "unit": "pupils"
+    }
+   ]
+  },
+  "Secondary": {
+   "all": 3423,
+   "inspected": 756,
+   "rows": [
+    {
+     "key": "idaci5",
+     "label": "Most deprived IDACI fifth",
+     "all": 20.0,
+     "inspected": 24.9,
+     "unit": "%"
+    },
+    {
+     "key": "idaci1",
+     "label": "Least deprived IDACI fifth",
+     "all": 20.0,
+     "inspected": 15.9,
+     "unit": "%"
+    },
+    {
+     "key": "ehc",
+     "label": "Pupils with an EHC plan (average share)",
+     "all": 3.74,
+     "inspected": 4.02,
+     "unit": "%"
+    },
+    {
+     "key": "sensup",
+     "label": "Pupils on SEN support (average share)",
+     "all": 14.74,
+     "inspected": 15.76,
+     "unit": "%"
+    },
+    {
+     "key": "academy",
+     "label": "Academies",
+     "all": 84.0,
+     "inspected": 82.0,
+     "unit": "%"
+    },
+    {
+     "key": "urban",
+     "label": "Urban schools",
+     "all": 87.0,
+     "inspected": 88.0,
+     "unit": "%"
+    },
+    {
+     "key": "oqe3",
+     "label": "Last OEIF quality of education: Requires improvement",
+     "all": 11.6,
+     "inspected": 19.2,
+     "unit": "%"
+    },
+    {
+     "key": "oqe1",
+     "label": "Last OEIF quality of education: Outstanding",
+     "all": 11.6,
+     "inspected": 4.5,
+     "unit": "%"
+    },
+    {
+     "key": "pupils",
+     "label": "Pupils (average)",
+     "all": 1064,
+     "inspected": 1017,
+     "unit": "pupils"
+    }
+   ]
+  }
+ },
+ "weights": {
+  "Primary": {
+   "ipw_context": {
+    "includes": [
+     "IDACI fifth",
+     "EHC plan share",
+     "SEN support share",
+     "school size",
+     "Ofsted region",
+     "urban or rural",
+     "academy or LA-maintained"
+    ],
+    "auc": 0.568,
+    "range": [
+     0.6,
+     1.505
+    ],
+    "n": 16636
+   },
+   "ipw_prior_grade": {
+    "includes": [
+     "IDACI fifth",
+     "EHC plan share",
+     "SEN support share",
+     "school size",
+     "Ofsted region",
+     "urban or rural",
+     "academy or LA-maintained",
+     "previous OEIF quality of education grade"
+    ],
+    "auc": 0.642,
+    "range": [
+     0.382,
+     3.368
+    ],
+    "n": 16636
+   }
+  },
+  "Secondary": {
+   "ipw_context": {
+    "includes": [
+     "IDACI fifth",
+     "EHC plan share",
+     "SEN support share",
+     "school size",
+     "Ofsted region",
+     "urban or rural",
+     "academy or LA-maintained",
+     "prior attainment",
+     "pupil stability"
+    ],
+    "auc": 0.596,
+    "range": [
+     0.531,
+     1.765
+    ],
+    "n": 3273
+   },
+   "ipw_context_results": {
+    "includes": [
+     "IDACI fifth",
+     "EHC plan share",
+     "SEN support share",
+     "school size",
+     "Ofsted region",
+     "urban or rural",
+     "academy or LA-maintained",
+     "prior attainment",
+     "pupil stability",
+     "2024/25 results against similar schools"
+    ],
+    "auc": 0.6,
+    "range": [
+     0.509,
+     1.878
+    ],
+    "n": 3250
+   },
+   "ipw_prior_grade": {
+    "includes": [
+     "IDACI fifth",
+     "EHC plan share",
+     "SEN support share",
+     "school size",
+     "Ofsted region",
+     "urban or rural",
+     "academy or LA-maintained",
+     "prior attainment",
+     "pupil stability",
+     "previous OEIF quality of education grade"
+    ],
+    "auc": 0.634,
+    "range": [
+     0.471,
+     2.916
+    ],
+    "n": 3273
+   }
+  }
+ },
+ "settling": {
+  "Primary": {
+   "g_inc": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": 7.0,
+     "lo": 1.8,
+     "hi": 12.3,
+     "n": 1732
+    },
+    {
+     "to": "2026-08-31",
+     "e": 7.1,
+     "lo": 1.8,
+     "hi": 12.3,
+     "n": 1735
+    },
+    {
+     "to": "2026-09-30",
+     "e": 6.4,
+     "lo": 1.8,
+     "hi": 11.1,
+     "n": 2304
+    },
+    {
+     "to": "2026-10-31",
+     "e": 5.6,
+     "lo": 1.3,
+     "hi": 9.8,
+     "n": 2638
+    }
+   ],
+   "g_ct": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": 12.6,
+     "lo": 4.0,
+     "hi": 21.3,
+     "n": 968
+    },
+    {
+     "to": "2026-06-30",
+     "e": 11.8,
+     "lo": 4.7,
+     "hi": 18.8,
+     "n": 1439
+    },
+    {
+     "to": "2026-07-31",
+     "e": 9.7,
+     "lo": 3.0,
+     "hi": 16.4,
+     "n": 1732
+    },
+    {
+     "to": "2026-08-31",
+     "e": 9.8,
+     "lo": 3.2,
+     "hi": 16.5,
+     "n": 1735
+    },
+    {
+     "to": "2026-09-30",
+     "e": 10.0,
+     "lo": 4.2,
+     "hi": 15.8,
+     "n": 2304
+    },
+    {
+     "to": "2026-10-31",
+     "e": 9.6,
+     "lo": 4.1,
+     "hi": 15.0,
+     "n": 2638
+    }
+   ],
+   "g_ach": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": 16.8,
+     "lo": 7.1,
+     "hi": 26.5,
+     "n": 692
+    },
+    {
+     "to": "2026-05-31",
+     "e": 20.2,
+     "lo": 11.3,
+     "hi": 29.0,
+     "n": 968
+    },
+    {
+     "to": "2026-06-30",
+     "e": 19.0,
+     "lo": 11.6,
+     "hi": 26.5,
+     "n": 1439
+    },
+    {
+     "to": "2026-07-31",
+     "e": 16.7,
+     "lo": 9.6,
+     "hi": 23.7,
+     "n": 1732
+    },
+    {
+     "to": "2026-08-31",
+     "e": 16.8,
+     "lo": 9.8,
+     "hi": 23.8,
+     "n": 1735
+    },
+    {
+     "to": "2026-09-30",
+     "e": 17.7,
+     "lo": 11.5,
+     "hi": 23.8,
+     "n": 2304
+    },
+    {
+     "to": "2026-10-31",
+     "e": 17.2,
+     "lo": 11.4,
+     "hi": 23.0,
+     "n": 2638
+    }
+   ],
+   "g_ab": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": 19.6,
+     "lo": 13.1,
+     "hi": 26.1,
+     "n": 1439
+    },
+    {
+     "to": "2026-07-31",
+     "e": 20.5,
+     "lo": 14.5,
+     "hi": 26.4,
+     "n": 1732
+    },
+    {
+     "to": "2026-08-31",
+     "e": 20.5,
+     "lo": 14.6,
+     "hi": 26.5,
+     "n": 1735
+    },
+    {
+     "to": "2026-09-30",
+     "e": 20.8,
+     "lo": 15.5,
+     "hi": 26.1,
+     "n": 2304
+    },
+    {
+     "to": "2026-10-31",
+     "e": 19.3,
+     "lo": 14.3,
+     "hi": 24.2,
+     "n": 2638
+    }
+   ],
+   "g_pd": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": 6.5,
+     "lo": 2.9,
+     "hi": 10.1,
+     "n": 1732
+    },
+    {
+     "to": "2026-08-31",
+     "e": 6.5,
+     "lo": 2.9,
+     "hi": 10.1,
+     "n": 1735
+    },
+    {
+     "to": "2026-09-30",
+     "e": 5.8,
+     "lo": 2.9,
+     "hi": 8.7,
+     "n": 2304
+    },
+    {
+     "to": "2026-10-31",
+     "e": 5.8,
+     "lo": 3.1,
+     "hi": 8.5,
+     "n": 2638
+    }
+   ],
+   "g_lg": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": 10.9,
+     "lo": 4.7,
+     "hi": 17.1,
+     "n": 1439
+    },
+    {
+     "to": "2026-07-31",
+     "e": 7.8,
+     "lo": 1.9,
+     "hi": 13.7,
+     "n": 1732
+    },
+    {
+     "to": "2026-08-31",
+     "e": 7.9,
+     "lo": 2.0,
+     "hi": 13.8,
+     "n": 1735
+    },
+    {
+     "to": "2026-09-30",
+     "e": 8.1,
+     "lo": 3.0,
+     "hi": 13.3,
+     "n": 2304
+    },
+    {
+     "to": "2026-10-31",
+     "e": 6.1,
+     "lo": 1.3,
+     "hi": 11.0,
+     "n": 2638
+    }
+   ],
+   "g_ey": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": 5.2,
+     "lo": -1.1,
+     "hi": 11.5,
+     "n": 1615
+    },
+    {
+     "to": "2026-08-31",
+     "e": 5.2,
+     "lo": -1.1,
+     "hi": 11.5,
+     "n": 1618
+    },
+    {
+     "to": "2026-09-30",
+     "e": 4.9,
+     "lo": -0.4,
+     "hi": 10.3,
+     "n": 2146
+    },
+    {
+     "to": "2026-10-31",
+     "e": 4.6,
+     "lo": -0.2,
+     "hi": 9.4,
+     "n": 2453
+    }
+   ]
+  },
+  "Secondary": {
+   "g_inc": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": null
+    },
+    {
+     "to": "2026-08-31",
+     "e": null
+    },
+    {
+     "to": "2026-09-30",
+     "e": null
+    },
+    {
+     "to": "2026-10-31",
+     "e": null
+    }
+   ],
+   "g_ct": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": 4.1,
+     "lo": -8.0,
+     "hi": 16.2,
+     "n": 435
+    },
+    {
+     "to": "2026-07-31",
+     "e": 5.5,
+     "lo": -5.5,
+     "hi": 16.6,
+     "n": 525
+    },
+    {
+     "to": "2026-08-31",
+     "e": 5.6,
+     "lo": -5.4,
+     "hi": 16.6,
+     "n": 528
+    },
+    {
+     "to": "2026-09-30",
+     "e": 6.7,
+     "lo": -3.3,
+     "hi": 16.6,
+     "n": 657
+    },
+    {
+     "to": "2026-10-31",
+     "e": 7.4,
+     "lo": -2.4,
+     "hi": 17.2,
+     "n": 724
+    }
+   ],
+   "g_ach": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": null
+    },
+    {
+     "to": "2026-08-31",
+     "e": null
+    },
+    {
+     "to": "2026-09-30",
+     "e": 16.6,
+     "lo": 5.4,
+     "hi": 27.7,
+     "n": 657
+    },
+    {
+     "to": "2026-10-31",
+     "e": 16.9,
+     "lo": 6.0,
+     "hi": 27.8,
+     "n": 724
+    }
+   ],
+   "g_ab": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": 0.0,
+     "lo": -11.1,
+     "hi": 11.1,
+     "n": 435
+    },
+    {
+     "to": "2026-07-31",
+     "e": 3.9,
+     "lo": -6.4,
+     "hi": 14.2,
+     "n": 525
+    },
+    {
+     "to": "2026-08-31",
+     "e": 3.9,
+     "lo": -6.4,
+     "hi": 14.2,
+     "n": 528
+    },
+    {
+     "to": "2026-09-30",
+     "e": 0.9,
+     "lo": -9.1,
+     "hi": 10.8,
+     "n": 657
+    },
+    {
+     "to": "2026-10-31",
+     "e": 4.0,
+     "lo": -5.4,
+     "hi": 13.4,
+     "n": 724
+    }
+   ],
+   "g_pd": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": null
+    },
+    {
+     "to": "2026-08-31",
+     "e": null
+    },
+    {
+     "to": "2026-09-30",
+     "e": null
+    },
+    {
+     "to": "2026-10-31",
+     "e": null
+    }
+   ],
+   "g_lg": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": null
+    },
+    {
+     "to": "2026-08-31",
+     "e": null
+    },
+    {
+     "to": "2026-09-30",
+     "e": -0.8,
+     "lo": -9.8,
+     "hi": 8.1,
+     "n": 657
+    },
+    {
+     "to": "2026-10-31",
+     "e": 0.9,
+     "lo": -7.8,
+     "hi": 9.5,
+     "n": 724
+    }
+   ],
+   "g_p16": [
+    {
+     "to": "2026-01-31",
+     "e": null
+    },
+    {
+     "to": "2026-02-28",
+     "e": null
+    },
+    {
+     "to": "2026-03-31",
+     "e": null
+    },
+    {
+     "to": "2026-04-30",
+     "e": null
+    },
+    {
+     "to": "2026-05-31",
+     "e": null
+    },
+    {
+     "to": "2026-06-30",
+     "e": null
+    },
+    {
+     "to": "2026-07-31",
+     "e": null
+    },
+    {
+     "to": "2026-08-31",
+     "e": null
+    },
+    {
+     "to": "2026-09-30",
+     "e": null
+    },
+    {
+     "to": "2026-10-31",
+     "e": null
+    }
+   ]
+  }
+ },
+ "exploratory": {
+  "strong_or_above": {
+   "Primary": {
+    "g_inc": {
+     "raw": [
+      -0.8,
+      -6.5,
+      4.8
+     ],
+     "controlled": [
+      -7.5,
+      -14.0,
+      -0.9
+     ]
+    },
+    "g_ct": {
+     "raw": [
+      -0.7,
+      -5.0,
+      3.6
+     ],
+     "controlled": [
+      -0.9,
+      -6.2,
+      4.3
+     ]
+    },
+    "g_ach": {
+     "raw": [
+      -6.8,
+      -11.2,
+      -2.5
+     ],
+     "controlled": [
+      -7.7,
+      -12.7,
+      -2.6
+     ]
+    },
+    "g_ab": {
+     "raw": [
+      -20.0,
+      -25.3,
+      -14.6
+     ],
+     "controlled": [
+      -18.9,
+      -25.1,
+      -12.7
+     ]
+    },
+    "g_pd": {
+     "raw": [
+      -6.9,
+      -12.7,
+      -1.1
+     ],
+     "controlled": [
+      -9.6,
+      -16.1,
+      -3.2
+     ]
+    },
+    "g_lg": {
+     "raw": [
+      -2.9,
+      -7.8,
+      1.9
+     ],
+     "controlled": [
+      -5.2,
+      -11.0,
+      0.5
+     ]
+    },
+    "g_ey": {
+     "raw": [
+      -7.5,
+      -12.9,
+      -2.0
+     ],
+     "controlled": [
+      -5.3,
+      -11.6,
+      1.1
+     ]
+    }
+   },
+   "Secondary": {
+    "g_inc": {
+     "raw": [
+      -8.3,
+      -19.3,
+      2.6
+     ],
+     "controlled": [
+      6.5,
+      -3.5,
+      16.5
+     ]
+    },
+    "g_ct": {
+     "raw": [
+      -5.8,
+      -15.1,
+      3.5
+     ],
+     "controlled": [
+      8.0,
+      0.6,
+      15.4
+     ]
+    },
+    "g_ach": {
+     "raw": [
+      -12.4,
+      -22.3,
+      -2.6
+     ],
+     "controlled": [
+      2.7,
+      -5.6,
+      11.1
+     ]
+    },
+    "g_ab": {
+     "raw": [
+      -10.8,
+      -21.4,
+      -0.3
+     ],
+     "controlled": [
+      12.4,
+      3.2,
+      21.6
+     ]
+    },
+    "g_pd": {
+     "raw": [
+      -19.8,
+      -30.9,
+      -8.6
+     ],
+     "controlled": [
+      0.1,
+      -10.9,
+      11.1
+     ]
+    },
+    "g_lg": {
+     "raw": [
+      -5.2,
+      -15.4,
+      4.9
+     ],
+     "controlled": [
+      9.2,
+      0.0,
+      18.3
+     ]
+    },
+    "g_p16": {
+     "raw": [
+      -23.0,
+      -37.6,
+      -8.5
+     ],
+     "controlled": [
+      -5.4,
+      -18.7,
+      8.0
+     ]
+    }
+   }
+  }
+ },
+ "safeguarding": {
+  "met": 3622,
+  "not_met": 15
+ }
+}

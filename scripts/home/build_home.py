@@ -168,7 +168,7 @@ def plate(st, i):
             '<picture><source media="(orientation:portrait)" srcset="/assets/plates/%s-v.webp" width="1080" height="1440">'
             '<img src="/assets/plates/%s.webp" width="1600" height="900" alt="%s"%s%s></picture>'
             '<video class="mv" muted playsinline preload="none" disablepictureinpicture aria-hidden="true" tabindex="-1" data-w="/assets/video/%s.mp4" data-t="/assets/video/%s-v.mp4"></video>'
-            '%s%s<div class="bds w">%s</div><div class="bds t">%s</div></div></div>') % (
+            '%s%s<div class="bds w" aria-hidden="true">%s</div><div class="bds t" aria-hidden="true">%s</div></div></div>') % (
         k, k, e(st['alt']), lazy, fetch, k, k,
         art(st['w'], (1600, 900), 'w'), art(st['t'], (900, 1200), 't'), badges(st['w']), badges(st['t']))
 
@@ -199,7 +199,7 @@ def card(st):
 
 def hero(st):
     return ('<section class="stop hero" data-ground="%s" style="--th:%s">%s'
-            '<div class="hero-copy"><h1><span>Leading schools.</span> <span>Challenging assumptions.</span> <span>Building what comes next.</span></h1></div>'
+            '<div class="hero-copy"><h1><span>Leading schools.</span> <span>Challenging assumptions.</span> <span>Building what comes next.</span></h1><p class="role">Secondary principal in the West Midlands</p></div>'
             '</div>'
             '<div class="hero-cards">'
             '<div class="pc left day intro"><p>I lead a secondary school in the West Midlands, and write about fair accountability, disadvantage and building teachers: national measures read through the practice of a school, with every figure linked to its source.</p>'
@@ -207,7 +207,7 @@ def hero(st):
             '<div class="pc right sheet explorer"><p class="pw"><span>Free tool</span> Report cards added daily</p>'
             '<h2>Ofsted Explorer</h2>'
             '<div class="ex-row"><p>Look up any secondary school in England: its report card beside its GCSE results, read against the national average and its 50 most similar schools.</p>'
-            '<figure class="mini" aria-label="Achievement grades of the 756 secondary schools with a report card"><svg viewBox="0 0 120 120" role="img"><g class="grid" data-counts="%s" data-x="0" data-y="0" data-size="10" data-gap="2"></g></svg>'
+            '<figure class="mini"><svg viewBox="0 0 120 120" role="img" aria-label="Achievement grades of the 756 secondary schools with a report card"><g class="grid" data-counts="%s" data-x="0" data-y="0" data-size="10" data-gap="2"></g></svg>'
             '<figcaption>Achievement grades, 756 secondary report cards</figcaption></figure></div>'
             '<p class="acts"><a class="btn" href="/explorer/">Open the Explorer</a><span class="n">3,298 secondary schools</span></p></div>'
             '</div><svg class="seam" aria-hidden="true"><path class="th"/><circle class="tip" r="4.5"/></svg></section>') % (
@@ -249,9 +249,9 @@ def writing_cards(entries):
 
 
 ENTRIES = [
+    ('/writing/belonging/', 'Analysis', '18 November 2026', "Behaviour has improved fast. Belonging hasn't kept pace.", 'Pupils rate behaviour far more highly than a year ago. The share who feel they belong has not risen with it.', '', '/assets/writing/belonging.webp'),
     ('/writing/ofsted-report-cards/', 'Analysis', 'November 2026', "I checked every Ofsted report card. Results alone don't explain the gap.", 'A year of report cards read against deprivation and against statistically similar schools.', '', '/assets/writing/report-cards.webp'),
     ('/writing/progress-8/', 'Analysis', '20 September 2026', 'Progress 8: a lens refracted by context', 'The measure returns with the summer 2027 results. What it controls for, what it does not, and why it should start the conversation about a school, not finish it.', '', '/assets/writing/progress-8.webp'),
-    ('/writing/curriculum-review/', 'Leadership', '5 November 2025', 'Curriculum &amp; Assessment Review: questions every school leader should be asking now', 'What the Review asks of leaders in practice, with the questions to put to a leadership team.', '', '/assets/writing/curriculum-review.webp'),
 ]
 
 def page():
@@ -277,7 +277,7 @@ def page():
 <a class="skip" href="#main">Skip to the content</a>
 <header class="site-head over"><div class="wrap">
   <a class="brand" href="/">Mark Dalton</a>
-  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/">Ofsted<span class="nav-x"> Explorer</span></a><a href="/attendance/">Attendance</a><a href="#about">About</a><a class="nav-li" href="%s" aria-label="Mark Dalton on LinkedIn">%s</a></nav>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/"><span class="nav-long">Ofsted </span>Explorer</a><a href="#about">About</a><a href="/contact/">Contact</a><a class="nav-li" href="%s" aria-label="Mark Dalton on LinkedIn">%s</a></nav>
 </div></header>
 <main id="main">
 <div class="day" id="day">
@@ -320,5 +320,10 @@ def page():
 
 if __name__ == '__main__':
     out = page()
-    (SITE / 'index.html').write_text(out)
+    (SITE / 'index.html').write_text(out, encoding='utf-8')
     print('index.html', len(out))
+    # the share-card and Open Graph tags come from one source: scripts/site_meta.py
+    import sys
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    import site_meta
+    site_meta.write_heads()

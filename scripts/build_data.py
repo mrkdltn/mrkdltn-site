@@ -8,6 +8,8 @@ Inputs (data/raw/):
 Outputs (site/explorer/data/):
   ks4.json, rc.json  compact column-major JSON, served compressed by Cloudflare Pages
   nn/0..31.json      similar-schools lists, sharded by URN
+  it/0..127.json     inspection timing (scripts/inspection_timing.py), one record per state-funded school, sharded
+                     by URN % 128 so a school page fetches only its own shard (under 5 KB compressed)
   build.json         when and from what the data was built
 
 Format (column-major, compresses well): {"n": rows, "cols": [...], "codes": {col: [labels]}, "data": {col: [...]}}.
@@ -32,14 +34,14 @@ KS4_DROP = {'relig', 'ss_z', 'ss_dist', 'ss_mean_25'}
 # decimals kept per column (everything else numeric is kept as written)
 ROUND = {'lat': 4, 'lng': 4}
 NN_SHARDS = 32
+IT_SHARDS = 128
 
 
 def sha(path):
-    h = hashlib.sha256()
+    """SHA-256 of an input file with line endings normalised to LF, so a Windows checkout (CRLF) gives the same
+    checksum as Linux and Cloudflare (LF); on an LF file this is the plain sha256sum."""
     with open(path, 'rb') as f:
-        for b in iter(lambda: f.read(1 << 16), b''):
-            h.update(b)
-    return h.hexdigest()
+        return hashlib.sha256(f.read().replace(b'\r\n', b'\n')).hexdigest()
 
 
 def num(v):
@@ -160,6 +162,50 @@ def write_model(ks4):
              'em5': {'form': 'logit', 'coef': b_em}}
     with open(os.path.join(OUT, 'model.json'), 'w') as f:
         json.dump(model, f, separators=(',', ':'))
+    return model
+
+
+def write_timing(raw, out, as_at):
+    """Inspection timing for every state-funded school in Ofsted's MI, read against Ofsted's published policy and the
+    inspection regulations (docs/inspection-timing-rules.md). MI is the record; a report card read daily counts only
+    where it is newer. Returns the totals for build.json."""
+    import inspection_timing as it
+    mi_path = os.path.join(raw, 'ofsted_mi_latest.csv')
+    if not os.path.exists(mi_path):
+        return None
+    mi = load(mi_path)
+    gias_path, daily_path = os.path.join(raw, 'gias_slim.csv'), os.path.join(raw, 'reports_daily.csv')
+    gias = {g['urn']: g for g in load(gias_path)} if os.path.exists(gias_path) else {}
+    daily = {d['urn']: d for d in load(daily_path)} if os.path.exists(daily_path) else {}
+    meta_path = os.path.join(raw, 'ofsted_mi_meta.json')
+    mi_as_at = json.load(open(meta_path)).get('as_at') if os.path.exists(meta_path) else None
+    shards, totals, used, closed = {}, {}, 0, 0
+    for r in mi:
+        g = gias.get(r['urn'], {})
+        if (g.get('status') or '') == 'Closed':
+            closed += 1
+            continue
+        row, took = it.merge_daily(r, daily.get(r['urn']))
+        used += took
+        rec = it.classify(row, g, as_at)
+        key = rec['rule'] + ('.' + rec['why'] if rec['why'] else '')
+        totals[key] = totals.get(key, 0) + 1
+        shards.setdefault(int(r['urn']) % IT_SHARDS, {})[r['urn']] = it.compact(rec)
+    d = os.path.join(out, 'it')
+    os.makedirs(d, exist_ok=True)
+    # the backtest's figures for the panel's one empirical line, only for rule groups with enough inspections
+    bt_path = os.path.join(raw, 'inspection_timing_backtest.json')
+    emp = {}
+    if os.path.exists(bt_path):
+        bt = json.load(open(bt_path))
+        emp = {k: dict(v, f=bt['window_from'], t=bt['window_to']) for k, v in bt['groups'].items() if v['n'] >= bt.get('min_n', 100)}
+    head = {'asat': as_at.isoformat(), 'mi': mi_as_at, 'emp': emp}
+    for k in range(IT_SHARDS):
+        with open(os.path.join(d, f'{k}.json'), 'w') as f:
+            json.dump(dict(head, s=shards.get(k, {})), f, separators=(',', ':'))
+    return {'as_at': as_at.isoformat(), 'mi_as_at': mi_as_at, 'schools': sum(totals.values()),
+            'closed_skipped': closed, 'daily_report_cards_used': used, 'shards': IT_SHARDS,
+            'by_rule': dict(sorted(totals.items(), key=lambda kv: -kv[1]))}
 
 
 def main():
@@ -203,9 +249,13 @@ def main():
                     if c in k and c in r:
                         k[c] = r[c]
 
+    # --- no figures for groups under 10 (before anything is written) ---
+    import data_downloads
+    suppressed = data_downloads.suppress_small_groups(ks4)
+
     # --- English and maths at grade 5+ and 4+: similar-schools averages and a contextual expectation ---
     enrich_em(ks4)
-    write_model(ks4)
+    model = write_model(ks4)
 
     # --- ks4 ---
     cols = [c for c in ks4[0].keys() if c not in KS4_DROP]
@@ -254,13 +304,39 @@ def main():
         with open(os.path.join(OUT, name), 'w', encoding='utf-8') as f:
             json.dump(obj, f, ensure_ascii=False, separators=(',', ':'))
 
+    timing = write_timing(RAW, OUT, datetime.date.today())
+
+    # grades and context (areas page): built weekly by scripts/analysis/grades_context.py, served as it stands
+    gc = os.path.join(os.path.dirname(os.path.abspath(RAW)), 'derived', 'grades_context.json')
+    if os.path.exists(gc):
+        import shutil
+        shutil.copyfile(gc, os.path.join(OUT, 'grades_context.json'))
+
     rc_dates = sorted(r['insp_date'] for r in rc if r.get('insp_date'))
+    downloads = data_downloads.write(ks4, rc, rcols, model, OUT)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    mi_path = os.path.join(RAW, 'ofsted_mi_latest.csv')
+    sources = {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path, mi_path) if os.path.exists(p)}
+    # data version: build date plus a short fingerprint of the inputs, so two builds from the same inputs share it
+    fp = hashlib.sha256(''.join(f'{k}{v}' for k, v in sorted(sources.items())).encode()).hexdigest()[:8]
+    commit = os.environ.get('CF_PAGES_COMMIT_SHA', '')
+    if not commit:
+        try:
+            import subprocess
+            commit = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True, timeout=10).stdout.strip()
+        except Exception:
+            commit = ''
     meta = {
-        'built': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'built': now.strftime('%Y-%m-%dT%H:%M:%SZ'),
+        'version': now.strftime('%Y-%m-%d') + '-' + fp,
+        'commit': commit or None,
+        'small_groups_suppressed': suppressed,
         'secondaries': len(ks4), 'report_cards': len(rc), 'daily_reports_merged': daily_added,
         'latest_inspection': rc_dates[-1] if rc_dates else None,
         'latest_published': latest_published,
-        'sources': {os.path.basename(p): sha(p) for p in (ks4_path, rc_path, daily_path, gias_path) if os.path.exists(p)},
+        'sources': sources,
+        'downloads': downloads,
+        'inspection_timing': timing,
     }
     with open(os.path.join(OUT, 'build.json'), 'w') as f:
         json.dump(meta, f, indent=1)
@@ -274,6 +350,17 @@ def main():
     import build_attendance   # the Attendance Explorer's data (site/attendance/data)
     build_attendance.main()
     build_attendance.schools()
+
+    # share cards for the main site, then fail the build if any page lacks its share tags
+    import site_meta
+    import check_meta
+    import fingerprint
+    site_meta.build()
+    # long-lived assets get hashed names under /static/ (Cloudflare builds only, or FINGERPRINT=1)
+    if fingerprint.main():
+        raise SystemExit('fingerprint failed: see the list above')
+    if check_meta.main():
+        raise SystemExit('metadata check failed: see the list above')
 
 
 if __name__ == '__main__':

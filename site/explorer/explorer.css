@@ -341,3 +341,75 @@ i.nm{background:#55627A;width:2px}
 .oe-gapbar .oe-rngbar::before{left:0}.oe-gapbar .oe-rngbar::after{right:0}
 .oe small.oe-rng,.oe small.oe-prev{display:block;font-size:11.5px;font-weight:400;color:#55627A;white-space:nowrap;margin-top:3px}
 @media print{.oe-gapbar .oe-rngbar{opacity:1}}
+
+/* grade tiles: labels at full strength so text on every grade colour reaches 4.5:1 (23 November 2026) */
+body.explorer .oe-g span{opacity:1}
+/* every chart: picture, table, download, source (23 November 2026) */
+.oe-xbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;margin:14px 0 0;font-size:13px}
+.oe-xseg{display:inline-flex;border:1px solid #D8DDE5}
+.oe-xseg button,.oe-xdl button{font:inherit;font-size:13px;background:#fff;color:#0B1A2E;border:0;padding:6px 12px;cursor:pointer;min-height:32px}
+.oe-xseg button+button{border-left:1px solid #D8DDE5}
+.oe-xseg button[aria-pressed=true]{background:#0B1A2E;color:#fff}
+.oe-xdl{display:inline-flex;align-items:center;gap:2px;color:#55627A}
+.oe-xdl span{margin-right:4px}
+.oe-xdl button{padding:6px 8px;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#C9A24B}
+.oe-xdl button:hover,.oe-xseg button[aria-pressed=false]:hover{color:#7A5C14}
+.oe-xdl button:disabled{opacity:.5;cursor:progress}
+.oe-xseg button:focus-visible,.oe-xdl button:focus-visible{outline:2px solid #C9A24B;outline-offset:1px}
+.oe-xtab{margin-top:12px}
+.oe-xtab table{font-size:13px}
+.oe-xtab tr.self td{background:#F3F1EA;font-weight:600}
+.oe-xtab .oe-note{margin-top:8px}
+.oe .oe-xsrc{font-size:12px;line-height:1.5;color:#55627A;margin:8px 0 0;max-width:none}
+.oe .oe-xsrc a{color:#7A5C14}
+@media screen and (max-width:640px){.oe-xseg button,.oe-xdl button{min-height:40px;font-size:14px}.oe-xdl button{padding:6px 9px}.oe-xbar{gap:6px 10px}}
+@media screen and (max-width:640px){.oe .oe-xsrc:not(.open){display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}}
+.oe-xbar[hidden],.oe .oe-xsrc[hidden],.oe-xseg[hidden],.oe-plegend[hidden],.oe-legend[hidden]{display:none!important}
+.oe-kpi small.oe-krng{display:block;margin-top:2px;color:#55627A;font-variant-numeric:tabular-nums}
+/* speed baseline (item 4): until the data arrives the school card holds a screen's height, so the sections
+   below start out of view and do not jump when it fills (layout shift) */
+html:not(.loaded) body.explorer #school{min-height:100vh;min-height:100svh}
+html:not(.loaded) body.explorer #school h2,html:not(.loaded) body.explorer #school .oe-actions{display:none}
+/* at a glance: spine chart (item 5) */
+.oe-spinew{margin:0 0 var(--cds-gap-lg)}
+.oe-spine svg{display:block;font-family:var(--font-anthropic-sans)}
+.oe-rconly .oe-spinew,.oe-spinew[hidden]{display:none!important}
+/* the second journey (item 6): from a measure, one tap from the Explorer's home */
+body.explorer .oe-hero .oe-alt{margin:10px 0 0;font-size:14.5px}
+body.explorer .oe-hero .oe-alt a{color:#F5F1E8;text-decoration-color:#C9A24B;text-underline-offset:3px}
+
+/* Compare (item 8): a link styled as the buttons beside it */
+body.explorer a.oe-btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;color:inherit}
+body.explorer a.oe-btn[hidden]{display:none}
+/* pre-rendered school pages (scripts/prerender.py): the buttons are there from the start, so the first finding never moves */
+html.oe-prd:not(.loaded) body.explorer #school .oe-actions{display:flex}
+@media(min-width:1024px){html.oe-pre:not(.loaded) body.explorer #school .oe-kpis{min-height:155px}}
+@media(max-width:640px){html.oe-pre:not(.loaded) body.explorer #school .oe-kpis{min-height:265px}}
+/* the map's Chart/Table switch, table and source line sit under the map, in its column; the list of nearest schools
+   stays beside the map from the top (they were grid items of their own, which pushed the list below the map) */
+@media screen and (min-width:821px){.oe-mapgrid{gap:0 28px;grid-template-rows:auto auto auto 1fr}.oe-mapgrid>:not(.oe-geo){grid-column:1}.oe-mapgrid>.oe-geo{grid-column:2;grid-row:1/span 4}}
+/* report card tiles: the grade sits at the foot of each tile, so grades in a row line up when an area's name runs to two lines */
+body.explorer .oe-g{display:flex;flex-direction:column}
+body.explorer .oe-g b{margin-top:auto;padding-top:4px}
+/* Inspection timing (24 November 2026): a reading of published rules, drawn still, on the reading scale (never grade colours) */
+.oe-it{margin-top:var(--cds-gap-lg,28px)}
+.oe-it[hidden]{display:none}
+.oe-it.loading{min-height:190px}
+.oe .oe-it-s{font-size:16px;line-height:1.6;color:#33405A;max-width:86ch;margin:4px 0 12px}
+.oe-it-fig{width:100%}
+.oe-it-fig svg{display:block;width:100%;height:auto;overflow:visible}
+.oe-itsvg text{font-family:var(--sans);fill:#33405A;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.oe-itsvg .base{stroke:#8A96A8;stroke-width:2}
+.oe-itsvg .band{fill:#2F6F66;fill-opacity:.16}
+.oe-itsvg .lead{stroke:#C2C8D2;stroke-width:1}
+.oe-itsvg .m.k circle{fill:#fff;stroke:#0B1A2E;stroke-width:1.5}
+.oe-itsvg .m.usual line{stroke:#2F6F66;stroke-width:2.5}
+.oe-itsvg .m.usual text{fill:#1E544D;font-weight:600}
+.oe-itsvg .m.stat rect{fill:#0B1A2E}
+.oe-itsvg .m.stat text{fill:#0B1A2E;font-weight:600}
+.oe-itsvg .m.today line{stroke:#C9A24B;stroke-width:2;stroke-dasharray:3 2}
+.oe-itsvg .m.today text{fill:#7A5C14}
+.oe-itsvg .m.mon circle{fill:#fff;stroke:#55627A;stroke-width:1.5}
+.oe .oe-it-more p{font-size:14px;line-height:1.55;color:#55627A;margin:8px 0 0;max-width:86ch}
+.oe .oe-it-more p.oe-it-note{font-size:13px}
+@media print{.oe-it{break-inside:avoid}}

@@ -10,6 +10,8 @@
   const sources = {}, calcs = {}, draws = {}, models = new Map(), onDataFns = [];
   let state = {}, cache = {}, loaded = false, defaults = {};
   let fresh = false, resizing = false, shown = null, rid = 0;
+  // view settings kept in the address; a page can add its own (dash.keep)
+  const KEEP = ['urn', 'x', 'area', 'phase', 'area2', 'meas'];
   const still = (on) => document.documentElement.classList.toggle('oe-still', on);
 
   const readHash = () => {
@@ -20,7 +22,7 @@
   // The school picked at random on /explorer/ stays in the hash, so the landing address is unchanged until someone chooses.
   const schoolPath = /^\/explorer\/school\/\d+\/?$/;
   const writeHash = () => {
-    const keep = {}; ['urn', 'x', 'area', 'phase', 'area2', 'meas'].forEach((k) => { if (state[k] && state[k] !== defaults[k]) keep[k] = state[k]; });
+    const keep = {}; KEEP.forEach((k) => { if (state[k] && state[k] !== defaults[k]) keep[k] = state[k]; });
     const usePath = state.urn && (schoolPath.test(location.pathname) || String(state.urn) !== String(window.OE_RANDOM || ''));
     if (usePath) delete keep.urn;
     const s = new URLSearchParams(keep).toString();
@@ -44,7 +46,14 @@
   const expand = (j) => { const rows = new Array(j.n); const cols = j.cols;
     for (let i = 0; i < j.n; i++) { const o = {}; for (const c of cols) { const v = j.data[c][i]; o[c] = v === null || v === undefined ? '' : (j.codes[c] ? j.codes[c][v] : String(v)); } rows[i] = o; }
     return rows; };
-  const loadSource = (url) => (/\.json$/.test(url) ? d3.json(url).then(expand) : d3.csv(url));
+  // CSV rows parsed without d3.csvParse, which builds its row converter with new Function (blocked by the CSP)
+  const csvRows = (text) => {
+    const rows = d3.csvParseRows(text), cols = rows.shift() || [];
+    const out = rows.map((r) => { const o = {}; cols.forEach((c, i) => { o[c] = r[i] || ''; }); return o; });
+    out.columns = cols;
+    return out;
+  };
+  const loadSource = (url) => (/\.json$/.test(url) ? d3.json(url).then(expand) : d3.text(url).then(csvRows));
   // The 50 similar schools are fetched per school (nn/<urn % 32>.json) and written back as the space-separated
   // 'nn' string the code expects. Every row in the shard is filled, so nearby lookups are often free.
   const nnShards = new Map();
@@ -93,11 +102,22 @@
       render(changed.every((k) => k === 'q') ? ['results'] : null);
     },
     onData: (f) => { onDataFns.push(f); },
+    keep: (ks) => { ks.forEach((k) => { if (!KEEP.includes(k)) KEEP.push(k); }); },
     start: (defs) => {
-      defaults = defs || {}; state = Object.assign({}, defaults, window.OE_URN ? {urn: String(window.OE_URN)} : {}, readHash());
-      window.addEventListener('hashchange', () => { const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
+      // a school page names its school in <meta name="oe-urn"> (no inline script, for the CSP)
+      const urnMeta = document.querySelector('meta[name="oe-urn"]');
+      defaults = defs || {}; state = Object.assign({}, defaults, urnMeta ? {urn: urnMeta.content} : {}, readHash());
+      // the front page names the school the build chose for it in <meta name="oe-pick">, already written into the page;
+      // an address that names another school wins, and the written-in school is cleared so it never shows under it
+      const pick = document.querySelector('meta[name="oe-pick"]');
+      if (pick && !state.urn) { state.urn = pick.content; window.OE_RANDOM = pick.content; }
+      else if (pick && state.urn !== pick.content) {
+        document.documentElement.classList.remove('oe-prd', 'oe-pre', 'oe-rconly', 'oe-nonsec');
+        document.querySelectorAll('[data-pre]').forEach((el) => { delete el.dataset.pre; el.textContent = el.dataset.draw === 'story' ? '' : '—'; });
+      }
+      window.addEventListener('hashchange', () => { if (!location.hash.includes('=')) return; /* a jump link such as #main is not a view */ const h = readHash(); if (h.urn && h.urn !== state.urn) { state = Object.assign(state, h); writeHash(); rid++; ensureNN(state.urn).then(() => render()); return; }
         // other view settings in the address (measure, chart options) also apply when only they change
-        const ch = {}; ['x', 'area', 'phase', 'area2', 'meas'].forEach((k) => { const v = h[k] || defaults[k]; if (v !== undefined && v !== state[k]) ch[k] = v; }); if (Object.keys(ch).length) window.dash.setParams(ch); });
+        const ch = {}; KEEP.filter((k) => k !== 'urn').forEach((k) => { const v = k in h ? h[k] : (defaults[k] ?? null); if ((v ?? null) !== (state[k] ?? null)) ch[k] = v; /* a key taken out of the address clears it */ }); if (Object.keys(ch).length) window.dash.setParams(ch); });
       let t, lastW = window.innerWidth;
       window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { const w = window.innerWidth; if (w === lastW) return; lastW = w; render(null, 'resize'); }, 200); });
       render();

@@ -3,7 +3,6 @@
   site/explorer/school/<URN>/index.html   the Explorer, opening on that school, with its own
                                           title, description, canonical address and share image
   site/explorer/school/<URN>/card.png     1200 x 630 share image
-  site/sitemap.xml                        the site's pages plus every school page
 
 Called from build_data.py once the rows are merged, so the pages always match the data.
 The images need Pillow; if it is missing the pages are still built and share the Explorer's image.
@@ -28,9 +27,6 @@ AREAS = [('g_ach', 'Achievement'), ('g_ct', 'Curriculum and teaching'), ('g_ab',
 GRADE_COLOUR = {'Exceptional': '#0176E0', 'Strong standard': '#33903C', 'Expected standard': '#5CD168',
                 'Needs attention': '#FF8341', 'Urgent improvement': '#CE1E02'}
 GROUND, PANEL, INK, MUTED, LINE, BRASS = '#0B1A2E', '#13263F', '#F5F1E8', '#A8B5C8', '#2B3C55', '#C9A24B'
-
-STATIC_PAGES = ['/', '/explorer/', '/explorer/areas/', '/explorer/updates/', '/writing/', '/writing/ofsted-report-cards/', '/writing/progress-8/',
-                '/writing/curriculum-review/', '/colophon/']
 
 
 def fnum(v):
@@ -75,18 +71,24 @@ def page(template, r, has_card):
         (r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{url}">'),
         (r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{e(name)}">'),
         (r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{e(desc)}">'),
-        (r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{img}">'
-         '\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">'
-         f'\n<meta property="og:image:alt" content="{e(("Ofsted report card for " if r.get("rc_only") else "Ofsted report card and Attainment 8 for ") + name)}">'
-         f'\n<meta property="og:url" content="{url}">'),
+        (r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{url}">'),
+        (r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{img}">'),
+        (r'<meta property="og:image:width" content="[^"]*">',
+         f'<meta property="og:image:width" content="{1200 if has_card else 1600}">'),
+        (r'<meta property="og:image:height" content="[^"]*">',
+         f'<meta property="og:image:height" content="{630 if has_card else 900}">'),
     ]
+    if has_card:
+        subs.append((r'<meta property="og:image:alt" content="[^"]*">',
+                     f'<meta property="og:image:alt" content="{e(("Ofsted report card for " if r.get("rc_only") else "Ofsted report card and Attainment 8 for ") + name)}">'))
     for pat, rep in subs:
         h, n = re.subn(pat, lambda m: rep, h, count=1)
         if n != 1:
             raise SystemExit(f'school page template: no match for {pat}')
-    h = h.replace('<script src="/explorer/dash.js', f'<script>window.OE_URN="{urn}";</script>\n<script src="/explorer/dash.js', 1)
-    if 'window.OE_URN' not in h:
-        raise SystemExit('school page template: dash.js must be loaded from /explorer/dash.js')
+    # the school is named in a meta tag that dash.js reads, so the page needs no inline script (CSP)
+    h = h.replace('<link rel="canonical"', f'<meta name="oe-urn" content="{e(urn)}">\n<link rel="canonical"', 1)
+    if 'name="oe-urn"' not in h:
+        raise SystemExit('school page template: no canonical link to put the school URN beside')
     return h
 
 
@@ -233,6 +235,35 @@ def _draw(job):
     return 1
 
 
+def home_pick(template, pre):
+    """The Explorer's front page opens on a school chosen at random. Chosen in the browser, it can only be shown once
+    every school's data has loaded (5.5 s on a phone over 4G, 23 November 2026). So a production build chooses it,
+    from the same pool as OE.pickRandom (a report card and an Attainment 8), seeded by the date, and writes it into the
+    page as a school page's is written; "Show me another school" still picks in the browser. The page is rewritten in
+    place, so this runs on Cloudflare builds only, or with HOME_PICK=1 (then `git checkout -- site/explorer/index.html`)."""
+    import hashlib
+    import prerender
+    from datetime import datetime
+    pool = sorted((r for r in pre.ks4 if r.get('g_ach') and prerender.ok(r.get('a8'))), key=lambda r: int(r['urn']))
+    if not pool:
+        return
+    try:
+        from zoneinfo import ZoneInfo
+        day = datetime.now(ZoneInfo('Europe/London')).strftime('%Y-%m-%d')
+    except Exception:  # no time-zone database (Windows without tzdata): the UTC date
+        from datetime import timezone
+        day = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    r = pool[int(hashlib.sha256(day.encode()).hexdigest(), 16) % len(pool)]
+    h = prerender.fill(template, pre.school(r['urn']), pre.med)
+    # named in a meta tag that dash.js reads; unlike oe-urn, the address stays /explorer/ until someone chooses
+    h = h.replace('<link rel="canonical"', f'<meta name="oe-pick" content="{html.escape(r["urn"])}">\n<link rel="canonical"', 1)
+    if 'name="oe-pick"' not in h:
+        raise SystemExit('Explorer page: no canonical link to put the chosen school beside')
+    with open(os.path.join(EXPLORER, 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(h)
+    print(f'front page: opens on {r["urn"]} ({day})')
+
+
 def main(rows, rc_rows=(), only=None):
     have = {r['urn'] for r in rows}
     extra = [dict(r, rc_only='yes') for r in rc_rows if r['urn'] not in have]
@@ -249,10 +280,20 @@ def main(rows, rc_rows=(), only=None):
     nat_mean = round(sum(nats) / len(nats), 2) if nats else None
 
     sample = int(os.environ.get('OE_PAGES_SAMPLE') or 0)
-    if sample and not only:
+    if os.environ.get('OE_PAGES_ONLY') and not only:  # local checks: OE_PAGES_ONLY="100000 100001"
+        only = set(os.environ['OE_PAGES_ONLY'].replace(',', ' ').split())
+    sampled = bool(sample and not only)  # a sample of school pages (the daily check) still builds every other page
+    if sampled:
         only = {r['urn'] for r in rows[:sample]}
     out = os.path.join(EXPLORER, 'school')
     jobs, n_pages = [], 0
+    # the name, details and first finding written into each page (prerender.py), from the data the browser loads
+    import prerender
+    try:
+        pre = prerender.Rows()
+    except FileNotFoundError:
+        pre = None
+        print('school pages: no built data yet, so no first finding in the pages')
     for r in rows:
         if only and r['urn'] not in only:
             continue
@@ -260,7 +301,9 @@ def main(rows, rc_rows=(), only=None):
         if fonts:
             jobs.append((r, nat_mean, os.path.join(d, 'card.png')))
         with open(os.path.join(d, 'index.html'), 'w', encoding='utf-8') as f:
-            f.write(page(template, r, bool(fonts)))
+            h = page(template, r, bool(fonts))
+            row = pre.school(r['urn']) if pre else None
+            f.write(prerender.fill(h, row, pre.med) if row else h)
         n_pages += 1
     n_img = 0
     if jobs:
@@ -268,13 +311,13 @@ def main(rows, rc_rows=(), only=None):
         with ProcessPoolExecutor(max_workers=os.cpu_count() or 2) as ex:
             n_img = sum(ex.map(_draw, jobs, chunksize=64))
 
-    today = datetime.date.today().isoformat()
-    urls = [ORIGIN + p for p in STATIC_PAGES] + [f'{ORIGIN}/explorer/school/{r["urn"]}/' for r in rows]
-    with open(os.path.join(SITE, 'sitemap.xml'), 'w') as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
-        for u in urls:
-            f.write(f'<url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n')
-        f.write('</urlset>\n')
+    if pre and not only and (os.environ.get('CF_PAGES') or os.environ.get('HOME_PICK')):
+        home_pick(template, pre)
+
+    # sitemap.xml is written by site_meta.py from the pages that exist, with git dates
+    if not only or sampled:
+        import build_explore_pages
+        build_explore_pages.main([r for r in rows if not r.get('rc_only')], fonts)
     print(f'school pages: {n_pages} pages ({len(extra)} without results), {n_img} share images, England A8 mean {nat_mean}')
 
 

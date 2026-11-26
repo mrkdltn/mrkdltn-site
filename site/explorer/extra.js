@@ -21,12 +21,18 @@
 
   // ---------- the data picture (v3 wording, 15 November 2026) ----------
   dash.draw('story', (box) => {
-    const r = S(), st = ST(), nb = N(); box.replaceChildren();
+    const r = S(), st = ST(), nb = N();
+    // the headline may be pre-rendered into the page (scripts/prerender.py): keep it until the data are in, and keep the
+    // same node when the script's own headline matches it, so the first finding never moves or repaints
+    if (box.dataset.pre && (!r || (!r.rc_only && !st))) return;
+    const keep = box.dataset.pre && (!r || box.dataset.pre !== r.urn) ? null : box.firstElementChild; delete box.dataset.pre;  // on any redraw too: a new node is a new largest paint
+    [...box.childNodes].forEach((n) => { if (n !== keep) n.remove(); });
+    const put = (lead) => { if (keep && keep.outerHTML === lead.outerHTML) return; if (keep) keep.remove(); box.prepend(lead); };
     if (r && r.rc_only) { const ph = (OE.PHL && OE.PHL[r.phase]) || 'schools'; const lead = el('div', 'oe-verdict');
       lead.append(el('h3', '', 'The report card, beside comparable schools.'));
       const why = r.phase === 'Secondary' ? 'No 2025/26 GCSE results are published for this school, so this profile shows its report card on its own.' : 'The Explorer reads results for secondary schools only so far, so this profile shows the report card on its own.';
       lead.append(rich(el('p'), why + ' Below, each graded area is set beside other ' + ph + ' in England' + (r.idaci_q ? ' and those whose pupils come from similarly deprived areas' : '') + '.'));
-      box.append(lead); return; }
+      put(lead); return; }
     if (!r || !st || !ok(r.a8)) return;
     const nat = +r.nat_diff, ssd = +r.ss_diff, cva = +r.cva_res, band = String(r.ss_band || '');
     const up = /above/i.test(band), down = /below/i.test(band);
@@ -49,7 +55,7 @@
       else if (!up && !down) body += ' The contextual model is a little more ' + (cva > 0 ? 'positive' : 'negative') + ' (' + cv + '), so read “in line” as approximate.';
       else body += ' The contextual model points the other way (' + cv + '), so the two readings disagree and the direction is uncertain.'; }
     if (ok(r.pupils) && +r.pupils < 30) body += ' With only **' + Math.round(+r.pupils) + ' pupils** in the cohort, a few results move these figures a long way.';
-    const lead = el('div', 'oe-verdict'); lead.append(el('h3', '', head)); lead.append(rich(el('p'), body)); box.append(lead);
+    const lead = el('div', 'oe-verdict'); lead.append(el('h3', '', head)); lead.append(rich(el('p'), body)); put(lead);
 
     const list = el('div', 'oe-points'); box.append(list);
     const add = (tag, text) => { const d = el('div', 'oe-point rise'); d.append(el('span', 'tag', tag)); d.append(rich(el('p'), text)); list.append(d); };
@@ -68,9 +74,10 @@
       add('Three years', Math.abs(d2) < 1 ? 'Results have been **broadly stable**: ' + seq + ' from 2023/24 to 2025/26.' : 'Results have **' + (d2 > 0 ? 'risen' : 'fallen') + ' ' + f1(Math.abs(d2)) + ' points** in two years: ' + seq + ' from 2023/24 to 2025/26. This year’s figure is provisional.'); }
     else if (ok(r.a8_25)) add('Last year', 'Attainment 8 was ' + f1(+r.a8_25) + ' in 2024/25 and is ' + f1(+r.a8) + ' this year (provisional).');
     // disadvantaged pupils: no figures for groups under 10
-    if (ok(r.dis_a8) && ok(r.nondis_a8)) { const nDis = ok(r.pupils) && ok(r.dis_pct) ? Math.round(+r.pupils * +r.dis_pct / 100) : NaN;
-      if (ok(nDis) && nDis < 10) add('Disadvantaged pupils', 'Fewer than 10 disadvantaged pupils took GCSEs here. That is too few for their average to be read reliably, so it is not reported.');
-      else { const gap = r.nondis_a8 - r.dis_a8, dd = r.dis_a8 - st.dis_a8.mean;
+    // (the build blanks both averages when either group is under 10, so neither can be worked out from the other)
+    const nDis = ok(r.pupils) && ok(r.dis_pct) ? Math.round(+r.pupils * +r.dis_pct / 100) : NaN, nOth = ok(nDis) ? Math.round(+r.pupils * (100 - +r.dis_pct) / 100) : NaN;
+    if (ok(nDis) && (nDis < 10 || nOth < 10)) add('Disadvantaged pupils', 'Fewer than 10 ' + (nDis < 10 ? 'disadvantaged pupils' : 'pupils who were not disadvantaged') + ' took GCSEs here. That is too few for an average to be read reliably, so neither group’s average is reported.');
+    else if (ok(r.dis_a8) && ok(r.nondis_a8)) { { const gap = r.nondis_a8 - r.dis_a8, dd = r.dis_a8 - st.dis_a8.mean;
         let t = 'Disadvantaged pupils averaged **' + f1(+r.dis_a8) + '**, ' + (Math.abs(dd) < 1 ? 'in line with' : f1(Math.abs(dd)) + ' points ' + (dd > 0 ? 'above' : 'below')) + ' disadvantaged pupils in the average secondary (' + f1(st.dis_a8.mean) + '). ';
         t += gap < -0.05 ? 'Here they outscored other pupils in the school by **' + f1(-gap) + ' points**; in the average school other pupils lead by ' + f1(st.gap.mean) + '.' : Math.abs(gap) <= 0.05 ? 'They scored **level with** other pupils in the school, where the average school has a gap of ' + f1(st.gap.mean) + '.' : 'The gap to other pupils in the school is **' + f1(gap) + ' points**, against ' + f1(st.gap.mean) + ' in the average school.';
         if (ok(nDis) && nDis < 30) t += ' The group is small (about ' + nDis + ' pupils), so read this loosely.';
@@ -95,8 +102,9 @@
 
   // ---------- profile of the 50 ----------
   const FACT = [['pa_index', 'Prior attainment index', fs, 0.46], ['dis_pct', 'Disadvantaged (cohort) %', f1, 0.14], ['sensup_pct', 'SEN support %', f1, 0.09], ['nonmob_pct', 'Non-mobile (cohort) %', f1, 0.06], ['ehc_pct', 'EHC plan %', f1, 0.04], ['eal_school', 'EAL %', f1, 0.03], ['nor', 'Pupils on roll', d3.format(',.0f'), 0.02]];
-  dash.draw('profile', (box) => { const r = S(), nb = N(), st = ST(); box.replaceChildren(); if (!r || !nb.length || !st) return;
+  dash.draw('profile', (box) => { const r = S(), nb = N(), st = ST(); box.replaceChildren(); OE.xd = OE.xd || {}; OE.xd.profile = []; if (!r || !nb.length || !st) return;
     FACT.forEach(([k, lab, fmt, w]) => { const vals = nb.map((x) => x[k]).filter(ok).map(Number); if (!vals.length || !ok(r[k])) return;
+      OE.xd.profile.push({lab, w, fmt, me: +r[k], min: d3.min(vals), max: d3.max(vals), mean: d3.mean(vals), nat: st[k].mean, lo: Math.min(st[k].lo, +r[k], d3.min(vals)), hi: Math.max(st[k].hi, +r[k], d3.max(vals)), n: vals.length});
       const lo = Math.min(st[k].lo, +r[k], d3.min(vals)), hi = Math.max(st[k].hi, +r[k], d3.max(vals)); const X = (v) => 100 * (v - lo) / ((hi - lo) || 1);
       const out = +r[k] < d3.min(vals) || +r[k] > d3.max(vals); const row = el('div', 'oe-prow rise' + (out ? ' out' : '')); const l = el('div', 'lab'); const sm = el('small', '', 'weight ' + w); if (out) sm.append(el('em', '', ' \u00b7 outside the range of the 50')); l.append(el('b', '', lab), sm); row.append(l);
       const tr = el('div', 'track'); const rng = el('i', 'rng'); rng.style.left = X(d3.min(vals)) + '%'; rng.style.width = Math.max(1, X(d3.max(vals)) - X(d3.min(vals))) + '%';
@@ -129,7 +137,7 @@
       const cells = [[x._rank, 'n'], [self ? x.name + '  (this school)' : x.name, ''], [x.la, ''], [x.region, ''], [OE.mfmt(x[mf], mf), 'n'], [o(x.dis_pct, f1), 'n'], [o(x.pa_index, fs), 'n'], [o(x.pupils, d3.format(',.0f')), 'n'], [o(gapOf(x), fs), 'n'], [self ? '—' : o(x._mi, d3.format('.0f')), 'n']];
       cells.forEach(([t, c]) => tr.append(el('td', c, String(t))));
       const td = el('td'); const gv = x[T.area];
-      if (GC[gv]) { const sp = el('span', 'oe-band', gv); sp.style.background = GC[gv]; if (gv === 'Expected standard' || gv === 'Needs attention') sp.style.color = '#0B1A2E'; td.append(sp); }
+      if (GC[gv]) { const sp = el('span', 'oe-band', gv); sp.style.background = GC[gv]; sp.style.color = OE.gradeInk(gv); td.append(sp); }
       else if (gv === 'Not met') { const sp = el('span', 'oe-band', 'Not met'); sp.style.background = '#CE1E02'; td.append(sp); }
       else if (gv === 'Met') td.textContent = 'Met';
       else { td.textContent = x.g_ach ? 'Not graded' : '—'; td.className = 'muted'; }
@@ -138,6 +146,20 @@
   if (tsel) tsel.addEventListener('change', () => { OE.tbl.area = tsel.value; if (tgh) tgh.textContent = tsel.options[tsel.selectedIndex].text; redrawT(); });
   const redrawT = () => dash.draw('neigh');
   const nall = document.getElementById('oe-nall'); if (nall) nall.addEventListener('click', () => { const was = OE.tbl.all; OE.tbl.all = !was; redrawT(); if (was) document.getElementById('neighbours').scrollIntoView({block: 'start'}); });
+  // Get the data (22 November 2026): this school and its 50 similar schools as CSV, every column, with the data version
+  const csvb = document.getElementById('oe-csv');
+  if (csvb) csvb.addEventListener('click', async () => { const r = S(), nb = N(); if (!r || !nb.length) return;
+    let ver = ''; try { const b = await fetch('/explorer/data/build.json', {cache: 'no-cache'}).then((x) => x.json()); ver = b.version || (b.built || '').slice(0, 10); } catch (e) { ver = ''; }
+    const cols = Object.keys(nb[0]).filter((c) => c !== 'nn' && c[0] !== '_');
+    const order = String(r.nn || '').split(' '); const pos = (u) => order.indexOf(String(u)) + 1;
+    const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const rows = [['relation', 'list_position'].concat(cols, ['data_version'])];
+    rows.push(['this school', ''].concat(cols.map((c) => r[c]), [ver]));
+    nb.slice().sort((a, b) => pos(a.urn) - pos(b.urn)).forEach((x) => rows.push(['similar school', pos(x.urn) || ''].concat(cols.map((c) => x[c]), [ver])));
+    const blob = new Blob([rows.map((row) => row.map(q).join(',')).join('\n') + '\n'], {type: 'text/csv;charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'ofsted-explorer-' + r.urn + '-and-50-similar-schools' + (ver ? '-' + ver : '') + '.csv';
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); });
   const nf = document.getElementById('oe-nf'); if (nf) nf.addEventListener('input', () => { OE.tbl.q = nf.value; redrawT(); });
   [['oe-insp', 'insp'], ['oe-reg', 'reg'], ['oe-near', 'near']].forEach(([id, k]) => { const c = document.getElementById(id); if (c) c.addEventListener('change', () => { OE.tbl[k] = c.checked; redrawT(); }); });
   document.querySelectorAll('#oe-ntable th[data-sort]').forEach((th) => { th.tabIndex = 0; const go = () => { const k = th.dataset.sort; if (OE.tbl.k === k) OE.tbl.dir *= -1; else { OE.tbl.k = k; OE.tbl.dir = (k === 'name' || k === 'la' || k === 'region' || k === 'miles') ? 1 : -1; } redrawT(); }; th.addEventListener('click', go); th.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); }); });
@@ -174,8 +196,8 @@
       if (m.key !== p.urn) { m.key = p.urn; m.svg.call(m.zoom.transform, d3.zoomIdentity); }
       restyle(m); }});
 
-  dash.draw('geo', (box) => { const r = S(), nb = N(); box.replaceChildren(); if (!r || !nb.length) return; if (!ok(r.lat)) { box.append(el('p', '', 'No location is available for this school.')); return; }
-    const ds = nb.map((x) => [x, hav(r, x)]).filter((x) => ok(x[1])).sort((a, b) => a[1] - b[1]); if (!ds.length) return;
+  dash.draw('geo', (box) => { const r = S(), nb = N(); box.replaceChildren(); OE.xd = OE.xd || {}; OE.xd.map = []; if (!r || !nb.length) return; if (!ok(r.lat)) { box.append(el('p', '', 'No location is available for this school.')); return; }
+    const ds = nb.map((x) => [x, hav(r, x)]).filter((x) => ok(x[1])).sort((a, b) => a[1] - b[1]); OE.xd = OE.xd || {}; OE.xd.map = ds; if (!ds.length) return;
     const within = (m) => ds.filter((x) => x[1] <= m).length; const same = nb.filter((x) => x.region === r.region).length; const med = d3.median(ds, (x) => x[1]);
     box.append(rich(el('p'), 'Similar does not mean nearby. Only **' + within(25) + '** of the 50 are within 25 miles and **' + same + '** are in the same region (' + r.region + '). The typical similar school is **' + d3.format('.0f')(med) + ' miles** away; the farthest is ' + d3.format('.0f')(ds[ds.length - 1][1]) + ' miles away, in ' + ds[ds.length - 1][0].la + '.'));
     box.append(el('h3', '', 'Nearest similar schools')); const ul = el('ol', 'oe-near');
@@ -192,7 +214,14 @@
 
   // ---------- actions ----------
   const pr = document.getElementById('oe-print'); if (pr) pr.addEventListener('click', () => { const s = S(); const d = document.getElementById('oe-printdate'); if (d) d.textContent = (s ? s.name + ' · ' : '') + 'generated ' + d3.timeFormat('%-d %B %Y')(new Date()) + ' · mrkdltn.com/explorer/#urn=' + (s ? s.urn : ''); const t = document.title; if (s) document.title = 'Ofsted Explorer - ' + s.name; window.print(); document.title = t; });
-  const cp = document.getElementById('oe-copy'); if (cp) cp.addEventListener('click', async () => { try { const sc = S(); let u = location.href; if (sc && sc.urn) { const h = new URLSearchParams(location.hash.slice(1)); h.delete('urn'); const t = h.toString(); u = location.origin + '/explorer/school/' + sc.urn + '/' + (t ? '#' + t : ''); } await navigator.clipboard.writeText(u); cp.textContent = 'Link copied'; } catch (e) { cp.textContent = location.href; } setTimeout(() => { cp.textContent = 'Copy link'; }, 1800); });
+  // share this view: the school's own address (its share image) with the view settings and a data stamp (share.js)
+  { const cmp = document.getElementById('oe-cmp'); if (cmp) dash.onData(() => { const sc = S(); cmp.hidden = !(sc && !sc.rc_only && sc.a8 !== ''); if (sc) cmp.href = '/explorer/compare/#u=' + sc.urn; }); }  // Compare opens with this school
+  if (window.OEshare) { const schoolUrl = () => { const sc = S(); const h = new URLSearchParams(location.hash.slice(1)); h.delete('urn'); h.delete('v'); const t = h.toString();
+      return (sc && sc.urn ? location.origin + '/explorer/school/' + sc.urn + '/' : location.origin + location.pathname) + (t ? '#' + t : ''); };
+    const insp = () => { const sc = S(); return (sc && sc.insp_date) || ''; };
+    OEshare.button(document.getElementById('oe-copy'), {url: schoolUrl, insp, title: () => { const sc = S(); return sc ? sc.name + ' · Ofsted Explorer' : document.title; }});
+    // Compare: opens with this school, ready to add others
+    let checked = false; dash.onData(() => { if (checked || !S()) return; checked = true; OEshare.check({insp, host: '#school'}); }); }
   // section nav highlight; on phones the sticky menu scrolls sideways to keep the current section's link in view
   const phone = window.matchMedia('(max-width: 640px)');
   const links = [...document.querySelectorAll('.oe-nav a')]; if ('IntersectionObserver' in window && links.length) { const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => { const on = a.getAttribute('href') === '#' + e.target.id; a.classList.toggle('on', on); if (on && phone.matches) { const p = a.parentNode; p.scrollTo({left: p.scrollLeft + a.getBoundingClientRect().left - p.getBoundingClientRect().left - 16, behavior: 'smooth'}); }; }); }); }, {rootMargin: '-30% 0px -60% 0px'}); links.forEach((a) => { const t = document.getElementById(a.getAttribute('href').slice(1)); if (t) io.observe(t); }); }

@@ -47,23 +47,25 @@ Each has a test. Run the tests before any preview goes to Mark.
 
 Met 0 · Partly met 10 · Not met 6. Re-score monthly.
 
+Updated 23 November 2026 as each "Now" item ships: Met 4 · Partly met 10 · Not met 2.
+
 | # | Standard | Status | Evidence |
 | --- | --- | --- | --- |
-| 1 | Identity in the first screen | Partly | Wordmark only, no role line; intro and Explorer cards below the fold on desktop |
-| 2 | Reachable | Not met | LinkedIn is the only route |
-| 3 | Followable | Not met | `/feed.xml` returns 404 |
+| 1 | Identity in the first screen | Met (23 Nov) | 23 Nov: role line "Secondary principal in the West Midlands" under the home headline; at 1400 × 860 and 375 × 812 the first screen shows the name, the role line, "Read the writing" and the Explorer (card on desktop, header link on phones). Portrait re-exported at its declared 880 × 1100 and 480 × 600 |
+| 2 | Reachable | Partly (23 Nov) | 23 Nov: "Contact" in the header of every page, opening `/contact/` (private form, stored in the existing D1 feedback store as kind "contact"; no email published). Still to do: speaking and press page with biographies, photographs, topics and talks |
+| 3 | Followable | Met (23 Nov) | 23 Nov: `/feed.xml` is Atom with the full text and dates of all 4 articles, valid on the W3C validator (0 errors); linked from every page head; built in the same build as the articles, and the build fails without it |
 | 4 | One template | Partly | Update box on 2 of 4 articles; report-cards piece on an older pattern; no author note or related reading |
 | 5 | Figures current | Partly | All sourced and dated; no register or freshness check |
 | 6 | Citable | Partly | Cite as partial; no BibTeX, CSV or licence on the site |
 | 7 | Corrections | Not met | No log |
 | 8 | Body of work | Not met | No theme or record pages |
-| 9 | Shares well | Partly | Usable share image on 2 of 8 pages; home has none; Progress 8 and Curriculum Review have none; belonging uses WebP |
-| 10 | Findable | Not met | No JSON-LD; `STATIC_PAGES` in `scripts/build_pages.py` omits `/writing/belonging/`; every `lastmod` is the build date |
+| 9 | Shares well | Met (23 Nov) | 23 Nov: every page but 404 has a 1200 × 630 JPG card and full OG and Twitter tags, articles with dates; `scripts/check_meta.py` passes on all 6,642 pages and fails the build otherwise. Post Inspector check is Mark's to run (needs his sign-in) |
+| 10 | Findable | Partly (23 Nov) | 23 Nov: Person JSON-LD on home (About is on the same page) with `sameAs` LinkedIn; Article JSON-LD on all 4 articles with author, dates and image; sitemap built from the pages in `site/` with git dates, including `/writing/belonging/`. Still to do: 137 school-page titles are shared by schools with the same name (add the town) |
 | 11 | Honest imagery | Partly | Grade grid drawn inside a generated classroom; no label near figures |
-| 12 | Text before motion | Not met | `.js .pc{opacity:0}` in `home.css`; phone intro invisible until scrolled |
-| 13 | Accessible | Partly | Belonging article clean on axe; home has 5 serious contrast failures (`#55627A` on animated `#C9D7E6`, 4.2:1); footer links 20 px tall |
-| 14 | Fast | Partly | Desktop cold load ~360 ms, 87 KB, CLS 0; no phone measurement; everything `max-age=0` |
-| 15 | Secure | Partly | Only `nosniff` and `Referrer-Policy`; inline `onclick` on print buttons |
+| 12 | Text before motion | Met (23 Nov) | 23 Nov: every home card and figure readable at load with JavaScript off, with reduced motion and before any scroll (0 of 9 cards hidden, was 8 of 9 on a phone); figures no longer count up; motion only adds thread, badges and bar growth |
+| 13 | Accessible | Partly (23 Nov) | 23 Nov: home clean on axe (no serious or critical) at 375 × 812 and 1400 × 860, top, middle and bottom, motion on and reduced; `.paper` paints its own stone ground. Explorer: text on Strong standard, Expected standard and Needs attention now at least 4.5:1; Exceptional keeps white at 4.49:1 by Mark's decision (one known axe finding). Contact page clean on axe. Still to do: axe on every template, keyboard and screen-reader walk-through, accessibility statement |
+| 14 | Fast | Partly (23 Nov) | 23 Nov: fonts, plates, video, writing images and d3 fingerprinted under `/static/` with `public, max-age=31536000, immutable`; HTML `max-age=0, must-revalidate`. Still to do: phone LCP, CLS and INP over 4G, and page weights |
+| 15 | Secure | Partly (23 Nov) | 23 Nov: HSTS `max-age=86400`, `frame-ancestors 'self'` enforced, `Permissions-Policy`, `/.well-known/security.txt`; no inline script or handlers anywhere; CSP report-only shows no violations on home, articles, Explorer and school pages. Still to do: a clean week, then enforce the CSP and lengthen HSTS; privacy note |
 | 16 | Built and checked | Partly | Hand-built pages and one-off scripts per article; no site gate or changelog |
 
 Other specifics found: portrait `site/assets/img/mark-dalton.webp` is 400 × 500 but declared 880w, and the 480w file is identical; home links Progress 8 twice under different titles; the report-cards piece is dated "November 2026" with no day; colophon and 404 descriptions are one word; the 404 page carries a canonical.

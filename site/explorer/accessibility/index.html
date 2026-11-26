@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Accessibility · Ofsted Explorer · Mark Dalton</title>
+<meta name="description" content="How accessible the Ofsted Explorer is, what has been checked, the known problems and how to report one.">
+<link rel="canonical" href="https://mrkdltn.com/explorer/accessibility/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mark Dalton">
+<meta property="og:title" content="Accessibility · Ofsted Explorer · Mark Dalton">
+<meta property="og:description" content="How accessible the Ofsted Explorer is, what has been checked, the known problems and how to report one.">
+<meta property="og:url" content="https://mrkdltn.com/explorer/accessibility/">
+<meta property="og:image" content="https://mrkdltn.com/writing/ofsted-report-cards/img/explorer-card.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta property="og:image:alt" content="Ofsted Explorer: a scatter of 3,298 secondary schools, Attainment 8 against their 50 similar schools' average, coloured by Ofsted achievement grade.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="Mark Dalton: writing" href="/feed.xml">
+<meta name="theme-color" content="#0B1A2E">
+<link rel="preload" href="/assets/fonts/libre-caslon-display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>.ac h2{font:400 clamp(26px,3vw,32px)/1.15 var(--display);margin:1.7em 0 .5em}.ac h2:first-of-type{margin-top:.4em}.ac li{margin:.35em 0}.ac .meta{font:400 15.5px/1.55 var(--sans);color:var(--ink-2)}</style>
+</head>
+<body class="stone">
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-head band midnight"><div class="wrap">
+  <a class="brand" href="/">Mark Dalton</a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/" aria-current="page"><span class="nav-long">Ofsted </span>Explorer</a><a href="/#about">About</a><a href="/contact/">Contact</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+<main id="main">
+<div class="band midnight article-band"><div class="wrap"><header class="article-head"><p class="label">Ofsted Explorer &middot; Accessibility</p><h1>Accessibility of the Ofsted Explorer</h1><p class="standfirst">The aim is that anyone can read every finding in the Explorer, by sight, by keyboard or with a screen reader. This page says what has been checked, what does not yet meet the standard, and how to tell me.</p></header></div></div>
+<div class="wrap"><div class="prose prose-sheet ac">
+
+<h2>What you should be able to do</h2>
+<ul>
+  <li>Use every control with a keyboard: search, the section menu, buttons, table sorting, the map's zoom buttons and the chart and table switches.</li>
+  <li>Read every chart as a table. Each figure has a <i>Table</i> switch, and a CSV download with the source and data version.</li>
+  <li>Have each chart described to a screen reader: charts carry text descriptions, and readings are given in words, not only colours.</li>
+  <li>Use it on a phone without scrolling sideways.</li>
+</ul>
+
+<h2>Known problems</h2>
+<ul>
+  <li><b>Text on the Strong standard colour.</b> Ofsted's report card colours are used exactly as published. White or dark text on the Strong standard green (#33903C) has a contrast ratio of about 4.0:1, below the 4.5:1 that the Web Content Accessibility Guidelines (WCAG 2.2, level AA) ask of small text. The grade is always also given in words, and every bar's figures are in its table view.</li>
+  <li><b>Hover details on the dot charts.</b> The names of individual schools on the strip, the national chart and the map appear on hover or tap. The same schools and figures are in each chart's table view and download.</li>
+  <li><b>Map dragging.</b> Moving the map needs a pointer; the zoom buttons work by keyboard.</li>
+</ul>
+
+<h2>How this was checked</h2>
+<p>On 23 November 2026 the Explorer was checked by hand in Chrome on desktop (1,900 pixels wide) and at phone width (375 pixels): names for every button and link, text alternatives for charts and images, labels for form fields, heading order, colour contrast against WCAG 2.2, keyboard use, and that the page does not jump as it loads. It has not been audited by an outside specialist. Problems found are fixed or listed above.</p>
+
+<h2>Speed</h2>
+<p>The aim is that on a mid-range phone over 4G a page shows its first finding within 2.5 seconds, nothing on it moves as it loads (a layout shift score under 0.1), and a first visit transfers under 1 MB. Measured on 23 November 2026 in Chrome, as a phone on 4G with a cold cache, the median of three loads:</p>
+<ul>
+  <li><b>Explorer front page:</b> first finding in 1.1 seconds, layout shift 0.00, 743 KB. It was 5.5 seconds and 0.37 before the school it opens on was written into the page.</li>
+  <li><b>A secondary school's page:</b> 1.1 seconds, 0.00, 743 KB.</li>
+  <li><b>A primary school's page:</b> 1.0 seconds, 0.00, 746 KB.</li>
+  <li><b>Explore a measure and Compare schools:</b> 0.7 seconds, 0.00, about 515 KB.</li>
+</ul>
+<p>Most of each first visit is the data for every school (about 420 KB, compressed), which later views reuse. The script that takes these measurements is <code>scripts/measure.mjs</code> in the <a href="https://github.com/mrkdltn/mrkdltn-site">site&rsquo;s open code</a>.</p>
+
+<h2>Tell me about a problem</h2>
+<p>If something in the Explorer is hard to use, please say so through the <a href="/explorer/#feedback">feedback form</a>. Every message is read, and changes are listed on <a href="/explorer/updates/">What's new</a>.</p>
+<p class="meta">Last reviewed 23 November 2026.</p>
+</div></div>
+</main>
+<footer class="site-foot"><div class="wrap">
+  <span>© 2026 Mark Dalton. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/writing/">Writing</a> · <a href="/explorer/">Ofsted Explorer</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+</body>
+</html>
