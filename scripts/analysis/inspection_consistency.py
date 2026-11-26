@@ -33,6 +33,12 @@ Tests: python3 scripts/analysis/test_inspection_consistency.py
 Expected runtime of the real run on about 4,000 report cards (4 cores): see the measured figures in the docstring
 of main() and in the results file, which records the wall time of each step.
 
+Convergence and the retry ladder (every Bayesian fit, main and sensitivity): R-hat below 1.01 and bulk and tail ESS
+above 400 for the inspector SD and every fixed effect. First fit 4 chains x 1,000 draws after 1,000 tuning, target_accept
+0.9; if it misses, first refit at 2,000 + 2,000 and target_accept 0.95; if that misses, second refit at 4,000 + 4,000 and
+0.95. Each attempt has its own fixed seed (SEED, SEED + 1, SEED + 2). A fit that misses after the second refit is reported
+as "fitted (not converged)". The results file records, per fit, the number of refits needed.
+
 Package versions: scripts/analysis/requirements-inspection-consistency.txt.
 """
 import argparse, csv, datetime as dt, json, math, os, re, sys, time, warnings
@@ -371,15 +377,25 @@ def fit_bayes(X, y, g, J, seed=SEED, draws=DRAWS, tune=TUNE, chains=CHAINS, core
     return s.ravel(), b.reshape(-1, b.shape[2]), diag
 
 
+RETRY_LADDER = [(1, TARGET_ACCEPT), (2, 0.95), (4, 0.95)]   # (multiple of draws and tuning, target_accept)
+
+
 def fit_bayes_checked(X, y, g, J, seed=SEED, draws=DRAWS, tune=TUNE, **kw):
-    """Fit; if R-hat or ESS fail the pre-registered thresholds, refit once with twice the draws and tuning and
-    target_accept 0.95. A model that still fails is reported with converged = false."""
-    s, b, d = fit_bayes(X, y, g, J, seed=seed, draws=draws, tune=tune, **kw)
-    if not d['converged']:
-        kw2 = dict(kw, target_accept=0.95)
-        s, b, d2 = fit_bayes(X, y, g, J, seed=seed + 1, draws=2 * draws, tune=2 * tune, **kw2)
-        d2['refit_after'] = {k: d[k] for k in ('rhat_max', 'ess_min')}
-        d = d2
+    """Fit, then climb the retry ladder while R-hat or ESS miss the pre-registered thresholds: first fit
+    (1,000 draws, target_accept 0.9); first refit (2,000, 0.95); second refit (4,000, 0.95), each with tuning equal
+    to draws and a new seed. A fit that still misses after the second refit is reported with converged = false.
+    Every fit, main and sensitivity, uses the same ladder; `refits` records how many were needed."""
+    tried = []
+    kw.pop('target_accept', None)
+    for i, (mult, ta) in enumerate(RETRY_LADDER):
+        s, b, d = fit_bayes(X, y, g, J, seed=seed + i, draws=mult * draws, tune=mult * tune, target_accept=ta, **kw)
+        if d['converged'] or i == len(RETRY_LADDER) - 1:
+            break
+        tried.append({k: d[k] for k in ('draws', 'rhat_max', 'ess_min')})
+        del s, b
+    d['refits'] = i
+    if tried:
+        d['earlier_attempts'] = tried
     return s, b, d
 
 
@@ -655,12 +671,13 @@ def render_md(res):
                      f"{fmt(m['inspector_sd'])} | {fmt(m['median_odds_ratio'])} | "
                      f"{m['mor_reading']} | {m['typical_school_p25_pct']['median']}% to {m['typical_school_p75_pct']['median']}% | "
                      f"{fmt(m['spread_pp'])} | {fmt(m['icc_latent'])} |")
-    L += ['', 'Convergence: R-hat below 1.01 and effective sample size above 400 required for every parameter kept.', '']
+    L += ['', 'Convergence: R-hat below 1.01 and effective sample size above 400 required for every parameter kept. A fit that misses is refitted '
+          'with twice the draws (target_accept 0.95), then if needed with four times the draws; one that still misses is reported as not converged.', '']
     for a, r in res['areas'].items():
         m = r['main']
         if m.get('status') == 'fitted':
             c, p = m['convergence'], m.get('permutation')
-            L.append(f"- {r['area']}: R-hat max {c['rhat_max']:.3f}, ESS min {c['ess_min']:.0f}, divergences {c['divergences']}, converged {c['converged']}.")
+            L.append(f"- {r['area']}: R-hat max {c['rhat_max']:.3f}, ESS min {c['ess_min']:.0f}, divergences {c['divergences']}, refits {c.get('refits', 0)}, converged {c['converged']}.")
             if p:
                 L.append(f"  Permutation ({p['shuffles']} shuffles within {p['strata']}): observed ML SD {p['observed_sd_ml']}, shuffled median {p['shuffled_sd_median']} "
                          f"(2.5th to 97.5th percentile {p['shuffled_sd_2_5']} to {p['shuffled_sd_97_5']}; 95th percentile {p['shuffled_sd_95']}); observed at the {p['observed_percentile']}th percentile: {p['reading']}.")
@@ -668,7 +685,8 @@ def render_md(res):
     for a, r in res['areas'].items():
         for n, m in r.get('sensitivity', {}).items():
             if m.get('status') == 'fitted':
-                L.append(f"| {r['area']} | {m['model']} | fitted{'' if m['convergence']['converged'] else ' (not converged)'} | {fmt(m['inspector_sd'])} | {fmt(m['median_odds_ratio'])} | {m['mor_reading']} |")
+                c = m['convergence']
+                L.append(f"| {r['area']} | {m['model']} | fitted{'' if c['converged'] else ' (not converged)'}, refits {c.get('refits', 0)} | {fmt(m['inspector_sd'])} | {fmt(m['median_odds_ratio'])} | {m['mor_reading']} |")
             else:
                 L.append(f"| {r['area']} | {m['model']} | {m.get('status')} | | | |")
     L += ['', '## Described only: special, alternative provision and nursery', '']
@@ -707,9 +725,10 @@ def versions():
 
 def main():
     """Measured runtime (26 Nov 2026, this container, 4 cores; synthetic data of the real run's size, 4,000 primary
-    and secondary report cards, 287 lead codes): 10.4 minutes in all. Each PyMC fit (4 chains x 1,000 draws after
+    and secondary report cards, 287 lead codes): 10.4 minutes in all before Amendment 1; 18.1 minutes with the
+    region x school term run fitted and the retry ladder (two of its fits needed both refits). Each PyMC fit (4 chains x 1,000 draws after
     1,000 tuning) takes about 25-35 seconds; each maximum-likelihood fit about 0.3 seconds, so the 200 shuffles take
-    about a minute per area. Five areas reached the events rule there; with all eight, allow about 20 minutes."""
+    about a minute per area. Five areas reached the events rule there; with all eight, allow about 30 minutes."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--cutoff', help='corpus cut-off date, YYYY-MM-DD (real run)')
     ap.add_argument('--confirm-complete', action='store_true', help='confirm the corpus is complete at the cut-off')

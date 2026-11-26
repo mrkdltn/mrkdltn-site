@@ -9,6 +9,7 @@ What is checked:
   - the PyMC model recovers a known SD of 0 and 0.5, with converged chains, and the MOR reading follows;
   - the permutation benchmark puts the observed SD near the middle when the true SD is 0, and at the top when it is 0.5,
     and the Amendment 1 reading follows: "not distinguishable from chance" at SD 0, "distinguishable from chance" at 0.5;
+  - the convergence retry ladder (1x, 2x, 4x draws) and its refit count;
   - region x school term (Amendment 1) maps months to terms as written;
   - shuffling keeps every code's number of reports within each region x month x phase stratum;
   - the derived figures (MOR, ICC, MOR bands with the whole-interval rule) are computed as pre-registered;
@@ -75,6 +76,26 @@ class Guards(unittest.TestCase):
         for obj, md in bad:
             with self.assertRaises(SystemExit, msg=str(obj)):
                 ic.check_output(obj, md, self.codes, self.urns)
+
+    def test_retry_ladder(self):
+        calls, real = [], ic.fit_bayes
+        def stub(conv):
+            def f(X, y, g, J, seed, draws, tune, target_accept, **kw):
+                calls.append((draws, tune, target_accept, seed))
+                ok = conv(len(calls))
+                return np.zeros(4), np.zeros((4, 1)), {'converged': ok, 'draws': draws, 'rhat_max': 1.0 if ok else 1.02, 'ess_min': 900}
+            return f
+        try:
+            ic.fit_bayes = stub(lambda k: False)
+            _, _, d = ic.fit_bayes_checked(None, None, None, 1, seed=7, draws=1000, tune=1000)
+            self.assertEqual(calls, [(1000, 1000, 0.9, 7), (2000, 2000, 0.95, 8), (4000, 4000, 0.95, 9)])
+            self.assertEqual((d['refits'], d['converged']), (2, False))
+            calls.clear()
+            ic.fit_bayes = stub(lambda k: k == 2)
+            _, _, d = ic.fit_bayes_checked(None, None, None, 1, seed=7, draws=1000, tune=1000)
+            self.assertEqual((len(calls), d['refits'], d['converged']), (2, 1, True))
+        finally:
+            ic.fit_bayes = real
 
     def test_cell_suppression(self):
         self.assertEqual(ic.cell(9), 'fewer than 10')
