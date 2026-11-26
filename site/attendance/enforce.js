@@ -82,7 +82,7 @@
       const lead = (x) => (x === 'none' ? 'No' : cap1(x));
       k.hidden = !on; k.textContent = label; h2.textContent = !on ? label : a === 'none' && b === 'none' ? 'No penalty notices for term-time holiday or for other unauthorised absence'
         : `${lead(a)} penalty notices for term-time holiday${vs(a)}, and ${b} for other unauthorised absence${a === b || vs(a) ? '' : vs(b)}`; }
-    add(area, 'p', 'ax-sub', `Penalty notices to parents in ${ay(L)}, kept in two separate strands because they answer different things: notices for a holiday taken in term time without the school’s agreement, and notices for other unauthorised absence from school. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
+    add(area, 'p', 'ax-sub ax-keep', `Penalty notices to parents in ${ay(L)}, kept in two separate strands because they answer different things: notices for a holiday taken in term time without the school’s agreement, and notices for other unauthorised absence from school. ${kind === 'y' ? 'The county’s figures are those of its local authorities added together. ' : ''}These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools.`);
     const years = Object.keys(E.y).filter((y) => +y >= 2016).concat(['2019']).filter((y, i, a) => a.indexOf(y) === i).sort(), grid = add(area, 'div', 'en-pair en-strands');
     const strand = (c, title, noun, absKey, absName, absNote) => { const box = add(grid, 'div', 'en-strand'); add(box, 'h3', 'en-st', title);
       const n = col(rec, L, c), r = per(rec, L, c, 1000), er = per(E, L, c, 1000), ab = rec[absKey] && rec[absKey][L], eab = E[absKey] && E[absKey][L], sp = spread(c, L);
@@ -110,7 +110,7 @@
     // every category at once: the number, the rate, the fifth of local authorities it falls in, and its region beside it
     const R = kind === 'a' && rec.reg ? D.areas[rec.reg] : null, rname = R ? D.names[rec.reg] : '';
     add(area, 'h3', 'en-h', kind === 'a' ? `Where ${esc(name)} sits among local authorities, ${ay(L)}` : `Every measure, ${ay(L)}`);
-    add(area, 'p', 'ax-sub', kind === 'a' ? `For each kind of enforcement the strip shows seven categories: none, fewer than 10, then five equal groups of the local authorities that used it, from the fewest for their size to the most. The filled box is ${esc(name)}. ${R ? `The region’s own rate is beside it, placed on the same scale.` : ''}`
+    add(area, 'p', 'ax-sub ax-keep', kind === 'a' ? `For each kind of enforcement the strip shows seven categories: none, fewer than 10, then five equal groups of the local authorities that used it, from the fewest for their size to the most. The filled box is ${esc(name)}. ${R ? `The region’s own rate is beside it, placed on the same scale.` : ''}`
       : 'Counts for the county’s local authorities added together, with the rate for every 1,000 pupils against England.');
     const wrap = add(area, 'div', 'ax-tablewrap'), rate = (r, c) => { const v = col(r, L, c); return v == null ? '–' : v === 0 ? '–' : v < 0 ? 'under ' + r1k(10000 / col(r, L, 'enrol')) : r1k(per(r, L, c, 1000)); };
     add(wrap, 'table', 'ax-table en-table en-other', `<thead><tr><th>Measure</th><th class="n">Number</th><th class="n">For every 1,000 pupils</th>${kind === 'a' ? '<th class="en-qh">Category among local authorities</th>' + (R ? `<th class="en-qh">${esc(rname)}</th>` : '') : ''}<th class="n">England, for every 1,000</th></tr></thead><tbody>`
@@ -128,7 +128,7 @@
   function england() {
     const L = String(D.latest), E = D.areas.E92000001, regs = Object.keys(D.areas).filter((c) => /^E12/.test(c) && D.areas[c].y[L]).sort((a, b) => D.names[a].localeCompare(D.names[b])), cname = CATS.find((c) => c[0] === csel)[1], sc = scale(csel, L);
     all.innerHTML = '';
-    add(all, 'p', 'ax-sub', `How much each kind of enforcement was used in ${ay(L)}, region by region. Local authorities fall into seven categories for each measure: none, fewer than 10, then five equal groups of the authorities that used it, from the fewest for their size to the most. Each region’s row shows where the region as a whole would sit and how many of its local authorities are in each category.`);
+    add(all, 'p', 'ax-sub ax-keep', `How much each kind of enforcement was used in ${ay(L)}, region by region. Local authorities fall into seven categories for each measure: none, fewer than 10, then five equal groups of the authorities that used it, from the fewest for their size to the most. Each region’s row shows where the region as a whole would sit and how many of its local authorities are in each category.`);
     const f = add(add(all, 'div', 'en-ctl'), 'label', 'ax-field'); add(f, 'span', null, 'Measure'); const sel = add(f, 'select', 'ax-select'); CATS.forEach(([c, n]) => { const o = add(sel, 'option', null, n); o.value = c; o.selected = c === csel; });
     sel.addEventListener('change', () => { const y0 = scrollY; csel = sel.value; england(); scrollTo(0, y0); });
     const inReg = (reg) => Object.keys(D.areas).filter((id) => isLA(id) && D.areas[id].reg === reg && D.areas[id].y[L] && col(D.areas[id], L, 'enrol') >= 2000);

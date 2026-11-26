@@ -87,12 +87,39 @@ def main():
             if v.get('poss'):
                 w.writerow(list(k) + [v.get(c, '') for c in COLS])
     if ytd and version:
+        # The same point last year, as the DfE published it then: the version of this data set whose last week has the
+        # same number a year earlier. Its year-to-date rows are the like-for-like comparison for this year's.
+        rows, was = [[year] + list(k) + [ytd[k].get(c, '') for c in COLS] for k in sorted(ytd) if ytd[k].get('poss')], None
+        try:
+            vs, page = [], 1
+            while True:
+                j = json.load(urllib.request.urlopen(urllib.request.Request(f'{API}/versions?page={page}&pageSize=20', headers={'User-Agent': UA}), timeout=60))
+                vs += j['results']
+                if page >= j['paging']['totalPages']:
+                    break
+                page += 1
+            end = next(v['timePeriods']['end'] for v in vs if v['version'] == version['version'])          # e.g. "2026 Week 45"
+            y, wk = end.split(' Week ')
+            was = next((v for v in vs if v['timePeriods']['end'] == f'{int(y) - 1} Week {wk}'), None)
+        except Exception as ex:          # the comparison then falls back to last year's days added up
+            print('could not look up last year\'s version:', ex)
+        if was:
+            prev = {}
+            for r in open_csv(f"{API}/csv?dataSetVersion={was['version']}"):
+                col, ph = KEEP.get(r['attendance_reason']), PHASE.get(r['education_phase'])
+                if not col or not ph or r['time_frame'] != 'Year to date':
+                    continue
+                code = r['new_la_code'] if r['geographic_level'] == 'Local authority' else r['region_code'] if r['geographic_level'] == 'Regional' else r['country_code']
+                try:
+                    prev.setdefault((code, ph), {})[col] = int(float(r['session_count']))
+                except ValueError:
+                    continue
+            rows += [[year - 1] + list(k) + [prev[k].get(c, '') for c in COLS] for k in sorted(prev) if k[0] and prev[k].get('poss')]
+            print(f"last year at the same point: version {was['version']} ({was['release']['title']}), {len(prev)} area and phase totals")
         with open(os.path.join(OUT, 'pulse_ytd.csv'), 'w', newline='', encoding='utf-8') as f:
             w = csv.writer(f, lineterminator='\n')
             w.writerow(['year', 'code', 'phase'] + COLS)
-            for k in sorted(ytd):
-                if ytd[k].get('poss'):
-                    w.writerow([year] + list(k) + [ytd[k].get(c, '') for c in COLS])
+            w.writerows(sorted(rows))
     # areas: keep any already known (earlier years), add or refresh the ones in this file
     apath = os.path.join(OUT, 'areas.csv')
     known = {r['code']: r for r in csv.DictReader(open(apath, encoding='utf-8'))} if os.path.exists(apath) else {}

@@ -31,7 +31,10 @@
     // controls show only where they change something: none on Method or Enforcement (penalty notices are not published
     // by phase, pupil group or measure), and no choice of pupil group on Schools, where no pupil-group figure is published
     const bar = main.querySelector('.ax-controls'); if (bar) bar.classList.toggle('ax-tab-off', T.current === 'method' || T.current === 'enforcement');
-    const pgf = document.getElementById('gx-pg-f'); if (pgf) pgf.classList.toggle('ax-tab-off', T.current === 'schools');
+    const off = (id, cond) => { const f = typeof id === 'string' ? document.getElementById(id) : id; if (f) f.classList.toggle('ax-tab-off', !!cond); };
+    off('gx-pg-f', T.current === 'schools'); off('gx-view-f', T.current === 'schools');          // the schools list does not follow the pupil group or the change view
+    off('gx-meas-f', T.current === 'schools' && q.get('k') === 'y');          // a county's Schools tab lists its local authorities
+    const pm = document.getElementById('px-meas-l'); off(pm && pm.closest('.ax-field'), T.current === 'time');          // Patterns, Over time: those charts are of overall and severe absence whatever is chosen
     const foot = document.getElementById('ax-places-foot'); if (foot) foot.classList.toggle('ax-tab-off', T.current !== 'overview');
     TABS.forEach(([key]) => { const ids = list.filter((x) => tabOf(x.dataset.nav) === key).map((x) => x.id).join(' '); if (ids) btn[key].setAttribute('aria-controls', ids); });
     TABS.forEach(([key]) => { const on = key === T.current; btn[key].classList.toggle('on', on); btn[key].setAttribute('aria-selected', String(on)); btn[key].tabIndex = on ? 0 : -1; });

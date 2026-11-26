@@ -643,3 +643,86 @@ Two labels to look at as well. On trust pages the small line above the "compared
 ### Not checked
 
 The similar-schools figure itself; the wording of sections that have no finding-heading; screen-reader behaviour beyond roles and focus; widths other than 390 px; anything committed after `f625d5d`.
+
+## Seventh pass: end to end
+
+Run on 26 November 2026 against commit `686f931` ("this year so far from the DfE's own year-to-date totals"), with `pulse.json` as built on 25 November. Everything changed since `f625d5d` was checked at 390 px and at 1,300 px. The DfE files were downloaded again, including version 3.2 of the in-year data set (published 20 November 2025), which is the DfE's own year-to-date figure at this point last year. The sixth-pass sample was kept so that each original case could be reproduced: 44 schools and 47 areas and trusts in 232 addresses, every tab opened and reopened at each width (1,121 tab views a width), with screenshots of every tab of ten pages at each width and a sample of them looked at; and, for the in-year figures, England, the nine regions and 40 local authorities in all four phase views, including the nine with the special-school fault.
+
+**The sixth-pass bugs are fixed, the "so far this year" figures now equal the DfE's own totals everywhere, and nothing is broken at either width.** What remains is one comparison that can mislead, some controls that do nothing where they are shown, and a handful of folded notes that carry something the reader needs.
+
+### Counts
+
+| | Checked | Right | Not |
+| --- | --- | --- | --- |
+| (a) A school page opened at a tab or section keeps that tab in its address | 8 addresses, both widths | 8 | 0 |
+| (a) Old `#sec-<name>` links bring their section into view | 34, both widths | 34 | 0 |
+| (a) School-by-school heading clears under severe absence | 1 case, 42 direct loads | all | 0 |
+| (a) Rewordings in place: "Overall absence" in both summaries; "across England, N% of … are higher than they were"; "No penalty notices … or …"; "points"; "Among trusts"; `aria-controls` | 6 | 6 | 0 |
+| (a) Finding-headings, recomputed, each width | 1,039 | 1,038 | 1, by one (two constituencies equal to four decimal places) |
+| (a) "Close to" applied as stated: a gap shown as 0.2 or less, never beside 0.3 | 106 gaps | 106 | 0 |
+| (b) This year so far, stored, against the DfE's year-to-date rows, all 163 areas and four phases, seven measures | 4,501 | 4,501 at one and at two decimal places | 0 |
+| (b) In-year page: year to date, authorised, illness, unauthorised | 800 | 800 | 0 |
+| (b) In-year page: unauthorised holiday at two decimal places | 200 | 200 | 0 |
+| (b) In-year page: last year's figure and the change, as built | 373 | 373 | 0, but see item 1 |
+| (b) Clock line: area, England, gap, dates | 114 authority-and-phase pairs, 456 figures | 456 | 0 |
+| (c) Folded notes: not empty, open by tap, by Enter and by Space, 44 px, open for printing | 42 on nine kinds of page, each width; 1,325 across the sample | all | 0 |
+| (c) A folded note follows its controls | phase changed on Pupils | yes | |
+| (e), (f) Console or network errors | 232 addresses a width, and every interaction test | none | 0 |
+| (e), (f) Sideways scroll | 1,121 tab views a width | none | 0 |
+| (e), (f) Charts at the right width, first time and after switching back | 1,465 a width | all | 0 (42 intentionally empty under severe absence; the hexagon map is narrower than its card at 1,300 px by design) |
+| (f) Text within 14 px of the screen edge at 390 px | 1,121 tab views | none | 0 |
+| (f) Headings at 390 px | 2,331 | at most four lines | 0 |
+| (g) Links between pages: school to trust, constituency and Ofsted Explorer; authority to week by week and to schools; Patterns and Areas to the area pages | 14 | 14 | 0 |
+| (g) Search: "st mary", a school's postcode with and without the space, part of a postcode, a trust, an authority, a county | 13 queries, the first six on 3 pages | all return the right places | 0, but see item 6 |
+
+The nine authorities from the fourth pass now show the DfE's total for special schools: Barnsley 14.9%, Bracknell Forest 9.4%, Brent 8.6%, Derbyshire 9.7%, Kingston upon Thames 11.9%, Nottingham 13.0%, Shropshire 14.3%, Sutton 12.8%, Windsor and Maidenhead 10.2%.
+
+At 1,300 px the layout holds on every tab looked at: the tab bar sits on one line, headings wrap to two or three lines, tiles sit five across, the "Showing" strip appears once the controls have scrolled away and leaves out any control hidden on that tab. At 390 px the tab bar scrolls sideways where there are five tabs, with the fifth cut off at the edge so that it is seen to continue; controls become drop-downs and work in every tab.
+
+### What the owner would not want to find, most serious first
+
+**1. "Lower or higher than at the same point last year" sets the DfE's total for this year against days added up for last year, and the DfE did publish a total for last year.** The note in `CLAUDE.md` that "no such figure is published for an earlier year" is not right: version 3.2 of the same data set, still served by the DfE's API, carries the year-to-date rows to week 45 of 2025. Days added up for last year come out lower than that total in 98% of all-schools views (median 0.04 points), because the daily rows have since been revised and stop a day earlier. So the tool understates the fall a little everywhere, and badly in a few places.
+
+| | As shown | Like for like (DfE total, both years) |
+| --- | --- | --- |
+| England, all schools | 0.1 lower than last year (5.9%) | 0.2 lower (5.73% against 5.92%) |
+| "Lower … in N of 151 local authorities", all schools | 114 | 128 |
+| The same, secondary | 109 | 117 |
+| Barnsley, special schools (`/attendance/#area=E08000016&phase=X`) | 1.4 points higher than last year (13.5%) | 3.3 points lower (14.89% against 18.22%) |
+| Warrington, special schools | 0.8 higher | 0.1 lower |
+| Brent, special schools | 0.2 higher | 0.1 lower |
+| Sutton, special schools | 0.1 lower | 0.1 higher |
+
+Across all 643 area-and-phase views, the change differs by 0.1 or more in 298, the direction word differs in 56, and it is the opposite in 4. Five views have a last-year figure 0.5 points or more away from the DfE's (Barnsley, Wokingham, Cheshire East, Warrington and Greenwich, all special schools), which is the withheld-days fault of the fourth pass, now on last year's side only. Had this year also been added up from days, one direction word in 643 would differ, so the mixing itself costs little; it is last year's basis that matters. Reading last year from version 3.2 would settle it.
+
+**2. Printing shows sections that are hidden on screen because they are empty.** On a single-school authority (`k=a&id=E09000001`) the printed page includes "School by school. Each circle is one of its , placed by ." with the gaps showing. Trust, constituency and ward pages print bare "By pupil group" and "Penalty notices and other legal measures" headings. The controls are printed too.
+
+**3. Controls shown where they do nothing.**
+- "Show" (latest, change in a year, change since 2018/19) on the Schools tab of every area and trust page.
+- "Measure" on a county's Schools tab, which lists its local authorities with fixed columns.
+- "Pupils", "Show" and "Measure" on the two single-school authority pages, where there is no figure for them to change.
+- "Measure" on Patterns, Over time: all three charts ignore it, and the sentence saying so is inside a folded note.
+
+Nothing a visible section responds to is hidden on any tab. A pupil group chosen on Pupils changes the "compared" heading on Overview, which then says "for pupils eligible for free school meals", and the summary gains a "Chosen above" line; Schools and Enforcement do not change and do not show the choice. So no tab changes silently.
+
+**4. Folded notes that should stay open.** None is empty and all work. These carry something a reader needs in order not to misread what is beneath:
+- Patterns, Over time (three notes): "This chart uses overall absence only, whichever measure is chosen above" and "follows the schools chosen above, not the measure". With persistent absence chosen the charts do not change and nothing in view says why.
+- Enforcement, the category strip, and Patterns, "Enforcement, region by region": the dashed boxes (none, fewer than 10), the five fifths and the numbers inside the boxes are explained only in the note. The strip cannot be read without it.
+- Enforcement, first note: "These are counts of notices, not of pupils, and the DfE does not publish them by pupil group or for single schools." The standing rule is that the page says this; it now says it only on a tap.
+- School, Compare, "Where it sits": "This is a position in a distribution, not a judgement of the school."
+- Trust, Year by year: which line is the trust's own record and which is today's schools followed back.
+- Side by side on area and trust pages: the note is the only place that says which phase the table is for.
+
+The rest (how circles are sized, what a hexagon is, "tap to name it") are rightly folded.
+
+**5. The in-year Method text is out of date in two places.** "'All' schools means primary, secondary and special schools together": the figure is now the DfE's own all-schools row. "The same point last year is the school year 2025/26 up to the same calendar date": true, but it does not say that this year's figure is the DfE's total while last year's is days added up.
+
+**6. A home postcode finds nothing.** The box says "Name, town or postcode". A school's own postcode works, with or without the space, and so does the first half of any postcode ("B15"). A full postcode that is not a school's ("B15 2TT", "CM1 1QH") returns "Nothing matches. Try a school's town or postcode." A parent will type their own.
+
+**7. A local authority asked for a phase it lacks shows another.** `k=a&id=E08000016&phase=X` shows Barnsley's primary schools, clock line included, without saying so. Only a hand-made or stale link gets there.
+
+**8. Small tap targets at 390 px.** The tool's own menu (Start here, Areas, Schools, Trusts, Patterns) is 42 px high and "Areas" and "Trusts" are under 40 px wide; the site header links are 40 px high; the feedback form's tick box is 13 px. Everything else that is tapped is 44 px or more.
+
+### Not checked in this pass
+
+Pupil-group changes and county pupil-group rates (fourth pass, items 2 and 3) were not recomputed. The Start here and briefing pages, saved images, and widths other than 390 and 1,300 px were not examined. Screenshots were sampled, not all read.

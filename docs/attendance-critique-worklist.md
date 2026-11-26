@@ -116,3 +116,18 @@ Mark rejected the cut-down school page on seeing it (24 Nov) and asked to roll b
 | Controls beside what they change (area and trust pages) | Done within the tabs: no controls on Enforcement or Method, where they change nothing, and no pupil-group choice on Schools. The controls were not moved into individual sections, since phase and measure change several sections at once |
 | (i) notes in place of the paragraph above each chart | Done on every page: 2 to 3 folded per tab; opens on a tap; printed open |
 | Menus that open a list instead of a random place | Closed: Mark confirmed on 25 Nov that the landings stay as they are |
+
+### Seventh independent pass and the unlisted release, 26 November 2026
+
+| Item | State |
+| --- | --- |
+| Sixth-pass bugs and rewordings | Confirmed fixed at 390 and 1,300 px; 1,038 of 1,039 headings true (one constituency rank out by one on an exact tie) |
+| "The same point last year" was this year's DfE total against last year's days added up | Fixed: last year is now the total the DfE published at the same week a year earlier (version 3.2 of the data set). England reads 0.2 points lower, not 0.1; lower in 128 of 151 authorities, not 114; Barnsley's special schools 3.3 lower, not 1.4 higher |
+| Sections with nothing in them printed as empty headings | Fixed |
+| Controls shown where they do nothing | Fixed for Show and Pupils on Schools tabs, Measure on a county's Schools tab and on Patterns, Over time. Left: the two single-school authorities |
+| Notes a reader needs were folded away | Nine now stay open (the enforcement introduction and category strip, the regional table, three on Patterns, the school's position and side-by-side notes, the trust's two history lines) |
+| In-year method text out of date | Rewritten |
+| A home postcode found nothing | Now finds schools in the same postcode sector, then district |
+| Tool menu under 44 px on phones | Fixed |
+| Left as they are | An authority asked for a phase it lacks shows another without saying so; the site header's links are 40 px high (a live-site style, not the tool's) |
+| Unlisted release | Prepared on the branch; see `CLAUDE.md`. Awaiting Mark's Go |

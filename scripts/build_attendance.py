@@ -161,16 +161,16 @@ def main():
                    'daily': {str(y): {p: daily(data[y].get(c, {}).get(p, {}), days[y]) for p in PH} for y in years}}
             json.dump(one, open(os.path.join(OUT, 'area', c + '.json'), 'w'), separators=(',', ':'))
             n += 1
-    # The current year so far is the DfE's own year-to-date total where it publishes one. Adding up the days gives a
-    # different answer in a few areas, mostly for special schools, because the DfE withholds some days. Last year at the
-    # same point is still the days added up: the DfE publishes no such figure for an earlier year.
+    # The year so far is the DfE's own year-to-date total where the fetcher has one: for this year, and for last year at
+    # the same point from the version of the data set the DfE published then. Adding up the days gives a different
+    # answer in a few areas, mostly for special schools, because the DfE withholds some days; it is the fallback only.
     ypath, used = os.path.join(RAW, 'pulse_ytd.csv'), 0
     if os.path.exists(ypath):
         for r in csv.DictReader(open(ypath, encoding='utf-8')):
-            if r['year'] == str(cur) and r['code'] in pulse['ytd'] and r['phase'] in PH:
+            if r['year'] in pulse['ytd'].get(r['code'], {}) and r['phase'] in PH:
                 own = rates_of([int(r[c] or 0) for c in COLS])
                 if own:
-                    pulse['ytd'][r['code']][str(cur)][r['phase']] = own
+                    pulse['ytd'][r['code']][r['year']][r['phase']] = own
                     used += 1
     path = os.path.join(OUT, 'pulse.json')
     json.dump(pulse, open(path, 'w'), separators=(',', ':'))

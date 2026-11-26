@@ -10,6 +10,10 @@
   const findG = (t, prefer) => grp.filter((r) => t.every((w) => r.key.includes(' ' + w))).sort((a, b) => ((b.kind === prefer) - (a.kind === prefer)) || (b.key.startsWith(' ' + t[0]) - a.key.startsWith(' ' + t[0])) || ((b.kind !== 'w') - (a.kind !== 'w')) || b.n - a.n).slice(0, 4);
   const find = (q, groups, only, prefer) => { const t = q.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean); if (!t.length) return [];
     if (only) return grp.filter((r) => r.kind === only && t.every((w) => r.key.includes(' ' + w))).sort((a, b) => (b.key.startsWith(' ' + t[0]) - a.key.startsWith(' ' + t[0])) || a.name.localeCompare(b.name)).slice(0, 8);
+    // a full postcode that is not a school's own: fall back to schools in the same postcode sector, then the same district
+    const pcm = q.toUpperCase().replace(/\s+/g, '').match(/^([A-Z]{1,2}\d[A-Z\d]?)(\d)[A-Z]{2}$/);
+    if (pcm && !findS(t).length) { const near = (pre) => idx.filter((r) => r.pc.toUpperCase().startsWith(pre)).sort((a, b) => a.name.localeCompare(b.name)).slice(0, 8);
+      const sector = near(pcm[1] + ' ' + pcm[2]); return sector.length ? sector : near(pcm[1] + ' '); }
     if (!groups) return findS(t);
     // an area or trust whose name begins with what was typed comes first; then schools; then other areas and trusts
     const g = findG(t, prefer), lead = g.filter((r) => r.kind !== 'w' && r.kind !== 'c' && r.key.startsWith(' ' + t.join(' '))).slice(0, 3), rest = g.filter((r) => !lead.includes(r));
