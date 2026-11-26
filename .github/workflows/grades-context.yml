@@ -37,7 +37,8 @@ jobs:
         run: python3 scripts/analysis/grades_context.py --weekly --data-dir "$RUNNER_TEMP/grades-context"
 
       - name: Record what was used
-        run: python3 -c "import json; d=json.load(open('data/derived/grades_context.json')); print(json.dumps({'as_at': d['as_at'], 'report_cards': d['report_cards'], 'sources': d['sources']}, indent=1))"
+        run: |
+          python3 -c "import json; d=json.load(open('data/derived/grades_context.json')); print(json.dumps({'as_at': d['as_at'], 'report_cards': d['report_cards'], 'sources': d['sources']}, indent=1))"
 
       - name: Commit if anything changed
         run: |
