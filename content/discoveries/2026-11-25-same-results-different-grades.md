@@ -60,7 +60,7 @@ limitation: This is an association in the first year of report cards, among the 
 article: /writing/ofsted-report-cards/
 linkedin:
   - url: "https://www.linkedin.com/pulse/i-checked-every-ofsted-report-card-results-alone-dont-mark-dalton-bqjue/"
-    date: 2026-11-16
+    date: "2026-11-16"
     kind: article
     title: "I checked every Ofsted report card. Results alone don't explain the gap."
 todo: "Confirm the LinkedIn article's date (2026-11-16 is the site article's date). Publishing also needs a same-day LinkedIn post."
