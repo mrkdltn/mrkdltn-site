@@ -295,7 +295,13 @@
       const sec = b.closest('section'); if (sec) setHash('sec', sec.id);
       drawAll();
     }));
-    const h = hash(); if (['held', 'inspected', 'settling'].includes(h.sec)) { const t = document.getElementById(h.sec); if (t) t.scrollIntoView(); }
+    // the models sit in a closed fold at the foot of the page; a link to one of its sections opens it
+    const fold = document.getElementById('deeper');
+    const want = () => { const h = hash(); const id = ['held', 'inspected', 'settling', 'gc-method'].includes(h.sec) ? h.sec : location.hash.replace(/^#/, ''); return ['held', 'inspected', 'settling', 'gc-method', 'deeper'].includes(id) ? id : null; };
+    const go = () => { const id = want(); if (!id || !fold) return; if (!fold.open) fold.open = true; requestAnimationFrame(() => { const t = document.getElementById(id); if (t) t.scrollIntoView(); }); };
+    if (fold) fold.addEventListener('toggle', () => { if (fold.open) drawAll(); });
+    window.addEventListener('hashchange', go);
+    go();
   }
 
   fetch('/explorer/data/grades_context.json', {cache: 'no-cache'}).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(init)

@@ -20,3 +20,19 @@
 .gc section,.ar .gc{scroll-margin-top:12px}
 .gc .oe-xsrc{font-size:12.5px;line-height:1.5;color:#55627A}
 .gc-svg .gc-lab,.gc-svg .gc-read{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+
+/* the models fold (26 November 2026): there for readers who want them, not in the way of those who don't */
+.gc-deeper{margin:30px 0 0}
+.gc-deeper>summary,.gc-origin{background:#fff;border:1px solid var(--color-border-line);border-radius:2px;padding-left:28px;padding-right:28px}
+.gc-origin{border-top:0;margin:-1px 0 0!important;padding-top:0;padding-bottom:18px}
+@media(max-width:640px){.gc-deeper>summary,.gc-origin{padding-left:16px;padding-right:16px}}
+.gc-deeper>summary{list-style:none;cursor:pointer;padding-top:22px;padding-bottom:22px;display:flex;flex-direction:column;gap:4px;position:relative}
+.gc-deeper>summary::-webkit-details-marker{display:none}
+.gc-deeper>summary .t{font-family:var(--display);font-size:clamp(22px,2.6vw,28px);line-height:1.15;color:#0B1A2E;padding-right:84px}
+.gc-deeper>summary .s{font-size:15px;color:#55627A;max-width:70ch;padding-right:84px}
+.gc-deeper>summary::after{content:"Show";position:absolute;right:16px;top:24px;font-size:14px;color:#0B1A2E;border:1px solid #55627A;padding:8px 14px;border-radius:2px}
+.gc-deeper[open]>summary::after{content:"Hide"}
+.gc-deeper[open]>summary{border-bottom:0}
+.gc-deeper>summary:focus-visible{outline:2px solid #C9A24B;outline-offset:2px}
+.gc-origin{font-size:15px;color:#33405A;margin:0 0 8px}
+@media print{.gc-deeper>summary::after{display:none}}
