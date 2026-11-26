@@ -295,3 +295,46 @@ body.explorer{background:#ECE9E1}
 .ax-how summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .ax-how p.ax-sub{margin:2px 0 6px}
 @media (max-width:480px){.ax-nav a{min-height:44px;display:inline-flex;align-items:center;padding:0}}
+
+/* ---- Aligned with the Ofsted Explorer (27 November 2026) -------------------------------------------------------------
+   The two tools share three typefaces and one palette; this makes them use them the same way. Values are the Ofsted
+   Explorer's own (explorer.css), measured on the live page. The colour rules and the tabs stay as Mark set them for
+   this tool. Libre Caslon Display has no bold, so a heading in it is always weight 400: a heavier weight is a fake. */
+.ax{max-width:1240px;padding:20px 40px 64px;gap:14px}
+.ax-hero-in,.ax-secnav .in{max-width:1240px;padding-left:40px;padding-right:40px}
+#sx-body:not([hidden]),#gx-body:not([hidden]){gap:14px}
+.ax-two{gap:14px}
+.ax .ax-card{padding:32px 36px 38px;border-radius:0}
+.ax .ax-card h2{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.12;margin:0 0 8px;max-width:27em;letter-spacing:0}
+.ax .ax-card h3.en-st{font-weight:400;font-size:24px;line-height:1.15}
+.ax .ax-kick{margin-bottom:8px}
+.ax .ax-sub{font-size:15px;line-height:1.5;max-width:672px;margin:0 0 14px}
+/* headline figures: paper tiles, Caslon figures */
+.ax .ax-kpis{gap:10px}
+.ax .ax-kpi{background:#F6F3EC;border:0;border-radius:0;padding:16px 18px}
+.ax .ax-kpi .k{font-size:12px;line-height:1.35}
+.ax .ax-kpi .v{font-family:var(--display);font-weight:400;font-size:38px;line-height:1.25;margin-top:2px;color:var(--ink)}
+.ax .ax-kpi .d{font-size:12px;line-height:1.4}
+.ax .en-k3 .ax-kpi{padding:14px 14px}.ax .en-k3 .ax-kpi .v{font-size:30px}
+/* the reading: the Ofsted Explorer's verdict panel */
+.ax .ax-reading{font-family:var(--sans);font-size:17px;line-height:1.6;color:#33405A;background:#F6F3EC;border-left:2px solid #C9A24B;padding:22px 24px;padding-right:max(24px,calc(100% - 842px));margin:14px 0 0;max-width:none}
+.ax .ax-reading b{color:var(--ink);font-weight:600}
+.ax .ax-reading:empty{display:none}
+.ax .ax-clock{background:#fff;border:1px solid var(--line);border-left:2px solid #C9A24B;margin-top:10px}
+.ax-picked{border-radius:0}
+@media (max-width:820px){.ax{padding:14px 20px 64px}.ax-hero-in,.ax-secnav .in{padding-left:20px;padding-right:20px}.ax .ax-card{padding:24px 22px 28px}.ax .ax-card h2{font-size:26px}}
+@media (max-width:480px){
+  .ax{padding:10px 0 64px;gap:10px}
+  #sx-body:not([hidden]),#gx-body:not([hidden]),.ax-two{gap:10px}
+  .ax-hero-in,.ax-secnav .in{padding-left:16px;padding-right:16px}
+  .ax .ax-card{padding:20px 16px 24px}
+  .ax > :not(section):not(#sx-body):not(#gx-body):not(.ax-two),.ax > .ax-controls,#sx-body > :not(section):not(.ax-two),#gx-body > :not(section):not(.ax-two){margin-left:16px;margin-right:16px}
+  .ax .ax-card h2{font-size:23px;line-height:1.15}
+  .ax .ax-card h3.en-st{font-size:21px}
+  .ax .ax-kpi{padding:10px 12px}.ax .ax-kpi .v{font-size:28px}
+  .ax .en-k3 .ax-kpi .v{font-size:24px}
+  .ax .ax-reading{font-size:16px;padding:16px}
+}
+/* Start here is a form, not sheets of figures: it keeps its own side margins on phones */
+@media (max-width:480px){main.ax.ax-form{padding:10px 16px 64px}main.ax.ax-form > *{margin-left:0!important;margin-right:0!important}}
+.ax .ax-ofsted{margin:14px 0 0}
