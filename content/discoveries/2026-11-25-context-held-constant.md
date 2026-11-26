@@ -120,8 +120,12 @@ related: ["/explorer/areas/#held"]
 limitation: These are associations in a first set of inspections that is not a random sample, they cannot allow for what no public data records, and the results gap comes from an open replica.
 card_source: Ofsted management information, latest inspections as at 31 October 2026; DfE SEN school level data, January 2026; DfE GCSE results 2024/25 via the open similar-schools replica. Pre-registered analysis
 article: /writing/ofsted-report-cards/
-linkedin: []
-todo: Add the LinkedIn post for /writing/ofsted-report-cards/ under linkedin (url, date, kind, title) once its URL is known; do not guess it.
+linkedin:
+  - url: "https://www.linkedin.com/pulse/i-checked-every-ofsted-report-card-results-alone-dont-mark-dalton-bqjue/"
+    date: 2026-11-16
+    kind: article
+    title: "I checked every Ofsted report card. Results alone don't explain the gap."
+todo: "Confirm the LinkedIn article's date (2026-11-16 is the site article's date). Publishing also needs a same-day LinkedIn post."
 supersedes: null
 superseded_by: null
 ---

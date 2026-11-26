@@ -62,8 +62,12 @@ explore: "/explorer/areas/#sec=context&focus=g_ab"
 related: ["/explorer/areas/#context"]
 limitation: Less stable intakes are also more often in deprived areas, and this chart does not separate the two.
 article: /writing/ofsted-report-cards/
-linkedin: []
-todo: Add the LinkedIn post for /writing/ofsted-report-cards/ under linkedin (url, date, kind, title) once its URL is known; do not guess it.
+linkedin:
+  - url: "https://www.linkedin.com/pulse/i-checked-every-ofsted-report-card-results-alone-dont-mark-dalton-bqjue/"
+    date: 2026-11-16
+    kind: article
+    title: "I checked every Ofsted report card. Results alone don't explain the gap."
+todo: "Confirm the LinkedIn article's date (2026-11-16 is the site article's date). Publishing also needs a same-day LinkedIn post."
 supersedes: null
 superseded_by: null
 rule: "gradient:g_ab:nonmob"
