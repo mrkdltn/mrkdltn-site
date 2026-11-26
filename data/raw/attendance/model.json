@@ -1,0 +1,82 @@
+{
+ "period": "2025AS",
+ "k": 20,
+ "phases": {
+  "P": {
+   "n": 16682,
+   "median_enrol": 184.0,
+   "factors": [
+    "fsm_pct",
+    "eal_pct",
+    "sen_pct",
+    "ehcp_pct",
+    "log_pupils",
+    "rural"
+   ],
+   "labels": [
+    "Eligible for free school meals",
+    "First language other than English",
+    "SEN support",
+    "Education, health and care plans",
+    "School size",
+    "Rural setting"
+   ],
+   "mean": [
+    24.0319,
+    18.8687,
+    15.8197,
+    4.2327,
+    5.2235,
+    0.2811
+   ],
+   "weights": [
+    0.448,
+    0.055,
+    0.158,
+    0.17,
+    0.14,
+    0.029
+   ]
+  },
+  "S": {
+   "n": 3419,
+   "median_enrol": 950.0,
+   "factors": [
+    "fsm_pct",
+    "eal_pct",
+    "sen_pct",
+    "ehcp_pct",
+    "log_pupils",
+    "rural",
+    "selective"
+   ],
+   "labels": [
+    "Eligible for free school meals",
+    "First language other than English",
+    "SEN support",
+    "Education, health and care plans",
+    "School size",
+    "Rural setting",
+    "Selective admissions"
+   ],
+   "mean": [
+    28.8351,
+    18.7582,
+    14.7558,
+    3.7401,
+    6.8006,
+    0.1299,
+    0.0477
+   ],
+   "weights": [
+    0.354,
+    0.238,
+    0.136,
+    0.046,
+    0.028,
+    0.005,
+    0.193
+   ]
+  }
+ }
+}

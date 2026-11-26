@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Schools · Attendance Explorer · Mark Dalton</title>
+<meta name="description" content="Absence at any state-funded primary, secondary or special school in England, set beside England, its local authority and the 20 schools most like it, and year by year from 2013/14. From the DfE's termly absence statistics.">
+<link rel="canonical" href="https://mrkdltn.com/attendance/school/">
+<meta property="og:title" content="Schools · Attendance Explorer">
+<meta property="og:description" content="Absence at any state-funded school in England, beside England, its local authority and the 20 schools most like it. Free, and built from public data.">
+<meta property="og:url" content="https://mrkdltn.com/attendance/school/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mrkdltn.com/attendance/data/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Attendance Explorer: overall absence in England so far this school year, with a calendar of school days coloured against the average.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="Mark Dalton: writing" href="/feed.xml">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/attendance/attendance.css">
+<link rel="stylesheet" href="/attendance/tools.css">
+<link rel="stylesheet" href="/attendance/brief.css">
+</head>
+<body class="explorer" data-ax-source="Source: Department for Education, Pupil absence in schools in England. A reading of the data, not a judgement on the school.">
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/"><span class="nav-long">Ofsted </span>Explorer</a><a href="/#about">About</a><a href="/contact/">Contact</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+
+<div class="ax-hero"><div class="ax-hero-in">
+  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/start/" data-v="start">Start here</a><a href="/attendance/" data-v="areas">Areas</a><a href="/attendance/school/" data-v="schools" aria-current="page">Schools</a><a href="/attendance/patterns/" data-v="patterns">Patterns</a></nav>
+  <header class="ax-top">
+    <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · Schools</p>
+    <h1 id="sx-name">Find a school</h1>
+    <p class="ax-date" id="sx-meta">Absence at every state-funded primary, secondary and special school in England, from the DfE’s termly statistics.</p>
+    <p class="ax-date" id="sx-hint" hidden>This school was chosen at random to start you off. Search below for any school.</p>
+    <div class="ax-head-row"><div id="ax-pin"></div><button type="button" class="ax-btn" id="sx-another">Show me another school</button></div>
+  </header>
+    <div class="ax-hero-search">
+    <label class="ax-field ax-find"><span>Find a school or area</span>
+      <input id="sx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Name, town or postcode" role="combobox" aria-expanded="false" aria-controls="sx-list" aria-autocomplete="list">
+      <ul id="sx-list" class="ax-pop" role="listbox" hidden></ul></label>
+    </div>
+</div></div>
+<nav class="ax-secnav noprint" aria-label="Sections"><div class="in" id="ax-secnav"></div></nav>
+<main class="ax">
+
+
+  <div id="sx-body" hidden>
+  <section data-nav="Summary" class="ax-card">
+    <h2 id="sx-period"></h2>
+    <p class="ax-reading" id="sx-reading"></p>
+    <div class="ax-kpis" id="sx-kpis"></div>
+    <p class="ax-sub ax-ofsted" id="sx-ofsted"></p>
+  </section>
+
+  <section data-nav="Three ways" class="ax-card" id="sx-read-c">
+    <h2>Read three ways</h2>
+    <p class="ax-sub">The school’s <span class="sx-meas-n"></span> beside England, its local authority and the 20 schools most like it in their circumstances. A green bar means lower absence at this school than the comparison, a rust bar higher.</p>
+    <div class="ax-seg sx-meas" role="group" aria-label="Measure"><button type="button" data-m="abs">Overall absence</button><button type="button" data-m="pa">Persistent absence</button></div>
+    <div id="sx-read" class="ax-chart"></div>
+    <p class="ax-reading" id="sx-read-r"></p>
+    <p class="ax-sub" id="sx-ctx"></p>
+    <details class="ax-details" id="sx-sim-d"><summary>The 20 similar schools, in alphabetical order</summary><ul id="sx-sim"></ul></details>
+  </section>
+
+  <section data-nav="Side by side" class="ax-card" id="sx-cmp-c">
+    <h2>Side by side</h2>
+    <p class="ax-sub ax-keep" id="sx-cmp-s"></p>
+    <div class="ax-tablewrap"><table class="ax-table ax-cmp" id="sx-cmp"></table></div>
+    <div class="ax-compare"><label class="ax-field ax-find"><span>Compare with another school</span>
+      <input id="sx-q2" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Add a school" role="combobox" aria-expanded="false" aria-controls="sx-list2" aria-autocomplete="list">
+      <ul id="sx-list2" class="ax-pop" role="listbox" hidden></ul></label><div id="sx-chips" class="ax-chips"></div></div>
+  </section>
+
+  <section data-nav="Position" class="ax-card">
+    <h2>Where it sits among <span id="sx-phase-n"></span></h2>
+    <p class="ax-sub ax-keep">Every school in England of the same phase (primary, secondary or special), by <span class="sx-meas-n"></span>. The taller the bar, the more schools at that rate. The marks beneath are the other schools in its local authority. This is a position in a distribution, not a judgement of the school.</p>
+    <div class="ax-seg sx-meas" role="group" aria-label="Measure"><button type="button" data-m="abs">Overall absence</button><button type="button" data-m="pa">Persistent absence</button></div>
+    <div id="sx-dist" class="ax-chart"></div>
+    <p class="ax-reading" id="sx-dist-r"></p>
+  </section>
+
+  <section data-nav="Year by year" class="ax-card">
+    <h2>Year by year</h2>
+    <p class="ax-sub">Full school years from 2013/14. No figures were published for 2019/20. Any school added under Side by side is drawn here too.</p>
+    <div class="ax-seg sx-meas" role="group" aria-label="Measure"><button type="button" data-m="abs">Overall absence</button><button type="button" data-m="pa">Persistent absence</button></div>
+    <div id="sx-hist" class="ax-chart"></div>
+    <p class="ax-reading" id="sx-hist-r"></p>
+  </section>
+
+  <section data-nav="Since 2018/19" class="ax-card">
+    <h2>Since before the pandemic</h2>
+    <p class="ax-sub">The change in overall absence between <span id="sx-base-n"></span>, set against the change at every other school of the same phase.</p>
+    <div id="sx-chg" class="ax-chart"></div>
+    <p class="ax-reading" id="sx-chg-r"></p>
+  </section>
+  </div>
+
+  <section data-nav="Method" class="ax-card ax-method">
+    <h2>How this page works</h2>
+    <p><b>Measures.</b> Overall absence is the share of possible sessions that pupils missed. A session is a morning or an afternoon. Persistent absence is the share of pupils who missed a tenth or more of their own possible sessions. Figures cover pupils aged 5 to 15.</p>
+    <p><b>Points.</b> A difference between two rates is given in percentage points, shortened to “points”. A rate of 7.0% against 6.5% is 0.5 points higher. Each difference is worked out from the rates before they are rounded and then rounded once, so it can be 0.1 away from what subtracting the two rates on screen would give.</p>
+    <p><b>Two kinds of period.</b> The newest figures cover the autumn and spring terms only and are compared with the same two terms a year earlier. The long run uses full school years. The two are never mixed on one chart.</p>
+    <p><b>England and the local authority.</b> Each is one rate for all its schools of the same phase taken together, from the DfE’s school-level file: sessions missed over sessions possible, and persistently absent pupils over pupils on roll. Larger schools count for more.</p>
+    <p><b>Similar schools.</b> For a primary or secondary school, the 20 schools of the same phase nearest to it on these factors: pupils eligible for free school meals, first language other than English, SEN support, education, health and care plans, size, rural setting and, for secondary schools, selective admissions. Each factor is weighted by how strongly it goes with overall absence across schools. The match is made here from published data and is not the DfE’s. The factors are from the January 2026 school census. The <a href="/attendance/patterns/">Patterns</a> page sets out the weights.</p>
+    <p><b>Since 2018/19.</b> 2018/19 is the last full school year before the pandemic. The change since then is the difference between that year and the newest full school year.</p>
+    <p><b>Colours.</b> On “Read three ways” a green bar means lower absence at this school than the comparison and a rust bar higher. Colour shows direction only. Everywhere else on the page a school’s figures are in ink.</p>
+    <p><b>Trusts.</b> The date a school joined its present trust is from Get Information about Schools and is marked on the year-by-year chart. Where the DfE recorded a different trust for the school before that date, that trust is named. Those records begin in 2020/21.</p>
+    <p><b>Schools that changed.</b> Where a school has exactly one predecessor, for example before it became an academy, the earlier years are the predecessor’s and the chart marks the join. A school formed by merging others starts at the merger.</p>
+    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>: <span id="sx-src"></span>. These are accredited official statistics from the school census. School details are from Get Information about Schools. Open Government Licence v3.0.</p>
+    <p><b>Ofsted.</b> The attendance and behaviour grade is from the school’s most recent report card. It is shown as published, in Ofsted’s own colour, with the date of the inspection.</p>
+    <p><b>What is not shown.</b> Rates only, never counts of pupils. No figures for a school with fewer than 10 pupils on roll. Severe absence, which is missing half or more of sessions, is never shown for a single school, where it usually describes a handful of children. The DfE publishes no absence figures by pupil group for individual schools, so none appears here.</p>
+    <p><b>Small schools.</b> In a school of 100 pupils, one child is a full percentage point of persistent absence. Read small differences with that in mind.</p>
+    <p><b>No expected rate.</b> No expected rate is calculated for any school. The page sets each school beside real schools in similar circumstances and leaves the reading to you.</p>
+    <p><b>Special schools.</b> No similar schools are given for a special school. What a special school provides for shapes its attendance far more than the factors measured here.</p>
+    <p><b>Not a judgement.</b> Every figure here is a reading of published data, not a judgement on a school. No school is ranked. Ethnicity is never used.</p>
+  </section>
+</main>
+
+
+<footer class="site-foot noprint"><div class="wrap">
+  <span>© 2026 Mark Dalton. Built from public DfE and Ofsted data. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<div class="ax-tip" id="ax-tip" role="status" hidden></div>
+<script src="/assets/d3.min.js"></script>
+<script src="/attendance/colour.js"></script>
+<script src="/attendance/tools.js"></script>
+<script src="/attendance/brief.js"></script>
+<script src="/attendance/tabs.js"></script>
+<script src="/attendance/chrome.js"></script>
+<script src="/attendance/search.js"></script>
+<script src="/attendance/school.js"></script>
+</body>
+</html>

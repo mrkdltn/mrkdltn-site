@@ -1,0 +1,35 @@
+/* Attendance Explorer tools: card toolbar, pin button, pinned places. Midnight and Paper. */
+.ax-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid #D8DDE5}
+.ax-tool,.ax-pinbtn{font:inherit;font-family:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:14px;line-height:1.2;color:#0B1A2E;background:#fff;border:1px solid #D8DDE5;border-radius:6px;padding:8px 12px;min-height:36px;margin:0;cursor:pointer;max-width:100%;-webkit-appearance:none;appearance:none}
+.ax-tool{color:#55627A}
+.ax-tool:hover,.ax-pinbtn:hover{border-color:#55627A;color:#0B1A2E}
+.ax-tool:focus-visible,.ax-pinbtn:focus-visible,.ax-places a:focus-visible,.ax-places-x:focus-visible{outline:2px solid #0B1A2E;outline-offset:2px}
+.ax-tools-status{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+.ax-pinbtn{display:inline-flex;align-items:center;gap:9px;min-height:40px;padding:8px 14px;font-size:15px}
+.ax-pinmark{display:inline-block;flex:none;box-sizing:border-box;width:9px;height:9px;border:1.5px solid #C9A24B;transform:rotate(45deg)}
+.ax-pinbtn[aria-pressed=true]{border-color:#55627A;font-weight:600}
+.ax-pinbtn[aria-pressed=true] .ax-pinmark{background:#C9A24B}
+
+.ax-places{background:#fff;border:1px solid #D8DDE5;border-radius:6px;padding:16px 24px;min-width:0;font-family:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#0B1A2E}
+.ax-places-t{font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:#7A5C14;margin:0 0 6px}
+.ax-places-none{font-size:14px;line-height:1.45;color:#55627A;margin:0}
+.ax-places ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr));gap:0 28px}
+.ax-places li{display:flex;align-items:center;gap:6px;min-width:0;border-top:1px solid #D8DDE5}
+.ax-places a{flex:1 1 auto;min-width:0;display:block;padding:8px 0;color:#0B1A2E;text-decoration:none;font-size:15px;line-height:1.3}
+.ax-places-n{display:block;overflow-wrap:anywhere;text-decoration:underline;text-decoration-color:#D8DDE5;text-underline-offset:3px}
+.ax-places a:hover .ax-places-n{text-decoration-color:#0B1A2E}
+.ax-places small{display:block;font-size:12px;color:#55627A;margin-top:1px}
+.ax-places-x{flex:none;font:inherit;font-size:20px;line-height:1;width:36px;height:36px;padding:0;margin:0;color:#55627A;background:#fff;border:1px solid transparent;border-radius:6px;cursor:pointer;-webkit-appearance:none;appearance:none}
+.ax-places-x:hover{border-color:#D8DDE5;color:#0B1A2E}
+
+@media (pointer:coarse),(max-width:480px){
+  .ax-tool,.ax-pinbtn{min-height:44px;padding:10px 14px}
+  .ax-places-x{width:44px;height:44px}
+  .ax-places a{padding:10px 0}
+}
+@media (max-width:480px){
+  .ax-tools{margin-top:14px}
+  .ax-places{padding:14px 16px}
+}
+@media print{.ax-tools,.ax-pinbtn,.ax-places-x{display:none!important}}

@@ -1,0 +1,50 @@
+name: Grades and context (weekly)
+
+# Re-runs the pre-registered grades-and-context models (docs/analysis-plans/grades-context-plan.md) on the
+# latest public releases and commits data/derived/grades_context.json, which the areas page reads.
+# Downloads: Ofsted's monthly management information (GOV.UK), DfE Special educational needs in England
+# school-level data (Explore education statistics) and the GIAS daily extract. Each release's title, URL and
+# SHA-256 are written into the json, so a new release is recorded, never refused.
+# Weekly, not daily: the MI changes monthly, and the models take about a minute.
+# Scheduled workflows run only from the default branch, so this starts once it is merged to main.
+on:
+  schedule:
+    - cron: '43 4 * * 2'   # Tuesdays 04:43 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: grades-context
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install
+        run: pip install "statsmodels==0.15.*" "pandas>=2.2" "numpy>=1.26" "scipy>=1.11" patsy
+
+      - name: Fetch the latest releases and re-run the models
+        run: python3 scripts/analysis/grades_context.py --weekly --data-dir "$RUNNER_TEMP/grades-context"
+
+      - name: Record what was used
+        run: python3 -c "import json; d=json.load(open('data/derived/grades_context.json')); print(json.dumps({'as_at': d['as_at'], 'report_cards': d['report_cards'], 'sources': d['sources']}, indent=1))"
+
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet -- data/derived/grades_context.json && ! git ls-files --others --exclude-standard -- data/derived | grep -q .; then
+            echo "No change."; exit 0; fi
+          git config user.name "mrkdltn data bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/derived/grades_context.json
+          git commit -m "Grades and context: weekly refresh ($(date -u +%F))"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 20; done; exit 1

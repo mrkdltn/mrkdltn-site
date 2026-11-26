@@ -182,7 +182,9 @@ def main():
                     failures.append(f'{rel}: {prob}')
                 if name == 'index.html':
                     url = 'https://mrkdltn.com/' + rel[:-len('index.html')]
-                    pages.append(url)
+                    # a page marked noindex is deliberately left out of the sitemap (site_meta.py skips it too)
+                    if not re.search(r'<meta name="robots" content="[^"]*noindex', head(p)):
+                        pages.append(url)
                     if not rel.startswith('explorer/school/') and '<meta property="og:type" content="article">' in head(p):
                         articles.append(url)
     failures += site_problems(pages, articles)

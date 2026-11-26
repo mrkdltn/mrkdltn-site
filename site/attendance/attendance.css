@@ -1,0 +1,297 @@
+/* Attendance Explorer. Midnight and Paper: data on white sheets, Hanken Grotesk for data, midnight ink. */
+.ax{--ink:#0B1A2E;--muted:#55627A;--line:#D8DDE5;--unlit:#E3E6EB;--verdigris:#2F6F66;max-width:1180px;margin:0 auto;padding:40px 24px 64px;font-family:var(--sans);color:var(--ink);display:flex;flex-direction:column;gap:22px}
+.ax-top h1{font-family:var(--display);font-weight:400;font-size:clamp(30px,4.4vw,44px);line-height:1.08;margin:8px 0 10px}
+.ax-label{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--brass-text,#7A5C14);margin:0;font-weight:600}
+.ax-lede{font-family:var(--serif-text);font-size:18px;line-height:1.5;color:var(--ink-2,#33405A);max-width:64ch;margin:0}
+.ax-date{font-size:14px;color:var(--muted);margin:12px 0 0}
+.ax-controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:end;position:sticky;top:0;z-index:5;background:var(--ground,#fff);padding:10px 0;border-bottom:1px solid var(--line)}
+.ax-field{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);min-width:0}
+.ax-select{font:inherit;font-size:16px;color:var(--ink);padding:9px 10px;border:1px solid var(--muted);border-radius:6px;background:#fff;max-width:100%;min-width:min(320px,100%)}
+.ax-seg{display:flex;border:1px solid var(--muted);border-radius:6px;overflow:hidden}
+.ax-seg button{font:inherit;font-size:15px;padding:9px 13px;border:0;border-left:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.ax-seg button:first-child{border-left:0}
+.ax-seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.ax-select:focus-visible,.ax-seg button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ax-card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:24px;min-width:0}
+.ax-card h2{font-size:20px;font-weight:600;margin:0 0 4px}
+#ax-name{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.15}
+.ax-sub{font-size:14px;line-height:1.45;color:var(--muted);margin:0 0 14px;max-width:78ch}
+.ax-reading{font-family:var(--serif-text);font-size:17px;line-height:1.5;margin:10px 0 0;max-width:70ch}
+.ax-reading b{font-family:var(--sans);font-weight:600;font-variant-numeric:tabular-nums}
+.ax-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px}
+.ax-kpi{border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.ax-kpi .k{font-size:13px;color:var(--muted);line-height:1.3}
+.ax-kpi .v{font-size:28px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2;margin-top:4px}
+.ax-kpi .d{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ax-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.ax-chart{width:100%;min-width:0}
+.ax-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.ax-chart text{font-family:var(--sans);font-size:12px;fill:var(--muted)}
+.ax-chart .strong{fill:var(--ink);font-weight:600}
+.ax-key{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin-top:10px;align-items:center}
+.ax-key i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px;border-radius:1px}
+.ax-key .ln{height:0;border-top:3px solid;width:18px;vertical-align:3px}
+.ax-key .ramp{width:120px;height:10px;margin:0 6px}
+.ax-method p{font-size:14px;line-height:1.55;color:var(--ink-2,#33405A);margin:8px 0 0;max-width:86ch}
+.ax-method a{color:inherit}
+.ax-tip{position:fixed;z-index:30;pointer-events:none;background:#fff;border:1px solid var(--muted);border-radius:6px;box-shadow:0 8px 28px rgba(11,26,46,.14);padding:8px 10px;font:13px/1.4 var(--sans);color:var(--ink,#0B1A2E);max-width:240px}
+.ax-tip b{font-weight:600}
+.ax-hexes path,.ax-dots circle,.ax-cells rect{cursor:pointer}
+@media (max-width:820px){.ax-two{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.ax{padding:24px 16px 48px;gap:16px}.ax-card{padding:16px}.ax-lede{font-size:17px}#ax-name{font-size:25px}.ax-controls{gap:10px}.ax-field,.ax-select{width:100%;min-width:0}.ax-seg button{flex:1;padding:9px 6px}.ax-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.ax-kpi .v{font-size:24px}}
+/* school view */
+.ax-label a{color:inherit}
+.ax-find{position:relative;flex:1 1 320px;max-width:560px}
+.ax-find .ax-select{width:100%;box-sizing:border-box}
+.ax-pop{position:absolute;left:0;right:0;top:100%;margin:4px 0 0;padding:4px;list-style:none;z-index:20;background:#fff;border:1px solid var(--muted);border-radius:6px;box-shadow:0 8px 28px rgba(11,26,46,.14);max-height:340px;overflow:auto}
+.ax-pop li{padding:9px 10px;border-radius:4px;cursor:pointer;font-size:15px;color:var(--ink);line-height:1.3}
+.ax-pop li small{display:block;font-size:13px;color:var(--muted)}
+.ax-pop li[aria-selected=true],.ax-pop li:hover{background:#EEF1F5}
+.ax-pop .none{cursor:default;color:var(--muted)}
+.sx-meas{display:inline-flex;margin:0 0 12px}
+.ax-compare{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:end;margin-top:16px}
+.ax-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ax-chip{font:inherit;font-size:14px;display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);cursor:pointer}
+.ax-chip i{width:10px;height:10px;border-radius:50%}
+.ax-ofsted{margin:16px 0 0}
+/* an Ofsted grade: its colour as a swatch, its name in ink, so the colour is never altered and the text always reads */
+.ax-grade{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--ink);margin:0 4px;white-space:nowrap}
+.ax-grade i{width:14px;height:14px;border-radius:2px;display:inline-block}
+#sx-body:not([hidden]){display:flex;flex-direction:column;gap:22px}
+@media (max-width:480px){#sx-body:not([hidden]){gap:16px}}
+/* trusts and constituencies */
+#gx-body:not([hidden]){display:flex;flex-direction:column;gap:22px}
+.ax-date a{color:inherit}
+.ax-tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ax-table{border-collapse:collapse;width:100%;font-size:15px}
+.ax-table th{text-align:left;font-weight:600;font-size:13px;color:var(--muted);padding:6px 10px 6px 0;border-bottom:1px solid var(--muted);white-space:nowrap}
+.ax-table td{padding:8px 10px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.ax-table td.n,.ax-table th.n{text-align:right;font-variant-numeric:tabular-nums;padding-right:0;padding-left:10px}
+.ax-table a{color:var(--ink)}
+.ax-table small{display:block;color:var(--muted);font-size:13px}
+@media (max-width:480px){#gx-body:not([hidden]){gap:16px}.ax-table{font-size:14px}}
+@media (max-width:480px){.ax-controls{position:static}.ax-table th.n{white-space:normal}}
+/* sub-navigation, readings, patterns */
+.ax-nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;margin:-12px 0 -4px}
+.ax-nav a{color:var(--muted);text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}
+.ax-nav a[aria-current=page]{color:var(--ink);border-bottom-color:#C9A24B;font-weight:600}
+.ax-nav a:hover{color:var(--ink)}
+.ax-details{margin-top:8px;font-size:15px}
+.ax-details summary{cursor:pointer;color:var(--ink);font-weight:600;padding:6px 0}
+.ax-details ul{list-style:none;margin:6px 0 0;padding:0;columns:2 280px;column-gap:28px}
+.ax-details li{padding:4px 0;break-inside:avoid}
+.ax-details a{color:var(--ink)}.ax-details small{color:var(--muted)}
+#px-body{display:flex;flex-direction:column;gap:22px}
+.ax-chart canvas{display:block;width:100%}
+.ax-pos{position:relative}
+.ax-pos svg{position:absolute;left:0;top:0}
+.ax-multi{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px 16px}
+.ax-multi h3{font-size:13px;font-weight:600;margin:0 0 2px}
+.ax-coef td,.ax-coef th{font-variant-numeric:tabular-nums}
+@media (max-width:480px){#px-body{gap:16px}.ax-nav{gap:4px 14px;font-size:13px;margin-top:-6px}}
+
+/* ---- Colour and layout pass, 23 November 2026: lessons carried over from the Ofsted Explorer.
+   Stone ground, data on white sheets, a midnight header with a brass rule; colour only where it encodes something. */
+body.explorer{background:#ECE9E1}
+.ax{gap:18px}
+.ax-top{background:#0B1A2E;color:#F5F1E8;padding:28px 32px 26px;border-bottom:2px solid #C9A24B;margin-top:-8px}
+.ax-top h1{color:#F5F1E8}
+.ax-top .ax-label,.ax-top .ax-label a{color:#C9A24B}
+.ax-top .ax-lede{color:#D9DEE8}
+.ax-top .ax-date,.ax-top .ax-date a{color:#A8B5C8}
+.ax-nav{margin:0 0 -6px}
+.ax-nav a{padding:10px 0;min-height:24px}
+.ax-card{border:0;border-radius:2px}
+.ax-kpi{border-radius:2px;border-color:var(--line);border-left:3px solid var(--line)}
+.ax-kpi.lo{border-left-color:#2F6F66}.ax-kpi.hi{border-left-color:#A3402B}.ax-kpi.me{border-left-color:#0B1A2E}
+.ax-kpi .d b{font-weight:600}
+.ax-controls{background:#ECE9E1;border-bottom:0;padding:8px 0}
+.ax-select,.ax-seg{border-radius:2px}
+.ax-seg button{min-height:44px}
+.ax-select{min-height:44px}
+.ax-pill{display:inline-block;color:#fff;font:500 13px/1.2 var(--sans);padding:4px 9px;border-radius:2px;white-space:nowrap;vertical-align:1px}
+.ax-pills{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.ax-reading{border-left:2px solid #C9A24B;padding-left:14px}
+.ax-head-row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-top:14px}
+.ax-btn{font:inherit;font-size:15px;min-height:44px;padding:0 14px;border:1px solid var(--muted);border-radius:2px;background:#fff;color:var(--ink);cursor:pointer}
+.ax-btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ax-top .ax-btn{background:transparent;color:#F5F1E8;border-color:#A8B5C8}
+.ax-notice{background:#fff;border-left:3px solid #C9A24B;padding:12px 16px;font-size:15px;border-radius:2px}
+.ax-more{margin-top:12px}
+.ax-map path{stroke:#fff;stroke-width:1;cursor:pointer}
+.ax-map path.me{stroke:#0B1A2E;stroke-width:2.5}
+@media (max-width:480px){.ax-top{padding:20px 16px;margin:-8px -16px 0}.ax{gap:14px}.ax-nav a{padding:8px 0}}
+.ax-sw{display:inline-block;width:10px;height:10px;margin-right:8px;vertical-align:0}
+.ax-cmp td.n{font-weight:600}
+#gx-view button{padding-left:10px;padding-right:10px}
+.ax-more-link{display:block;margin-top:10px;font:15px/1.4 var(--sans)}
+.ax-more-link a{color:var(--ink)}
+
+/* ---- Header pass, 24 November 2026: the same shape as the Ofsted Explorer. A full-width midnight hero with the
+   search inside it, then a section menu that stays at the top while scrolling, then white sheets on stone. */
+.ax-hero{background:#0B1A2E;color:#F5F1E8;border-bottom:2px solid #C9A24B}
+.ax-hero-in{max-width:1180px;margin:0 auto;padding:18px 24px 30px}
+.ax-hero .ax-top{background:none;border:0;padding:0;margin:26px 0 0}
+.ax-hero .ax-top h1{font-size:clamp(34px,5vw,58px);line-height:1.06;margin:10px 0 12px}
+.ax-hero .ax-lede{font-size:19px;max-width:58ch}
+.ax-hero .ax-nav{margin:0;gap:4px 22px;border-bottom:1px solid #2B3C55}
+.ax-hero .ax-nav a{color:#A8B5C8;font-size:15px;padding:10px 0 9px}
+.ax-hero .ax-nav a:hover{color:#F5F1E8}
+.ax-hero .ax-nav a[aria-current=page]{color:#F5F1E8;border-bottom-color:#C9A24B}
+.ax-kinds{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.ax-kinds a{font-size:14px;color:#D9DEE8;text-decoration:none;border:1px solid #55627A;border-radius:2px;padding:8px 12px;min-height:22px}
+.ax-kinds a:hover{border-color:#F5F1E8;color:#F5F1E8}
+.ax-kinds a[aria-current=page]{background:#F5F1E8;color:#0B1A2E;border-color:#F5F1E8;font-weight:600}
+.ax-hero-search{margin:20px 0 0;max-width:680px}
+.ax-hero-search .ax-field{color:#A8B5C8;max-width:none}
+.ax-hero-search .ax-select{min-height:54px;font-size:17px;padding:0 16px;border-color:#F5F1E8;color:#0B1A2E;background:#fff}
+.ax-hero .ax-pop{color:#0B1A2E;z-index:40}
+.ax-hero .ax-head-row{margin-top:18px;justify-content:flex-start}
+.ax-secnav{position:sticky;top:0;z-index:25;background:rgba(236,233,225,.96);backdrop-filter:blur(8px);border-bottom:1px solid #D9D4C8}
+.ax-secnav .in{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.ax-secnav .in::-webkit-scrollbar{display:none}
+.ax-secnav a{flex:none;padding:13px 10px 11px;font:14px/1.2 var(--sans);color:#55627A;text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.ax-secnav a:first-child{padding-left:0}
+.ax-secnav a:hover{color:#0B1A2E}
+.ax-secnav a.on{color:#0B1A2E;border-bottom-color:#C9A24B;font-weight:600}
+.ax section[data-nav]{scroll-margin-top:58px}
+.ax{padding-top:22px}
+.ax-controls{position:static}
+.ax-places-v{color:var(--muted);font-weight:400}
+.ax-places-cmp{margin:10px 0 0;font:15px/1.4 var(--sans)}
+.ax-places-cmp a{color:var(--ink)}
+@media (max-width:480px){.ax-hero-in{padding:10px 16px 22px}.ax-hero .ax-top{margin:18px 0 0}.ax-hero .ax-lede{font-size:17px}.ax-secnav .in{padding:0 16px}.ax-kinds a{padding:8px 10px}.ax-top{margin:0}}
+@media print{.ax-secnav{display:none}}
+
+/* method tabs (chrome.js), matching the Ofsted Explorer's method section */
+.ax-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--ink);margin:12px 0 16px}
+.ax-tabs::-webkit-scrollbar{display:none}
+.ax-tabs button{flex:none;font:inherit;font-size:15px;min-height:44px;padding:0 14px;border:0;border-bottom:3px solid transparent;background:none;color:var(--muted);cursor:pointer;white-space:nowrap}
+.ax-tabs button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:#C9A24B}
+.ax-tabs button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.ax-panel p:first-child{margin-top:0}
+.ax-method .ax-panel p{font-size:15px;max-width:80ch}
+@media print{.ax-tabs{display:none}.ax-panel[hidden]{display:block!important}.ax-panel::before{content:attr(data-title);display:block;font-weight:600;margin:14px 0 4px}}
+.ax-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1px solid var(--muted);border-radius:50%;font:600 12px/1 var(--sans);color:var(--ink);margin-right:8px;vertical-align:1px}
+@media (max-width:480px){.ax-hero .ax-nav{gap:2px 13px;flex-wrap:nowrap}.ax-hero .ax-nav a{font-size:14px}}
+
+/* ---- Usability pass, 24 November 2026, from the independent review (docs/attendance-ux-review.md) */
+.ax [hidden],.ax-hero [hidden],.ax-secnav [hidden]{display:none!important}      /* display:flex was overriding the hidden attribute */
+.ax-focus{display:block;margin-top:10px;font:15px/1.5 var(--sans);color:var(--ink);background:#F6F3EC;padding:9px 12px;border-radius:2px}
+.ax-linkbtn{font:inherit;color:var(--ink);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.ax-skip{position:absolute;left:-9999px}.ax-skip:focus{left:16px;top:8px;z-index:50;background:#fff;color:#0B1A2E;padding:10px 14px;border:2px solid #0B1A2E}
+.ax-showing{max-width:1180px;margin:0 auto;padding:7px 24px 8px;font:13px/1.3 var(--sans);color:#33405A;border-top:1px solid #D9D4C8;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.ax-showing b{font-weight:600;color:#0B1A2E}
+.ax-showing button{font:inherit;font-weight:600;color:#0B1A2E;background:none;border:0;text-decoration:underline;cursor:pointer;padding:6px 0;flex:none}
+.ax-msel{display:none}
+@media (max-width:480px){
+  /* the first figure sooner: a shorter hero, and controls as four compact menus in two columns */
+  .ax-hero .ax-top h1{font-size:30px;margin:6px 0 8px}
+  .ax-hero .ax-lede{display:none}
+  .ax-hero .ax-head-row{margin-top:12px;gap:8px;flex-wrap:nowrap}
+  .ax-hero .ax-head-row .ax-btn,.ax-hero .ax-head-row .ax-pinbtn{font-size:14px;padding:0 10px;white-space:nowrap}
+  body[data-ax-page=group] .ax-kinds{display:none}
+  .ax-hero-search{margin-top:14px}.ax-hero-search .ax-select{min-height:48px}
+  .ax-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;padding:0}
+  .ax-controls .ax-field{width:auto}
+  .ax-controls .ax-seg{display:none}
+  .ax-controls .ax-msel{display:block;width:100%;min-width:0;font:inherit;font-size:15px;min-height:44px;padding:0 8px;border:1px solid var(--muted);border-radius:2px;background:#fff;color:var(--ink)}
+  .ax-controls .ax-field:has(> select.ax-select){grid-column:1 / -1}
+  .ax-showing{padding:6px 16px 7px}
+  #gx-cmp th:nth-child(n+6),#gx-cmp td:nth-child(n+6),#gx-cmp th:nth-child(4),#gx-cmp td:nth-child(4),#sx-cmp th:nth-child(n+5),#sx-cmp td:nth-child(n+5){display:none}
+  .ax-cmp+.ax-cmp-note,.ax-tablewrap:has(.ax-cmp)::after{content:"More columns show on a wider screen: severe absence, and change in persistent absence and since 2018/19.";display:block;font:13px/1.4 var(--sans);color:var(--muted);margin-top:8px}
+}
+/* second usability pass, 24 November 2026 */
+.ax-kinds{display:flex}body[data-ax-page=group] .ax-kinds{display:none}      /* place pages carry a breadcrumb instead */
+.ax-places:has(.ax-places-none){display:none}                               /* nothing saved: no empty card above England's figures */
+.ax-tools .ax-tool:nth-child(2){display:none}                               /* one Copy link per page (in the header), Save image per chart */
+.ax-picked{margin:10px 0 0;font:15px/1.4 var(--sans);color:var(--ink);background:#F6F3EC;padding:8px 12px;border-radius:2px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.ax-picked .ax-btn{display:inline-flex;align-items:center;text-decoration:none;min-height:40px}
+.ax-pgt{margin-top:14px}.ax-pgt td small{display:block;color:var(--muted);font-size:12px;font-weight:400}.ax-pgt tr.on td{background:#F6F3EC}.ax-pgt td.n span{font-weight:600}
+.ax-top .ax-label a{color:inherit}
+@media (max-width:480px){.ax-pgt th:nth-child(2),.ax-pgt td:nth-child(2),.ax-pgt th:nth-child(5),.ax-pgt td:nth-child(5){display:none}}
+@media (max-width:480px){
+  .ax-hero .ax-head-row{flex-wrap:wrap}
+  .ax-kinds{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-top:12px}.ax-kinds::-webkit-scrollbar{display:none}.ax-kinds a{flex:none}
+  .ax-controls .ax-field:has(> select.ax-select){grid-column:auto}
+  .ax-hero .ax-date{margin-top:6px;font-size:13px}
+}
+@media (max-width:480px){.ax-hero .ax-copy{display:none}.ax-hero .ax-head-row{flex-wrap:nowrap}}      /* phones share from the browser; keep the header to one row */
+@media (max-width:480px){.ax-controls-below{margin:2px 0}.ax-hero-search .ax-field > span{position:absolute;left:-9999px}}
+/* Feedback form, matching the Ofsted Explorer's */
+.ax-fb form{max-width:640px}
+.ax-fbrow{display:flex;flex-direction:column;gap:6px;margin:0 0 14px}
+.ax-fbrow label{font-weight:600;font-size:15px;color:var(--ink)}
+.ax-fb .ax-select,.ax-fb textarea,.ax-fb input[type=email]{font:400 16px/1.4 inherit;font-family:inherit;color:var(--ink);background:#fff;border:1px solid #8A96A8;border-radius:2px;padding:10px 12px;width:100%;min-width:0;box-sizing:border-box}
+.ax-fb textarea{resize:vertical;min-height:120px}
+.ax-fb input[type=email]:disabled{background:#F3F4F6;color:#55627A}
+.ax-fb select:focus,.ax-fb textarea:focus,.ax-fb input:focus{outline:2px solid var(--ink);outline-offset:1px}
+.ax-fbchk{font-weight:400!important;display:flex;gap:8px;align-items:center;min-height:44px}
+.ax-fbhp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+.ax-fbnote{font-size:14px;line-height:1.5;color:#55627A;max-width:64ch}
+.ax-fbact{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.ax-fbsend{background:var(--ink);color:#fff;border-color:var(--ink);padding:0 22px}
+#ax-fb-note{font-size:15px;color:#2F6F66}#ax-fb-note.bad{color:#A3402B}
+@media print{.ax-fb{display:none}}
+/* Print: every method panel, whichever tab was open (must follow the [hidden] rule above to win) */
+@media print{.ax .ax-method .ax-panel[hidden],.ax .px-panel[hidden]{display:block!important}}
+/* Touch: nothing tappable under 44px */
+.ax-fb input[type=email]{min-height:44px}
+.ax-linkbtn{padding:12px 0;margin:-12px 0}      /* a 44px target without moving the line it sits in */
+/* Enforcement (enforce.js) */
+.en-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 28px;margin-top:18px}
+.en-mini h3,.en-h{font:600 15px/1.3 var(--sans);color:var(--ink);margin:0 0 6px}
+.en-h{margin:26px 0 8px}
+.en-ctl{display:flex;flex-wrap:wrap;gap:12px 22px;margin:14px 0 6px}
+.en-ctl .ax-seg{flex-wrap:wrap}
+.en-table td:first-child{max-width:46ch}
+.ax-note{font-size:14px;line-height:1.55;color:var(--muted);margin:12px 0 0;max-width:86ch}
+.ax-note a{color:var(--ink)}
+@media (max-width:720px){.en-pair{grid-template-columns:1fr}}
+@media (max-width:480px){.en-ctl .ax-seg button{flex:1 1 auto}}
+.en-strands{gap:22px 36px;align-items:start}
+.en-strand{min-width:0;border-top:3px solid var(--ink);padding-top:12px}
+.en-st{font:400 20px/1.25 var(--display, "Libre Caslon Display", serif);color:var(--ink);margin:0}
+.en-k3{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.en-k3 .ax-kpi{padding:10px}.en-k3 .ax-kpi .v{font-size:22px}
+.en-strand .en-mini{margin-top:16px}
+@media (max-width:1000px){.en-k3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.en-names{line-height:1.8}.en-names b{color:var(--ink);font-weight:600}
+@media (max-width:560px){.en-use th:nth-child(3),.en-use td:nth-child(3){display:none}}
+.en-flag{border:1px solid var(--ink);border-left:6px solid var(--ink);background:#F6F3EC;padding:14px 16px;margin:14px 0 20px;max-width:86ch}
+.en-flag p{margin:0 0 8px;font-size:15px;line-height:1.55;color:var(--ink)}
+.en-flag .en-flag-h{font:600 16px/1.35 var(--sans)}
+.en-flag .en-flag-n{font-size:14px;color:var(--muted);margin:0}.en-flag a{color:var(--ink)}
+.en-flagt td{vertical-align:top}
+.en-q{display:inline-flex;gap:2px;vertical-align:middle;margin-right:8px}
+.en-q i{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid #8A96A8;background:#fff;font:600 11px/1 var(--sans);font-style:normal;color:var(--ink);font-variant-numeric:tabular-nums}
+.en-q i.z{border-style:dashed;margin-right:1px}
+.en-q i.z + i:not(.z){margin-left:5px}
+.en-q i.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.en-qk i{width:auto;min-width:18px;padding:0 3px;font-weight:400}
+.en-qc{white-space:nowrap}.en-ql{font-size:14px;color:var(--ink)}
+.en-reg .en-q i{width:22px;height:22px}
+.en-eng td{font-weight:600;border-top:2px solid var(--ink)}
+@media (max-width:900px){.en-qc{white-space:normal}.en-ql{display:block;margin-top:3px}}
+@media (max-width:560px){.en-other th:nth-child(2),.en-other td:nth-child(2),.en-other th:last-child,.en-other td:last-child,.en-reg th:nth-child(2),.en-reg td:nth-child(2),.en-reg th:last-child,.en-reg td:last-child{display:none}.en-q i{width:14px;height:16px}.en-reg .en-q i{width:19px;height:20px}}
+.ax-table td.en-qc,.ax-table th.en-qh{padding-left:22px}
+@media (max-width:560px){.en-other th:nth-child(3),.en-other td:nth-child(3){display:none}.ax-table td.en-qc{padding-left:8px}.en-other td:first-child{max-width:112px}.en-other .en-ql{font-size:13px}}
+.en-qr{display:none}
+@media (max-width:560px){.en-other th:nth-child(5),.en-other td.en-qreg{display:none}.en-qr{display:block;font-size:13px;color:var(--muted);margin-top:2px}}
+/* Tabs for a long page (tabs.js) and headings that state a finding */
+.ax .ax-tab-off{display:none!important}
+.ax-secnav[role=tablist] a,.ax-secnav .in[role=tablist] a{padding:15px 14px 13px;font-size:15px;min-height:44px;box-sizing:border-box}
+.ax-secnav .in[role=tablist] a:first-child{padding-left:0}
+.ax-secnav .in[role=tablist] a:focus-visible{outline:2px solid #0B1A2E;outline-offset:-2px}
+.ax-kick{font:600 12px/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:#7A5C14;margin:0 0 6px}
+.ax-kick + h2{max-width:34ch}
+@media print{.ax .ax-tab-off:not([hidden]){display:revert!important}.ax section[data-nav][hidden]{display:none!important}}
+.ax-clock{font-size:15px;line-height:1.55;color:#33405A;background:#F6F3EC;border-left:3px solid #C9A24B;padding:12px 14px;margin:16px 0 0;max-width:80ch}.ax-clock b{color:var(--ink)}.ax-clock a{color:var(--ink)}
+.ax-how{margin:0 0 12px}
+.ax-how summary{display:inline-flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;font:14px/1.2 var(--sans);color:var(--muted);list-style:none}
+.ax-how summary::-webkit-details-marker{display:none}
+.ax-how summary::before{content:"i";display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border:1.5px solid var(--muted);border-radius:50%;font:italic 600 13px/1 Georgia,serif;color:var(--muted)}
+.ax-how[open] summary{color:var(--ink)}.ax-how[open] summary::before{border-color:var(--ink);color:var(--ink)}
+.ax-how summary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ax-how p.ax-sub{margin:2px 0 6px}
+@media (max-width:480px){.ax-nav a{min-height:44px;display:inline-flex;align-items:center;padding:0}}

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Start here · Attendance Explorer · Mark Dalton</title>
+<meta name="description" content="Three questions, then a short briefing on school absence for the school or area you choose. Built from the figures the Department for Education publishes.">
+<link rel="canonical" href="https://mrkdltn.com/attendance/start/">
+<meta property="og:title" content="Start here · Attendance Explorer">
+<meta property="og:description" content="Say who you are, choose a school or area and what you want to know, and get a short briefing on school absence. Free, and built from public data.">
+<meta property="og:url" content="https://mrkdltn.com/attendance/start/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mrkdltn.com/attendance/data/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Attendance Explorer: overall absence in England so far this school year, with a calendar of school days coloured against the average.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="Mark Dalton: writing" href="/feed.xml">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/attendance/attendance.css">
+<link rel="stylesheet" href="/attendance/start.css">
+</head>
+<body class="explorer" data-ax-source="Source: Department for Education, Pupil absence in schools in England. A reading of the data, not a judgement.">
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/"><span class="nav-long">Ofsted </span>Explorer</a><a href="/#about">About</a><a href="/contact/">Contact</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+
+<div class="ax-hero"><div class="ax-hero-in">
+  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/start/" data-v="start" aria-current="page">Start here</a><a href="/attendance/" data-v="areas">Areas</a><a href="/attendance/school/" data-v="schools">Schools</a><a href="/attendance/patterns/" data-v="patterns">Patterns</a></nav>
+  <header class="ax-top">
+    <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · Start here</p>
+    <h1>Start here</h1>
+    <p class="ax-date">Three questions, then a short briefing on absence for the school or area you choose, built from the figures the Department for Education publishes.</p>
+  </header>
+</div></div>
+<main class="ax">
+  <form class="st" id="st-form" novalidate autocomplete="off">
+    <nav class="st-steps" aria-label="Steps">
+      <p class="st-count" id="st-count">Step 1 of 3</p>
+      <ol id="st-steps">
+        <li><button type="button" data-step="1"><b>1</b><span>Who you are</span><small></small></button></li>
+        <li><button type="button" data-step="2"><b>2</b><span>Which place</span><small></small></button></li>
+        <li><button type="button" data-step="3"><b>3</b><span>What you want to know</span><small></small></button></li>
+      </ol>
+    </nav>
+
+    <div class="ax-card st-step" id="st-1">
+      <fieldset>
+        <legend tabindex="-1">Who are you?</legend>
+        <p class="ax-sub">This sets the order and the title of your briefing. The figures are the same for everyone.</p>
+        <div class="st-opts" id="st-roles"></div>
+      </fieldset>
+      <p class="st-need" id="st-need-1" role="alert" hidden>Choose the one that fits you best, then continue.</p>
+      <div class="st-row"><button type="button" class="st-next" data-go="2">Continue</button></div>
+    </div>
+
+    <div class="ax-card st-step" id="st-2" hidden>
+      <fieldset>
+        <legend tabindex="-1">Which place?</legend>
+        <p class="ax-sub" id="st-hint"></p>
+        <label class="ax-field ax-find st-find"><span>School, local authority, county, constituency or ward</span>
+          <input id="st-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Start typing a name, town or postcode" role="combobox" aria-expanded="false" aria-controls="st-list" aria-autocomplete="list">
+          <ul id="st-list" class="ax-pop" role="listbox" hidden></ul></label>
+        <p class="st-chosen" id="st-chosen" role="status" hidden></p>
+        <p class="st-or">Or <button type="button" class="st-link" id="st-england">choose England as a whole</button>.</p>
+      </fieldset>
+      <p class="st-need" id="st-need-2" role="alert" hidden>Search for a place and choose it from the list, or choose England as a whole.</p>
+      <div class="st-row"><button type="button" class="ax-btn st-back" data-go="1">Back</button><button type="button" class="st-next" data-go="3">Continue</button></div>
+    </div>
+
+    <div class="ax-card st-step" id="st-3" hidden>
+      <fieldset>
+        <legend tabindex="-1">What do you want to know?</legend>
+        <p class="ax-sub">Choose one or more.</p>
+        <div class="st-opts" id="st-wants"></div>
+        <div id="st-notes"></div>
+      </fieldset>
+      <div class="st-out" id="st-out" aria-live="polite">
+        <p class="st-plan" id="st-plan"></p>
+        <div class="st-row"><button type="button" class="ax-btn st-back" data-go="2">Back</button><a class="st-next" id="st-build" href="/attendance/">Build my briefing</a></div>
+        <div class="st-also" id="st-also" hidden></div>
+      </div>
+    </div>
+
+    <p class="st-foot"><button type="button" class="st-link" id="st-reset">Start again</button> A briefing is a reading of published data, not a judgement. Your choices are kept only in the address of this page, so you can share the page or come back to it.</p>
+  </form>
+  <noscript><p class="ax-notice">This page needs JavaScript. You can go straight to <a href="/attendance/">Areas</a>, <a href="/attendance/school/">Schools</a> or <a href="/attendance/patterns/">Patterns</a>.</p></noscript>
+</main>
+
+
+<footer class="site-foot noprint"><div class="wrap">
+  <span>© 2026 Mark Dalton. Built from public DfE and Ofsted data. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<script src="/assets/d3.min.js"></script>
+<script src="/attendance/colour.js"></script>
+<script src="/attendance/search.js"></script>
+<script src="/attendance/start.js"></script>
+</body>
+</html>

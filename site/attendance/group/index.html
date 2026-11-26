@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Areas · Attendance Explorer · Mark Dalton</title>
+<meta name="description" content="Overall, persistent and severe absence across the schools of any local authority, county, constituency or ward in England, against England and year by year. Built from the DfE's school-level absence statistics.">
+<link rel="canonical" href="https://mrkdltn.com/attendance/group/">
+<meta property="og:title" content="Areas · Attendance Explorer">
+<meta property="og:description" content="Absence across the schools of any local authority, county, constituency or ward in England, against England and year by year. Free, and built from public data.">
+<meta property="og:url" content="https://mrkdltn.com/attendance/group/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://mrkdltn.com/attendance/data/card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Attendance Explorer: overall absence in England so far this school year, with a calendar of school days coloured against the average.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="alternate" type="application/atom+xml" title="Mark Dalton: writing" href="/feed.xml">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/attendance/attendance.css">
+<link rel="stylesheet" href="/attendance/tools.css">
+<link rel="stylesheet" href="/attendance/brief.css">
+</head>
+<body class="explorer" data-ax-page="group" data-ax-source="Source: Department for Education, Pupil absence in schools in England. A reading of the data, not a judgement.">
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="/"><b>MD</b><span>Mark Dalton</span></a>
+  <nav class="nav" aria-label="Main"><a href="/writing/">Writing</a><a href="/explorer/"><span class="nav-long">Ofsted </span>Explorer</a><a href="/#about">About</a><a href="/contact/">Contact</a><a class="nav-li" href="https://www.linkedin.com/in/mrkdltn" aria-label="Mark Dalton on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></nav>
+</div></header>
+
+<div class="ax-hero"><div class="ax-hero-in">
+  <nav class="ax-nav" aria-label="Attendance Explorer"><a href="/attendance/start/" data-v="start">Start here</a><a href="/attendance/" data-v="areas">Areas</a><a href="/attendance/school/" data-v="schools">Schools</a><a href="/attendance/patterns/" data-v="patterns">Patterns</a></nav>
+  <header class="ax-top">
+    <p class="ax-label"><a href="/attendance/">Attendance Explorer</a> · <span id="gx-kind">Areas</span></p>
+    <h1 id="gx-name">Areas</h1>
+    <p class="ax-date" id="gx-meta">Absence across the schools of any local authority, county, constituency or ward in England, built from the DfE’s school-level statistics.</p>
+    <div class="ax-head-row"><div id="ax-pin"></div><button type="button" class="ax-btn" id="gx-another">Show me another</button></div>
+  </header>
+  <nav class="ax-kinds" id="ax-kinds" aria-label="Kind of area" hidden><a href="/attendance/" data-k="e">This year, week by week</a><a href="/attendance/group/?k=a" data-k="a">Local authorities</a><a href="/attendance/group/?k=y" data-k="y">Counties</a><a href="/attendance/group/?k=c" data-k="c">Constituencies</a><a href="/attendance/group/?k=w" data-k="w">Wards</a></nav>
+    <div class="ax-hero-search">
+    <label class="ax-field ax-find"><span>Find an area or school</span>
+      <input id="gx-q" class="ax-select" type="search" autocomplete="off" spellcheck="false" placeholder="Name, town or postcode" role="combobox" aria-expanded="false" aria-controls="gx-list" aria-autocomplete="list">
+      <ul id="gx-list" class="ax-pop" role="listbox" hidden></ul></label>
+    </div>
+</div></div>
+<nav class="ax-secnav noprint" aria-label="Sections"><div class="in" id="ax-secnav"></div></nav>
+<main class="ax">
+
+  <section class="ax-controls" aria-label="Choose what to show">
+    <div class="ax-field" id="gx-phase-f" hidden><span id="gx-phase-l">Schools</span>
+      <div class="ax-seg" id="gx-phase" role="group" aria-labelledby="gx-phase-l"></div></div>
+    <div class="ax-field" id="gx-pg-f" hidden><span id="gx-pgs-l">Pupils</span>
+      <div class="ax-seg" id="gx-pgs" role="group" aria-labelledby="gx-pgs-l"><button type="button" data-g="all">All</button><button type="button" data-g="fsm">Free school meals</button><button type="button" data-g="sen">SEN support</button><button type="button" data-g="ehcp">EHC plan</button></div></div>
+    <div class="ax-field" id="gx-view-f" hidden><span id="gx-view-l">Show</span>
+      <div class="ax-seg" id="gx-view" role="group" aria-labelledby="gx-view-l"><button type="button" data-v="now">Latest figures</button><button type="button" data-v="yr">Change in a year</button><button type="button" data-v="base">Change since 2018/19</button></div></div>
+    <div class="ax-field" id="gx-meas-f" hidden><span id="gx-meas-l">Measure</span>
+      <div class="ax-seg" id="gx-meas" role="group" aria-labelledby="gx-meas-l"><button type="button" data-m="abs">Overall</button><button type="button" data-m="pa">Persistent</button><button type="button" data-m="sev">Severe</button></div></div>
+  </section>
+
+  <div id="gx-body" hidden>
+  <section data-nav="Summary" class="ax-card">
+    <h2 id="gx-period"></h2>
+    <p class="ax-reading" id="gx-reading"></p>
+    <div class="ax-kpis" id="gx-kpis"></div>
+  </section>
+
+  <section data-nav="Side by side" class="ax-card" id="gx-cmp-c" hidden>
+    <h2>Side by side</h2>
+    <p class="ax-sub ax-keep" id="gx-cmp-s"></p>
+    <div class="ax-tablewrap"><table class="ax-table ax-cmp" id="gx-cmp"></table></div>
+    <div class="ax-compare"><label class="ax-field ax-find"><span>Compare with another place of the same kind</span>
+      <input id="gx-q2" class="ax-select" type="search" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="gx-list2" aria-autocomplete="list">
+      <ul id="gx-list2" class="ax-pop" role="listbox" hidden></ul></label><div id="gx-chips" class="ax-chips"></div></div>
+  </section>
+
+  <section data-nav="Pupil groups" class="ax-card" id="gx-pg-c" hidden>
+    <h2>By pupil group</h2>
+    <p class="ax-sub" id="gx-pg-s"></p>
+    <div id="gx-pg" class="ax-chart"></div>
+    <p class="ax-reading" id="gx-pg-r"></p>
+    <div class="ax-tablewrap"><table class="ax-table ax-pgt" id="gx-pgt"></table></div>
+  </section>
+
+  <section data-nav="Enforcement" class="ax-card" id="gx-enf-c" hidden>
+    <h2>Penalty notices and other legal measures</h2>
+    <div id="gx-enf"></div>
+  </section>
+
+  <section data-nav="School by school" class="ax-card" id="gx-strip-c">
+    <h2>School by school</h2>
+    <p class="ax-sub">Each circle is one of its <span class="gx-phase-n"></span>, placed by <span class="gx-meas-n"></span>. A larger circle is a larger school. Tap a circle to name the school.</p>
+    <div id="gx-strip" class="ax-chart"></div>
+    <p class="ax-reading" id="gx-strip-r"></p>
+  </section>
+
+  <section data-nav="Year by year" class="ax-card" id="gx-hist-c">
+    <h2>Year by year</h2>
+    <p class="ax-sub" id="gx-hist-s"></p>
+    <div id="gx-hist" class="ax-chart"></div>
+    <p class="ax-reading" id="gx-hist-r" hidden></p>
+  </section>
+
+  <section data-nav="Compared" class="ax-card" id="gx-over-c">
+    <h2 id="gx-over-h"></h2>
+    <p class="ax-sub" id="gx-over-s"></p>
+    <div id="gx-over" class="ax-chart"></div>
+    <p class="ax-reading" id="gx-over-r"></p>
+  </section>
+
+  <section data-nav="The schools" class="ax-card">
+    <h2 id="gx-table-h">The schools</h2>
+    <p class="ax-sub">In alphabetical order, for the <span id="gx-table-p"></span>. A dash means no rate is shown.</p>
+    <p class="ax-sub" id="gx-table-n" hidden></p>
+    <div class="ax-tablewrap"><table class="ax-table" id="gx-table"></table></div>
+    <button type="button" class="ax-btn ax-more" id="gx-more" hidden></button>
+  </section>
+  </div>
+
+  <section data-nav="Method" class="ax-card ax-method">
+    <h2>How this page works</h2>
+    <p><b>Three measures.</b> Overall absence is the share of possible sessions that pupils missed. A session is a morning or an afternoon. Persistent absence is the share of pupils who missed a tenth or more of their sessions. Severe absence is the share who missed half or more.</p>
+    <p><b>Taken together.</b> Each figure for a place is one rate for its schools taken together: sessions missed across the schools over sessions possible, and persistently and severely absent pupils over pupils on roll. Larger schools count for more, so it is not the average of the schools’ own rates. Primary, secondary and special schools are kept apart, because they differ so much that a single figure would mostly describe the mix.</p>
+    <p><b>Penalty notices.</b> A local authority can issue a penalty notice to a parent whose child misses school without authorisation. Since August 2024 one national framework applies: a notice is considered once a pupil has 10 sessions of unauthorised absence in 10 school weeks, the charge is £160, reduced to £80 if paid within 21 days, a second notice to the same parent for the same child within three years is £160, and after two notices in three years other measures are used. Each notice is to one parent for one child, so the count is of notices, not of pupils or families. “For every 1,000 pupils” divides the notices by the enrolments the DfE publishes beside them. The DfE records the reason for each notice, and the two main reasons are kept apart throughout: a holiday in term time that the school did not agree, and other unauthorised absence from school. They are never added together here, and each is set beside its own kind of absence.</p>
+    <p><b>Other measures.</b> Attendance case management, parenting contracts and orders, education supervision orders and prosecutions are counted as the DfE publishes them for each local authority. A recorded zero is written “None”; a count from 1 to 9 is written “fewer than 10” and not given exactly; a dash means the local authority supplied no figure. These figures are for all schools together; the DfE does not publish them by phase, by pupil group or for single schools. Source: DfE, Parental responsibility measures, 2024/25, published 29 January 2026.</p>
+    <p><b>Points.</b> A difference between two rates is given in percentage points, shortened to “points”. A rate of 7.0% against 6.5% is 0.5 points higher. Each difference is worked out from the rates before they are rounded and then rounded once, so it can be 0.1 away from what subtracting the two rates on screen would give.</p>
+    <p><b>Change.</b> “Change in a year” sets the autumn and spring terms of 2025/26 against the same two terms a year earlier. “Change since 2018/19” sets the full year 2024/25 against 2018/19, the last full year before the pandemic. Pupil groups are published for the two terms only, so for them it sets the autumn and spring terms of 2025/26 against those of 2018/19. For trusts, change describes the schools held today.</p>
+    <p><b>Colours.</b> Green marks lower absence than England and rust higher. Where a change is shown, green means absence fell, or rose less than it did across England, and rust means it rose more. Colour shows direction only. A named school is never coloured on these pages.</p>
+    <p><b>Pupil groups.</b> Absence for pupils eligible for free school meals, pupils not eligible, pupils with SEN support, pupils with an education, health and care plan and pupils with no identified SEN. The figures are from the DfE’s “Absence by pupil characteristics” for the autumn and spring terms (published 15 October 2026). The DfE publishes them for local authorities, regions and England only. They appear on local authority and county pages, and not for single schools, constituencies or wards. A county’s figures take its local authorities together. No figure is shown for a group of fewer than 10 pupils.</p>
+    <p><b>Local authorities.</b> The 153 local authorities responsible for schools. A local authority’s figures here take together its primary, secondary and special schools in the DfE’s school-level file. They can differ slightly from the DfE’s own totals for the authority, which include other settings.</p>
+    <p><b>Counties.</b> The 48 ceremonial counties, each made up of whole local authorities. Stockton-on-Tees, which straddles two, is counted with County Durham.</p>
+    <p><b>Constituencies.</b> Parliamentary constituencies on their 2024 boundaries. A figure describes the schools located in the constituency, not the children who live there. Many pupils cross a boundary to go to school.</p>
+    <p><b>Wards.</b> Wards as at May 2026. Only primary schools are counted, and only where a ward has three or more. Secondary pupils travel too far for a ward figure to mean much. Fewer than half of wards with a school carry a figure. As with constituencies, a figure describes the schools in the ward, not the children who live there.</p>
+    <p><b>Constituencies.</b> The DfE publishes no absence figures for constituencies. The figures here are built from its figures for their schools.</p>
+    <p><b>Source.</b> Department for Education, <a href="https://explore-education-statistics.service.gov.uk/find-statistics/pupil-absence-in-schools-in-england">Pupil absence in schools in England</a>, school-level files: <span id="gx-src"></span>. The constituency of each school is from Get Information about Schools. Open Government Licence v3.0.</p>
+    <p><b>Maps.</b> The hexagon layout is from <a href="https://github.com/odileeds/hexmaps">Open Innovations</a> (MIT licence), one hexagon per constituency. Ward boundaries are from the Office for National Statistics (Open Government Licence v3.0; contains OS data © Crown copyright and database right 2026).</p>
+    <p><b>Small numbers.</b> A figure for a place is given only where at least three of its schools of the phase contribute. Smaller places list their schools without one. No school with fewer than 10 pupils on roll is shown. Rates only, never counts of pupils.</p>
+    <p><b>Severe absence.</b> Severe absence is given for areas and pupil groups. It is never shown for a single school, where it usually describes a handful of children, and it is withheld where fewer than 10 pupils are severely absent.</p>
+    <p><b>No expected rate.</b> No expected rate is calculated for any school. Each place is set beside England and beside others of its kind, and the reading is left to you.</p>
+    <p><b>Not a judgement.</b> Every figure here is a reading of published data, not a judgement on a school or an area. Schools are listed in alphabetical order and never ranked. Ethnicity is never used.</p>
+  </section>
+</main>
+
+
+<footer class="site-foot noprint"><div class="wrap">
+  <span>© 2026 Mark Dalton. Built from public DfE and Ofsted data. Views are my own.</span>
+  <span><a href="/">Home</a> · <a href="/colophon/">Colophon</a> · <a href="https://www.linkedin.com/in/mrkdltn">LinkedIn</a></span>
+</div></footer>
+<div class="ax-tip" id="ax-tip" role="status" hidden></div>
+<script src="/assets/d3.min.js"></script>
+<script src="/attendance/colour.js"></script>
+<script src="/attendance/tools.js"></script>
+<script src="/attendance/brief.js"></script>
+<script src="/attendance/tabs.js"></script>
+<script src="/attendance/chrome.js"></script>
+<script src="/attendance/search.js"></script>
+<script src="/attendance/group.js"></script>
+<script src="/attendance/enforce.js"></script>
+</body>
+</html>
