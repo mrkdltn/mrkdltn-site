@@ -238,7 +238,13 @@
   function prime(v) {
     if (v.dataset.loaded) return;
     v.dataset.loaded = '1';
-    v.src = portrait ? v.dataset.t : v.dataset.w;
+    var s = portrait ? v.dataset.t : v.dataset.w;
+    // On a day with another setting, a swapped plate plays that setting's clip, or none
+    var set = root.getAttribute('data-setting'), pic = v.parentNode.querySelector('picture');
+    if (set && set !== 'classic' && pic && pic.hasAttribute('data-' + set + '-w'))
+      s = pic.getAttribute('data-' + set + '-' + (portrait ? 'vt' : 'vw'));
+    if (!s) { v.remove(); return; }
+    v.src = s;
     v.addEventListener('playing', function () { v.classList.add('on'); }, { once: true });
     v.addEventListener('error', function () { v.remove(); }, { once: true });
   }
