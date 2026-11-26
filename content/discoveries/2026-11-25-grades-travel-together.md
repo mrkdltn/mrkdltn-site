@@ -88,6 +88,9 @@ chart:
 explore: "/explorer/areas/#sec=together"
 related: ["/explorer/areas/#together"]
 limitation: Every area is graded by the same team on the same visit, so the grades are not independent measures of a school.
+article: /writing/ofsted-report-cards/
+linkedin: []
+todo: Add the LinkedIn post for /writing/ofsted-report-cards/ under linkedin (url, date, kind, title) once its URL is known; do not guess it.
 supersedes: null
 superseded_by: null
 ---

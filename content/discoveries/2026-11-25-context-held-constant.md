@@ -119,6 +119,9 @@ explore: "/explorer/areas/#sec=held&phase=secondary"
 related: ["/explorer/areas/#held"]
 limitation: These are associations in a first set of inspections that is not a random sample, they cannot allow for what no public data records, and the results gap comes from an open replica.
 card_source: Ofsted management information, latest inspections as at 31 October 2026; DfE SEN school level data, January 2026; DfE GCSE results 2024/25 via the open similar-schools replica. Pre-registered analysis
+article: /writing/ofsted-report-cards/
+linkedin: []
+todo: Add the LinkedIn post for /writing/ofsted-report-cards/ under linkedin (url, date, kind, title) once its URL is known; do not guess it.
 supersedes: null
 superseded_by: null
 ---

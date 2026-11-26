@@ -102,3 +102,21 @@
 .dc-legend i.dc-dot-low{background:#8A96A8;border-color:#8A96A8}
 .dc-ch-wide{max-width:none}
 .dc-page svg .rl,.dc-page svg .rd{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+/* the LinkedIn chain: quiet, dated links */
+.dc-chain{margin:18px 0 0;padding:10px 0 0 14px;border-left:2px solid #C9A24B;font-size:15px;line-height:1.5;color:#33405A}
+.dc-chain p{margin:0 0 6px}
+.dc-chl{display:inline-block;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:#7A5C14;margin-right:6px}
+.dc-chain a{color:#0B1A2E;text-decoration-color:#C9A24B}
+.dc-chd{color:#55627A;white-space:nowrap}
+/* post kit: preview builds only */
+.dc-kit{margin:28px 0 0;padding:18px 20px;background:#F6F3EC;border:1px dashed #7A5C14;font-size:15px}
+.dc-kit h2{font:600 16px/1.3 var(--sans);margin:0 0 4px;color:#7A5C14;text-transform:uppercase;letter-spacing:.06em}
+.dc-kn{margin:0 0 12px;color:#55627A;font-size:14px;line-height:1.45}
+.dc-kit dl{margin:0}
+.dc-kr{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 14px;padding:8px 0;border-top:1px solid #E4DFD3}
+.dc-kr dt{font-weight:600;color:#0B1A2E}
+.dc-kr dd{margin:0;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.dc-kv{overflow-wrap:anywhere;color:#33405A;line-height:1.45}
+.dc-copy{flex:none;font:inherit;font-size:13.5px;min-height:32px;min-width:56px;padding:4px 10px;border:1px solid #55627A;background:#fff;color:#0B1A2E;border-radius:2px;cursor:pointer}
+.dc-copy:focus-visible{outline:2px solid #C9A24B;outline-offset:2px}
+@media(max-width:700px){.dc-kr{grid-template-columns:1fr}.dc-kit{padding:16px 14px}}

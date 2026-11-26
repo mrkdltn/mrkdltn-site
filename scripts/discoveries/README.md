@@ -24,7 +24,27 @@ link with the view in the hash), `related` (Explorer sections it sits beside, e.
 Explorer shows up to two quiet links there), `limitation` (one sentence), `supersedes`, `superseded_by`, and `rule`
 for anything the generator could suggest.
 
+Optional: `article` (the site article it comes from, e.g. `/writing/ofsted-report-cards/`; its title is read from the
+article itself), `linkedin` (a list of `{url, date, kind: post|article, title}`), `published` (the publication date),
+`todo` (a note to whoever edits the file next), `card_source` (a shorter source line for the share image).
+
 Every number in the title, standfirst, body and limitation must be one of the file's figures; the test checks this.
+
+## The LinkedIn chain
+
+Each discovery page shows, quietly and dated, "From the article" and "Discussed on LinkedIn" links where the file names
+them; the Atom feed entry carries the same links (`<link rel="related">` and in the content).
+
+**The publishing rule, enforced in code.** A discovery cannot be `published` unless it has a `published:` date and at
+least one `linkedin` entry of kind `post`, with a linkedin.com URL, dated that same day: the post and the discovery go
+out together, so the discovery is never public without the post that introduces it, and the post always has its
+evidence page. `content.problems()` holds the rule; a production build fails on a discovery that breaks it, and
+`freeze.py` refuses it. Order of work: Mark writes and posts the post, the post's URL and date go into `linkedin`, and
+only then does the status become `published` (on Mark's word), with `published` set to that day.
+
+**Post kit.** On preview builds only, each discovery page has a Post kit panel: the canonical link, the share image
+link, the claim (the title), each key figure with its number of schools, and the source line, each with a Copy
+button. It holds facts only; the post itself is Mark's to write. Production pages never show it.
 
 ## Status and the approval gate
 

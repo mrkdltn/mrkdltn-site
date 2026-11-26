@@ -24,7 +24,7 @@ THEMES = {'achievement-and-context': 'Achievement and context', 'attendance-and-
           'inclusion': 'Inclusion', 'later-report-language': 'Later report language'}
 NAME = re.compile(r'^\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$')
 ORDER = ['id', 'date', 'title', 'standfirst', 'status', 'theme', 'figures', 'chart', 'explore', 'related',
-         'limitation', 'card_source', 'supersedes', 'superseded_by', 'published', 'approved_by']
+         'limitation', 'card_source', 'article', 'linkedin', 'todo', 'supersedes', 'superseded_by', 'published', 'approved_by']
 
 
 # ---------- reading ----------
@@ -227,6 +227,36 @@ def problems(d):
     ex = d.get('explore') or ''
     if not ex.startswith('/explorer/') or '#' not in ex or '=' not in ex.split('#', 1)[1]:
         p.append('explore is not an Explorer link with its view in the hash')
+    # the LinkedIn chain: optional links, checked when present
+    li = d.get('linkedin') or []
+    if not isinstance(li, list):
+        p.append('linkedin is not a list')
+        li = []
+    for i, x in enumerate(li):
+        if not isinstance(x, dict):
+            p.append(f'linkedin {i + 1} is not a mapping of url, date, kind and title')
+            continue
+        if not re.match(r'^https://(?:www\.)?linkedin\.com/\S+$', str(x.get('url') or '')):
+            p.append(f'linkedin {i + 1}: url is not a linkedin.com link')
+        if x.get('kind') not in ('post', 'article'):
+            p.append(f'linkedin {i + 1}: kind is not post or article')
+        if not re.match(r'^\d{4}-\d{2}-\d{2}$', str(x.get('date') or '')):
+            p.append(f'linkedin {i + 1}: date is not YYYY-MM-DD')
+        if not x.get('title'):
+            p.append(f'linkedin {i + 1}: no title')
+    art = d.get('article')
+    if art is not None and not re.match(r'^/writing/[a-z0-9-]+/$', str(art)):
+        p.append(f'article {art!r} is not a site article path such as /writing/ofsted-report-cards/')
+    # the publishing rule: a discovery goes out with its LinkedIn post, on the same day
+    if d.get('status') == 'published':
+        pub = str(d.get('published') or '')
+        posts = [x for x in li if isinstance(x, dict) and x.get('kind') == 'post' and x.get('url')]
+        if not re.match(r'^\d{4}-\d{2}-\d{2}$', pub):
+            p.append('published, but no published: YYYY-MM-DD date')
+        if not posts:
+            p.append('published, but no linkedin post: a discovery is published with its LinkedIn post (see README)')
+        elif pub and not any(str(x.get('date')) == pub for x in posts):
+            p.append(f'published on {pub}, but no linkedin post dated that day: the post and the discovery go out together')
     if d.get('status') == 'superseded' and not d.get('superseded_by'):
         p.append('superseded but no superseded_by')
     return p

@@ -30,6 +30,10 @@ def rounded(v, unit):
 
 def freeze(meta, d):
     """Recompute every figure and the chart in place. Returns meta."""
+    if meta.get('status') == 'published':
+        probs = [x for x in content.problems(meta) if 'linkedin' in x or 'published' in x]
+        if probs:
+            raise SystemExit(f'{meta.get("_file")}: cannot be published: ' + '; '.join(probs))
     if meta.get('status') in FROZEN:
         raise SystemExit(f'{meta.get("_file")}: status {meta["status"]}, so its figures are frozen; supersede it instead')
     stamp = figures.as_at(d)

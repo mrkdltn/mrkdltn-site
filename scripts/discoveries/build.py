@@ -371,7 +371,47 @@ def method_items(d, today):
     return '<ol class="dc-method">' + ''.join(out) + '</ol>'
 
 
-def page(d, all_by_id, today, draft):
+def article_title(path):
+    """The site article's own title (its og:title), so the link never drifts from the article."""
+    f = os.path.join(SITE, *path.strip('/').split('/'), 'index.html')
+    try:
+        h = open(f, encoding='utf-8').read(20000)
+    except OSError:
+        raise SystemExit(f'discoveries: article {path} does not exist on the site')
+    m = re.search(r'<meta property="og:title" content="([^"]*)">', h)
+    return html.unescape(m.group(1)) if m else path
+
+
+def chain(d):
+    """'From the article' and 'Discussed on LinkedIn': quiet, dated links, only where the file names them."""
+    out = []
+    if d.get('article'):
+        out.append(f'<p><span class="dc-chl">From the article</span> <a href="{e(d["article"])}">{e(typo(article_title(d["article"])))}</a></p>')
+    for x in sorted(d.get('linkedin') or [], key=lambda x: str(x['date'])):
+        kind = 'post' if x['kind'] == 'post' else 'article'
+        out.append(f'<p><span class="dc-chl">Discussed on LinkedIn</span> <a href="{e(x["url"])}" rel="noopener">{e(typo(x["title"]))}</a> '
+                   f'<span class="dc-chd">({kind}, <time datetime="{x["date"]}">{long_date(x["date"])}</time>)</span></p>')
+    return f'<div class="dc-chain">{"".join(out)}</div>' if out else ''
+
+
+def post_kit(d):
+    """Preview builds only: the facts Mark needs for the LinkedIn post, each with a copy button. No post text."""
+    path = BASE + d['id'] + '/'
+    keyf = [f for f in d['figures'] if f.get('key')]
+    items = [('Link', ORIGIN + path), ('Share image', ORIGIN + path + 'card.png'), ('Claim', typo(d['title']))]
+    for f in keyf:
+        items.append(('Key figure', f'{typo(f["label"])}: {fmt(f["value"], f.get("unit"), 1)} ({int(f["n"]):,} schools)'))
+    items.append(('Source', typo(f'{keyf[0]["source"] if keyf else d["figures"][0]["source"]}. As at {long_date((keyf or d["figures"])[0]["as_at"])}.')))
+    rows = ''.join(f'<div class="dc-kr"><dt>{e(k)}</dt><dd><span class="dc-kv">{e(v)}</span>'
+                   f'<button type="button" class="dc-copy" data-copy="{e(v)}" aria-label="Copy the {e(k.lower())}">Copy</button></dd></div>'
+                   for k, v in items)
+    return ('<aside class="dc-kit noprint" aria-labelledby="dc-kh"><h2 id="dc-kh">Post kit</h2>'
+            '<p class="dc-kn">Preview only. The facts for the LinkedIn post; the post itself is written by hand. '
+            'The link and image work once the discovery is published.</p>'
+            f'<dl>{rows}</dl></aside>')
+
+
+def page(d, all_by_id, today, draft, kit=False):
     path = BASE + d['id'] + '/'
     url = ORIGIN + path
     modified = str(d.get('modified') or d['date'])
@@ -423,6 +463,7 @@ def page(d, all_by_id, today, draft):
 {paras(d['_body'])}<p class="dc-lim"><b>Limitation.</b> {inline(d['limitation'])}</p>
 </div>
 <p class="dc-cta"><a class="btn" href="{e(d['explore'])}">Explore this</a><span>Opens the Explorer on the view behind this chart, worked out afresh from today&rsquo;s data.</span></p>
+{chain(d)}{post_kit(d) if kit else ''}
 <section class="dc-sec" aria-labelledby="dc-mh"><h2 id="dc-mh">Method</h2>
 <p>Every figure here is frozen as it stood on {long_date(d['date'])}. Each is reproduced by a named function in the site&rsquo;s open code, run on the Explorer&rsquo;s own data, and every build of the site runs it again: if a share moves by more than 2 percentage points, this page says so under the figure. Groups of fewer than 10 schools give no figure. A grade counts as below Expected standard when it is Needs attention or Urgent improvement.</p>
 {method_items(d, today)}
@@ -525,12 +566,18 @@ def feed(items, today):
         html_body = (f'<p><em>{x(typo(d["standfirst"]))}</em></p><ul>{keyf}</ul>{chart_table(d)}{paras(d["_body"])}'
                      f'<p><strong>Limitation.</strong> {inline(d["limitation"])}</p>'
                      f'<p>Source: {x(typo(chart_source(d)))}</p>'
-                     f'<p><a href="{ORIGIN}{d["explore"]}">Explore this in the Ofsted Explorer</a></p>')
+                     f'<p><a href="{ORIGIN}{d["explore"]}">Explore this in the Ofsted Explorer</a></p>'
+                     + ''.join(f'<p>Discussed on LinkedIn: <a href="{e(li["url"])}">{x(typo(li["title"]))}</a> ({li["date"]})</p>'
+                               for li in d.get('linkedin') or [])
+                     + (f'<p>From the article: <a href="{ORIGIN}{d["article"]}">{x(typo(article_title(d["article"])))}</a></p>'
+                        if d.get('article') else ''))
         out += ['<entry>', f'<title>{x(typo(d["title"]))}</title>', f'<link rel="alternate" type="text/html" href="{url}"/>',
                 f'<id>{url}</id>', f'<published>{d["date"]}T00:00:00Z</published>',
                 f'<updated>{d.get("modified") or d["date"]}T00:00:00Z</updated>',
-                f'<summary>{x(typo(d["standfirst"]))}</summary>',
-                f'<content type="html">{x(html_body)}</content>', '</entry>']
+                f'<summary>{x(typo(d["standfirst"]))}</summary>']
+        out += [f'<link rel="related" type="text/html" href="{e(li["url"])}" title="{e(typo(li["title"]))} (LinkedIn {li["kind"]})"/>'
+                for li in d.get('linkedin') or []]
+        out += [f'<content type="html">{x(html_body)}</content>', '</entry>']
     out.append('</feed>')
     return '\n'.join(out) + '\n'
 
@@ -579,7 +626,7 @@ def build(data=None, fonts=None, today=None):
             if moved:
                 summary['review'].append({'id': d['id'], 'figures': moved})
             draft = d['status'] not in PUBLIC
-            path, h = page(d, by_id, today, draft)
+            path, h = page(d, by_id, today, draft, kit=(m == 'preview'))
             folder = os.path.join(OUT, d['id'])
             os.makedirs(folder, exist_ok=True)
             with open(os.path.join(folder, 'index.html'), 'w', encoding='utf-8', newline='\n') as f:

@@ -61,6 +61,9 @@ chart:
 explore: "/explorer/areas/#sec=context&focus=g_ab"
 related: ["/explorer/areas/#context"]
 limitation: Less stable intakes are also more often in deprived areas, and this chart does not separate the two.
+article: /writing/ofsted-report-cards/
+linkedin: []
+todo: Add the LinkedIn post for /writing/ofsted-report-cards/ under linkedin (url, date, kind, title) once its URL is known; do not guess it.
 supersedes: null
 superseded_by: null
 rule: "gradient:g_ab:nonmob"

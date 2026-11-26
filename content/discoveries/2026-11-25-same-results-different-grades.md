@@ -57,6 +57,9 @@ chart:
 explore: "/explorer/areas/#sec=results&by=idaci&focus=g_ach"
 related: ["/explorer/areas/#results", "/explorer/#allphases"]
 limitation: This is an association in the first year of report cards, among the schools Ofsted chose to inspect first, and it does not show that any grade is wrong.
+article: /writing/ofsted-report-cards/
+linkedin: []
+todo: Add the LinkedIn post for /writing/ofsted-report-cards/ under linkedin (url, date, kind, title) once its URL is known; do not guess it.
 supersedes: null
 superseded_by: null
 rule: "gradient:g_ach:idaci:matched"

@@ -9,6 +9,8 @@
    definition (50 similar schools, 2024/25 results).
 4. A production build builds no candidate, draft or approved discovery; a preview build builds them behind the banner.
 5. The live check flags a figure that has moved by more than 2 points, and the page then shows the dated line.
+6. The LinkedIn chain: a discovery cannot be published (freeze.py, or a production build) without a LinkedIn post
+   dated its publication day; links show on the page and in the feed; the post kit shows on preview builds only.
 """
 import copy
 import os
@@ -111,6 +113,55 @@ def main():
         d2 = copy.deepcopy(pcts[0])
         if not stale:
             check(not build.live_check(d2, data), 'live check flags an unmoved draft')
+
+    # 6. the LinkedIn chain and the publishing rule
+    if every:
+        d = copy.deepcopy(every[0])
+        d['status'] = 'published'
+        d['published'] = '2026-12-01'
+        d['linkedin'] = []
+        check(any('no linkedin post' in x for x in content.problems(d)), 'published without a LinkedIn post was allowed')
+        d['linkedin'] = [{'url': 'https://www.linkedin.com/posts/example-0001', 'date': '2026-11-30', 'kind': 'post', 'title': 'A post'}]
+        check(any('dated that day' in x for x in content.problems(d)), 'a post from another day was allowed')
+        d['linkedin'][0]['date'] = '2026-12-01'
+        check(not [x for x in content.problems(d) if 'linkedin' in x or 'published' in x], 'a same-day post was refused')
+        d['linkedin'].append({'url': 'https://example.com/x', 'date': '2026-12-01', 'kind': 'tweet', 'title': ''})
+        probs = content.problems(d)
+        check(any('not a linkedin.com link' in x for x in probs) and any('kind' in x for x in probs), 'a bad linkedin entry was allowed')
+        d['linkedin'].pop()
+        try:
+            import freeze
+            freeze.freeze(dict(d, linkedin=[]), data)
+            check(False, 'freeze.py let a discovery be published without its post')
+        except SystemExit as ex:
+            check('cannot be published' in str(ex), 'freeze.py refused for the wrong reason')
+        _, h = build.page(d, {}, '2026-12-01', False, kit=False)
+        check('Discussed on LinkedIn' in h and 'linkedin.com/posts/example-0001' in h, 'no LinkedIn link on the page')
+        check(('From the article' in h) == bool(d.get('article')), 'article link wrong')
+        check('Post kit' not in h, 'post kit on a production page')
+        _, h = build.page(d, {}, '2026-12-01', True, kit=True)
+        check('Post kit' in h and h.count('class="dc-copy"') >= 4, 'no post kit on a preview page')
+        f = build.feed([d], '2026-12-01')
+        check('rel="related" type="text/html" href="https://www.linkedin.com/posts/example-0001"' in f, 'no LinkedIn link in the feed')
+        # a production build refuses a published discovery without its post
+        with tempfile.TemporaryDirectory() as tmp:
+            os.environ['OE_DISCOVERIES'] = 'production'
+            real, build.OUT = build.OUT, tmp
+            orig = content.load_all
+            content.load_all = lambda: [dict(d, linkedin=[])]
+            try:
+                build.build(data=data, fonts=False, today='2026-12-01')
+                check(False, 'a production build published a discovery with no LinkedIn post')
+            except SystemExit:
+                pass
+            content.load_all = lambda: [d]
+            s6 = build.build(data=data, fonts=False, today='2026-12-01')
+            check(s6['built'] == [d['id']], 'a production build refused a discovery with its post')
+            ph = open(os.path.join(tmp, d['id'], 'index.html'), encoding='utf-8').read()
+            check('Post kit' not in ph and 'Draft, not published' not in ph, 'production page shows the kit or the banner')
+            content.load_all = orig
+            build.OUT = real
+            os.environ.pop('OE_DISCOVERIES', None)
 
     if stale:
         print(f'discoveries: {len(stale)} figures differ from today\'s data (refreeze drafts with freeze.py; '

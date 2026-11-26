@@ -76,3 +76,13 @@
     window.addEventListener('hashchange', () => apply(view().theme || '', false));
   }
 })();
+
+// post kit (preview builds only): copy each fact
+(() => {
+  document.querySelectorAll('.dc-copy').forEach((b) => b.addEventListener('click', async () => {
+    const t = b.dataset.copy || '';
+    try { await navigator.clipboard.writeText(t); b.textContent = 'Copied'; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(b.previousElementSibling); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected'; }
+    setTimeout(() => { b.textContent = 'Copy'; }, 1800);
+  }));
+})();
