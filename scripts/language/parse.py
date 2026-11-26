@@ -864,6 +864,8 @@ def main():
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--urn', nargs='*')
     ap.add_argument('--counts', default=os.path.join(REPO, 'docs', 'report-language', 'corpus-counts.md'))
+    ap.add_argument('--no-codes', action='store_true',
+                    help='never create lead-inspector codes (no key, no restricted/ file): for runs away from this machine')
     a = ap.parse_args()
     man = [json.loads(l) for l in open(os.path.join(a.data, 'manifest.jsonl')) if l.strip()]
     if a.urn:
@@ -881,7 +883,7 @@ def main():
     resid = collections.Counter()
     resid_ex = collections.defaultdict(list)
     skipped = []
-    key = inspector_key(a.data)
+    key = None if a.no_codes else inspector_key(a.data)
     lead_rows = []
     for m in man:
         u = m['urn']
@@ -894,8 +896,9 @@ def main():
                           'status': 'not a report card', 'ref': '', 'warnings': '', 'dropped': '', 'name_rules': '',
                           'residual_hits': ''})
             continue
-        code, role = lead_inspector_code(raws[u], key)
-        lead_rows.append({'urn': u, 'code': code, 'role_detected': role})
+        if key is not None:
+            code, role = lead_inspector_code(raws[u], key)
+            lead_rows.append({'urn': u, 'code': code, 'role_detected': role})
         rec, diag = parse_report(raws[u], m, names.get(u, ()), [trust[u]] if u in trust else [], given, boiler)
         json.dump(rec, open(os.path.join(a.data, 'parsed', u + '.json'), 'w'), ensure_ascii=False, indent=1)
         recs.append(rec)
@@ -935,13 +938,14 @@ def main():
         w = csv.DictWriter(f, fieldnames=list(index[0]))
         w.writeheader()
         w.writerows(index)
-    os.makedirs(os.path.join(a.data, 'restricted'), mode=0o700, exist_ok=True)
-    lpath = os.path.join(a.data, 'restricted', 'lead_inspector.csv')
-    with open(lpath, 'w', newline='') as f:
-        w = csv.DictWriter(f, fieldnames=['urn', 'code', 'role_detected'])
-        w.writeheader()
-        w.writerows(lead_rows)
-    os.chmod(lpath, 0o600)
+    if key is not None:
+        os.makedirs(os.path.join(a.data, 'restricted'), mode=0o700, exist_ok=True)
+        lpath = os.path.join(a.data, 'restricted', 'lead_inspector.csv')
+        with open(lpath, 'w', newline='') as f:
+            w = csv.DictWriter(f, fieldnames=['urn', 'code', 'role_detected'])
+            w.writeheader()
+            w.writerows(lead_rows)
+        os.chmod(lpath, 0o600)
     per = collections.Counter(r['code'] for r in lead_rows if r['code'])
     if per:
         ns = sorted(per.values())

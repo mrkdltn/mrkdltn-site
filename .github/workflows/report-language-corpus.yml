@@ -1,0 +1,69 @@
+name: Report Language corpus
+
+# Builds the Report Language corpus on GitHub's machines and stores ONLY the name-stripped text in the private R2
+# bucket mrkdltn-report-language. Raw report text stays on the runner and is discarded with it. Lead-inspector codes
+# are never created here (parse.py --no-codes); they exist only on the analyst's machine for the pre-registered
+# consistency analysis.
+#
+# Runs when this workflow file changes on the report-language branch (it does not deploy anything: Cloudflare builds a
+# preview of the branch only). After merge, the schedule below adds new report cards daily.
+on:
+  push:
+    branches: [report-language]
+    paths: ['.github/workflows/report-language-corpus.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '41 7 * * *'   # after the daily report-card read; active only once merged to main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: report-language-corpus
+  cancel-in-progress: false
+
+jobs:
+  corpus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Working folder (outside the checkout)
+        run: echo "DATA=$RUNNER_TEMP/report-language" >> "$GITHUB_ENV"
+
+      - name: Install
+        run: pip install "pypdf==5.*" "boto3>=1.34"
+
+      - name: Check the bucket can be reached
+        run: |
+          python3 - <<'PY'
+          import os, boto3
+          s3 = boto3.client('s3', endpoint_url=f"https://{os.environ['R2_ACCOUNT_ID'].strip()}.r2.cloudflarestorage.com",
+                            aws_access_key_id=os.environ['R2_ACCESS_KEY_ID'].strip(),
+                            aws_secret_access_key=os.environ['R2_SECRET_ACCESS_KEY'].strip(), region_name='auto')
+          s3.list_objects_v2(Bucket='mrkdltn-report-language', MaxKeys=1)
+          print('bucket reachable')
+          PY
+
+      - name: Read every renewed-framework report card (polite pace; about 3.5 hours for the full set)
+        run: python3 scripts/language/backfill.py --out "$DATA"
+
+      - name: Parse and remove names (no inspector codes)
+        run: python3 scripts/language/parse.py --data "$DATA" --no-codes --counts "$RUNNER_TEMP/corpus-counts.md"
+
+      - name: Upload the name-stripped corpus to R2
+        run: python3 scripts/language/upload_r2.py --data "$DATA"
+
+      - name: Summary
+        run: |
+          echo "reports read: $(wc -l < "$DATA/manifest.jsonl")"
+          [ -f "$DATA/errors.jsonl" ] && echo "failures: $(wc -l < "$DATA/errors.jsonl")" || echo "failures: 0"
