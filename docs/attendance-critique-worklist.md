@@ -132,3 +132,4 @@ Mark rejected the cut-down school page on seeing it (24 Nov) and asked to roll b
 | Left as they are | An authority asked for a phase it lacks shows another without saying so; the site header's links are 40 px high (a live-site style, not the tool's) |
 | Unlisted release | Prepared on the branch; see `CLAUDE.md`. Awaiting Mark's Go |
 | Trusts | Withheld from the release by Mark's decision of 26 Nov: no pages, data, search entries, menu item or mentions. A school's page still names its trust and joining date |
+| Unlisted release | Live on 26 Nov with Mark's Go, without trusts. Checked on the live site: pages, page functions, trust redirect, no links from the rest of the site, noindex, sitemap, feedback endpoint |
