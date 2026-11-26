@@ -481,6 +481,9 @@ def tidy(name):
 
 
 G_KIND_SHARDS = {'t': 16, 'c': 16, 'w': 64, 'y': 1, 'a': 8}
+# Trusts are built but not published: Mark decided on 26 November 2026 that the trust pages should not go live at all.
+# With this False no trust is grouped, so no trust page, search entry or data file is written. Do not set it True without him.
+TRUSTS_LIVE = False
 PG = ['all', 'fsm', 'nfsm', 'sen', 'ehcp', 'nosen']
 
 
@@ -525,7 +528,7 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
     members = {}
     for u in current:
         m = meta[u]
-        if m.get('trust_id'):
+        if TRUSTS_LIVE and m.get('trust_id'):
             members.setdefault(('t', m['trust_id']), []).append(u)
         if m['pcon_code'].startswith('E14'):
             members.setdefault(('c', m['pcon_code']), []).append(u)
@@ -618,6 +621,10 @@ def groups_build(current, meta, rows, raw_history, shown, pool, periods, latest,
     out = os.path.join(OUT, 'grp')
     os.makedirs(out, exist_ok=True)
     for kind in G_KIND_SHARDS:
+        if kind == 't' and not TRUSTS_LIVE:          # and clear any trust files left by an earlier build
+            for f in glob.glob(os.path.join(out, 't[0-9]*.json')) + glob.glob(os.path.join(out, 't_all.json')):
+                os.remove(f)
+            continue
         for i, sh in enumerate(shards[kind]):
             json.dump(sh, open(os.path.join(out, f'{kind}{i}.json'), 'w'), separators=(',', ':'), ensure_ascii=False)
         json.dump(overview[kind], open(os.path.join(out, f'{kind}_all.json'), 'w'), separators=(',', ':'), ensure_ascii=False)

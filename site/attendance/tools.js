@@ -8,7 +8,7 @@
   const DISPLAY = '"Libre Caslon Display", Georgia, serif';
   const W = 800, PAD = 40, CW = W - PAD * 2, SCALE = 2, MAX_H = 8000;
   const PIN_KEY = 'ax-pins', SEEN_KEY = 'ax-seen', PIN_MAX = 12;
-  const KIND = {school: 'School', group: 'Area or trust', area: 'Area, week by week'};
+  const KIND = {school: 'School', group: 'Area', area: 'Area, week by week'};
 
   /* ---------- small helpers ---------- */
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
@@ -301,7 +301,7 @@
   function fillPins(host) {
     const list = pins(), wrap = el('div', 'ax-places'), id = host._axId || (host._axId = 'ax-places-t' + (++uid));
     const t = el('p', 'ax-places-t', 'Your places'); t.id = id; wrap.appendChild(t);
-    if (!list.length) wrap.appendChild(el('p', 'ax-places-none', 'Save a school, trust or area and it is kept here with its latest figure, ready to open or compare each time you come back. Saved only on this device.'));
+    if (!list.length) wrap.appendChild(el('p', 'ax-places-none', 'Save a school or area and it is kept here with its latest figure, ready to open or compare each time you come back. Saved only on this device.'));
     else { const ul = el('ul'); ul.setAttribute('aria-labelledby', id);
       list.forEach((p) => { const li = el('li'), a = el('a'); a.href = p.href; a.appendChild(el('span', 'ax-places-n', p.name)); a.appendChild(el('small', null, p.kind === 'group' ? ({a: 'Local authority', y: 'County', c: 'Constituency', w: 'Ward', t: 'Trust'}[String(p.id).split(':')[0]] || KIND[p.kind]) : KIND[p.kind]));
         const rm = el('button', 'ax-places-x'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove ' + p.name + ' from your places'); rm.appendChild(el('span', null, '×')).setAttribute('aria-hidden', 'true');

@@ -369,7 +369,8 @@
   }
 
   d3.json('/attendance/data/bench.json').then((j) => {
-    B = j; const q = new URLSearchParams(location.search); kind = SH[q.get('k')] ? q.get('k') : 'c'; id = q.get('id') || '';
+    B = j; const q = new URLSearchParams(location.search); if (q.get('k') === 't') { location.replace('/attendance/'); return; }          // trust pages are not published
+    kind = SH[q.get('k')] ? q.get('k') : 'c'; id = q.get('id') || '';
     AXsearch($('gx-q'), $('gx-list'), AXsearch.go, true, null, kind);
     $('gx-another').addEventListener('click', () => { location.href = '/attendance/group/?k=' + kind; });
     // which part of the Explorer this is: trusts stand apart; every other kind is an area

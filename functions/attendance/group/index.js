@@ -7,6 +7,7 @@ const KIND = {t: 'the schools of this trust', c: 'schools in this parliamentary 
 export async function onRequestGet({env, request}) {
   const page = await env.ASSETS.fetch(new URL('/attendance/group/', request.url));
   const u = new URL(request.url), k = u.searchParams.get('k') || '', id = u.searchParams.get('id') || '';
+  if (k === 't') return Response.redirect(new URL('/attendance/', request.url).toString(), 302);          // trust pages are not published
   if (!SH[k] || !/^[A-Za-z0-9_-]{1,40}$/.test(id)) return page;
   let g = null;
   try {

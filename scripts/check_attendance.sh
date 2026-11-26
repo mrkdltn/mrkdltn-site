@@ -12,7 +12,7 @@ node - <<'JS' || { echo "A PAGE FAILED TO LOAD CLEANLY"; exit 1; }
 const { chromium } = require('playwright');
 (async () => { const b = await chromium.launch(); let bad = 0;
   const pages = ['/attendance/', '/attendance/#area=E08000025&phase=S', '/attendance/school/?urn=141741', '/attendance/school/?urn=107702', '/attendance/group/?k=a&id=E08000025&phase=S', '/attendance/group/?k=y&id=kent',
-    '/attendance/group/?k=c&id=E14001063', '/attendance/group/?k=w&id=E05000954', '/attendance/group/?k=t&id=1337&phase=S', '/attendance/patterns/', '/attendance/start/', '/explorer/'];
+    '/attendance/group/?k=c&id=E14001063', '/attendance/group/?k=w&id=E05000954', '/attendance/patterns/', '/attendance/start/', '/explorer/'];
   for (const w of [375, 1300]) { const p = await b.newPage({ viewport: { width: w, height: 850 } }); const errs = [];
     p.on('console', (m) => m.type() === 'error' && errs.push(m.text())); p.on('pageerror', (e) => errs.push(String(e)));
     for (const u of pages) { errs.length = 0; await p.goto('http://localhost:8765' + u); await p.waitForTimeout(2000);

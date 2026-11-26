@@ -53,7 +53,7 @@
     if (window.AXtools) AXtools.setPlace({kind: 'school', id: urn, name: S.n, href: AXsearch.href(urn)});
     $('sx-hint').hidden = !random;
     const link = (t, k, id) => (id ? `<a href="${AXsearch.ghref(k, id)}">${esc(t)}</a>` : esc(t));
-    $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? link(S.tname || S.trust, 't', S.multi ? S.tid : '') + (S.tj ? esc(', joined ' + month(S.tj) + (S.tprev ? ' from ' + S.tprev : '')) : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
+    $('sx-meta').innerHTML = [esc(PH[S.ph].replace(/s$/, '').replace(/^./, (c) => c.toUpperCase())), esc(S.town), esc(la), S.trust ? esc(S.tname || S.trust) + (S.tj ? esc(', joined ' + month(S.tj) + (S.tprev ? ' from ' + S.tprev : '')) : '') : '', S.pcon ? link(S.pcon + ' constituency', 'c', S.pc_code) : ''].filter(Boolean).join(' · ');
     document.title = S.n + ': attendance · Attendance Explorer · Mark Dalton';
     { const cmp = [['England', e && e[0]], [la || 'its local authority', l && l[3] >= 3 ? l[0] : null], ['similar schools', S.sim ? S.sim[0] : null]].filter((c) => c[1] != null), groups = [];
       if (now && now[1] != null) cmp.forEach((c) => { const t = gap(now[1], c[1]), w = Math.abs(t) < 3 ? 'close to' : t > 0 ? 'higher than' : 'lower than',          /* 'close to' is a gap shown as 0.2 points or less, so the word never sits beside a figure of 0.3 */ g = groups.find((x) => x.w === w); if (g) g.names.push(c[0]); else groups.push({w, names: [c[0]]}); });

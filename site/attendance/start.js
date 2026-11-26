@@ -6,8 +6,7 @@
   // ---- Question 1. Role changes the title of the briefing (brief.js) and the order of its sections, never the figures.
   const ROLES = [
     {id: 'head', label: 'Headteacher or senior leader', order: ['compare', 'improving'], hint: 'Your own school is the natural place to start.'},
-    {id: 'trust', label: 'Trust leader', order: ['compare', 'improving'], hint: 'Start with your trust, then look at one school at a time.'},
-    {id: 'governor', label: 'Governor or trustee', order: ['improving', 'compare'], hint: 'Start with your school, or with your trust if you are a trustee.'},
+    {id: 'governor', label: 'Governor', order: ['improving', 'compare'], hint: 'Start with your school.'},
     {id: 'la', label: 'Local authority officer or councillor', order: ['compare', 'improving'], hint: 'Start with your local authority, or with your ward if you are a councillor.'},
     {id: 'press', label: 'Journalist or researcher', order: ['improving', 'compare'], hint: 'A local authority, county or constituency is a good place to start.'},
     {id: 'parent', label: 'Parent or carer', order: ['improving', 'compare'], hint: 'Start with your child’s school.'}];
@@ -48,7 +47,7 @@
   // What to say when a question is not offered for the chosen place.
   const NOTES = {
     groups: 'Absence by pupil group is shown for local authorities and counties only, because the DfE does not publish it for anything smaller. Choose a local authority or a county at step 2 to see it.',
-    severeSchool: 'Severe absence is never shown for a single school, where it usually describes a handful of children. It is given for trusts and areas.'};
+    severeSchool: 'Severe absence is never shown for a single school, where it usually describes a handful of children. It is given for areas.'};
 
   // How each section is named in the sentence above the button.
   const SAYS = {'Summary': 'the latest figures', 'Three ways': 'the school beside England, its local authority and similar schools',
@@ -144,7 +143,7 @@
     $('st-need-1').hidden = true; $('st-need-2').hidden = true;
 
     const roles = $('st-roles'); roles.innerHTML = ''; ROLES.forEach((r) => roles.appendChild(option('radio', 'role', r.id, r.label, '', r.id === S.role)));
-    $('st-hint').textContent = (role ? role.hint + ' ' : '') + 'You can choose any school, trust, local authority, county, constituency or ward in England.';
+    $('st-hint').textContent = (role ? role.hint + ' ' : '') + 'You can choose any school, local authority, county, constituency or ward in England.';
     const ch = $('st-chosen'); ch.hidden = !place; ch.innerHTML = '';
     if (place) { ch.append(el('span', 'st-chosen-k', 'Chosen'), el('b', null, place.name), el('small', null, place.sub || '')); }
 
