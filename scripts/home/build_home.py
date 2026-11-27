@@ -249,9 +249,9 @@ def writing_cards(entries):
 
 
 ENTRIES = [
+    ('/writing/crowded-homes/', 'Analysis', '27 November 2026', "Poorer pupils do best where homes are most crowded. Housing isn’t why.", 'Disadvantaged pupils do best where homes are most crowded. The reason has little to do with housing.', '', '/assets/writing/crowded-homes.webp'),
     ('/writing/belonging/', 'Analysis', '18 November 2026', "Behaviour has improved fast. Belonging hasn't kept pace.", 'Pupils rate behaviour far more highly than a year ago. The share who feel they belong has not risen with it.', '', '/assets/writing/belonging.webp'),
     ('/writing/ofsted-report-cards/', 'Analysis', 'November 2026', "I checked every Ofsted report card. Results alone don't explain the gap.", 'A year of report cards read against deprivation and against statistically similar schools.', '', '/assets/writing/report-cards.webp'),
-    ('/writing/progress-8/', 'Analysis', '20 September 2026', 'Progress 8: a lens refracted by context', 'The measure returns with the summer 2027 results. What it controls for, what it does not, and why it should start the conversation about a school, not finish it.', '', '/assets/writing/progress-8.webp'),
 ]
 
 def page():
