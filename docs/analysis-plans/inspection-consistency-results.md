@@ -61,3 +61,7 @@ Convergence: R-hat below 1.01 and effective sample size above 400 required for e
 MOR reading, set before the analysis: below 1.2 little association with the lead inspector; 1.2 to 1.5 modest; above 1.5 substantial. A band is stated only where the whole 95% interval falls within one band.
 
 Reading against chance (Amendment 1, 26 November 2026): an inspector effect is reported as distinguishable from chance only where the observed maximum-likelihood inspector SD is above the 95th percentile of its 200 shuffled values; otherwise the reading for that area is "not distinguishable from chance", whatever the MOR band. The MOR, its interval and its band are reported in full in every case.
+
+## Agreed, and the codes deleted
+
+Mark agreed these results on 28 November 2026, in the live conversation, without asking for a repeat on a later cut. As the plan's retention rule requires, the lead-inspector codes and the key were deleted the same day (overwritten, then removed), after a search found no copy of any code elsewhere on the analysis machine. No code was ever in git or in the corpus bucket. The analysis can no longer be linked back to any inspector, and it cannot be re-run without a fresh, separately approved extraction.
