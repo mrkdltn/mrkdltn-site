@@ -1,0 +1,210 @@
+area,grade,phase,sections,words_median,words_q1,words_q3,sentences_median,sentences_q1,sentences_q3,sentence_length_median,sentence_length_q1,sentence_length_q3,flesch_median,flesch_q1,flesch_q3,fk_grade_median,fk_grade_q1,fk_grade_q3,hedges_per_100_median,hedges_per_100_q1,hedges_per_100_q3
+Inclusion,Exceptional,All phases,79,225.00,211.00,245.00,15.00,13.00,17.00,15.73,13.93,17.65,36.29,32.47,42.02,12.09,11.21,12.97,0.00,0.00,0.00
+Inclusion,Exceptional,Primary,25,232.00,211.00,284.00,15.00,12.00,18.00,17.35,14.60,18.36,39.75,32.62,43.82,12.09,11.41,12.75,0.00,0.00,0.00
+Inclusion,Exceptional,Secondary,31,225.00,207.00,245.00,15.00,12.00,16.00,16.42,14.52,17.88,34.76,31.02,39.19,12.28,11.78,13.50,0.00,0.00,0.29
+Inclusion,Exceptional,Special,12,225.00,208.25,232.50,15.00,14.00,16.25,13.73,13.25,15.34,36.50,34.34,42.91,11.66,10.91,13.09,0.00,0.00,0.00
+Inclusion,Exceptional,Nursery,<10,,,,,,,,,,,,,,,,,,
+Inclusion,Exceptional,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Inclusion,Strong standard,All phases,1420,208.00,199.00,220.00,14.00,13.00,16.00,14.86,13.50,16.31,39.68,34.56,44.73,11.42,10.60,12.29,0.00,0.00,0.00
+Inclusion,Strong standard,Primary,1012,207.00,198.00,218.00,14.00,13.00,16.00,14.79,13.43,16.22,39.74,34.50,45.09,11.39,10.57,12.31,0.00,0.00,0.00
+Inclusion,Strong standard,Secondary,270,211.00,201.00,221.75,14.00,13.00,16.00,14.93,13.67,16.61,39.89,35.53,44.01,11.46,10.73,12.19,0.00,0.00,0.00
+Inclusion,Strong standard,Special,80,216.50,202.00,226.25,15.00,14.00,16.00,14.73,13.28,16.02,38.18,32.83,43.43,11.65,10.77,12.42,0.00,0.00,0.11
+Inclusion,Strong standard,Nursery,34,205.50,198.50,219.50,14.00,12.00,16.00,14.79,13.23,16.08,40.74,37.04,45.56,11.22,10.41,11.82,0.00,0.00,0.00
+Inclusion,Strong standard,Alternative provision,24,207.00,199.00,218.75,14.00,12.00,15.00,15.84,14.34,16.95,35.10,27.95,42.05,12.43,10.87,13.49,0.00,0.00,0.10
+Inclusion,Expected standard,All phases,2383,202.00,193.00,212.00,14.00,12.00,15.00,14.75,13.45,16.17,41.16,35.93,45.98,11.20,10.41,12.14,0.52,0.00,1.09
+Inclusion,Expected standard,Primary,1825,201.00,193.00,211.00,14.00,12.00,15.00,14.71,13.43,16.13,41.48,36.20,46.49,11.16,10.35,12.09,0.51,0.00,1.11
+Inclusion,Expected standard,Secondary,468,204.00,195.00,215.00,14.00,13.00,15.00,14.79,13.46,16.33,40.57,35.46,44.91,11.30,10.55,12.24,0.53,0.00,1.07
+Inclusion,Expected standard,Special,59,209.00,202.50,226.50,14.00,12.50,16.00,14.93,13.68,17.08,36.55,31.12,43.88,11.92,10.74,12.80,0.46,0.00,0.97
+Inclusion,Expected standard,Nursery,19,205.00,193.00,213.00,13.00,12.00,14.00,15.33,14.36,16.61,41.32,34.20,45.35,11.35,10.83,12.26,0.49,0.00,0.96
+Inclusion,Expected standard,Alternative provision,12,230.00,209.00,232.25,15.00,13.00,16.25,15.60,14.51,16.79,36.15,24.95,43.43,12.51,10.90,13.02,0.87,0.32,1.10
+Inclusion,Needs attention,All phases,362,206.00,195.25,217.00,13.00,12.00,15.00,15.52,13.92,17.00,43.26,38.43,48.02,11.07,10.29,11.90,2.24,1.47,2.91
+Inclusion,Needs attention,Primary,256,204.00,194.00,216.25,13.00,12.00,15.00,15.68,13.93,17.00,43.69,38.54,48.40,10.99,10.26,11.86,2.26,1.51,2.92
+Inclusion,Needs attention,Secondary,98,207.00,197.00,217.75,14.00,12.00,15.00,14.77,13.58,17.00,42.36,38.08,46.53,11.14,10.37,12.03,2.08,1.44,2.81
+Inclusion,Needs attention,Special,<10,,,,,,,,,,,,,,,,,,
+Inclusion,Needs attention,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Inclusion,Urgent improvement,All phases,37,205.00,197.00,222.00,14.00,13.00,15.00,15.08,14.14,15.92,48.88,39.00,51.94,10.34,9.90,11.50,1.35,0.50,1.79
+Inclusion,Urgent improvement,Primary,26,204.00,197.00,223.50,14.00,13.00,15.00,15.12,14.20,15.91,48.95,43.58,51.52,10.41,9.96,10.77,1.45,0.49,1.80
+Inclusion,Urgent improvement,Secondary,<10,,,,,,,,,,,,,,,,,,
+Inclusion,Urgent improvement,Special,<10,,,,,,,,,,,,,,,,,,
+Inclusion,Urgent improvement,Nursery,<10,,,,,,,,,,,,,,,,,,
+Inclusion,Urgent improvement,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Exceptional,All phases,36,219.50,211.00,236.00,15.00,13.00,16.00,15.07,14.03,17.10,35.34,30.49,39.37,12.28,11.28,13.10,0.00,0.00,0.00
+Curriculum and teaching,Exceptional,Primary,10,234.00,210.25,257.00,13.50,13.00,14.75,16.83,14.40,19.29,32.91,28.34,37.46,13.07,11.59,13.93,0.00,0.00,0.00
+Curriculum and teaching,Exceptional,Secondary,19,215.00,211.00,226.00,15.00,15.00,16.00,14.69,13.97,15.50,35.81,33.48,39.57,12.22,11.27,12.45,0.00,0.00,0.00
+Curriculum and teaching,Exceptional,Special,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Exceptional,Nursery,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Strong standard,All phases,689,205.00,197.00,216.00,15.00,13.00,16.00,14.14,12.94,15.46,40.38,35.14,44.95,11.16,10.38,12.05,0.00,0.00,0.00
+Curriculum and teaching,Strong standard,Primary,450,206.00,197.25,217.00,15.00,13.00,16.00,14.21,12.93,15.33,40.24,35.17,44.57,11.16,10.40,12.05,0.00,0.00,0.00
+Curriculum and teaching,Strong standard,Secondary,163,202.00,195.00,214.00,14.00,13.00,16.00,14.00,13.07,16.00,39.65,34.43,44.25,11.32,10.45,12.09,0.00,0.00,0.00
+Curriculum and teaching,Strong standard,Special,46,201.50,196.25,209.75,14.00,13.00,16.00,14.21,13.30,15.46,43.11,38.58,48.14,10.74,9.97,11.51,0.00,0.00,0.00
+Curriculum and teaching,Strong standard,Nursery,19,209.00,201.00,225.50,16.00,15.00,18.50,13.06,12.05,15.11,43.54,38.25,46.17,10.59,10.06,11.52,0.00,0.00,0.00
+Curriculum and teaching,Strong standard,Alternative provision,11,212.00,203.50,220.50,15.00,13.50,16.50,13.38,12.97,16.38,40.02,31.63,42.16,11.24,10.60,12.34,0.00,0.00,0.19
+Curriculum and teaching,Expected standard,All phases,2699,205.00,196.00,215.00,15.00,13.00,16.00,14.00,12.80,15.31,44.06,38.84,48.66,10.61,9.85,11.49,1.70,1.00,2.42
+Curriculum and teaching,Expected standard,Primary,2052,205.00,197.00,215.00,15.00,13.00,16.00,13.97,12.75,15.29,44.23,39.12,48.78,10.59,9.82,11.43,1.67,1.00,2.38
+Curriculum and teaching,Expected standard,Secondary,502,203.00,194.00,214.00,15.00,13.00,16.00,13.94,12.75,15.33,44.03,38.76,48.05,10.65,9.92,11.48,1.89,1.35,2.56
+Curriculum and teaching,Expected standard,Special,89,212.00,201.00,222.00,15.00,13.00,16.00,14.43,13.29,15.79,41.38,34.86,47.60,11.04,9.96,12.41,1.44,0.90,2.27
+Curriculum and teaching,Expected standard,Nursery,30,208.00,199.00,222.75,14.50,13.25,16.00,14.23,13.29,15.82,44.86,41.38,46.99,10.42,10.06,11.39,1.57,1.32,2.00
+Curriculum and teaching,Expected standard,Alternative provision,26,203.00,195.00,212.50,13.00,12.00,15.75,15.45,13.07,17.55,42.02,33.95,47.13,11.36,9.97,12.57,1.43,0.90,2.04
+Curriculum and teaching,Needs attention,All phases,799,206.00,198.00,219.00,14.00,13.00,16.00,14.36,13.17,15.85,46.85,41.90,51.19,10.38,9.58,11.16,2.66,1.98,3.47
+Curriculum and teaching,Needs attention,Primary,588,206.00,197.00,219.00,14.00,13.00,16.00,14.36,13.20,15.92,47.04,42.19,51.20,10.38,9.59,11.14,2.64,1.93,3.49
+Curriculum and teaching,Needs attention,Secondary,181,206.00,198.00,219.00,15.00,13.00,16.00,14.38,13.07,15.67,46.40,41.51,50.80,10.38,9.69,11.26,2.74,2.24,3.41
+Curriculum and teaching,Needs attention,Special,20,205.00,199.75,221.50,15.00,12.75,17.00,13.92,12.85,15.99,48.42,40.73,53.72,9.84,9.01,11.45,2.51,2.22,3.38
+Curriculum and teaching,Needs attention,Nursery,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Needs attention,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Urgent improvement,All phases,58,210.00,195.00,223.50,15.00,13.25,16.00,14.19,13.00,15.64,50.31,46.30,54.06,9.96,9.11,10.73,1.34,0.88,1.68
+Curriculum and teaching,Urgent improvement,Primary,44,206.00,193.00,222.50,15.00,13.00,16.00,14.16,12.81,15.60,50.49,45.94,54.75,9.83,8.93,10.71,1.29,0.89,1.66
+Curriculum and teaching,Urgent improvement,Secondary,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Urgent improvement,Special,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Urgent improvement,Nursery,<10,,,,,,,,,,,,,,,,,,
+Curriculum and teaching,Urgent improvement,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Achievement,Exceptional,All phases,58,156.50,147.00,165.75,11.00,9.00,12.00,14.78,13.36,16.22,36.41,29.83,41.30,11.97,11.41,12.82,0.00,0.00,0.00
+Achievement,Exceptional,Primary,22,153.50,147.00,161.25,11.00,10.00,11.75,14.71,13.36,16.06,36.41,28.92,41.09,11.69,11.12,12.78,0.00,0.00,0.00
+Achievement,Exceptional,Secondary,27,154.00,145.50,167.00,11.00,9.00,12.00,15.27,13.33,16.33,34.46,30.78,38.67,11.99,11.55,12.71,0.00,0.00,0.00
+Achievement,Exceptional,Special,<10,,,,,,,,,,,,,,,,,,
+Achievement,Exceptional,Nursery,<10,,,,,,,,,,,,,,,,,,
+Achievement,Exceptional,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Achievement,Strong standard,All phases,693,150.00,143.00,159.00,11.00,9.00,12.00,14.30,12.91,15.82,41.50,36.46,46.39,11.00,10.24,11.93,0.00,0.00,0.62
+Achievement,Strong standard,Primary,446,150.00,143.00,159.00,11.00,9.25,12.00,14.21,12.91,15.78,41.50,36.63,46.88,10.97,10.14,11.89,0.00,0.00,0.62
+Achievement,Strong standard,Secondary,164,149.00,141.75,159.25,10.00,9.00,11.25,14.47,12.89,16.13,41.11,35.93,45.38,11.19,10.48,12.08,0.00,0.00,0.64
+Achievement,Strong standard,Special,48,151.50,144.00,158.25,11.00,10.00,12.00,14.34,12.79,15.62,42.16,36.71,45.73,11.03,10.17,11.73,0.00,0.00,0.62
+Achievement,Strong standard,Nursery,24,152.50,146.75,163.75,11.00,9.00,12.00,14.55,12.96,16.78,45.95,39.34,48.67,10.72,9.78,11.63,0.00,0.00,0.00
+Achievement,Strong standard,Alternative provision,11,156.00,145.50,176.50,11.00,10.00,13.50,13.64,12.30,16.45,41.84,38.01,46.15,10.73,10.23,11.18,0.00,0.00,0.68
+Achievement,Expected standard,All phases,2371,150.00,143.00,160.00,10.00,9.00,12.00,14.50,13.18,16.10,44.95,39.66,50.11,10.59,9.76,11.54,2.01,1.29,3.01
+Achievement,Expected standard,Primary,1825,150.00,143.00,160.00,10.00,9.00,12.00,14.44,13.18,16.00,45.22,40.37,50.40,10.54,9.71,11.46,2.09,1.32,3.12
+Achievement,Expected standard,Secondary,400,149.00,139.00,161.00,10.00,9.00,12.00,14.59,13.30,16.00,44.20,38.92,49.18,10.69,9.84,11.66,1.94,1.28,2.75
+Achievement,Expected standard,Special,92,154.50,147.75,165.25,11.00,9.00,12.00,15.13,13.45,17.24,40.87,33.58,46.76,11.34,10.30,12.46,0.97,0.57,2.01
+Achievement,Expected standard,Nursery,28,152.00,146.00,164.25,11.00,10.00,12.00,14.61,13.06,15.70,45.26,39.30,48.66,10.43,9.75,11.37,1.31,0.63,1.84
+Achievement,Expected standard,Alternative provision,26,151.50,147.00,171.50,10.00,9.00,12.00,15.00,13.49,16.94,40.34,30.61,50.61,11.22,9.96,13.22,1.51,0.78,1.97
+Achievement,Needs attention,All phases,1077,153.00,145.00,166.00,10.00,9.00,11.00,15.30,13.82,16.90,47.94,42.61,52.65,10.39,9.53,11.35,2.68,1.83,3.70
+Achievement,Needs attention,Primary,799,154.00,145.50,167.00,10.00,9.00,11.00,15.42,13.92,17.00,48.64,43.91,53.30,10.29,9.45,11.22,2.70,1.81,3.68
+Achievement,Needs attention,Secondary,258,152.00,145.00,161.00,10.00,9.00,11.00,14.91,13.64,16.77,45.37,40.37,50.83,10.70,9.77,11.56,2.61,1.82,3.75
+Achievement,Needs attention,Special,14,149.00,148.00,156.25,10.00,10.00,11.75,14.60,12.70,15.28,51.44,45.02,53.02,9.71,9.38,10.51,3.61,2.82,4.57
+Achievement,Needs attention,Nursery,<10,,,,,,,,,,,,,,,,,,
+Achievement,Needs attention,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Achievement,Urgent improvement,All phases,82,156.00,147.00,167.75,11.00,10.00,12.00,14.41,13.45,15.82,50.00,44.74,53.51,10.10,9.20,10.56,1.03,0.57,1.37
+Achievement,Urgent improvement,Primary,52,157.00,147.00,167.25,11.00,10.00,12.00,14.14,12.96,15.56,51.14,46.63,54.32,9.63,8.98,10.33,0.70,0.58,1.27
+Achievement,Urgent improvement,Secondary,24,150.50,144.75,162.75,10.00,9.00,11.00,14.80,14.23,16.09,45.13,41.94,50.85,10.49,9.61,11.40,1.33,0.75,2.51
+Achievement,Urgent improvement,Special,<10,,,,,,,,,,,,,,,,,,
+Achievement,Urgent improvement,Nursery,<10,,,,,,,,,,,,,,,,,,
+Achievement,Urgent improvement,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Exceptional,All phases,58,218.00,207.25,232.25,16.00,14.25,18.00,13.86,12.40,15.21,39.38,36.41,44.97,11.17,10.36,11.87,0.00,0.00,0.27
+Attendance and behaviour,Exceptional,Primary,14,211.50,203.25,229.00,16.00,15.25,17.00,13.39,12.05,14.86,37.30,32.43,45.49,11.46,10.46,12.05,0.00,0.00,0.00
+Attendance and behaviour,Exceptional,Secondary,32,220.00,206.50,231.00,16.00,14.00,18.25,14.44,12.43,15.52,39.82,36.32,44.50,11.35,10.53,11.97,0.00,0.00,0.09
+Attendance and behaviour,Exceptional,Special,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Exceptional,Nursery,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Exceptional,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Strong standard,All phases,1247,202.00,194.00,211.00,16.00,15.00,18.00,12.47,11.39,13.72,42.69,37.10,48.13,10.42,9.51,11.32,0.00,0.00,0.48
+Attendance and behaviour,Strong standard,Primary,877,202.00,194.00,211.00,16.00,15.00,18.00,12.31,11.24,13.56,42.67,36.99,48.02,10.40,9.48,11.32,0.00,0.00,0.48
+Attendance and behaviour,Strong standard,Secondary,230,201.00,192.00,211.00,16.00,14.00,18.00,12.64,11.56,14.05,42.69,37.72,47.76,10.50,9.75,11.24,0.00,0.00,0.44
+Attendance and behaviour,Strong standard,Special,84,205.50,196.00,216.25,17.00,15.00,18.00,12.64,11.77,13.84,44.19,37.71,49.69,10.39,9.24,11.14,0.00,0.00,0.49
+Attendance and behaviour,Strong standard,Nursery,32,202.00,193.75,208.25,15.00,14.00,17.00,13.50,12.17,14.18,45.95,36.12,54.14,10.28,8.72,11.48,0.00,0.00,0.00
+Attendance and behaviour,Strong standard,Alternative provision,24,200.00,189.75,219.25,16.00,13.75,18.00,13.04,11.67,14.53,39.19,29.47,48.29,10.92,9.59,12.48,0.45,0.00,0.53
+Attendance and behaviour,Expected standard,All phases,2333,199.00,191.00,209.00,16.00,15.00,18.00,12.31,11.21,13.57,44.06,38.80,49.01,10.20,9.41,11.07,0.94,0.47,1.49
+Attendance and behaviour,Expected standard,Primary,1822,199.00,190.00,208.00,16.00,15.00,18.00,12.25,11.18,13.47,44.39,39.17,49.27,10.14,9.37,11.00,0.92,0.47,1.48
+Attendance and behaviour,Expected standard,Secondary,420,200.00,193.00,209.25,16.00,15.00,18.00,12.40,11.27,13.79,43.11,37.67,47.84,10.43,9.60,11.23,1.00,0.49,1.53
+Attendance and behaviour,Expected standard,Special,55,206.00,198.50,218.00,16.00,14.00,18.00,12.88,11.54,14.48,40.92,35.20,46.51,10.65,9.72,11.92,0.91,0.45,1.39
+Attendance and behaviour,Expected standard,Nursery,22,198.50,191.25,207.75,16.00,14.00,17.00,12.15,11.49,14.83,47.85,39.28,51.24,9.98,9.25,10.72,0.96,0.48,1.52
+Attendance and behaviour,Expected standard,Alternative provision,14,200.00,193.50,211.75,15.00,15.00,16.00,13.62,12.30,14.91,41.75,36.91,47.33,11.05,9.96,11.64,0.72,0.09,1.55
+Attendance and behaviour,Needs attention,All phases,601,200.00,192.00,212.00,16.00,14.00,18.00,12.53,11.47,13.83,44.95,40.03,49.70,10.14,9.36,10.94,1.90,1.08,2.78
+Attendance and behaviour,Needs attention,Primary,413,200.00,190.00,211.00,16.00,14.00,17.00,12.56,11.47,13.76,45.05,39.99,50.00,10.07,9.34,10.91,1.89,1.06,2.70
+Attendance and behaviour,Needs attention,Secondary,173,201.00,194.00,214.00,16.00,15.00,18.00,12.41,11.29,13.87,44.90,40.93,49.31,10.18,9.43,10.94,1.99,1.18,2.93
+Attendance and behaviour,Needs attention,Special,11,208.00,200.00,220.00,15.00,14.00,16.00,13.50,12.28,16.33,41.95,39.34,47.30,10.76,10.61,11.16,2.01,1.73,3.04
+Attendance and behaviour,Needs attention,Nursery,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Needs attention,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Urgent improvement,All phases,42,208.00,200.00,216.75,16.00,15.00,18.00,12.39,11.33,14.05,45.36,41.15,49.47,10.12,9.44,10.70,2.43,1.86,3.26
+Attendance and behaviour,Urgent improvement,Primary,18,209.50,204.50,216.50,16.00,14.25,18.50,12.49,11.79,13.97,45.52,43.60,46.37,10.27,9.47,10.77,2.09,1.46,2.95
+Attendance and behaviour,Urgent improvement,Secondary,18,208.00,200.25,224.25,17.00,15.00,18.00,12.77,11.42,14.12,45.36,42.42,50.63,9.91,9.40,10.59,2.87,2.42,3.32
+Attendance and behaviour,Urgent improvement,Special,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Urgent improvement,Nursery,<10,,,,,,,,,,,,,,,,,,
+Attendance and behaviour,Urgent improvement,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Exceptional,All phases,88,321.50,307.00,337.25,20.00,18.00,23.00,15.97,14.05,17.57,34.62,27.58,39.82,12.37,11.50,13.47,0.00,0.00,0.00
+Personal development and wellbeing,Exceptional,Primary,29,328.00,312.00,333.00,20.00,18.00,22.00,15.85,14.91,17.55,35.47,27.95,39.87,12.36,11.32,13.62,0.00,0.00,0.00
+Personal development and wellbeing,Exceptional,Secondary,41,322.00,307.00,341.00,21.00,18.00,22.00,16.33,14.44,17.62,32.53,27.26,37.10,12.78,11.81,13.87,0.00,0.00,0.00
+Personal development and wellbeing,Exceptional,Special,10,309.00,298.00,326.75,19.50,19.00,22.50,14.32,14.11,16.44,36.43,32.12,40.46,12.02,11.29,12.17,0.00,0.00,0.00
+Personal development and wellbeing,Exceptional,Nursery,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Exceptional,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Strong standard,All phases,1623,304.00,294.00,316.00,21.00,19.00,23.00,14.57,13.30,16.00,38.53,32.74,43.40,11.57,10.69,12.45,0.00,0.00,0.00
+Personal development and wellbeing,Strong standard,Primary,1195,304.00,294.00,315.00,21.00,19.00,23.00,14.53,13.32,15.89,38.76,33.14,43.87,11.51,10.62,12.41,0.00,0.00,0.00
+Personal development and wellbeing,Strong standard,Secondary,283,305.00,293.00,318.00,21.00,19.00,23.00,14.50,13.18,16.20,37.40,32.10,41.98,11.73,10.88,12.47,0.00,0.00,0.00
+Personal development and wellbeing,Strong standard,Special,82,306.00,295.00,319.00,21.00,19.00,23.00,14.73,13.31,16.29,36.77,31.27,40.89,11.96,10.97,12.71,0.00,0.00,0.00
+Personal development and wellbeing,Strong standard,Nursery,38,300.00,288.00,316.00,21.00,20.00,22.00,14.36,13.75,15.30,45.56,37.51,48.16,10.51,10.02,11.75,0.00,0.00,0.00
+Personal development and wellbeing,Strong standard,Alternative provision,25,297.00,286.00,305.00,19.00,17.00,22.00,15.45,13.40,17.19,30.03,25.95,38.49,13.13,11.31,13.77,0.00,0.00,0.00
+Personal development and wellbeing,Expected standard,All phases,2391,297.00,285.00,308.00,21.00,19.00,23.00,14.35,13.06,15.67,40.24,34.93,45.37,11.25,10.36,12.11,0.32,0.00,0.65
+Personal development and wellbeing,Expected standard,Primary,1805,297.00,285.00,307.00,21.00,19.00,23.00,14.32,13.05,15.56,40.65,35.13,45.88,11.16,10.30,12.06,0.31,0.00,0.63
+Personal development and wellbeing,Expected standard,Secondary,494,297.00,286.00,309.00,21.00,18.00,23.00,14.37,13.09,15.95,39.05,33.85,43.17,11.42,10.71,12.22,0.34,0.00,0.71
+Personal development and wellbeing,Expected standard,Special,63,306.00,289.50,315.00,21.00,19.00,23.00,14.55,13.39,15.85,38.87,34.65,44.15,11.36,10.55,12.24,0.32,0.00,0.49
+Personal development and wellbeing,Expected standard,Nursery,14,292.00,281.50,305.25,21.00,19.00,22.00,13.41,12.87,14.82,48.13,44.87,51.72,9.81,9.41,10.77,0.17,0.00,0.36
+Personal development and wellbeing,Expected standard,Alternative provision,15,301.00,291.00,319.50,20.00,19.00,22.00,15.35,14.26,15.90,35.30,27.14,45.01,12.32,10.82,13.18,0.33,0.15,0.38
+Personal development and wellbeing,Needs attention,All phases,172,294.00,278.75,304.00,20.00,18.00,21.00,15.00,13.76,16.21,40.78,36.41,45.22,11.32,10.43,12.16,1.14,0.72,1.79
+Personal development and wellbeing,Needs attention,Primary,112,291.00,274.50,302.00,20.00,17.00,21.00,14.79,13.71,16.07,42.63,37.59,46.20,11.05,10.31,11.96,1.17,0.76,1.69
+Personal development and wellbeing,Needs attention,Secondary,54,298.50,285.25,309.00,20.00,18.00,21.75,15.18,13.76,16.38,38.54,35.74,42.85,11.66,10.85,12.30,1.10,0.69,2.00
+Personal development and wellbeing,Needs attention,Special,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Needs attention,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Urgent improvement,All phases,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Urgent improvement,Primary,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Urgent improvement,Secondary,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Urgent improvement,Special,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Urgent improvement,Nursery,<10,,,,,,,,,,,,,,,,,,
+Personal development and wellbeing,Urgent improvement,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Early years,Exceptional,All phases,21,232.00,212.00,245.00,17.00,16.00,18.00,14.12,13.00,15.92,35.78,31.29,40.21,11.82,11.06,12.45,0.00,0.00,0.00
+Early years,Exceptional,Primary,20,234.00,212.00,246.25,16.50,15.75,18.00,14.12,13.19,15.98,35.76,31.00,40.08,11.82,11.11,12.50,0.00,0.00,0.00
+Early years,Exceptional,Secondary,<10,,,,,,,,,,,,,,,,,,
+Early years,Strong standard,All phases,833,209.00,200.00,221.00,16.00,14.00,18.00,13.35,12.12,14.69,42.92,37.04,48.26,10.60,9.83,11.53,0.00,0.00,0.00
+Early years,Strong standard,Primary,787,209.00,200.00,221.00,16.00,14.00,18.00,13.32,12.10,14.67,42.87,36.96,48.18,10.60,9.84,11.55,0.00,0.00,0.00
+Early years,Strong standard,Secondary,18,203.50,195.25,205.75,15.50,13.25,16.00,13.57,12.31,14.57,43.71,37.37,47.55,10.70,9.78,11.58,0.00,0.00,0.00
+Early years,Strong standard,Special,28,207.50,200.50,223.50,15.00,14.00,16.25,14.00,12.91,15.02,45.01,40.37,51.05,10.41,9.67,11.22,0.00,0.00,0.00
+Early years,Expected standard,All phases,1851,205.00,197.00,215.00,16.00,14.00,17.00,13.13,11.89,14.43,46.31,40.86,51.83,10.09,9.20,10.97,0.49,0.00,1.01
+Early years,Expected standard,Primary,1824,205.00,197.00,215.00,16.00,14.00,17.00,13.13,11.88,14.43,46.31,40.90,51.88,10.10,9.20,10.97,0.49,0.00,1.01
+Early years,Expected standard,Secondary,13,205.00,193.00,217.00,17.00,14.00,18.00,12.83,12.00,14.29,46.61,45.04,50.82,9.94,9.22,10.88,0.56,0.00,0.99
+Early years,Expected standard,Special,14,209.00,199.25,213.75,15.00,14.00,17.00,14.40,12.03,15.26,46.59,32.11,49.26,10.04,9.66,12.78,0.50,0.11,0.96
+Early years,Needs attention,All phases,272,205.00,195.75,216.25,15.00,14.00,17.00,13.58,12.31,14.93,49.42,44.53,53.90,9.78,9.06,10.67,1.77,1.01,2.35
+Early years,Needs attention,Primary,268,205.00,196.00,216.25,15.00,14.00,17.00,13.55,12.28,14.92,49.46,44.38,53.90,9.78,9.04,10.67,1.77,1.01,2.35
+Early years,Needs attention,Secondary,<10,,,,,,,,,,,,,,,,,,
+Early years,Needs attention,Special,<10,,,,,,,,,,,,,,,,,,
+Early years,Urgent improvement,All phases,27,216.00,208.00,232.00,16.00,15.00,17.00,13.87,12.82,15.45,51.11,45.44,54.00,9.79,9.00,10.33,0.99,0.83,1.55
+Early years,Urgent improvement,Primary,26,217.00,208.00,235.00,16.00,15.00,17.00,13.96,12.99,15.52,50.81,45.17,53.67,9.84,9.07,10.37,1.02,0.82,1.56
+Early years,Urgent improvement,Special,<10,,,,,,,,,,,,,,,,,,
+Post-16 provision,Exceptional,All phases,23,228.00,212.00,249.00,15.00,12.00,18.00,15.57,14.02,17.77,32.93,26.96,37.09,12.67,11.79,13.76,0.00,0.00,0.21
+Post-16 provision,Exceptional,Secondary,21,228.00,214.00,262.00,15.00,12.00,18.00,15.57,14.27,17.54,32.93,27.04,36.95,12.67,11.81,13.66,0.00,0.00,0.42
+Post-16 provision,Exceptional,Special,<10,,,,,,,,,,,,,,,,,,
+Post-16 provision,Strong standard,All phases,147,208.00,198.00,219.00,15.00,13.00,16.00,14.43,13.19,15.74,38.50,32.32,43.17,11.41,10.54,12.53,0.00,0.00,0.00
+Post-16 provision,Strong standard,Secondary,110,208.00,197.25,219.00,15.00,13.00,16.75,14.31,12.87,15.76,38.52,32.28,43.22,11.38,10.54,12.49,0.00,0.00,0.26
+Post-16 provision,Strong standard,Special,37,209.00,198.00,223.00,14.00,13.00,15.00,14.93,14.00,15.50,38.05,32.50,42.74,11.50,10.59,12.67,0.00,0.00,0.00
+Post-16 provision,Expected standard,All phases,306,203.00,194.25,217.00,15.00,14.00,17.00,13.73,12.35,15.23,40.50,34.66,45.16,11.15,10.31,11.96,0.57,0.47,1.23
+Post-16 provision,Expected standard,Secondary,274,203.00,194.00,217.00,15.00,14.00,17.00,13.50,12.32,15.05,40.75,35.33,45.26,11.11,10.28,11.89,0.67,0.47,1.25
+Post-16 provision,Expected standard,Special,32,200.00,195.00,213.25,14.00,13.00,16.00,14.95,12.50,16.31,37.04,31.27,42.96,11.80,10.79,12.83,0.49,0.00,0.64
+Post-16 provision,Needs attention,All phases,48,207.00,194.25,218.00,15.00,13.00,16.00,13.90,12.91,15.03,44.64,38.95,49.89,10.64,9.59,11.43,1.37,0.90,2.25
+Post-16 provision,Needs attention,Secondary,46,207.50,195.00,218.00,15.00,13.00,16.00,13.96,12.96,15.27,44.60,38.52,49.40,10.70,9.64,11.48,1.37,0.89,2.23
+Post-16 provision,Needs attention,Special,<10,,,,,,,,,,,,,,,,,,
+Post-16 provision,Urgent improvement,All phases,<10,,,,,,,,,,,,,,,,,,
+Post-16 provision,Urgent improvement,Secondary,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Exceptional,All phases,67,253.00,237.00,270.00,17.00,15.00,19.00,15.33,13.57,16.54,40.27,35.17,45.16,11.54,10.64,12.23,0.00,0.00,0.00
+Leadership and governance,Exceptional,Primary,20,263.00,249.75,272.25,17.00,15.00,20.00,15.62,13.64,16.68,39.32,34.70,43.10,11.60,10.96,12.25,0.00,0.00,0.00
+Leadership and governance,Exceptional,Secondary,33,250.00,235.00,265.00,16.00,15.00,18.00,15.33,14.00,16.47,41.73,35.54,48.27,11.02,10.49,12.23,0.00,0.00,0.00
+Leadership and governance,Exceptional,Special,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Exceptional,Nursery,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Exceptional,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Strong standard,All phases,935,246.00,230.00,257.00,17.00,15.00,19.00,14.06,12.71,15.50,43.51,37.57,48.56,10.74,9.85,11.67,0.00,0.00,0.00
+Leadership and governance,Strong standard,Primary,624,246.00,230.00,257.00,17.00,16.00,19.00,13.97,12.68,15.27,42.72,37.25,48.22,10.77,9.92,11.67,0.00,0.00,0.00
+Leadership and governance,Strong standard,Secondary,208,244.50,227.75,255.00,17.00,15.00,19.00,14.31,12.87,15.80,44.53,38.93,48.90,10.67,9.83,11.59,0.00,0.00,0.37
+Leadership and governance,Strong standard,Special,61,251.00,241.00,261.00,18.00,16.00,20.00,14.16,12.43,15.69,44.33,36.73,48.88,10.47,9.68,11.58,0.00,0.00,0.00
+Leadership and governance,Strong standard,Nursery,21,230.00,204.00,252.00,17.00,15.00,18.00,13.79,12.35,14.88,45.59,39.56,54.84,10.22,8.79,11.12,0.00,0.00,0.00
+Leadership and governance,Strong standard,Alternative provision,21,253.00,242.00,262.00,17.00,14.00,19.00,14.53,12.83,17.29,39.24,32.36,51.90,11.55,9.49,12.91,0.00,0.00,0.36
+Leadership and governance,Expected standard,All phases,2704,241.00,223.00,252.00,17.00,15.00,19.00,13.83,12.65,15.24,45.10,39.64,50.15,10.42,9.61,11.31,0.38,0.00,0.72
+Leadership and governance,Expected standard,Primary,2078,240.00,222.00,252.00,17.00,15.00,19.00,13.81,12.65,15.17,45.08,39.65,50.16,10.39,9.60,11.31,0.38,0.00,0.69
+Leadership and governance,Expected standard,Secondary,505,242.00,224.00,253.00,17.00,15.00,19.00,13.88,12.62,15.50,45.48,40.25,50.24,10.45,9.68,11.21,0.38,0.00,0.65
+Leadership and governance,Expected standard,Special,78,248.00,235.25,262.75,17.00,15.25,19.00,14.25,13.28,15.91,43.40,34.79,48.83,10.75,9.87,12.19,0.42,0.00,0.84
+Leadership and governance,Expected standard,Nursery,28,245.00,224.75,252.25,18.00,15.75,20.00,13.65,12.54,14.82,44.87,39.75,50.72,10.49,9.34,11.44,0.00,0.00,0.82
+Leadership and governance,Expected standard,Alternative provision,15,246.00,218.00,265.00,17.00,15.00,19.50,13.27,12.38,16.46,39.01,34.63,45.23,11.26,10.43,12.55,0.72,0.00,0.84
+Leadership and governance,Needs attention,All phases,502,242.00,223.00,255.00,17.00,15.00,18.00,14.46,13.16,15.75,45.88,40.78,51.10,10.44,9.70,11.34,1.34,0.84,1.97
+Leadership and governance,Needs attention,Primary,370,240.00,222.00,253.00,16.00,15.00,18.00,14.49,13.23,15.64,46.07,41.30,51.17,10.39,9.71,11.25,1.30,0.84,1.91
+Leadership and governance,Needs attention,Secondary,111,248.00,232.00,258.00,17.00,15.00,19.00,14.33,13.05,15.90,44.07,39.24,50.85,10.64,9.73,11.70,1.50,0.90,2.14
+Leadership and governance,Needs attention,Special,13,252.00,239.00,259.00,17.00,16.00,20.00,13.61,12.95,15.75,48.52,45.44,52.13,9.65,9.32,11.50,1.01,0.82,1.26
+Leadership and governance,Needs attention,Nursery,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Needs attention,Alternative provision,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Urgent improvement,All phases,73,246.00,223.00,265.00,17.00,15.00,18.00,14.78,13.71,15.71,45.86,42.65,48.85,10.62,10.01,11.09,1.22,0.89,1.61
+Leadership and governance,Urgent improvement,Primary,52,245.50,222.75,261.00,16.50,15.00,18.00,14.75,13.75,15.37,45.81,42.57,48.01,10.64,10.13,11.08,1.20,0.79,1.63
+Leadership and governance,Urgent improvement,Secondary,16,246.00,219.75,258.75,16.50,14.00,17.50,14.96,13.66,15.74,47.69,44.23,50.90,10.20,9.60,11.07,1.28,0.94,1.72
+Leadership and governance,Urgent improvement,Special,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Urgent improvement,Nursery,<10,,,,,,,,,,,,,,,,,,
+Leadership and governance,Urgent improvement,Alternative provision,<10,,,,,,,,,,,,,,,,,,

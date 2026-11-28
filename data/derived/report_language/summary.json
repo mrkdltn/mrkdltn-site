@@ -1,0 +1,254 @@
+{
+ "cutoff": "2026-11-28",
+ "reports": 4281,
+ "sections": 29216,
+ "sentences": 456974,
+ "by_version": {
+  "v1.1": 3222,
+  "v2.0": 1059
+ },
+ "a1": {
+  "eligible_phrases_pooled": {
+   "Inclusion": 6804,
+   "Curriculum and teaching": 5646,
+   "Achievement": 4371,
+   "Attendance and behaviour": 6513,
+   "Personal development and wellbeing": 10513,
+   "Early years": 4848,
+   "Post-16 provision": 638,
+   "Leadership and governance": 6435
+  }
+ },
+ "a2_meta": {
+  "toolkit_5grams": {
+   "v1.1|inclusion": 1281,
+   "v1.1|curriculum_teaching": 2023,
+   "v1.1|achievement": 1468,
+   "v1.1|attendance_behaviour": 2012,
+   "v1.1|personal_development": 1771,
+   "v1.1|early_years": 2035,
+   "v1.1|post16": 1573,
+   "v1.1|leadership_governance": 1704,
+   "v2.0|inclusion": 1412,
+   "v2.0|curriculum_teaching": 2046,
+   "v2.0|achievement": 1506,
+   "v2.0|attendance_behaviour": 2073,
+   "v2.0|personal_development": 1833,
+   "v2.0|early_years": 2130,
+   "v2.0|post16": 1569,
+   "v2.0|leadership_governance": 1760,
+   "both|inclusion": 1222,
+   "both|curriculum_teaching": 2004,
+   "both|achievement": 1398,
+   "both|attendance_behaviour": 1984,
+   "both|personal_development": 1691,
+   "both|early_years": 1990,
+   "both|post16": 1534,
+   "both|leadership_governance": 1660
+  },
+  "stock_5grams": {
+   "inclusion": 3,
+   "curriculum_teaching": 2,
+   "achievement": 2,
+   "attendance_behaviour": 0,
+   "personal_development": 0,
+   "early_years": 0,
+   "post16": 0,
+   "leadership_governance": 0
+  }
+ },
+ "a2_reading": {
+  "like_for_like": {
+   "first3_mean": 4.023342438874242,
+   "last3_mean": 4.052768543280249,
+   "difference_pp": 0.02942610440600646,
+   "lo": -0.1371328672332147,
+   "hi": 0.17967409379430296,
+   "sections_first3": 5959,
+   "sections_last3": 9413,
+   "reports_first3": 870,
+   "reports_last3": 1378,
+   "reading": "no clear change"
+  },
+  "like_for_like_no_stock": {
+   "first3_mean": 4.023342438874242,
+   "last3_mean": 4.052768543280249,
+   "difference_pp": 0.02942610440600646,
+   "lo": -0.1371328672332147,
+   "hi": 0.17967409379430296,
+   "sections_first3": 5959,
+   "sections_last3": 9413,
+   "reports_first3": 870,
+   "reports_last3": 1378,
+   "reading": "no clear change"
+  },
+  "in_force": {
+   "first3_mean": 4.032817279354953,
+   "last3_mean": 4.142045889330127,
+   "difference_pp": 0.10922860997517425,
+   "lo": -0.05846516769216783,
+   "hi": 0.25948287265586917,
+   "sections_first3": 5959,
+   "sections_last3": 9413,
+   "reports_first3": 870,
+   "reports_last3": 1378,
+   "reading": "no clear change"
+  }
+ },
+ "a4": {
+  "headline": [
+   {
+    "estimate": 0.9543219478856946,
+    "se": 0.0024500223908985944,
+    "lo": 0.470705852290787,
+    "hi": 1.4402659312557908,
+    "p": 0.00010588831656824673,
+    "sections": 11304,
+    "reports": 1651,
+    "reports_dep": 908,
+    "reports_ref": 743,
+    "analysis": "headline",
+    "outcome": "log_words",
+    "area": "All areas",
+    "p_holm": 0.00021177663313649346,
+    "reading": "no meaningful difference"
+   },
+   {
+    "estimate": -0.08857122801086753,
+    "se": 0.0191368830379603,
+    "lo": -0.12607882954162516,
+    "hi": -0.05106362648010989,
+    "p": 3.686803992004904e-06,
+    "sections": 11304,
+    "reports": 1651,
+    "reports_dep": 908,
+    "reports_ref": 743,
+    "analysis": "headline",
+    "outcome": "hedges_per_100",
+    "area": "All areas",
+    "p_holm": 1.1060411976014712e-05,
+    "reading": "no meaningful difference"
+   },
+   {
+    "estimate": -0.08369285470932665,
+    "se": 0.09108633617970675,
+    "lo": -0.2622187931052596,
+    "hi": 0.09483308368660627,
+    "p": 0.3581845186744512,
+    "sections": 11304,
+    "reports": 1651,
+    "reports_dep": 908,
+    "reports_ref": 743,
+    "analysis": "headline",
+    "outcome": "echo_like_for_like",
+    "area": "All areas",
+    "p_holm": 0.3581845186744512,
+    "reading": "no meaningful difference"
+   }
+  ],
+  "reports_without_quintile_pri_sec": 0
+ },
+ "a5_months": [
+  {
+   "month": "2025-11",
+   "reports_all_phases": "124",
+   "reports_primary_secondary": "114",
+   "note": "shown on its own: the first weeks of the framework",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2025-12+2026-01",
+   "reports_all_phases": "543",
+   "reports_primary_secondary": "517",
+   "note": "merged: a month with fewer than 100 reports joins the next",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2026-02",
+   "reports_all_phases": "327",
+   "reports_primary_secondary": "315",
+   "note": "",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2026-03",
+   "reports_all_phases": "400",
+   "reports_primary_secondary": "381",
+   "note": "",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2026-04",
+   "reports_all_phases": "382",
+   "reports_primary_secondary": "353",
+   "note": "",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2026-05",
+   "reports_all_phases": "385",
+   "reports_primary_secondary": "349",
+   "note": "",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2026-06",
+   "reports_all_phases": "734",
+   "reports_primary_secondary": "668",
+   "note": "",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2026-07",
+   "reports_all_phases": "327",
+   "reports_primary_secondary": "303",
+   "note": "",
+   "toolkit": "v1.1"
+  },
+  {
+   "month": "2026-09",
+   "reports_all_phases": "679",
+   "reports_primary_secondary": "655",
+   "note": "",
+   "toolkit": "v2.0"
+  },
+  {
+   "month": "2026-10",
+   "reports_all_phases": "372",
+   "reports_primary_secondary": "354",
+   "note": "",
+   "toolkit": "v2.0"
+  }
+ ],
+ "a6": {
+  "threshold": 0.24551017942920064,
+  "rule": "fallback: no threshold reached precision 0.8; highest precision on the first 100 was 0.353",
+  "train": {
+   "n": 100,
+   "labelled_with_standard": 71,
+   "assigned": 17,
+   "correct": 6,
+   "precision": 0.35294117647058826,
+   "recall": 0.08450704225352113,
+   "unmatched_share": 0.83
+  },
+  "test": {
+   "n": 100,
+   "labelled_with_standard": 83,
+   "assigned": 15,
+   "correct": 2,
+   "precision": 0.13333333333333333,
+   "recall": 0.024096385542168676,
+   "unmatched_share": 0.85
+  },
+  "diagnostic_exploratory": {
+   "assigned_with_standard_label": 15,
+   "same_grade_heading": 2,
+   "all_test_with_standard_label": 83,
+   "all_test_same_grade_heading_at_any_score": 26,
+   "all_test_exact_at_any_score": 16
+  },
+  "map_status": "not validated: shown only as the standards whose wording reports echo most",
+  "links": 198
+ }
+}

@@ -1,0 +1,357 @@
+version,area,grade,phase,sections,sentences,unmatched_share
+v1.1,Inclusion,Exceptional,All phases,65,968,0.8977
+v1.1,Inclusion,Exceptional,Primary,17,250,0.9080
+v1.1,Inclusion,Exceptional,Secondary,27,388,0.8711
+v1.1,Inclusion,Exceptional,Special,11,169,0.8994
+v1.1,Inclusion,Exceptional,Nursery,<10,95,
+v1.1,Inclusion,Exceptional,Alternative provision,<10,66,
+v1.1,Inclusion,Strong standard,All phases,1075,15412,0.8926
+v1.1,Inclusion,Strong standard,Primary,758,10848,0.9014
+v1.1,Inclusion,Strong standard,Secondary,204,2903,0.8560
+v1.1,Inclusion,Strong standard,Special,63,948,0.8871
+v1.1,Inclusion,Strong standard,Nursery,34,489,0.9366
+v1.1,Inclusion,Strong standard,Alternative provision,16,224,0.8661
+v1.1,Inclusion,Expected standard,All phases,1762,24588,0.8787
+v1.1,Inclusion,Expected standard,Primary,1307,18160,0.8906
+v1.1,Inclusion,Expected standard,Secondary,379,5344,0.8348
+v1.1,Inclusion,Expected standard,Special,48,687,0.8734
+v1.1,Inclusion,Expected standard,Nursery,19,254,0.9409
+v1.1,Inclusion,Expected standard,Alternative provision,<10,143,
+v1.1,Inclusion,Needs attention,All phases,290,3912,0.8689
+v1.1,Inclusion,Needs attention,Primary,207,2776,0.8844
+v1.1,Inclusion,Needs attention,Secondary,76,1041,0.8252
+v1.1,Inclusion,Needs attention,Special,<10,80,
+v1.1,Inclusion,Needs attention,Alternative provision,<10,15,
+v1.1,Inclusion,Urgent improvement,All phases,30,420,0.8905
+v1.1,Inclusion,Urgent improvement,Primary,20,279,0.8853
+v1.1,Inclusion,Urgent improvement,Secondary,<10,73,
+v1.1,Inclusion,Urgent improvement,Special,<10,43,
+v1.1,Inclusion,Urgent improvement,Nursery,<10,14,
+v1.1,Inclusion,Urgent improvement,Alternative provision,<10,11,
+v1.1,Curriculum and teaching,Exceptional,All phases,31,445,0.8629
+v1.1,Curriculum and teaching,Exceptional,Primary,<10,110,
+v1.1,Curriculum and teaching,Exceptional,Secondary,16,238,0.8571
+v1.1,Curriculum and teaching,Exceptional,Special,<10,13,
+v1.1,Curriculum and teaching,Exceptional,Nursery,<10,84,
+v1.1,Curriculum and teaching,Strong standard,All phases,512,7620,0.8598
+v1.1,Curriculum and teaching,Strong standard,Primary,331,4967,0.8635
+v1.1,Curriculum and teaching,Strong standard,Secondary,117,1684,0.8539
+v1.1,Curriculum and teaching,Strong standard,Special,37,536,0.7892
+v1.1,Curriculum and teaching,Strong standard,Nursery,19,312,0.9615
+v1.1,Curriculum and teaching,Strong standard,Alternative provision,<10,121,
+v1.1,Curriculum and teaching,Expected standard,All phases,1978,29564,0.8532
+v1.1,Curriculum and teaching,Expected standard,Primary,1462,21955,0.8535
+v1.1,Curriculum and teaching,Expected standard,Secondary,399,5884,0.8486
+v1.1,Curriculum and teaching,Expected standard,Special,69,1030,0.8495
+v1.1,Curriculum and teaching,Expected standard,Nursery,30,443,0.9052
+v1.1,Curriculum and teaching,Expected standard,Alternative provision,18,252,0.8571
+v1.1,Curriculum and teaching,Needs attention,All phases,651,9501,0.8326
+v1.1,Curriculum and teaching,Needs attention,Primary,471,6887,0.8342
+v1.1,Curriculum and teaching,Needs attention,Secondary,152,2201,0.8214
+v1.1,Curriculum and teaching,Needs attention,Special,20,295,0.8441
+v1.1,Curriculum and teaching,Needs attention,Nursery,<10,58,
+v1.1,Curriculum and teaching,Needs attention,Alternative provision,<10,60,
+v1.1,Curriculum and teaching,Urgent improvement,All phases,50,738,0.7859
+v1.1,Curriculum and teaching,Urgent improvement,Primary,37,545,0.7817
+v1.1,Curriculum and teaching,Urgent improvement,Secondary,<10,102,
+v1.1,Curriculum and teaching,Urgent improvement,Special,<10,63,
+v1.1,Curriculum and teaching,Urgent improvement,Nursery,<10,14,
+v1.1,Curriculum and teaching,Urgent improvement,Alternative provision,<10,14,
+v1.1,Achievement,Exceptional,All phases,51,545,0.8000
+v1.1,Achievement,Exceptional,Primary,19,202,0.8168
+v1.1,Achievement,Exceptional,Secondary,23,242,0.7603
+v1.1,Achievement,Exceptional,Special,<10,21,
+v1.1,Achievement,Exceptional,Nursery,<10,54,
+v1.1,Achievement,Exceptional,Alternative provision,<10,26,
+v1.1,Achievement,Strong standard,All phases,520,5495,0.7969
+v1.1,Achievement,Strong standard,Primary,325,3446,0.8056
+v1.1,Achievement,Strong standard,Secondary,125,1292,0.7384
+v1.1,Achievement,Strong standard,Special,39,417,0.8417
+v1.1,Achievement,Strong standard,Nursery,24,262,0.8779
+v1.1,Achievement,Strong standard,Alternative provision,<10,78,
+v1.1,Achievement,Expected standard,All phases,1735,18272,0.7949
+v1.1,Achievement,Expected standard,Primary,1298,13684,0.8020
+v1.1,Achievement,Expected standard,Secondary,318,3308,0.7382
+v1.1,Achievement,Expected standard,Special,72,771,0.8508
+v1.1,Achievement,Expected standard,Nursery,28,299,0.9197
+v1.1,Achievement,Expected standard,Alternative provision,19,210,0.8476
+v1.1,Achievement,Needs attention,All phases,845,8656,0.7866
+v1.1,Achievement,Needs attention,Primary,624,6419,0.7972
+v1.1,Achievement,Needs attention,Secondary,203,2050,0.7459
+v1.1,Achievement,Needs attention,Special,14,148,0.8784
+v1.1,Achievement,Needs attention,Nursery,<10,19,
+v1.1,Achievement,Needs attention,Alternative provision,<10,20,
+v1.1,Achievement,Urgent improvement,All phases,71,781,0.7977
+v1.1,Achievement,Urgent improvement,Primary,43,485,0.8103
+v1.1,Achievement,Urgent improvement,Secondary,22,230,0.7348
+v1.1,Achievement,Urgent improvement,Special,<10,43,
+v1.1,Achievement,Urgent improvement,Nursery,<10,11,
+v1.1,Achievement,Urgent improvement,Alternative provision,<10,12,
+v1.1,Attendance and behaviour,Exceptional,All phases,43,703,0.9203
+v1.1,Attendance and behaviour,Exceptional,Primary,<10,143,
+v1.1,Attendance and behaviour,Exceptional,Secondary,23,376,0.9176
+v1.1,Attendance and behaviour,Exceptional,Special,<10,102,
+v1.1,Attendance and behaviour,Exceptional,Nursery,<10,61,
+v1.1,Attendance and behaviour,Exceptional,Alternative provision,<10,21,
+v1.1,Attendance and behaviour,Strong standard,All phases,975,15965,0.9099
+v1.1,Attendance and behaviour,Strong standard,Primary,668,11013,0.9070
+v1.1,Attendance and behaviour,Strong standard,Secondary,188,3042,0.9043
+v1.1,Attendance and behaviour,Strong standard,Special,69,1125,0.9298
+v1.1,Attendance and behaviour,Strong standard,Nursery,32,499,0.9619
+v1.1,Attendance and behaviour,Strong standard,Alternative provision,18,286,0.9126
+v1.1,Attendance and behaviour,Expected standard,All phases,1695,27634,0.8927
+v1.1,Attendance and behaviour,Expected standard,Primary,1294,21158,0.8928
+v1.1,Attendance and behaviour,Expected standard,Secondary,327,5281,0.8858
+v1.1,Attendance and behaviour,Expected standard,Special,43,708,0.9124
+v1.1,Attendance and behaviour,Expected standard,Nursery,22,344,0.9593
+v1.1,Attendance and behaviour,Expected standard,Alternative provision,<10,143,
+v1.1,Attendance and behaviour,Needs attention,All phases,469,7542,0.9024
+v1.1,Attendance and behaviour,Needs attention,Primary,321,5160,0.9027
+v1.1,Attendance and behaviour,Needs attention,Secondary,136,2195,0.9011
+v1.1,Attendance and behaviour,Needs attention,Special,10,156,0.9231
+v1.1,Attendance and behaviour,Needs attention,Nursery,<10,15,
+v1.1,Attendance and behaviour,Needs attention,Alternative provision,<10,16,
+v1.1,Attendance and behaviour,Urgent improvement,All phases,40,666,0.9039
+v1.1,Attendance and behaviour,Urgent improvement,Primary,17,276,0.9130
+v1.1,Attendance and behaviour,Urgent improvement,Secondary,17,291,0.8969
+v1.1,Attendance and behaviour,Urgent improvement,Special,<10,55,
+v1.1,Attendance and behaviour,Urgent improvement,Nursery,<10,14,
+v1.1,Attendance and behaviour,Urgent improvement,Alternative provision,<10,30,
+v1.1,Personal development and wellbeing,Exceptional,All phases,73,1502,0.8029
+v1.1,Personal development and wellbeing,Exceptional,Primary,21,423,0.7991
+v1.1,Personal development and wellbeing,Exceptional,Secondary,36,743,0.7793
+v1.1,Personal development and wellbeing,Exceptional,Special,<10,186,
+v1.1,Personal development and wellbeing,Exceptional,Nursery,<10,150,
+v1.1,Personal development and wellbeing,Strong standard,All phases,1238,26021,0.7944
+v1.1,Personal development and wellbeing,Strong standard,Primary,886,18643,0.7945
+v1.1,Personal development and wellbeing,Strong standard,Secondary,228,4798,0.7782
+v1.1,Personal development and wellbeing,Strong standard,Special,68,1433,0.7844
+v1.1,Personal development and wellbeing,Strong standard,Nursery,38,785,0.9299
+v1.1,Personal development and wellbeing,Strong standard,Alternative provision,18,362,0.7486
+v1.1,Personal development and wellbeing,Expected standard,All phases,1761,36725,0.7894
+v1.1,Personal development and wellbeing,Expected standard,Primary,1309,27354,0.7941
+v1.1,Personal development and wellbeing,Expected standard,Secondary,379,7825,0.7654
+v1.1,Personal development and wellbeing,Expected standard,Special,49,1050,0.8105
+v1.1,Personal development and wellbeing,Expected standard,Nursery,14,290,0.9310
+v1.1,Personal development and wellbeing,Expected standard,Alternative provision,10,206,0.7767
+v1.1,Personal development and wellbeing,Needs attention,All phases,144,2803,0.7578
+v1.1,Personal development and wellbeing,Needs attention,Primary,90,1740,0.7690
+v1.1,Personal development and wellbeing,Needs attention,Secondary,48,949,0.7366
+v1.1,Personal development and wellbeing,Needs attention,Special,<10,67,
+v1.1,Personal development and wellbeing,Needs attention,Alternative provision,<10,47,
+v1.1,Personal development and wellbeing,Urgent improvement,All phases,<10,111,
+v1.1,Personal development and wellbeing,Urgent improvement,Primary,<10,54,
+v1.1,Personal development and wellbeing,Urgent improvement,Special,<10,17,
+v1.1,Personal development and wellbeing,Urgent improvement,Nursery,<10,18,
+v1.1,Personal development and wellbeing,Urgent improvement,Alternative provision,<10,22,
+v1.1,Early years,Exceptional,All phases,17,286,0.7587
+v1.1,Early years,Exceptional,Primary,16,266,0.7519
+v1.1,Early years,Exceptional,Secondary,<10,20,
+v1.1,Early years,Strong standard,All phases,584,9351,0.7624
+v1.1,Early years,Strong standard,Primary,545,8760,0.7629
+v1.1,Early years,Strong standard,Secondary,16,235,0.7915
+v1.1,Early years,Strong standard,Special,23,356,0.7303
+v1.1,Early years,Expected standard,All phases,1359,21717,0.7489
+v1.1,Early years,Expected standard,Primary,1336,21352,0.7487
+v1.1,Early years,Expected standard,Secondary,13,211,0.7630
+v1.1,Early years,Expected standard,Special,10,154,0.7532
+v1.1,Early years,Needs attention,All phases,234,3604,0.7542
+v1.1,Early years,Needs attention,Primary,230,3541,0.7546
+v1.1,Early years,Needs attention,Secondary,<10,13,
+v1.1,Early years,Needs attention,Special,<10,50,
+v1.1,Early years,Urgent improvement,All phases,21,333,0.7057
+v1.1,Early years,Urgent improvement,Primary,20,316,0.7152
+v1.1,Early years,Urgent improvement,Special,<10,17,
+v1.1,Post-16 provision,Exceptional,All phases,18,261,0.9425
+v1.1,Post-16 provision,Exceptional,Secondary,16,233,0.9485
+v1.1,Post-16 provision,Exceptional,Special,<10,28,
+v1.1,Post-16 provision,Strong standard,All phases,115,1686,0.9282
+v1.1,Post-16 provision,Strong standard,Secondary,86,1272,0.9277
+v1.1,Post-16 provision,Strong standard,Special,29,414,0.9300
+v1.1,Post-16 provision,Expected standard,All phases,244,3686,0.9178
+v1.1,Post-16 provision,Expected standard,Secondary,216,3278,0.9131
+v1.1,Post-16 provision,Expected standard,Special,28,408,0.9559
+v1.1,Post-16 provision,Needs attention,All phases,40,595,0.9143
+v1.1,Post-16 provision,Needs attention,Secondary,38,565,0.9133
+v1.1,Post-16 provision,Needs attention,Special,<10,30,
+v1.1,Post-16 provision,Urgent improvement,All phases,<10,19,
+v1.1,Post-16 provision,Urgent improvement,Secondary,<10,19,
+v1.1,Leadership and governance,Exceptional,All phases,54,903,0.7719
+v1.1,Leadership and governance,Exceptional,Primary,14,239,0.7573
+v1.1,Leadership and governance,Exceptional,Secondary,27,437,0.7666
+v1.1,Leadership and governance,Exceptional,Special,<10,69,
+v1.1,Leadership and governance,Exceptional,Nursery,<10,104,
+v1.1,Leadership and governance,Exceptional,Alternative provision,<10,54,
+v1.1,Leadership and governance,Strong standard,All phases,703,12099,0.7863
+v1.1,Leadership and governance,Strong standard,Primary,461,7997,0.7855
+v1.1,Leadership and governance,Strong standard,Secondary,155,2600,0.7792
+v1.1,Leadership and governance,Strong standard,Special,51,892,0.7915
+v1.1,Leadership and governance,Strong standard,Nursery,21,352,0.8295
+v1.1,Leadership and governance,Strong standard,Alternative provision,15,258,0.8062
+v1.1,Leadership and governance,Expected standard,All phases,1985,34115,0.7905
+v1.1,Leadership and governance,Expected standard,Primary,1482,25500,0.7925
+v1.1,Leadership and governance,Expected standard,Secondary,404,6911,0.7809
+v1.1,Leadership and governance,Expected standard,Special,61,1046,0.7945
+v1.1,Leadership and governance,Expected standard,Nursery,28,492,0.8130
+v1.1,Leadership and governance,Expected standard,Alternative provision,10,166,0.7831
+v1.1,Leadership and governance,Needs attention,All phases,417,6953,0.8086
+v1.1,Leadership and governance,Needs attention,Primary,308,5097,0.8124
+v1.1,Leadership and governance,Needs attention,Secondary,91,1551,0.7982
+v1.1,Leadership and governance,Needs attention,Special,12,212,0.7925
+v1.1,Leadership and governance,Needs attention,Nursery,<10,58,
+v1.1,Leadership and governance,Needs attention,Alternative provision,<10,35,
+v1.1,Leadership and governance,Urgent improvement,All phases,63,1046,0.8403
+v1.1,Leadership and governance,Urgent improvement,Primary,44,730,0.8356
+v1.1,Leadership and governance,Urgent improvement,Secondary,14,222,0.8604
+v1.1,Leadership and governance,Urgent improvement,Special,<10,61,
+v1.1,Leadership and governance,Urgent improvement,Nursery,<10,15,
+v1.1,Leadership and governance,Urgent improvement,Alternative provision,<10,18,
+v2.0,Inclusion,Exceptional,All phases,14,227,0.9163
+v2.0,Inclusion,Exceptional,Primary,<10,127,
+v2.0,Inclusion,Exceptional,Secondary,<10,67,
+v2.0,Inclusion,Exceptional,Special,<10,15,
+v2.0,Inclusion,Exceptional,Alternative provision,<10,18,
+v2.0,Inclusion,Strong standard,All phases,345,4966,0.8955
+v2.0,Inclusion,Strong standard,Primary,254,3649,0.9055
+v2.0,Inclusion,Strong standard,Secondary,66,963,0.8515
+v2.0,Inclusion,Strong standard,Special,17,246,0.9228
+v2.0,Inclusion,Strong standard,Alternative provision,<10,108,
+v2.0,Inclusion,Expected standard,All phases,621,8658,0.8788
+v2.0,Inclusion,Expected standard,Primary,518,7202,0.8874
+v2.0,Inclusion,Expected standard,Secondary,89,1266,0.8318
+v2.0,Inclusion,Expected standard,Special,11,149,0.8658
+v2.0,Inclusion,Expected standard,Alternative provision,<10,41,
+v2.0,Inclusion,Needs attention,All phases,72,969,0.8658
+v2.0,Inclusion,Needs attention,Primary,49,652,0.8804
+v2.0,Inclusion,Needs attention,Secondary,22,305,0.8361
+v2.0,Inclusion,Needs attention,Alternative provision,<10,12,
+v2.0,Inclusion,Urgent improvement,All phases,<10,96,
+v2.0,Inclusion,Urgent improvement,Primary,<10,83,
+v2.0,Inclusion,Urgent improvement,Secondary,<10,13,
+v2.0,Curriculum and teaching,Exceptional,All phases,<10,77,
+v2.0,Curriculum and teaching,Exceptional,Primary,<10,31,
+v2.0,Curriculum and teaching,Exceptional,Secondary,<10,46,
+v2.0,Curriculum and teaching,Strong standard,All phases,177,2597,0.8564
+v2.0,Curriculum and teaching,Strong standard,Primary,119,1768,0.8558
+v2.0,Curriculum and teaching,Strong standard,Secondary,46,656,0.8537
+v2.0,Curriculum and teaching,Strong standard,Special,<10,131,
+v2.0,Curriculum and teaching,Strong standard,Alternative provision,<10,42,
+v2.0,Curriculum and teaching,Expected standard,All phases,721,10588,0.8527
+v2.0,Curriculum and teaching,Expected standard,Primary,590,8677,0.8538
+v2.0,Curriculum and teaching,Expected standard,Secondary,103,1509,0.8509
+v2.0,Curriculum and teaching,Expected standard,Special,20,295,0.8339
+v2.0,Curriculum and teaching,Expected standard,Alternative provision,<10,107,
+v2.0,Curriculum and teaching,Needs attention,All phases,148,2178,0.8196
+v2.0,Curriculum and teaching,Needs attention,Primary,117,1699,0.8193
+v2.0,Curriculum and teaching,Needs attention,Secondary,29,446,0.8139
+v2.0,Curriculum and teaching,Needs attention,Alternative provision,<10,33,
+v2.0,Curriculum and teaching,Urgent improvement,All phases,<10,119,
+v2.0,Curriculum and teaching,Urgent improvement,Primary,<10,105,
+v2.0,Curriculum and teaching,Urgent improvement,Secondary,<10,14,
+v2.0,Achievement,Exceptional,All phases,<10,78,
+v2.0,Achievement,Exceptional,Primary,<10,32,
+v2.0,Achievement,Exceptional,Secondary,<10,46,
+v2.0,Achievement,Strong standard,All phases,173,1923,0.8144
+v2.0,Achievement,Strong standard,Primary,121,1364,0.8277
+v2.0,Achievement,Strong standard,Secondary,39,409,0.7506
+v2.0,Achievement,Strong standard,Special,<10,102,
+v2.0,Achievement,Strong standard,Alternative provision,<10,48,
+v2.0,Achievement,Expected standard,All phases,636,6733,0.8040
+v2.0,Achievement,Expected standard,Primary,527,5589,0.8044
+v2.0,Achievement,Expected standard,Secondary,82,868,0.7788
+v2.0,Achievement,Expected standard,Special,20,205,0.8732
+v2.0,Achievement,Expected standard,Alternative provision,<10,71,
+v2.0,Achievement,Needs attention,All phases,232,2416,0.7939
+v2.0,Achievement,Needs attention,Primary,175,1815,0.7945
+v2.0,Achievement,Needs attention,Secondary,55,582,0.7921
+v2.0,Achievement,Needs attention,Alternative provision,<10,19,
+v2.0,Achievement,Urgent improvement,All phases,11,127,0.7874
+v2.0,Achievement,Urgent improvement,Primary,<10,109,
+v2.0,Achievement,Urgent improvement,Secondary,<10,18,
+v2.0,Attendance and behaviour,Exceptional,All phases,15,252,0.9206
+v2.0,Attendance and behaviour,Exceptional,Primary,<10,83,
+v2.0,Attendance and behaviour,Exceptional,Secondary,<10,156,
+v2.0,Attendance and behaviour,Exceptional,Special,<10,13,
+v2.0,Attendance and behaviour,Strong standard,All phases,272,4459,0.9051
+v2.0,Attendance and behaviour,Strong standard,Primary,209,3455,0.9054
+v2.0,Attendance and behaviour,Strong standard,Secondary,42,652,0.8850
+v2.0,Attendance and behaviour,Strong standard,Special,15,255,0.9569
+v2.0,Attendance and behaviour,Strong standard,Alternative provision,<10,97,
+v2.0,Attendance and behaviour,Expected standard,All phases,638,10353,0.8941
+v2.0,Attendance and behaviour,Expected standard,Primary,528,8581,0.8973
+v2.0,Attendance and behaviour,Expected standard,Secondary,93,1514,0.8686
+v2.0,Attendance and behaviour,Expected standard,Special,12,184,0.9457
+v2.0,Attendance and behaviour,Expected standard,Alternative provision,<10,74,
+v2.0,Attendance and behaviour,Needs attention,All phases,132,2169,0.8986
+v2.0,Attendance and behaviour,Needs attention,Primary,92,1480,0.9000
+v2.0,Attendance and behaviour,Needs attention,Secondary,37,645,0.8915
+v2.0,Attendance and behaviour,Needs attention,Special,<10,16,
+v2.0,Attendance and behaviour,Needs attention,Alternative provision,<10,28,
+v2.0,Attendance and behaviour,Urgent improvement,All phases,<10,36,
+v2.0,Attendance and behaviour,Urgent improvement,Primary,<10,21,
+v2.0,Attendance and behaviour,Urgent improvement,Secondary,<10,15,
+v2.0,Personal development and wellbeing,Exceptional,All phases,15,311,0.8167
+v2.0,Personal development and wellbeing,Exceptional,Primary,<10,168,
+v2.0,Personal development and wellbeing,Exceptional,Secondary,<10,105,
+v2.0,Personal development and wellbeing,Exceptional,Special,<10,20,
+v2.0,Personal development and wellbeing,Exceptional,Alternative provision,<10,18,
+v2.0,Personal development and wellbeing,Strong standard,All phases,385,8181,0.7847
+v2.0,Personal development and wellbeing,Strong standard,Primary,309,6586,0.7914
+v2.0,Personal development and wellbeing,Strong standard,Secondary,55,1164,0.7509
+v2.0,Personal development and wellbeing,Strong standard,Special,14,295,0.8034
+v2.0,Personal development and wellbeing,Strong standard,Alternative provision,<10,136,
+v2.0,Personal development and wellbeing,Expected standard,All phases,630,13048,0.7776
+v2.0,Personal development and wellbeing,Expected standard,Primary,496,10255,0.7837
+v2.0,Personal development and wellbeing,Expected standard,Secondary,115,2426,0.7527
+v2.0,Personal development and wellbeing,Expected standard,Special,14,268,0.7910
+v2.0,Personal development and wellbeing,Expected standard,Alternative provision,<10,99,
+v2.0,Personal development and wellbeing,Needs attention,All phases,28,568,0.7465
+v2.0,Personal development and wellbeing,Needs attention,Primary,22,451,0.7472
+v2.0,Personal development and wellbeing,Needs attention,Secondary,<10,117,
+v2.0,Personal development and wellbeing,Urgent improvement,All phases,<10,21,
+v2.0,Personal development and wellbeing,Urgent improvement,Secondary,<10,21,
+v2.0,Early years,Exceptional,All phases,<10,66,
+v2.0,Early years,Exceptional,Primary,<10,66,
+v2.0,Early years,Strong standard,All phases,249,3956,0.7401
+v2.0,Early years,Strong standard,Primary,242,3845,0.7402
+v2.0,Early years,Strong standard,Secondary,<10,32,
+v2.0,Early years,Strong standard,Special,<10,79,
+v2.0,Early years,Expected standard,All phases,492,7748,0.7251
+v2.0,Early years,Expected standard,Primary,488,7687,0.7245
+v2.0,Early years,Expected standard,Special,<10,61,
+v2.0,Early years,Needs attention,All phases,38,578,0.7509
+v2.0,Early years,Needs attention,Primary,38,578,0.7509
+v2.0,Early years,Urgent improvement,All phases,<10,92,
+v2.0,Early years,Urgent improvement,Primary,<10,92,
+v2.0,Post-16 provision,Exceptional,All phases,<10,88,
+v2.0,Post-16 provision,Exceptional,Secondary,<10,88,
+v2.0,Post-16 provision,Strong standard,All phases,32,487,0.8994
+v2.0,Post-16 provision,Strong standard,Secondary,24,375,0.8880
+v2.0,Post-16 provision,Strong standard,Special,<10,112,
+v2.0,Post-16 provision,Expected standard,All phases,63,966,0.9006
+v2.0,Post-16 provision,Expected standard,Secondary,59,913,0.9003
+v2.0,Post-16 provision,Expected standard,Special,<10,53,
+v2.0,Post-16 provision,Needs attention,All phases,<10,120,
+v2.0,Post-16 provision,Needs attention,Secondary,<10,120,
+v2.0,Leadership and governance,Exceptional,All phases,13,237,0.8228
+v2.0,Leadership and governance,Exceptional,Primary,<10,108,
+v2.0,Leadership and governance,Exceptional,Secondary,<10,109,
+v2.0,Leadership and governance,Exceptional,Special,<10,20,
+v2.0,Leadership and governance,Strong standard,All phases,232,4134,0.8075
+v2.0,Leadership and governance,Strong standard,Primary,163,2915,0.8014
+v2.0,Leadership and governance,Strong standard,Secondary,53,931,0.8088
+v2.0,Leadership and governance,Strong standard,Special,10,190,0.8789
+v2.0,Leadership and governance,Strong standard,Alternative provision,<10,98,
+v2.0,Leadership and governance,Expected standard,All phases,719,12492,0.8078
+v2.0,Leadership and governance,Expected standard,Primary,596,10320,0.8096
+v2.0,Leadership and governance,Expected standard,Secondary,101,1781,0.7951
+v2.0,Leadership and governance,Expected standard,Special,17,298,0.8121
+v2.0,Leadership and governance,Expected standard,Alternative provision,<10,93,
+v2.0,Leadership and governance,Needs attention,All phases,85,1441,0.8501
+v2.0,Leadership and governance,Needs attention,Primary,62,1022,0.8376
+v2.0,Leadership and governance,Needs attention,Secondary,20,372,0.8763
+v2.0,Leadership and governance,Needs attention,Special,<10,16,
+v2.0,Leadership and governance,Needs attention,Alternative provision,<10,31,
+v2.0,Leadership and governance,Urgent improvement,All phases,10,176,0.9034
+v2.0,Leadership and governance,Urgent improvement,Primary,<10,135,
+v2.0,Leadership and governance,Urgent improvement,Secondary,<10,41,

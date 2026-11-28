@@ -1,0 +1,97 @@
+run,area,comparison,sections_higher,sections_lower,status,eligible_phrases,lean_higher,lean_lower,shown_1_96_to_3_29,kept_prior_250,kept_prior_4000
+Primary and secondary,Inclusion,Exceptional v Strong standard,56,1282,run,341,15,0,47,15,14
+Primary and secondary,Inclusion,Strong standard v Expected standard,1282,2293,run,6561,303,174,1155,477,477
+Primary and secondary,Inclusion,Expected standard v Needs attention,2293,354,run,2085,88,322,458,410,404
+Primary and secondary,Inclusion,Needs attention v Urgent improvement,354,32,run,134,0,4,8,4,2
+Primary and secondary,Curriculum and teaching,Exceptional v Strong standard,29,613,not run: fewer than 30 sections in a grade,,,,,,
+Primary and secondary,Curriculum and teaching,Strong standard v Expected standard,613,2554,run,3745,347,120,863,467,464
+Primary and secondary,Curriculum and teaching,Expected standard v Needs attention,2554,769,run,4416,213,591,1072,804,801
+Primary and secondary,Curriculum and teaching,Needs attention v Urgent improvement,769,52,run,258,0,29,41,29,24
+Primary and secondary,Achievement,Exceptional v Strong standard,49,610,run,213,18,1,29,19,15
+Primary and secondary,Achievement,Strong standard v Expected standard,610,2225,run,2500,323,103,523,426,419
+Primary and secondary,Achievement,Expected standard v Needs attention,2225,1057,run,3737,333,489,714,822,815
+Primary and secondary,Achievement,Needs attention v Urgent improvement,1057,76,run,380,1,53,58,54,50
+Primary and secondary,Attendance and behaviour,Exceptional v Strong standard,46,1107,run,222,14,0,34,14,13
+Primary and secondary,Attendance and behaviour,Strong standard v Expected standard,1107,2242,run,5986,321,177,1076,498,488
+Primary and secondary,Attendance and behaviour,Expected standard v Needs attention,2242,586,run,3344,80,339,669,419,408
+Primary and secondary,Attendance and behaviour,Needs attention v Urgent improvement,586,36,run,138,0,10,9,10,7
+Primary and secondary,Personal development and wellbeing,Exceptional v Strong standard,70,1478,run,553,34,0,86,34,31
+Primary and secondary,Personal development and wellbeing,Strong standard v Expected standard,1478,2299,run,10437,399,224,1637,623,619
+Primary and secondary,Personal development and wellbeing,Expected standard v Needs attention,2299,166,run,1309,12,166,206,178,171
+Primary and secondary,Personal development and wellbeing,Needs attention v Urgent improvement,166,<10,not run: fewer than 30 sections in a grade,,,,,,
+Primary and secondary,Early years,Exceptional v Strong standard,21,805,not run: fewer than 30 sections in a grade,,,,,,
+Primary and secondary,Early years,Strong standard v Expected standard,805,1837,run,4648,200,103,811,303,303
+Primary and secondary,Early years,Expected standard v Needs attention,1837,269,run,1635,36,247,339,283,277
+Primary and secondary,Early years,Needs attention v Urgent improvement,269,26,not run: fewer than 30 sections in a grade,,,,,,
+Primary and secondary,Post-16 provision,Exceptional v Strong standard,21,110,not run: fewer than 30 sections in a grade,,,,,,
+Primary and secondary,Post-16 provision,Strong standard v Expected standard,110,275,run,616,11,4,61,15,15
+Primary and secondary,Post-16 provision,Expected standard v Needs attention,275,46,run,203,0,21,17,21,20
+Primary and secondary,Post-16 provision,Needs attention v Urgent improvement,46,<10,not run: fewer than 30 sections in a grade,,,,,,
+Primary and secondary,Leadership and governance,Exceptional v Strong standard,53,832,run,301,12,0,35,12,10
+Primary and secondary,Leadership and governance,Strong standard v Expected standard,832,2583,run,5760,395,206,1304,601,598
+Primary and secondary,Leadership and governance,Expected standard v Needs attention,2583,481,run,3127,161,530,716,691,681
+Primary and secondary,Leadership and governance,Needs attention v Urgent improvement,481,68,run,409,0,49,63,49,45
+Primary,Inclusion,Exceptional v Strong standard,25,1012,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Inclusion,Strong standard v Expected standard,1012,1825,run,5284,223,117,896,340,340
+Primary,Inclusion,Expected standard v Needs attention,1825,256,run,1518,53,243,300,296,294
+Primary,Inclusion,Needs attention v Urgent improvement,256,26,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Curriculum and teaching,Exceptional v Strong standard,10,450,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Curriculum and teaching,Strong standard v Expected standard,450,2052,run,2867,250,73,673,323,316
+Primary,Curriculum and teaching,Expected standard v Needs attention,2052,588,run,3483,147,477,881,624,620
+Primary,Curriculum and teaching,Needs attention v Urgent improvement,588,44,run,208,0,14,32,14,13
+Primary,Achievement,Exceptional v Strong standard,22,446,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Achievement,Strong standard v Expected standard,446,1825,run,1899,231,53,393,284,275
+Primary,Achievement,Expected standard v Needs attention,1825,799,run,2954,255,408,569,663,659
+Primary,Achievement,Needs attention v Urgent improvement,799,52,run,264,0,37,46,37,32
+Primary,Attendance and behaviour,Exceptional v Strong standard,14,877,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Attendance and behaviour,Strong standard v Expected standard,877,1822,run,4917,234,119,906,353,349
+Primary,Attendance and behaviour,Expected standard v Needs attention,1822,413,run,2477,43,249,479,292,285
+Primary,Attendance and behaviour,Needs attention v Urgent improvement,413,18,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Personal development and wellbeing,Exceptional v Strong standard,29,1195,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Personal development and wellbeing,Strong standard v Expected standard,1195,1805,run,8623,326,180,1305,506,501
+Primary,Personal development and wellbeing,Expected standard v Needs attention,1805,112,run,848,4,90,127,94,91
+Primary,Personal development and wellbeing,Needs attention v Urgent improvement,112,<10,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Early years,Exceptional v Strong standard,20,787,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Early years,Strong standard v Expected standard,787,1824,run,4574,200,101,798,301,299
+Primary,Early years,Expected standard v Needs attention,1824,268,run,1627,35,246,336,281,278
+Primary,Early years,Needs attention v Urgent improvement,268,26,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Post-16 provision,Exceptional v Strong standard,0,0,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Post-16 provision,Strong standard v Expected standard,0,0,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Post-16 provision,Expected standard v Needs attention,0,0,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Post-16 provision,Needs attention v Urgent improvement,0,0,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Leadership and governance,Exceptional v Strong standard,20,624,not run: fewer than 30 sections in a grade,,,,,,
+Primary,Leadership and governance,Strong standard v Expected standard,624,2078,run,4462,323,130,1033,453,450
+Primary,Leadership and governance,Expected standard v Needs attention,2078,370,run,2449,108,419,573,527,525
+Primary,Leadership and governance,Needs attention v Urgent improvement,370,52,run,309,0,29,43,29,23
+Secondary,Inclusion,Exceptional v Strong standard,31,270,run,131,4,0,8,4,3
+Secondary,Inclusion,Strong standard v Expected standard,270,468,run,1548,27,10,203,37,37
+Secondary,Inclusion,Expected standard v Needs attention,468,98,run,575,0,31,97,31,29
+Secondary,Inclusion,Needs attention v Urgent improvement,98,<10,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Curriculum and teaching,Exceptional v Strong standard,19,163,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Curriculum and teaching,Strong standard v Expected standard,163,502,run,965,37,8,162,45,43
+Secondary,Curriculum and teaching,Expected standard v Needs attention,502,181,run,1043,7,81,206,88,84
+Secondary,Curriculum and teaching,Needs attention v Urgent improvement,181,<10,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Achievement,Exceptional v Strong standard,27,164,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Achievement,Strong standard v Expected standard,164,400,run,681,34,11,114,45,42
+Secondary,Achievement,Expected standard v Needs attention,400,258,run,934,40,70,186,110,104
+Secondary,Achievement,Needs attention v Urgent improvement,258,24,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Attendance and behaviour,Exceptional v Strong standard,32,230,run,137,5,0,13,5,4
+Secondary,Attendance and behaviour,Strong standard v Expected standard,230,420,run,1317,30,11,168,41,39
+Secondary,Attendance and behaviour,Expected standard v Needs attention,420,173,run,975,5,40,135,45,45
+Secondary,Attendance and behaviour,Needs attention v Urgent improvement,173,18,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Personal development and wellbeing,Exceptional v Strong standard,41,283,run,278,5,0,26,5,4
+Secondary,Personal development and wellbeing,Strong standard v Expected standard,283,494,run,2363,37,9,210,46,46
+Secondary,Personal development and wellbeing,Expected standard v Needs attention,494,54,run,392,0,14,44,14,12
+Secondary,Personal development and wellbeing,Needs attention v Urgent improvement,54,<10,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Early years,Exceptional v Strong standard,<10,18,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Early years,Strong standard v Expected standard,18,13,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Early years,Expected standard v Needs attention,13,<10,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Early years,Needs attention v Urgent improvement,<10,0,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Post-16 provision,Exceptional v Strong standard,21,110,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Post-16 provision,Strong standard v Expected standard,110,275,run,616,11,4,61,15,15
+Secondary,Post-16 provision,Expected standard v Needs attention,275,46,run,203,0,21,17,21,20
+Secondary,Post-16 provision,Needs attention v Urgent improvement,46,<10,not run: fewer than 30 sections in a grade,,,,,,
+Secondary,Leadership and governance,Exceptional v Strong standard,33,208,run,148,7,0,15,7,6
+Secondary,Leadership and governance,Strong standard v Expected standard,208,505,run,1430,31,4,201,35,33
+Secondary,Leadership and governance,Expected standard v Needs attention,505,111,run,749,0,54,134,54,50
+Secondary,Leadership and governance,Needs attention v Urgent improvement,111,16,not run: fewer than 30 sections in a grade,,,,,,
