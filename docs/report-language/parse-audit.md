@@ -1,6 +1,6 @@
 # Report Language: parse audit
 
-First audit, 26 November 2026, on the corpus as it stood part-way through the backfill. It will be re-drawn and repeated on the complete corpus (about 4,200 report cards) once the backfill has finished.
+First audit, 26 November 2026, on the corpus as it stood part-way through the backfill. Re-drawn and repeated on the complete corpus on 28 November 2026; see the last section.
 
 Reports are identified here by an index number only. The key from index number to URN, and the audit sheet with each PDF's address, are kept outside the repository with the raw text. No school name and no personal name appears in this file.
 
@@ -90,3 +90,93 @@ Mark accepted this audit on 26 November 2026, in the live conversation, with two
 - Month-and-year mentions ("appointed in September 2025") are kept. Full dates are replaced with [date].
 
 The audit is re-drawn on the complete corpus (`audit_sample.py --label complete`) before any analysis, and its result is added here.
+
+## Re-drawn audit on the complete corpus (28 November 2026)
+
+The backfill has finished: 4,293 documents, of which 4,281 are renewed-framework report cards and 12 are not (below). This section repeats the first audit on a fresh draw from the complete corpus, adds the whole-corpus checks, and records every error found and how it was fixed. Reports in the sample are identified by index number only (key held outside the repository with the raw text, `audit/key-complete.csv`).
+
+### Method
+
+**Sample.** `audit_sample.py --label complete` (seed `report-language-audit-1`) drew 50 of the 4,281 report cards, stratified by phase and lowest grade:
+
+| Phase | All expected or better | Any needs attention | Any urgent improvement |
+| --- | --: | --: | --: |
+| Nursery | 2 | 2 | 1 |
+| Primary | 12 | 7 | 2 |
+| Secondary | 5 | 4 | 2 |
+| Special | 3 | 2 | 2 |
+| Alternative provision | 2 | 2 | 2 |
+
+The 50 hold 581 parsed sections (329 evaluation areas; 158 safeguarding, concern, pupil-view and next-steps sections; 94 about and context sections) and 388 graded outcomes (329 area grades, 50 safeguarding outcomes, 9 categories of concern).
+
+**Second extraction.** Every PDF was downloaded again from files.ofsted.gov.uk and checked against the corpus's sha256 before use. (On the first attempt the server returned a different document for 46 of the 50 addresses; a second fetch returned the right file for all 50, each confirmed by its sha256. Any later re-fetch should be checked the same way.) Each was read with poppler's `pdftotext`, in both layout and reading-order modes, independently of the `pypdf` text the parser uses.
+
+**Boundaries.** As in the first audit: a naive split (every line between one heading and the next) compared line by line with the parser's sections, with every difference read; and the first and last six words of every parsed section looked up in the `pdftotext` text.
+
+**Grades.** Every area grade, safeguarding outcome and category of concern compared with the `pdftotext` extraction and with Ofsted's management information (49 reports) or the daily reader (1 report whose inspection is newer than the management information).
+
+**Names, in the sample.** (a) every capitalised word sequence left in the 50 parsed texts listed and read; (b) every name word in the report's structural lines (inspection team, role lines, chair, chief executive, head and executive-lead sentences, now read across line breaks) searched for in its parsed text; (c) the school's name from the front page searched for word by word; (d) the residual-name detector run and every hit read; and (e) the parser's output before and after this audit's fixes compared word by word, with every difference read.
+
+**Names, across the corpus.** (b) and (c) for all 4,281 reports; (f) the distinctive part of each school's trust name (from GIAS) searched for in its parsed text; (g) every residual-detector hit read.
+
+### Results in the sample
+
+| Check | Errors found in the 50 | Rate | After fixes |
+| --- | --: | --: | --: |
+| Evaluation-area and narrative section boundaries | 0 of 487 sections | 0% | 0 |
+| About and context sections | 1 report | 2% of reports | 0 |
+| Grades, safeguarding and category of concern | 0 of 388 | 0% | 0 |
+| Personal names left in the text | 1 report | 2% of reports | 0 |
+| School, trust, partner-school or address left in the text | 1 report | 2% of reports | 0 |
+
+| Report | Error | Fix |
+| --- | --- | --- |
+| 2 | The report prints "Information about this school:" twice, the first time straight after "About this inspection" and above the inspection text, so that text was filed as context | A context heading straight after "About this inspection", with another context heading later, is taken as part of "About this inspection" (2 reports in the corpus) |
+| 12 | The chair's name had four words without a title; the role rule took three, leaving the surname | Names after a role, title or "is" may have up to four words and lower-case particles (da, de, van and others) |
+| 4 | A federation's name began with a place and "and", so only its second half was removed | The trust and federation rule takes "of", "and" and "&" inside the name |
+
+The fixes also changed, without any name having been left: in 13 of the 50 reports, a placeholder made more accurate (a trust's name ending "Trust" had become "[another school] Trust"; it is now "[the trust]"); in 2, a staff role line whose name was already removed ("Director of ...: [name]") now dropped as a role line; in 1, an ordinary word no longer removed as part of the school's name; and in 1, a governance phrase ending "Trust" now replaced as a trust (harmless over-removal).
+
+### Whole-corpus checks (4,281 report cards, 28 November 2026)
+
+- **Grades against Ofsted's management information:** 32,457 of 32,463 grades agree (99.98%); categories of concern 3,607 of 3,607; against the daily reader 6,057 of 6,057. The six differences are classified below; none is a parsing error.
+- **Structural names:** after the fixes below, none of the 45,779 candidate name words that reports give in their structural lines appears in the same report's parsed text. (The extraction is deliberately broad: the 112 matches that remain are ordinary words it picks up, such as "There" or "Deputy", an honour, and a role title, a diocese, a provision and a duck that share a word with a name.)
+- **Residual-name detector:** 1,327 hits in 921 reports (609 capitalised pairs mid-sentence, 718 at the start of a sentence), down from 1,376. Every hit was read, all 947 distinct strings in the first pass and the three new strings after the fixes. After the fixes none is a private individual. Two were before the fixes (a chief executive given a role the rules did not know; a regional executive principal on a label line), both fixed below. What remains: programme, event, room and value names; characters and mascots; places, rivers and landmarks; books, films and songs; and public figures taught as curriculum content (artists, writers, explorers, athletes), kept under the accepted rule. The detector now reads accented letters, which it missed before.
+- **School and trust names:** before the fixes, a distinctive part of the school's GIAS trust name was left in 58 reports, a word of the school's own name in 134, and a street address with more than one place before the postcode in 8. After them: 0, 19 and 0. The 19 are kept by design or are ordinary words: a place or diocese named in the text, a saint's or founder's name in a possessive, an ordinary word that is also part of the school's name, and a few house names that half-share a word with the school.
+
+### Every error found across the corpus, and the fix
+
+| Error | Reports | Fix |
+| --- | --: | --- |
+| A double-barrelled surname broken across a line: the second half was left ("[name]- Surname") | 6 | A word ending in a hyphen joins the next line without a space when that line starts with a capital, as it already did for lower case |
+| A name with accented letters was not recognised, so it was left whole | 2 | Name patterns accept accented letters |
+| A trust's sentence naming its chief executive was cut by the data tables, and its continuation (surname, then the chair) was taken for table text because the same line recurs in that trust's other reports; the given name was left | 3 | The continuation of the trust sentence ("..., and overseen by a board of trustees ...") is taken back from among the tables |
+| A role the rules did not know: "interim executive lead", "chief education officer", a "Regional Executive Principal:" label line | 3 | Those roles added; role labels with a colon are recognised inside paragraphs too |
+| Four-word names (see report 12 above) | at least 1 | As above |
+| The school's trust named with a lower-case trust word ("... multi-academy trust"), by an acronym alone, as "MAT" or "MAC", or in a trust-branded programme ("the Trustname Games") | 58 (distinctive names) | The trust's name from GIAS is reduced to its distinctive core and removed with or without a trust word after it; a core made only of ordinary words or places is removed only with a trust word after it |
+| A word of the school's own name used alone or with the school type in the middle ("Name Primary Academy, Place"), a "St." spelt with a full stop, plural forms ("Names Got Talent"), names with brackets, "&" or "and" | 134 (a word of the name) | Every distinctive part of the name between school-type words, brackets and joiners becomes a form; "St" and "St." match each other; plural and "-er" endings match. One-word forms are now allowed for ordinary words such as a tree's name (in that school's own report only), but not for words used in lower case in 20 or more reports, numbers or given names |
+| A street address with more than one place before the postcode, or written with "Rd" or "Estate" | 8 | The address rule allows up to four places before the postcode and more street words |
+| Named units of the school ("Name Boys", "Name Girls") | 1 | Replaced as another school |
+| A federation named by "called" was cut at "St." | 1 | "St." no longer ends the name |
+
+Every fix has a synthetic test in `test_parse.py` (invented names only). After the fixes the parser's text changed in 958 of the 4,281 reports, almost all of them a trust or school name now removed, or a placeholder made more accurate. Grades are unchanged. Section boundaries change only in the 2 reports with the mislabelled heading, and where a trust sentence's continuation is now taken back from among the tables into "About this inspection".
+
+### Kept by design, for Mark to confirm
+
+- **Trust and school nicknames made of ordinary words.** Where a trust's name is an ordinary word or a place (as in an invented "Bloom Learning Trust"), its programme and value names are kept ("the trust's Bloom Voices event"): about 36 mentions in 27 reports. Removing every capitalised use of such a word from those reports would damage the text, and a trust's name is shared by many schools. In about 10 reports, a value or reward is named with a nickname derived from the school's name (a shortened or altered form of it); these cannot be found by rule and are kept. Recommendation: accept both; neither is personal data, and each would need local knowledge to link back to a school.
+- **Given names alone.** Rooms, cafés, rewards and pets named with a given name (a garden or a resource base called after someone's first name, a therapy dog, a duck, mascots and story characters) are kept. A given name alone does not identify a private individual.
+
+### Grade disagreements, non-report-card documents and warnings
+
+| Item | Number | Classification |
+| --- | --: | --- |
+| Grade differs from the management information | 6 grades in 5 reports | **Source discrepancy.** All 5 schools are in special measures. In each case the PDF (read by both libraries) prints a lower grade than the management information records: Urgent improvement where it records Needs attention (2 early years, 1 inclusion), and "Safeguarding standards not met" where it records Met (3). The parser follows the PDF. |
+| Not a report card | 12 documents | **Expected.** For each school, the management information's latest event is a monitoring visit (7 special-measures or serious-weaknesses monitoring visits, 5 section 8 visits with no formal designation), not a report-card inspection; the newest "School inspection" document on the school's page is an older-framework report (dated 2019 to 2025). There is no report card to fetch. The parser skips them and they are not in the counts. |
+| Missing section: next steps | 25 reports | **Expected, 24; source revised, 1.** In 24, the PDF has no next steps (confirmed by `pdftotext`); every one of them is graded expected standard or better in every area, and 22 have no area below strong standard. In 1, the corpus address now serves a revised file of the same report (same school, URN and date; a different sha256 on six fetches) that does have next steps; the corpus holds the earlier version. It needs re-fetching. |
+| Report date differs from the list it was fetched for | 1 report | **Wrong report fetched (source).** The PDF is the school's earlier report card (January 2026); the management information's inspection is June 2026. The record is right for the PDF it holds, but the newer report is missing. It is the 1 report with no grade reference. It needs re-fetching. |
+| Short section | 1 report | **Source.** The PDF prints the post-16 heading and grade with no text under it. |
+
+### Re-fetching
+
+Two reports need re-fetching (the revised PDF and the earlier report card). The 12 non-report-card documents need nothing until those schools have a report card.
+

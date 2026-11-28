@@ -183,9 +183,49 @@ class Names(unittest.TestCase):
             'Pupils in the resourced provision join classes. The sixth form is shared with Fallowmere Catholic High School.':
                 'Pupils in the resourced provision join classes. The sixth form is shared with [another school].',
             'The second site is at Brindlecombe Road, Imaginaryton ZZ9 9ZZ.': 'The second site is at [address], Imaginaryton [postcode].',
+            'The board of trustees is chaired by Peregrine Ansel Da Quellow.': 'The board of trustees is chaired by [name].',
+            'The chair of the board of governors in this school is Isadora van Thrimble.':
+                'The chair of the board of governors in this school is [name].',
         }
         for src, want in cases.items():
             self.assertEqual(P.scrub(src), want, src)
+
+    def test_trust_as_reports_write_it(self):
+        common = frozenset({'bloom', 'learn'})
+        cases = [
+            ('This school is part of Q-ZAT multi-academy trust, which means', ['Q-ZAT'], 'This school is part of [the trust], which means'),
+            ('It joined QZAT in September 2025. Members of Q-Zat\'s team.', ['QZAT', 'Q-ZAT'], 'It joined [the trust] in September 2025. Members of [the trust]\'s team.'),
+            ("Pupils run the 'Vellacombe Games'.", ['VELLACOMBE ACADEMY TRUST LIMITED'], "Pupils run the '[the trust] Games'."),
+            ('Inspectors met leaders of Vellacombe MAT.', ['VELLACOMBE MULTI ACADEMY TRUST'], 'Inspectors met leaders of [the trust].'),
+            ('It is part of St Ombra Church of England Multi Academy Trust, which', ['ST OMBRA CHURCH OF ENGLAND MULTI ACADEMY TRUST'],
+             'It is part of [the trust], which'),
+            ('It is part of Bloom Learning Trust. Pupils bloom here. Bloom Day is popular.', ['BLOOM LEARNING TRUST'],
+             'It is part of [the trust]. Pupils bloom here. Bloom Day is popular.'),
+        ]
+        for src, trust, want in cases:
+            self.assertEqual(P.scrub(src, trust_names=trust, common=common), want, src)
+
+    def test_names_with_accents_hyphens_and_lead_roles(self):
+        self.assertEqual(P.scrub('The trust is chaired by Anaïs Penhallow. The CEO is Renée Dufrayne.'),
+                         'The trust is chaired by [name]. The CEO is [name].')
+        self.assertEqual(P.scrub('The trust is run by the interim executive lead, Mark Tollervey, and overseen by a board.'),
+                         'The trust is run by the interim executive lead, [name], and overseen by a board.')
+        self.assertEqual(P.scrub(P.join_lines(['The trust is chaired by Odile Brack-', 'Vennor.'])[0]), 'The trust is chaired by [name].')
+        self.assertEqual(P.scrub('The second site is at Brindle Road, Imaginaryton, Fakeshire ZZ9 9ZZ.'),
+                         'The second site is at [address], Imaginaryton, Fakeshire [postcode].')
+        self.assertEqual(P.scrub('A site at Quoller Rd, Imaginaryton ZZ9 9ZZ.'), 'A site at [address], Imaginaryton [postcode].')
+        self.assertEqual(P.scrub('The trust is run by the chief education officer (CEO), Ottavio Brenn, and overseen by a board.'),
+                         'The trust is run by the chief education officer (CEO), [name], and overseen by a board.')
+        self.assertEqual(P.scrub('Pupils thrive. Regional Executive Principal: Rob Quellan'), 'Pupils thrive. Regional Executive Principal: [name]')
+        self.assertEqual(P.scrub('The school has two units, Zorvah Boys and Zorvah Girls.', common=frozenset({'powerful'})),
+                         'The school has two units, [another school] and [another school].')
+
+    def test_mislabelled_about_heading(self):
+        raw = ('About this inspection\nInformation about this school:\nInspectors carried out this full inspection under '
+               'section 5 of the Education Act 2005.\nInformation about this school:\nThe school uses no alternative provision.\n')
+        s = P.split_sections(raw)
+        self.assertEqual(s['sections']['about'], ['Inspectors carried out this full inspection under section 5 of the Education Act 2005.'])
+        self.assertEqual(s['sections']['context'], ['The school uses no alternative provision.'])
 
     def test_detector_flags_mid_sentence_pairs(self):
         hits = P.detect('Pupils visited the town with Dorabella Nightjar last year.')

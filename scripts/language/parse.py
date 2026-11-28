@@ -105,8 +105,8 @@ DATA_DESC = re.compile(r"^(?:(?-i:(?:Percentage|Proportion|Number) of (?:pupils|
 TITLES_LINE = r"(?:Mr|Mrs|Ms|Miss|Mx|Dr|Dame|Sir|Professor|Prof|Rev|Revd|Reverend|Father|Canon)"
 ROLE_WORD = (r"(?:head ?teachers?|headmaster|headmistress|principals?|head of (?:school|centre)|heads of school|"
              r"chief executive(?: officer)?|ceo|chair(?:person)?(?: of [a-z ]+)?|executive leader|"
-             r"school leader|manager|director|executive head|head)")
-_LABEL = r"(?:(?:executive|interim|acting|co|chief|substantive|associate|federation|joint)[- ]?)*" + ROLE_WORD
+             r"school leader|manager|director(?: of [a-z ]+?)?|executive head|head)")
+_LABEL = r"(?:(?:executive|interim|acting|co|chief|substantive|associate|federation|joint|regional|deputy|assistant|trust|senior|vice)[- ]?)*" + ROLE_WORD
 _LABELS = _LABEL + r"(?:\s*(?:/|,|&|and)?\s*" + _LABEL + r")*"
 ROLE_LINE = re.compile(r"^(?:" + _LABELS + r"\.?\s*:\s*\S.{0,100}|(?:" + TITLES_LINE + r"\.?\s+)?[A-Z][\w'’.-]+(?:\s+[A-Z][\w'’.-]+){0,3}"
                        r"(?:\s+and\s+(?:" + TITLES_LINE + r"\.?\s+)?[A-Z][\w'’.-]+(?:\s+[A-Z][\w'’.-]+){0,3})?\s*:\s*" + _LABELS + r")$", re.I)
@@ -165,6 +165,9 @@ def is_stray_prose(l, boiler):
         return False
     if RESUME.match(l) or re.match(r'^(?:[•●▪]\s*)?(?:Leaders|Governors|Those responsible|The trust|The local authority)\b.*\b(?:should|must)\b', l):
         return True
+    if re.search(r"\band overseen by (?:a|the) (?:board|trust)", l):   # the end of the trust sentence, carried over the tables
+        return True
+        return True
     if l in boiler:
         return False
     if re.match(r'^[a-z].*[a-z]{2}[.;]$', l) and len(l.split()) >= 2:
@@ -198,6 +201,12 @@ def split_sections(raw, boiler=frozenset()):
             mode = None
             in_resumed = False
             if kind in ('area', 'area2', 'head'):
+                if key == 'context' and cur == 'about' and not out['about'] and \
+                        any(classify(x) == ('head', 'context', None) for x in lines[i + 1:]):
+                    # a context heading straight after "About this inspection", with the real one further on: the
+                    # report has mislabelled its about-the-inspection text, which stays in about
+                    i += 1
+                    continue
                 if key in out and key in ('about', 'context'):
                     cur = key          # a second heading for the same section: carry on in it
                     i += 1
@@ -310,7 +319,7 @@ def join_lines(lines):
                 buf = ''
         if not buf:
             buf = l
-        elif buf.endswith('-') and l[:1].islower():
+        elif re.search(r"[^\W_]-$", buf) and (l[:1].islower() or (re.search(r"[^\W\d_]-$", buf) and re.match(r"[A-Z][a-z]", l))):
             buf = buf + l
         else:
             buf = buf + ' ' + l
@@ -330,17 +339,21 @@ TITLES = (r"(?:(?:Mr|Mrs|Ms|Miss|Mx|Dr|Dame|Sir|Professor|Prof|Rev|Revd|Reverend
           r"Lieutenant|Lt|Colonel|Col|Major|Captain|Capt|Commander|Brigadier|Wing Commander|Squadron Leader)\.?\s+)*"
           r"(?:Mr|Mrs|Ms|Miss|Mx|Dr|Dame|Sir|Professor|Prof|Rev|Revd|Reverend|Father|Canon|Councillor|Cllr|"
           r"Lieutenant|Lt|Colonel|Col|Major|Captain|Capt|Commander|Brigadier)")
-NAME_TOK = r"[A-Z][a-zA-Z'’]+(?:-[A-Z][a-zA-Z'’]+)?"
+# letters include accented ones ("Renée", "Zoë")
+UP = r"[A-ZÀ-ÖØ-Þ]"
+LOW = r"(?:[^\W\d_]|['’])"
+NAME_TOK = UP + LOW + r"+(?:-" + UP + LOW + r"+)?"
 NAME_TOK_ANY = (r"(?!(?:Inspectors?|The|This|They|Following|Leaders|Pupils|Staff|Governors|Children|In|At|On)\b)"
-                r"(?:Mc|Mac|O['’]|D['’])?[A-Z][a-zA-Z'’]+(?:-[A-Z][a-zA-Z'’]+)?")
-# 2 to 3 capitalised tokens, optionally a middle initial
-NAME2 = NAME_TOK + r"(?:\s+[A-Z]\.?)?(?:\s+" + NAME_TOK_ANY + r"){1,2}"
+                r"(?:Mc|Mac|O['’]|D['’])?" + UP + LOW + r"+(?:-" + UP + LOW + r"+)?")
+# 2 to 4 capitalised tokens ("Firstname Middle Da Surname"), optionally a middle initial and lower-case particles
+NAME2 = (NAME_TOK + r"(?:\s+[A-Z]\.?)?(?:\s+(?:(?:da|de|di|du|del|della|van|von|der|den|le|la|ter|bin|al)\s+)?"
+         + NAME_TOK_ANY + r"){1,3}")
 ROLE_BEFORE = (r"(?:(?:executive |interim |acting |substantive |associate |co-|deputy |assistant |new |federation |"
                r"part-time |chief executive |trust |founding |former |previous |current |vice-?)*"
                r"(?:head ?teachers?|headmaster|headmistress|principals?|head of school|heads of school|"
-               r"chief executive officer(?: \(CEO\))?|CEO|chair(?: of [a-z ]+?)?|chairs?|vice-chair|trustees?|"
+               r"chief (?:executive|education|operating) officer(?: \(CEO\))?|CEO|chair(?: of [a-z ]+?)?|chairs?|vice-chair|trustees?|"
                r"special educational needs (?:and disabilities )?co-?ordinator(?: \(SENCo\))?|SENCo|SENDCo|"
-               r"designated safeguarding lead|director of [a-z ]+|leader|manager|executive leader|head)"
+               r"designated safeguarding lead|director of [a-z ]+|leader|manager|executive lead(?:er)?|head)"
                r"|chaired by|led by|run by)")
 # Words that are never a personal name's first token in these reports
 NOT_NAME_START = set("""The A An This That These Those Their Its It In On At Of For From By With And Or But As If When
@@ -378,6 +391,7 @@ ROLE_NAME = re.compile(r"\b(" + ROLE_BEFORE + r")(\s*,?\s*(?:\((?:[A-Za-z]+)\)\s
 IS_NAME = re.compile(r"\b((?i:co-?chair['’]?s|chair|chairs|chairperson|head ?teacher|principal|chief executive officer|CEO|head of school)"
                      r"[^.]{0,90}?\b(?:is|are|was|were)\s+(?:" + TITLES + r"\.?\s+)?)(" + NAME2 + r")"
                      r"(?=\s*(?:[.,&]|and\b|$|(?:The|Inspectors|Following|This|They)\b))")
+ROLE_COLON = re.compile(r"(?i:\b(" + _LABELS + r")(\s*:\s*))(?:" + TITLES + r"\.?\s+)?(" + NAME2 + r")")
 NAME_ROLE_APPOS = re.compile(r"\b(" + NAME2 + r")\s*\((?:the )?(?:head ?teacher|principal|chair|CEO|head of school)[^)]*\)")
 
 
@@ -404,8 +418,16 @@ ASD MLD SLD PMLD VI HI MSI PD OTH LGBT NHS CAMHS TA TAS ECT ECTS NPQ NPQH SLT MA
 UNICEF STEM STEAM BAME EAL FSM AP""".split())
 
 
-def school_name_forms(name, extra=()):
-    """Full name plus the distinctive short form ("Quillbrook Meadow" from "Quillbrook Meadow Primary School")."""
+SCHOOL_TYPE_WORDS = set("""Girls Boys Voluntary Preschool Pre-school Selective Specialist Nursery Infants Infant Junior Primary
+Academy School College Centre Sixth Form Unit Hub""".split()) | {'Sixth Form', 'Sixth Form College', 'Voluntary Academy',
+                                                             'Nursery School', 'Pre School'}
+NUMBER_WORDS = set("One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Twenty Hundred First Second Third".split())
+
+
+def school_name_forms(name, extra=(), common=frozenset(), trust_words=frozenset()):
+    """Full name plus the distinctive short form ("Quillbrook Meadow" from "Quillbrook Meadow Primary School").
+    common: ordinary lower-case words, never taken alone as the name; trust_words: words of the trust's name, which
+    some schools carry in front of their own."""
     forms = set()
     for n in [name, *extra]:
         n = re.sub(r'\s+', ' ', (n or '').replace('’', "'")).strip(' ,')
@@ -418,7 +440,7 @@ def school_name_forms(name, extra=()):
                    r"Catholic|Methodist|Voluntary (?:Aided|Controlled)|VA|VC|Primary|Junior|Infants?|Nursery|First|Middle|"
                    r"Secondary|High|Community|Foundation|Federation|School|Schools|Academy|College|Free|Grammar|"
                    r"Special|Pupil Referral Unit|PRU|Centre|Trust|Village|County|Endowed|Aided|Controlled|Church|"
-                   r"Infant|and|&|of|Studio|UTC|Learning|Partnership)\b")
+                   r"Infant|and|&|of|Studio|UTC|Learning|Partnership|Alternative Provision|Provision)\b")
         prev = None
         while prev != core:
             prev = core
@@ -430,14 +452,60 @@ def school_name_forms(name, extra=()):
                 and len(core) >= 4 and not all(w in NOT_NAME_START for w in words):
             forms.add(core)
             # "Quillbrook" from "Quillbrook Meadow", "Brightwater" from "Bishop Brightwater": one word of the name used alone
+            # (in this school's own report only, so an ordinary word such as "Willow" is taken as the name too)
             for w in ([words[0], words[-1]] if len(words) >= 2 else []):
-                if len(w) >= 5 and w.isalpha() and w[0].isupper() and w not in STOP_TOKENS and w not in NOT_NAME_START \
-                        and w not in GIVEN and w not in COMMON_WORDS:
+                w = re.sub(r"'s$", "", w)
+                if len(w) >= 4 and w.isalpha() and w[0].isupper() and w not in STOP_TOKENS and w not in NOT_NAME_START \
+                        and w not in GIVEN and w not in NUMBER_WORDS and w.lower() not in common:
+                    forms.add(w)
+        # the distinctive part after the school type ("Brightwater Primary Academy, Fallow End"): "Brightwater Fallow
+        # End", "Brightwater" and "Fallow End"
+        m = re.match(r"^(?:The\s+)?(.+?)\s+(?:(?:Primary|Junior|Infants?|Nursery|Secondary|High|Community|C of E|CofE|CE|"
+                     r"Church of England|Roman Catholic|RC|Catholic|Methodist|Free|Special)\s+)*(?:School|Academy|College)\s*[,\-–]?\s+(.+)$", n)
+        if m and not re.fullmatch(r"(?:\s*" + generic + r")+", m.group(2)):
+            for f in (m.group(1) + ' ' + m.group(2), m.group(1), m.group(2)):
+                f = f.strip(' ,-')
+                if len(f) >= 4 and f not in ('St', 'Saint', 'The', 'Holy', 'Christ', 'Our Lady') and ' ' in f \
+                        and not all(w in NOT_NAME_START or w in STOP_TOKENS for w in f.split()):
+                    forms.add(f)
+        # every distinctive part between the school-type words, brackets, joiners and the trust's own name:
+        # "Quillbrook and Fallow End" -> both; "Fallow End St Ninian's" -> "Fallow End" and "St Ninian's";
+        # "Quillbrook CofE (Controlled)" -> "Quillbrook"; "QZB Academy" -> "QZB"; "[trust word] Quillbrook" -> "Quillbrook"
+        bare = re.sub(r"\([^)]*\)|\b\d+\s*-\s*\d+\b|/\s*\w+", " ", n)
+        bare = re.sub(r"\b(?:Pre[- ]?[Ss]chool|Preschool|Voluntary|Parochial|Selective|Specialist|United|Memorial|Educate|"
+                      r"Technology|International|Hub|Academies?)\b", "|", bare)
+        if trust_words:
+            bare = re.sub(r"(?<![\w-])(?:" + "|".join(map(re.escape, sorted(trust_words, key=len, reverse=True))) + r")(?![\w-])",
+                          "|", bare, flags=re.I)
+        bare = re.sub(generic.replace(r"|and|&|of|", r"|"), "|", bare)
+        segs = re.split(r"\s*(?:\||,|&|\band\b| - | – |\bfor\b|\bA\b(?= ))\s*", bare)
+        parts = []
+        for sg in segs:
+            sg = re.sub(r"^(?:The|of)\s+|\s+(?:of|the)$", "", sg.strip(" ,.-'")).strip()
+            parts += [x.strip() for x in re.split(r"\s+(?=(?:St|Saint)\.?\s)", sg) if x.strip()]
+        for f in parts:
+            ws = f.split()
+            if not ws or f in ('St', 'Saint', 'The', 'Holy', 'Christ', 'Our Lady', 'Lady', 'Our'):
+                continue
+            if len(ws) >= 2:
+                if len(f) >= 5 and not all(w in NOT_NAME_START or w in STOP_TOKENS or w in ('St', 'St.', 'Saint') for w in ws):
+                    forms.add(f)
+            elif re.fullmatch(r"[A-Z]{3,6}", f) and f not in ACRONYMS:
+                forms.add(f)
+            else:
+                w = re.sub(r"'s?$", "", f)
+                if len(w) >= 4 and w.isalpha() and w[0].isupper() and w not in STOP_TOKENS and w not in NOT_NAME_START \
+                        and w not in GIVEN and w not in NUMBER_WORDS and w.lower() not in common:
                     forms.add(w)
         initials = ''.join(w[0] for w in re.findall(r"[A-Z][\w'-]*", n) if w not in ('of', 'and', 'the', 'The'))
         if 3 <= len(initials) <= 6 and initials not in ACRONYMS:
             forms.add(initials)
-    return sorted(forms, key=len, reverse=True)
+    out = set()
+    for f in forms:   # no joiner at either end, and no form that is only a school-type word
+        f = re.sub(r"^(?:(?:&|and|for|of|A)\s+)+|(?:\s+(?:&|and|for|of))+$", "", f).strip(" ,-")
+        if f and f not in SCHOOL_TYPE_WORDS:
+            out.add(f)
+    return sorted(out, key=len, reverse=True)
 
 
 def structural_surnames(raw):
@@ -452,11 +520,11 @@ def structural_surnames(raw):
             cands.append(m.group(1))
         if ROLE_LINE.match(l) and len(l) < 120:
             cands += re.split(r':', l)
-        for m in re.finditer(r"(?i:chair|chairs|chief executive officer|ceo|head ?teacher|head of school|principal)[^.]{0,90}?"
+        for m in re.finditer(r"(?i:chair|chairs|chief (?:executive|education|operating) officer|ceo|executive lead|head ?teacher|head of school|principal)[^.]{0,90}?"
                              r"\b(?:is|are|by|,)\s+((?:" + TITLES + r"\.?\s+)?" + NAME2 + r")", l):
             cands.append(m.group(1))
         for c in cands:
-            toks = re.findall(r"[A-Z][a-zA-Z'’-]{2,}", re.sub(TITLES + r"\.?\s", '', c))
+            toks = re.findall(UP + r"(?:[^\W\d_]|['’-]){2,}", re.sub(TITLES + r"\.?\s", '', c))
             for t in toks[1:]:
                 if t not in STOP_TOKENS and t not in NOT_NAME_START and t not in COMMON_WORDS and t not in GIVEN \
                         and not re.search(r'(?i)head|teacher|principal|executive|interim|acting|school|inspector', t):
@@ -464,9 +532,45 @@ def structural_surnames(raw):
     return out
 
 
-def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_names=()):
+TRUST_GENERIC = (r"(?i:\b(?:the|multi[- ]?academy|academy|academies|trust|ltd|limited|company|learning|education|educational|"
+                 r"schools?|partnership|federation|catholic|diocesan|church of england|c of e|foundation|community|of|and|"
+                 r"mat|cmat|mac|group|alliance|family|collaborative|st|saint)\b\.?)")
+TRUST_SUFFIX = (r"(?i:(?:\s+(?:catholic|church of england|c of e|cofe|diocesan|christian|multi[- ]?academy|academy|academies|"
+                r"learning|education(?:al)?|schools?|partnership|group|federation))*"
+                r"\s+(?:trust|company|partnership|federation|mat|cmat|mac|academies|schools)\b)")
+
+
+def trust_patterns(trust_names, common=frozenset()):
+    """Regexes for the school's trust as reports write it: the full name, and the distinctive core of the name with or
+    without a trust word after it ("Q-ZAT", "the Vellacombe multi-academy trust", "the 'Vellacombe Games'"). A core
+    made only of ordinary words or places ("Bloom", "Learn", "Imaginaryton") is removed only with a trust word after it.
+    common: lower-case words that are ordinary in reports (from the corpus), and place words."""
+    out = []
+    for f in trust_names:
+        f = re.sub(r"\s+", " ", (f or '').replace('’', "'")).strip()
+        full = re.sub(r"(?i)\s+(?:ltd|limited)\.?$", "", f)
+        if len(full) >= 4:
+            out.append((r"(?<![\w-])(?:the )?" + re.escape(full) + r"(?![\w-])", re.I, False))
+        core = re.sub(r"\s+", " ", re.sub(TRUST_GENERIC, " ", full)).strip(" ,.-&")
+        words = re.findall(r"[^\W_][\w'.-]*", core)
+        if not words or len(core) < 2:
+            continue
+        ordinary = all(w.lower().strip(".") in common or w.title() in STOP_TOKENS or w.title() in NOT_NAME_START
+                       or w.title() in COMMON_WORDS or w.title() in GIVEN for w in words)
+        rx_core = r"\s+".join(re.escape(w).replace("'", "'?") for w in core.split(" ")) + r"\.?"
+        acronym = core.replace("-", "").replace(".", "").isupper() and len(core) <= 8 and " " not in core
+        pre = r"(?<![\w\[-])(?:(?i:the|St\.?|Saint)\s+)?"
+        out.append((pre + rx_core + r"(?:" + TRUST_SUFFIX + r")(?![\w-])", re.I, True))      # with a trust word
+        if not ordinary and (len(core) >= 4 or acronym):
+            out.append((r"(?<![\w\[-])" + rx_core + r"(?![\w-])", re.I, True))  # the core alone
+    # longest first: a name with its trust word before the full name, and both before the core alone
+    return sorted(out, key=lambda x: (0 if x[0].endswith(TRUST_SUFFIX + r")(?![\w-])") else 1 if not x[2] else 2))
+
+
+def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_names=(), common=frozenset()):
     """Replace the school's name, its trust's name and personal names. Returns the new text.
-    own_names: surnames named in this report's structural lines, removed wherever they recur."""
+    own_names: surnames named in this report's structural lines, removed wherever they recur.
+    common: ordinary lower-case words and places, so that a trust named with one is removed only as a trust."""
     given = GIVEN if given is None else given
     counts = counts if counts is not None else collections.Counter()
 
@@ -476,13 +580,23 @@ def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_na
         return new
 
     t = text.replace('’', "'")
+    tpats = trust_patterns(trust_names, common)
+    for rx, fl, cap in tpats:
+        if rx.endswith(TRUST_SUFFIX + r")(?![\w-])"):
+            t = sub(rx, lambda m: '[the trust]' if re.sub(r"(?i)^(?:the|st\.?|saint)\s+", "", m.group(0))[:1].isupper()
+                    else m.group(0), t, 'trust', fl)
     for f in school_forms:
         if re.fullmatch(r'[A-Z]{3,6}', f):      # the school's initials ("Team ABS")
             t = sub(r"\b" + f + r"\b", '[the school]', t, 'school')
             continue
         rx = re.escape(f).replace("'", "'?")
         rx = re.sub(r"([a-z])s\b", r"\1'?s", rx)    # "Wrens Nest" also matches "Wren's Nest"
-        t = sub(r"(?<![\w-])" + rx + r"(?![\w-])", '[the school]', t, 'school', re.I if len(f) > 12 else 0)
+        rx = re.sub(r"\b(?:St(?:\\\.)?|Saint)\\ ", r"(?:St\\.?|Saint)\\s+", rx)   # "St Mary's" also matches "St. Mary's"
+        t = sub(r"(?<![\w-])" + rx + r"(?:s|ers?)?(?![\w-])", '[the school]', t, 'school', re.I if len(f) > 12 else 0)
+    # the school's own trust (GIAS), before other schools so that "St X Church of England Multi Academy Trust" stays whole
+    for rx, fl, cap in tpats:
+        t = sub(rx, lambda m: '[the trust]' if (not cap or re.sub(r"(?i)^(?:the|st\.?|saint)\s+", "", m.group(0))[:1].isupper())
+                else m.group(0), t, 'trust', fl)
     # another school named in the text (a federation partner, a shared sixth form)
     def other_school(m):
         lead = re.findall(r"[A-Z][\w'-]*", m.group(1))
@@ -493,18 +607,20 @@ def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_na
     t = re.sub(r"\b((?:(?:St|Saint)\.?\s+)?(?:[A-Z][\w'-]+\s+){1,5})(?:(?:C of E|CofE|CE|RC|Catholic|Church of England|"
                r"Methodist)\s+)?(?:(?:Primary|Infant|Infants|Junior|Nursery|High|Secondary|Community|Grammar|Special|Free|"
                r"Middle|First)\s+)?(?:School|Academy|College|Campus)\b", other_school, t)
+    # a named unit of the school ("Brightwater Boys and Brightwater Girls")
+    t = re.sub(r"\b([A-Z][\w'-]+) (?:Boys|Girls)\b(?!['’])", lambda m: m.group(0) if (m.group(1).lower() in common or m.group(1) in STOP_TOKENS
+               or m.group(1) in NOT_NAME_START or m.group(1) in COMMON_WORDS) else (counts.update(['other_school']), '[another school]')[1], t)
     # addresses: postcodes and the street before them
-    t = sub(r"\b(?:[A-Z][\w'-]+\s+){1,3}(?:Road|Street|Lane|Avenue|Drive|Close|Way|Crescent|Place|Terrace|Gardens)\b"
-            r"(?=,?\s+(?:[A-Z][a-z]+\s+)?[A-Z]{1,2}\d)", '[address]', t, 'address')
+    t = sub(r"\b(?:[A-Z][\w'-]+\s+){1,3}(?:Road|Rd|Street|St|Lane|Avenue|Ave|Drive|Close|Way|Crescent|Place|Terrace|Gardens|"
+            r"Estate|Court|Walk|Square|Grove|Row|Mews|Parade|Hill|Park|Green)\b\.?"
+            r"(?=(?:,?\s+(?:\[the school\]|[A-Z][\w'-]+(?:\s+(?:and\s+|on\s+|upon\s+)?[A-Z][\w'-]+){0,3})){0,4},?\s+[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b)",
+            '[address]', t, 'address')
     t = sub(r"\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b", '[postcode]', t, 'address')
-    for f in sorted(trust_names, key=len, reverse=True):
-        if f and len(f) > 5:
-            t = sub(r"(?<![\w-])(?:the )?" + re.escape(f.replace('’', "'")) + r"(?![\w-])", '[the trust]', t, 'trust', re.I)
     # a trust or federation named in the text
-    t = sub(r"\b(?:the\s+)?(?:[A-Z][\w'&.-]*\s+){1,7}(?:Multi[- ]Academy Trust|Academy Trust|Learning Trust|"
+    t = sub(r"\b(?:the\s+)?(?:[A-Z][\w'&.-]*\s+(?:(?:of|and|&)\s+)?){1,7}(?:Multi[- ]Academy Trust|Academy Trust|Learning Trust|"
             r"Educational Trust|Education Trust|Schools Trust|Catholic Trust|Federation|Learning Partnership|"
-            r"Trust)\b(?:\s*\((?:[A-Z]{2,8})\))?", lambda m: m.group(0) if m.group(0).strip() in ('The Trust', 'the Trust') else '[the trust]', t, 'trust')
-    t = sub(r"\b((?:federation|partnership|trust|collaboration|hub) (?:called|named|known as) )(?:the )?[A-Z\[][^.]*?(?=[.,;]|$| which| with| and the)",
+            r"Multi[- ]Academy Company|MAT|MAC|Trust)\b(?:\s*\((?:[A-Z]{2,8})\))?", lambda m: m.group(0) if m.group(0).strip() in ('The Trust', 'the Trust') else '[the trust]', t, 'trust')
+    t = sub(r"\b((?:federation|partnership|trust|collaboration|hub) (?:called|named|known as) )(?:the )?(?=[A-Z\[])(?:\bSt\.|[^.])+?(?=(?<!\bSt)[.,;]|$| which| with| and the)",
             r"\1[the trust]", t, 'trust')
     t = sub(r"\b((?:changed|change) (?:its|their) names? from )[A-Z][^.]*?( to )", r"\1[the school]\2", t, 'school')
     t = sub(r"\bthe Federation of (?:[A-Z][\w'&.-]*\s*(?:and\s+)?){1,8}", '[the trust] ', t, 'trust')
@@ -519,6 +635,7 @@ def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_na
     t = sub(TITLE_NAME, '[name]', t, 'title')
     t = IS_NAME.sub(lambda m: keep_if_not_name(m, 2, lambda m: (counts.update(['role']), m.group(1) + '[name]')[1]), t)
     t = ROLE_NAME.sub(lambda m: keep_if_not_name(m, 3, lambda m: (counts.update(['role']), m.group(1) + m.group(2) + '[name]')[1]), t)
+    t = ROLE_COLON.sub(lambda m: keep_if_not_name(m, 3, lambda m: (counts.update(['role']), m.group(1) + m.group(2) + '[name]')[1]), t)
     t = NAME_ROLE_APPOS.sub(lambda m: keep_if_not_name(m, 1, lambda m: (counts.update(['role']), '[name]' + m.group(0)[len(m.group(1)):])[1]), t)
 
     # known given name + capitalised surname
@@ -647,18 +764,23 @@ def is_report_card(raw):
     return all(g in lines for g in GRADES) and heads >= 5 and any(l.startswith('Safeguarding standards') for l in lines)
 
 
-def parse_report(raw, meta=None, school_extra=(), trust_names=(), given=None, boiler=frozenset()):
+def parse_report(raw, meta=None, school_extra=(), trust_names=(), given=None, boiler=frozenset(), common=frozenset(),
+                 name_common=None):
+    """name_common: ordinary lower-case words, not places (a school named after its town is still the school); by
+    default the same as common."""
     """Raw text -> parsed record with names removed. meta: manifest row (phase, insp_date)."""
     meta = meta or {}
     s = split_sections(raw, boiler)
     pdf_date = report_date(s['header'])
     own = structural_surnames(raw)
     name = school_name_from_header(s['header'])
-    forms = school_name_forms(name, school_extra)
+    trust_words = {w for f in trust_names for w in re.findall(r"[^\W_][\w'-]*", re.sub(TRUST_GENERIC, " ", f or ''))
+                   if len(w) >= 2}
+    forms = school_name_forms(name, school_extra, common if name_common is None else name_common, trust_words)
     counts = collections.Counter()
     sections = collections.OrderedDict()
     for key, lines in s['sections'].items():
-        paras = [scrub(p, forms, trust_names, given, counts, own) for p in join_lines(lines)]
+        paras = [scrub(p, forms, trust_names, given, counts, own, common) for p in join_lines(lines)]
         rec = {'grade': s['grades'].get(key), 'paragraphs': paras, 'words': sum(len(p.split()) for p in paras)}
         if key == 'next_steps':
             rec['items'] = paras
@@ -807,6 +929,14 @@ def corpus_boilerplate(texts, min_reports=3):
     return frozenset(l for l, n in c.items() if n >= min_reports and l)
 
 
+def corpus_common_words(texts, min_reports=20):
+    """Lower-case words used in at least min_reports reports: ordinary English in this corpus."""
+    c = collections.Counter()
+    for t in texts:
+        c.update(set(re.findall(r"(?<![\w'’-])[a-z][a-z'’-]+", t)))
+    return frozenset(w for w, n in c.items() if n >= min_reports)
+
+
 def suppress(n):
     return '<10' if 0 < n < 10 else str(n)
 
@@ -818,7 +948,7 @@ def write_counts(recs, path, as_at):
          f'Parsed report cards in the corpus as at {as_at}. Aggregate counts only; any cell from 1 to 9 is shown as "<10". '
          'Source: Ofsted report cards (renewed framework, inspections from 10 November 2025), read from '
          'files.ofsted.gov.uk; Contains public sector information licensed under the Open Government Licence v3.0. '
-         'The corpus is still being read, so these counts will grow. No analysis of language is in this file.', '',
+         'The backfill of the corpus is complete; counts change as new report cards are added. No analysis of language is in this file.', '',
          f'Reports parsed: {len(recs)}.', '', '## By phase', '', '| Phase | Reports |', '| --- | --: |']
     for p in phases:
         L.append(f'| {p} | {suppress(by_phase.get(p, 0))} |')
@@ -877,6 +1007,8 @@ def main():
     raws = {m['urn']: gzip.open(os.path.join(a.data, 'text', m['urn'] + '.txt.gz'), 'rt', encoding='utf-8').read() for m in man}
     given = (GIVEN | corpus_given_names(raws.values())) - GIVEN_AMBIGUOUS
     boiler = corpus_boilerplate(raws.values())
+    name_common = corpus_common_words(raws.values())
+    common = name_common | {p.lower() for p in places}
     recs, index = [], []
     agree = collections.Counter()
     disagree = []
@@ -899,7 +1031,7 @@ def main():
         if key is not None:
             code, role = lead_inspector_code(raws[u], key)
             lead_rows.append({'urn': u, 'code': code, 'role_detected': role})
-        rec, diag = parse_report(raws[u], m, names.get(u, ()), [trust[u]] if u in trust else [], given, boiler)
+        rec, diag = parse_report(raws[u], m, names.get(u, ()), [trust[u]] if u in trust else [], given, boiler, common, name_common)
         json.dump(rec, open(os.path.join(a.data, 'parsed', u + '.json'), 'w'), ensure_ascii=False, indent=1)
         recs.append(rec)
         # cross-check grades: MI when its inspection date matches, else the daily reader

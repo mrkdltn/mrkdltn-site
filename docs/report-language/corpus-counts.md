@@ -1,121 +1,121 @@
 # Report Language: corpus counts
 
-Parsed report cards in the corpus as at 2026-11-26. Aggregate counts only; any cell from 1 to 9 is shown as "<10". Source: Ofsted report cards (renewed framework, inspections from 10 November 2025), read from files.ofsted.gov.uk; Contains public sector information licensed under the Open Government Licence v3.0. The corpus is still being read, so these counts will grow. No analysis of language is in this file.
+Parsed report cards in the corpus as at 2026-11-28. Aggregate counts only; any cell from 1 to 9 is shown as "<10". Source: Ofsted report cards (renewed framework, inspections from 10 November 2025), read from files.ofsted.gov.uk; Contains public sector information licensed under the Open Government Licence v3.0. The backfill of the corpus is complete; counts change as new report cards are added. No analysis of language is in this file.
 
-Reports parsed: 1333.
+Reports parsed: 4281.
 
 ## By phase
 
 | Phase | Reports |
 | --- | --: |
-| Nursery | 47 |
-| Primary | 1111 |
-| Secondary | 118 |
-| Special | 55 |
-| Alternative provision | <10 |
+| Nursery | 60 |
+| Primary | 3144 |
+| Secondary | 873 |
+| Special | 160 |
+| Alternative provision | 44 |
 
 ## Grades by evaluation area (all phases)
 
 | Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
 | --- | --: | --: | --: | --: | --: | --: |
-| Inclusion | 23 | 423 | 757 | 112 | 18 | 0 |
-| Curriculum and teaching | <10 | 190 | 851 | 257 | 28 | 0 |
-| Achievement | 15 | 192 | 765 | 332 | 29 | 0 |
-| Attendance and behaviour | 16 | 381 | 726 | 197 | 13 | 0 |
-| Personal development and wellbeing | 24 | 519 | 729 | 58 | <10 | 0 |
-| Early years | <10 | 267 | 658 | 98 | 16 | 291 |
-| Post-16 provision | 0 | 32 | 53 | <10 | 0 | 1239 |
-| Leadership and governance | 17 | 228 | 868 | 188 | 32 | 0 |
+| Inclusion | 79 | 1420 | 2383 | 362 | 37 | 0 |
+| Curriculum and teaching | 36 | 689 | 2699 | 799 | 58 | 0 |
+| Achievement | 58 | 693 | 2371 | 1077 | 82 | 0 |
+| Attendance and behaviour | 58 | 1247 | 2333 | 601 | 42 | 0 |
+| Personal development and wellbeing | 88 | 1623 | 2391 | 172 | <10 | 0 |
+| Early years | 21 | 833 | 1852 | 271 | 27 | 1277 |
+| Post-16 provision | 23 | 147 | 307 | 48 | <10 | 3755 |
+| Leadership and governance | 67 | 935 | 2704 | 501 | 74 | 0 |
 
 ## Safeguarding and categories of concern
 
 | Outcome | Reports |
 | --- | --: |
-| Safeguarding standards met | 1327 |
-| Safeguarding standards not met | <10 |
-| Special measures | 29 |
-| Significant improvement | 16 |
+| Safeguarding standards met | 4263 |
+| Safeguarding standards not met | 18 |
+| Special measures | 70 |
+| Significant improvement | 45 |
 
 ## Grades by evaluation area and phase
 
-### Nursery (47 reports)
+### Nursery (60 reports)
 
 | Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
 | --- | --: | --: | --: | --: | --: | --: |
-| Inclusion | <10 | 25 | 15 | 0 | <10 | 0 |
-| Curriculum and teaching | <10 | 15 | 23 | <10 | <10 | 0 |
-| Achievement | <10 | 16 | 23 | <10 | <10 | 0 |
-| Attendance and behaviour | <10 | 24 | 17 | <10 | <10 | 0 |
-| Personal development and wellbeing | <10 | 27 | 13 | 0 | <10 | 0 |
-| Early years | 0 | 0 | 0 | 0 | 0 | 47 |
-| Post-16 provision | 0 | 0 | 0 | 0 | 0 | 47 |
-| Leadership and governance | <10 | 14 | 23 | <10 | <10 | 0 |
+| Inclusion | <10 | 34 | 19 | 0 | <10 | 0 |
+| Curriculum and teaching | <10 | 19 | 30 | <10 | <10 | 0 |
+| Achievement | <10 | 24 | 28 | <10 | <10 | 0 |
+| Attendance and behaviour | <10 | 32 | 22 | <10 | <10 | 0 |
+| Personal development and wellbeing | <10 | 38 | 14 | 0 | <10 | 0 |
+| Early years | 0 | 0 | 0 | 0 | 0 | 60 |
+| Post-16 provision | 0 | 0 | 0 | 0 | 0 | 60 |
+| Leadership and governance | <10 | 21 | 28 | <10 | <10 | 0 |
 
-### Primary (1111 reports)
-
-| Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
-| --- | --: | --: | --: | --: | --: | --: |
-| Inclusion | <10 | 341 | 652 | 97 | 16 | 0 |
-| Curriculum and teaching | <10 | 142 | 721 | 221 | 25 | 0 |
-| Achievement | <10 | 137 | 650 | 290 | 27 | 0 |
-| Attendance and behaviour | <10 | 296 | 632 | 168 | 10 | 0 |
-| Personal development and wellbeing | 10 | 420 | 626 | 53 | <10 | 0 |
-| Early years | <10 | 253 | 651 | 97 | 15 | 92 |
-| Post-16 provision | 0 | 0 | 0 | 0 | 0 | 1111 |
-| Leadership and governance | <10 | 179 | 737 | 162 | 29 | 0 |
-
-### Secondary (118 reports)
+### Primary (3144 reports)
 
 | Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
 | --- | --: | --: | --: | --: | --: | --: |
-| Inclusion | <10 | 33 | 66 | 14 | 0 | 0 |
-| Curriculum and teaching | 0 | 14 | 79 | 24 | <10 | 0 |
-| Achievement | <10 | 21 | 60 | 35 | 0 | 0 |
-| Attendance and behaviour | <10 | 31 | 59 | 24 | <10 | 0 |
-| Personal development and wellbeing | <10 | 44 | 67 | <10 | 0 | 0 |
-| Early years | 0 | 0 | 0 | 0 | 0 | 118 |
-| Post-16 provision | 0 | 17 | 39 | <10 | 0 | 54 |
-| Leadership and governance | <10 | 18 | 77 | 17 | <10 | 0 |
+| Inclusion | 25 | 1012 | 1825 | 256 | 26 | 0 |
+| Curriculum and teaching | 10 | 450 | 2052 | 588 | 44 | 0 |
+| Achievement | 22 | 446 | 1825 | 799 | 52 | 0 |
+| Attendance and behaviour | 14 | 877 | 1822 | 413 | 18 | 0 |
+| Personal development and wellbeing | 29 | 1195 | 1805 | 112 | <10 | 0 |
+| Early years | 20 | 787 | 1825 | 267 | 26 | 219 |
+| Post-16 provision | 0 | 0 | 0 | 0 | 0 | 3144 |
+| Leadership and governance | 20 | 624 | 2078 | 369 | 53 | 0 |
 
-### Special (55 reports)
-
-| Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
-| --- | --: | --: | --: | --: | --: | --: |
-| Inclusion | <10 | 24 | 23 | <10 | <10 | 0 |
-| Curriculum and teaching | 0 | 18 | 27 | <10 | <10 | 0 |
-| Achievement | <10 | 17 | 31 | <10 | <10 | 0 |
-| Attendance and behaviour | <10 | 29 | 17 | <10 | <10 | 0 |
-| Personal development and wellbeing | <10 | 27 | 22 | 0 | 0 | 0 |
-| Early years | 0 | 14 | <10 | <10 | <10 | 32 |
-| Post-16 provision | 0 | 15 | 14 | <10 | 0 | 25 |
-| Leadership and governance | <10 | 17 | 30 | <10 | <10 | 0 |
-
-### Alternative provision (<10 reports)
+### Secondary (873 reports)
 
 | Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
 | --- | --: | --: | --: | --: | --: | --: |
-| Inclusion | <10 | 0 | <10 | 0 | 0 | 0 |
-| Curriculum and teaching | 0 | <10 | <10 | 0 | 0 | 0 |
-| Achievement | 0 | <10 | <10 | 0 | 0 | 0 |
-| Attendance and behaviour | 0 | <10 | <10 | 0 | 0 | 0 |
-| Personal development and wellbeing | 0 | <10 | <10 | 0 | 0 | 0 |
-| Early years | 0 | 0 | 0 | 0 | 0 | <10 |
-| Post-16 provision | 0 | 0 | 0 | 0 | 0 | <10 |
-| Leadership and governance | <10 | 0 | <10 | 0 | 0 | 0 |
+| Inclusion | 31 | 270 | 468 | 98 | <10 | 0 |
+| Curriculum and teaching | 19 | 163 | 502 | 181 | <10 | 0 |
+| Achievement | 27 | 164 | 400 | 258 | 24 | 0 |
+| Attendance and behaviour | 32 | 230 | 420 | 173 | 18 | 0 |
+| Personal development and wellbeing | 41 | 283 | 494 | 54 | <10 | 0 |
+| Early years | <10 | 18 | 13 | <10 | 0 | 840 |
+| Post-16 provision | 21 | 110 | 275 | 46 | <10 | 420 |
+| Leadership and governance | 33 | 208 | 505 | 111 | 16 | 0 |
+
+### Special (160 reports)
+
+| Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
+| --- | --: | --: | --: | --: | --: | --: |
+| Inclusion | 12 | 80 | 59 | <10 | <10 | 0 |
+| Curriculum and teaching | <10 | 46 | 89 | 20 | <10 | 0 |
+| Achievement | <10 | 48 | 92 | 14 | <10 | 0 |
+| Attendance and behaviour | <10 | 84 | 55 | 11 | <10 | 0 |
+| Personal development and wellbeing | 10 | 82 | 63 | <10 | <10 | 0 |
+| Early years | 0 | 28 | 14 | <10 | <10 | 114 |
+| Post-16 provision | <10 | 37 | 32 | <10 | 0 | 87 |
+| Leadership and governance | <10 | 61 | 78 | 13 | <10 | 0 |
+
+### Alternative provision (44 reports)
+
+| Area | Exceptional | Strong standard | Expected standard | Needs attention | Urgent improvement | Not graded |
+| --- | --: | --: | --: | --: | --: | --: |
+| Inclusion | <10 | 24 | 12 | <10 | <10 | 0 |
+| Curriculum and teaching | 0 | 11 | 26 | <10 | <10 | 0 |
+| Achievement | <10 | 11 | 26 | <10 | <10 | 0 |
+| Attendance and behaviour | <10 | 24 | 14 | <10 | <10 | 0 |
+| Personal development and wellbeing | <10 | 25 | 15 | <10 | <10 | 0 |
+| Early years | 0 | 0 | 0 | 0 | 0 | 44 |
+| Post-16 provision | 0 | 0 | 0 | 0 | 0 | 44 |
+| Leadership and governance | <10 | 21 | 15 | <10 | <10 | 0 |
 
 ## By month of inspection
 
 | Month | Nursery | Primary | Secondary | Special | Alternative provision | All |
 | --- | --: | --: | --: | --: | --: | --: |
-| 2025-11 | 0 | 22 | <10 | <10 | 0 | 26 |
-| 2025-12 | 0 | 24 | <10 | <10 | 0 | 29 |
-| 2026-01 | 0 | 133 | 19 | <10 | 0 | 156 |
-| 2026-02 | <10 | 81 | <10 | <10 | 0 | 96 |
-| 2026-03 | <10 | 91 | 12 | <10 | 0 | 110 |
-| 2026-04 | <10 | 102 | 14 | <10 | <10 | 127 |
-| 2026-05 | <10 | 98 | <10 | <10 | 0 | 119 |
-| 2026-06 | 21 | 193 | 20 | 11 | <10 | 246 |
-| 2026-07 | <10 | 93 | <10 | <10 | 0 | 114 |
-| 2026-09 | 0 | 190 | 18 | <10 | 0 | 215 |
-| 2026-10 | 0 | 83 | <10 | <10 | 0 | 94 |
-| 2026-11 | 0 | <10 | 0 | 0 | 0 | <10 |
+| 2025-11 | 0 | 83 | 31 | <10 | <10 | 124 |
+| 2025-12 | 0 | 67 | 17 | <10 | <10 | 88 |
+| 2026-01 | 0 | 343 | 91 | 17 | <10 | 456 |
+| 2026-02 | <10 | 240 | 75 | <10 | 0 | 327 |
+| 2026-03 | <10 | 278 | 103 | 13 | <10 | 400 |
+| 2026-04 | 10 | 253 | 100 | 15 | <10 | 382 |
+| 2026-05 | 11 | 249 | 100 | 19 | <10 | 385 |
+| 2026-06 | 23 | 533 | 134 | 36 | <10 | 733 |
+| 2026-07 | <10 | 263 | 40 | 13 | <10 | 327 |
+| 2026-09 | 0 | 536 | 119 | 16 | <10 | 679 |
+| 2026-10 | 0 | 292 | 62 | 13 | <10 | 372 |
+| 2026-11 | 0 | <10 | <10 | 0 | 0 | <10 |
