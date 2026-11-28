@@ -108,3 +108,78 @@ Matching is on whole tokens after preparation.
 - **Parse error.** The audit found boundary errors in about 2% of context sections and no errors in area sections; small residual errors remain possible.
 - **Toolkit versions.** Echo against two versions is not strictly comparable. The like-for-like series is the guard, and only it is used to judge convergence.
 - **Templates.** Some phrasing comes from Ofsted's report templates and editing rather than from individual inspectors. The stock-phrasing sensitivity shows how much this matters.
+
+## Amendment 1, 28 November 2026 (before any counting)
+
+Approved by Mark in the live conversation on 28 November 2026. At the time of this amendment nothing in the plan had been counted, and no report text had been read by grade, deprivation or month. It adds two analyses and corrects one statement.
+
+### Correction: who labels the validation samples
+
+The Data section says that no language model reads or classifies any text. That is true of every published figure: each one comes from the deterministic code and the frozen lexicons in this plan. But the hand-labelled samples used to validate those lexicons (analysis 3, and analyses 6 and 7 below) are labelled by the analyst, and the analyst here is Claude, reading each item. To keep that honest:
+
+- the labelling rules are written down before any labelling;
+- each item is labelled without its school's grades, deprivation or results in view;
+- Mark checks a random 30 items from each labelled sample, and the agreement rate is reported.
+
+No language-model output appears on the site.
+
+### Analysis 6: the toolkit map (which standards inspectors write about)
+
+**Standards.** Each toolkit version is split into its standards. For each evaluation area, a standard is one bulleted statement under a grade heading. Each standard gets an identifier (area, grade heading, position) and keeps its text. The split is committed as `data/derived/report_language/toolkit_standards_v1.1.csv` and `_v2.0.csv` before any matching.
+
+**Matching.**
+- Each sentence of an area section is compared with every standard for the same area, in the version in force on its inspection date.
+- Similarity is BM25 (k1 = 1.2, b = 0.75) on the prepared tokens with stop words removed, normalised by the score of the standard matched against itself.
+- A sentence is assigned to its best-matching standard only if the normalised score reaches a threshold. Otherwise it is "unmatched".
+
+**Threshold and validation.**
+- 200 area-section sentences are drawn at random (seed 20261128) and labelled with the standard each one evidences, or "none".
+- The first 100 set the threshold: the lowest value giving precision of at least 0.8 for assigned sentences.
+- The second 100 test it. Precision, recall and the unmatched share are reported from the test set only.
+- If test precision is below 0.7, the map is published only as "the standards whose wording reports echo most", with that caveat. It is not described as what reports are about.
+
+**Figures (descriptive).** For each area and grade:
+- the share of sentences assigned to each standard;
+- the share of report sections with at least one sentence assigned to it.
+
+Both are grouped by the standard's grade heading. They are also shown by phase. Cells of fewer than 10 report sections are shown as "<10". A standard is said to be "written about at this grade" only if at least 20% of sections at that grade carry it. Nothing here is a confirmatory test.
+
+**Across versions.** Standards in v1.1 and v2.0 are linked where their texts have a normalised BM25 similarity of at least 0.8 in both directions. Linked standards are shown as one row across the September 2026 change. Unlinked ones are shown as belonging to one version only.
+
+### Analysis 7: words against data (does achievement text track published results?)
+
+**Sample.**
+- *Confirmatory:* secondary schools with a report card and a 2024/25 Attainment 8 gap against their 50 similar schools in the Explorer (the published, open measure).
+- *Exploratory:* primaries, against 2024/25 KS2 reading, writing and maths expected standard, where school-level data is published.
+
+**Text measure.**
+- *Results sentences:* sentences in the achievement section that refer to published outcomes. They are found by a frozen results lexicon: outcomes, results, attainment, examinations, GCSE, national tests, key stage, published data, progress measures, national average, and their forms.
+- *Direction:* each results sentence is classed positive, negative or mixed, using a frozen direction lexicon with negation handling.
+- *Section direction:* positive if all results sentences are positive, negative if all are negative, mixed otherwise, and "no results statement" if there are none.
+- *Drafting and validation:* both lexicons are drafted from a development sample of 150 achievement sections, read without results or grades. They are validated on a fresh 150 sentences: precision of at least 0.8 for each direction, or the direction is merged into "mixed" and the change reported.
+
+**Data measure.** The Explorer's reading of the Attainment 8 gap against similar schools, in its five bands (well below to well above), and the gap itself in points.
+
+**Figures.**
+1. A cross-table of data band × section direction, with row shares and Wilson intervals.
+2. Spearman correlation between the Attainment 8 gap and net direction (positive minus negative results sentences, over all results sentences), with a 2,000-resample bootstrap interval. It is given overall, and within each achievement grade with at least 30 schools.
+3. Two discordance shares:
+   - schools whose results are well below similar schools, but whose achievement text is wholly positive about results;
+   - schools whose results are well above, but whose text is wholly negative.
+
+**Reading, set now.**
+- "The words track the data" if the overall correlation's 95% interval lies above 0.3.
+- "Weak tracking" if it lies above 0 but not wholly above 0.3.
+- "No clear tracking" otherwise.
+- The within-grade correlations are reported beside the overall one, and are not read as a headline.
+
+**Rules.**
+- National and phase aggregates only.
+- No school is listed, flagged or shown with its text direction anywhere: on this page, on a school page, or in a download.
+- Discordant cases are never named or described individually, not even to Mark.
+- This analysis measures whether the wording follows the published data. It is not evidence that any grade or report is wrong.
+
+**Limits.**
+- Inspectors weigh more than published results: current pupils' work, the quality of internal assessment, and the secure-fit rules. Under the framework the text should not simply restate the data.
+- Published results lag the inspection by up to a year.
+- The Explorer's similar-schools gap is this project's open replica, not Ofsted's own measure.
