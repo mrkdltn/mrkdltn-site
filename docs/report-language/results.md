@@ -302,3 +302,11 @@ python3 scripts/language/analysis.py run --only 3 7      # analyses 3 and 7
 ```
 
 The full run takes a few minutes on four cores. It needs numpy, pandas, statsmodels, pdfplumber and cmudict.
+
+## Agreed
+
+Mark agreed these results on 28 November 2026, in the live conversation. He also approved two methods points:
+- the Explorer's five-band reading of the 2024/25 Attainment 8 gap (deviation 17) is used for analysis 7;
+- the four themes below 0.8 precision are shown with the plan's warning, unchanged.
+
+The results label checks for Mark are optional, and are reported on the method tab if he completes them.
