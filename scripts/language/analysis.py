@@ -575,6 +575,66 @@ def _order(x):
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# Analyses 3 and 7: validation samples for the frozen v1 lexicons (labelling-rules.md, second part)
+# ---------------------------------------------------------------------------------------------------------------
+
+import lexicons as LX  # noqa: E402
+
+DEV_KEY = os.path.join(AUDIT, 'lexicon-dev-key.json')      # the development items used to draft v0 (excluded)
+NS_N, RS_N = 100, 150
+GRADE_TEXT = re.compile(r'\b(exceptional|strong standard|expected standard|needs attention|urgent improvement)\b', re.I)
+
+
+def _raw_reports(corpus=CORPUS):
+    idx = [r['urn'] for r in csv.DictReader(open(os.path.join(corpus, 'parsed', 'index.csv'), encoding='utf-8'))
+           if r['status'] == 'parsed']
+    for u in sorted(idx, key=int):
+        yield u, json.load(open(os.path.join(corpus, 'parsed', u + '.json'), encoding='utf-8'))
+
+
+def draw_validation():
+    """Fresh random samples for analyses 3 and 7, after removing the development items. Writes the blind text (grade
+    words replaced by "[grade]"), and separately the key (URN, position) and the lexicon's output, all outside the
+    repository. Seeds: 20261128 + 3 (next steps) and 20261128 + 11 (results sentences)."""
+    dev = json.load(open(DEV_KEY))
+    dev_ns = {(u, i) for u, i in dev['next_steps']}
+    dev_ach = set(dev['achievement'])
+    items, rsent = [], []
+    for u, rec in _raw_reports():
+        s = rec['sections']
+        for i, t in enumerate((s.get('next_steps') or {}).get('items') or []):
+            if t and t.strip() and (u, i) not in dev_ns:
+                items.append((u, i, t))
+        if u not in dev_ach:
+            paras = (s.get('achievement') or {}).get('paragraphs') or []
+            for k, st in enumerate(LX.sentences(paras)):
+                if LX.is_results_sentence(st):
+                    rsent.append((u, k, st))
+    ns = random_sample(items, NS_N, SEED + 3)
+    rs = random_sample(rsent, RS_N, SEED + 11)
+    out = {}
+    for name, samp, f in (('ns', ns, lambda t: LX.classify_next_step(t)), ('rs', rs, lambda t: LX.sentence_direction(t))):
+        blind = [{'id': f'{name.upper()}{j + 1:03d}', 'text': GRADE_TEXT.sub('[grade]', t)} for j, (_, _, t) in enumerate(samp)]
+        key = [{'id': b['id'], 'urn': u, 'position': i} for b, (u, i, _) in zip(blind, samp)]
+        lex = [{'id': b['id'], 'lexicon': ';'.join(f(t)) if name == 'ns' else f(t),
+                'lexicon_no_trend': '' if name == 'ns' else LX.sentence_direction(t, trend=False)}
+               for b, (_, _, t) in zip(blind, samp)]
+        for suffix, rows in (('sample', blind), ('key', key), ('lexicon', lex)):
+            path = os.path.join(AUDIT, f'validation-{name}-{suffix}.csv')
+            with open(path, 'w', newline='', encoding='utf-8') as fh:
+                w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+                w.writeheader()
+                w.writerows(rows)
+        out[name] = {'pool': len(items) if name == 'ns' else len(rsent), 'drawn': len(samp)}
+    return out
+
+
+def random_sample(pool, n, seed):
+    import random
+    return random.Random(seed).sample(pool, n)
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # Analysis 3: next-steps themes (NOT RUN: the lexicon must be reviewed by Mark and frozen first)
 # ---------------------------------------------------------------------------------------------------------------
 
@@ -1088,11 +1148,14 @@ def analysis7(reports, results_sentences=None, direction=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['sample', 'check', 'run'])
+    ap.add_argument('cmd', choices=['sample', 'check', 'validation-sample', 'validation-score', 'run'])
     ap.add_argument('--only', nargs='*', type=int, default=[1, 2, 4, 5, 6])
     a = ap.parse_args()
     if a.cmd == 'check':
         print('wrote', os.path.relpath(CHECK_MD, REPO), write_check_for_mark())
+        return
+    if a.cmd == 'validation-sample':
+        print(draw_validation())
         return
     reports = load_corpus()
     print(f'{len(reports)} report cards; {sum(len(r["sections"]) for r in reports)} graded area sections', flush=True)
