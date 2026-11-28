@@ -16,7 +16,7 @@
    "Personal development and wellbeing": 10513,
    "Early years": 4848,
    "Post-16 provision": 638,
-   "Leadership and governance": 6435
+   "Leadership and governance": 6434
   }
  },
  "a2_meta": {
@@ -59,11 +59,11 @@
  },
  "a2_reading": {
   "like_for_like": {
-   "first3_mean": 4.023342438874242,
-   "last3_mean": 4.052768543280249,
-   "difference_pp": 0.02942610440600646,
-   "lo": -0.1371328672332147,
-   "hi": 0.17967409379430296,
+   "first3_mean": 4.023482730794241,
+   "last3_mean": 4.052883082778711,
+   "difference_pp": 0.029400351984469886,
+   "lo": -0.13713104348596142,
+   "hi": 0.1796576930007236,
    "sections_first3": 5959,
    "sections_last3": 9413,
    "reports_first3": 870,
@@ -71,11 +71,11 @@
    "reading": "no clear change"
   },
   "like_for_like_no_stock": {
-   "first3_mean": 4.023342438874242,
-   "last3_mean": 4.052768543280249,
-   "difference_pp": 0.02942610440600646,
-   "lo": -0.1371328672332147,
-   "hi": 0.17967409379430296,
+   "first3_mean": 4.023482730794241,
+   "last3_mean": 4.052883082778711,
+   "difference_pp": 0.029400351984469886,
+   "lo": -0.13713104348596142,
+   "hi": 0.1796576930007236,
    "sections_first3": 5959,
    "sections_last3": 9413,
    "reports_first3": 870,
@@ -83,11 +83,11 @@
    "reading": "no clear change"
   },
   "in_force": {
-   "first3_mean": 4.032817279354953,
-   "last3_mean": 4.142045889330127,
-   "difference_pp": 0.10922860997517425,
-   "lo": -0.05846516769216783,
-   "hi": 0.25948287265586917,
+   "first3_mean": 4.03295757127495,
+   "last3_mean": 4.1421644576154435,
+   "difference_pp": 0.1092068863404938,
+   "lo": -0.058459084713491906,
+   "hi": 0.25950309991455883,
    "sections_first3": 5959,
    "sections_last3": 9413,
    "reports_first3": 870,
@@ -98,11 +98,11 @@
  "a4": {
   "headline": [
    {
-    "estimate": 0.9543219478856946,
-    "se": 0.0024500223908985944,
-    "lo": 0.470705852290787,
-    "hi": 1.4402659312557908,
-    "p": 0.00010588831656824673,
+    "estimate": 0.9566979875184956,
+    "se": 0.0024501091052919716,
+    "lo": 0.47305343352812557,
+    "hi": 1.4426706488631424,
+    "p": 0.00010184408655428187,
     "sections": 11304,
     "reports": 1651,
     "reports_dep": 908,
@@ -110,15 +110,15 @@
     "analysis": "headline",
     "outcome": "log_words",
     "area": "All areas",
-    "p_holm": 0.00021177663313649346,
+    "p_holm": 0.00020368817310856374,
     "reading": "no meaningful difference"
    },
    {
-    "estimate": -0.08857122801086753,
-    "se": 0.0191368830379603,
-    "lo": -0.12607882954162516,
-    "hi": -0.05106362648010989,
-    "p": 3.686803992004904e-06,
+    "estimate": -0.08859000324539007,
+    "se": 0.019138030721431068,
+    "lo": -0.12609985419441608,
+    "hi": -0.05108015229636407,
+    "p": 3.6743029590919064e-06,
     "sections": 11304,
     "reports": 1651,
     "reports_dep": 908,
@@ -126,15 +126,15 @@
     "analysis": "headline",
     "outcome": "hedges_per_100",
     "area": "All areas",
-    "p_holm": 1.1060411976014712e-05,
+    "p_holm": 1.102290887727572e-05,
     "reading": "no meaningful difference"
    },
    {
-    "estimate": -0.08369285470932665,
-    "se": 0.09108633617970675,
-    "lo": -0.2622187931052596,
-    "hi": 0.09483308368660627,
-    "p": 0.3581845186744512,
+    "estimate": -0.0837717702046643,
+    "se": 0.09108844528168723,
+    "lo": -0.2623018423645187,
+    "hi": 0.0947583019551901,
+    "p": 0.3577425960942775,
     "sections": 11304,
     "reports": 1651,
     "reports_dep": 908,
@@ -142,7 +142,7 @@
     "analysis": "headline",
     "outcome": "echo_like_for_like",
     "area": "All areas",
-    "p_holm": 0.3581845186744512,
+    "p_holm": 0.3577425960942775,
     "reading": "no meaningful difference"
    }
   ],

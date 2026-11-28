@@ -1,7 +1,7 @@
 run,area,comparison,sections_higher,sections_lower,status,eligible_phrases,lean_higher,lean_lower,shown_1_96_to_3_29,kept_prior_250,kept_prior_4000
 Primary and secondary,Inclusion,Exceptional v Strong standard,56,1282,run,341,15,0,47,15,14
 Primary and secondary,Inclusion,Strong standard v Expected standard,1282,2293,run,6561,303,174,1155,477,477
-Primary and secondary,Inclusion,Expected standard v Needs attention,2293,354,run,2085,88,322,458,410,404
+Primary and secondary,Inclusion,Expected standard v Needs attention,2293,354,run,2085,88,322,459,410,404
 Primary and secondary,Inclusion,Needs attention v Urgent improvement,354,32,run,134,0,4,8,4,2
 Primary and secondary,Curriculum and teaching,Exceptional v Strong standard,29,613,not run: fewer than 30 sections in a grade,,,,,,
 Primary and secondary,Curriculum and teaching,Strong standard v Expected standard,613,2554,run,3745,347,120,863,467,464
@@ -28,11 +28,11 @@ Primary and secondary,Post-16 provision,Strong standard v Expected standard,110,
 Primary and secondary,Post-16 provision,Expected standard v Needs attention,275,46,run,203,0,21,17,21,20
 Primary and secondary,Post-16 provision,Needs attention v Urgent improvement,46,<10,not run: fewer than 30 sections in a grade,,,,,,
 Primary and secondary,Leadership and governance,Exceptional v Strong standard,53,832,run,301,12,0,35,12,10
-Primary and secondary,Leadership and governance,Strong standard v Expected standard,832,2583,run,5760,395,206,1304,601,598
+Primary and secondary,Leadership and governance,Strong standard v Expected standard,832,2583,run,5759,395,206,1304,601,596
 Primary and secondary,Leadership and governance,Expected standard v Needs attention,2583,481,run,3127,161,530,716,691,681
 Primary and secondary,Leadership and governance,Needs attention v Urgent improvement,481,68,run,409,0,49,63,49,45
 Primary,Inclusion,Exceptional v Strong standard,25,1012,not run: fewer than 30 sections in a grade,,,,,,
-Primary,Inclusion,Strong standard v Expected standard,1012,1825,run,5284,223,117,896,340,340
+Primary,Inclusion,Strong standard v Expected standard,1012,1825,run,5283,223,117,896,340,340
 Primary,Inclusion,Expected standard v Needs attention,1825,256,run,1518,53,243,300,296,294
 Primary,Inclusion,Needs attention v Urgent improvement,256,26,not run: fewer than 30 sections in a grade,,,,,,
 Primary,Curriculum and teaching,Exceptional v Strong standard,10,450,not run: fewer than 30 sections in a grade,,,,,,
@@ -40,7 +40,7 @@ Primary,Curriculum and teaching,Strong standard v Expected standard,450,2052,run
 Primary,Curriculum and teaching,Expected standard v Needs attention,2052,588,run,3483,147,477,881,624,620
 Primary,Curriculum and teaching,Needs attention v Urgent improvement,588,44,run,208,0,14,32,14,13
 Primary,Achievement,Exceptional v Strong standard,22,446,not run: fewer than 30 sections in a grade,,,,,,
-Primary,Achievement,Strong standard v Expected standard,446,1825,run,1899,231,53,393,284,275
+Primary,Achievement,Strong standard v Expected standard,446,1825,run,1899,231,53,392,284,275
 Primary,Achievement,Expected standard v Needs attention,1825,799,run,2954,255,408,569,663,659
 Primary,Achievement,Needs attention v Urgent improvement,799,52,run,264,0,37,46,37,32
 Primary,Attendance and behaviour,Exceptional v Strong standard,14,877,not run: fewer than 30 sections in a grade,,,,,,
@@ -60,7 +60,7 @@ Primary,Post-16 provision,Strong standard v Expected standard,0,0,not run: fewer
 Primary,Post-16 provision,Expected standard v Needs attention,0,0,not run: fewer than 30 sections in a grade,,,,,,
 Primary,Post-16 provision,Needs attention v Urgent improvement,0,0,not run: fewer than 30 sections in a grade,,,,,,
 Primary,Leadership and governance,Exceptional v Strong standard,20,624,not run: fewer than 30 sections in a grade,,,,,,
-Primary,Leadership and governance,Strong standard v Expected standard,624,2078,run,4462,323,130,1033,453,450
+Primary,Leadership and governance,Strong standard v Expected standard,624,2078,run,4461,323,130,1032,453,450
 Primary,Leadership and governance,Expected standard v Needs attention,2078,370,run,2449,108,419,573,527,525
 Primary,Leadership and governance,Needs attention v Urgent improvement,370,52,run,309,0,29,43,29,23
 Secondary,Inclusion,Exceptional v Strong standard,31,270,run,131,4,0,8,4,3

@@ -196,3 +196,29 @@ Both reports were fetched again from files.ofsted.gov.uk on 28 November 2026, th
 The manifest now records the new address and sha256 for each, marked as re-fetched. The parser was then run on the whole corpus again (`parse.py --no-codes`, so no inspector code or key was created). Apart from the two reports, the text changed in 2 others, where a title before an already-removed name ("His [name]") is now removed with it; nothing else changed. The corpus still holds 4,281 report cards. Against the management information, 32,466 of 32,472 grades agree (the same 6 source discrepancies as above) and categories of concern 3,608 of 3,608; no report is without a grade reference; 24 reports have no next steps, all as published. `corpus-counts.md` is regenerated: the earlier report card's grades and month are replaced by the June 2026 report's, which moves one report from January to June and changes a few grade counts by one.
 
 The plan asked for each re-fetch to be "checked against its stored checksum". Neither can be: one is a revised file and the other a different document, so each has a new checksum by definition. The checks above (three matching downloads, URN, date and grades) stand in for it, and the new checksums are stored.
+
+## Name tails beside the placeholder (28 November 2026)
+
+**The fault.** While the lexicons were drafted, 2 of 150 randomly sampled achievement sections had a word of the school's own name left beside "[the school]". The parser removes the school's full name and its distinctive short form. Where a report used a form in between ("Quillbrook Primary" or "Quillbrook C of E Primary" for an invented "Quillbrook Meadow Church of England Primary School"), only the short form matched, and the words after it were left: "[the school] Primary", "[the school] Church of England Primary".
+
+**How it was counted.** For every parsed report, each token of the school's own GIAS establishment name (25 November 2026 extract) was looked for within 4 tokens of "[the school]", and, separately, any capitalised words of that name directly after it. Before the fix:
+
+| What was left beside the placeholder | Reports |
+| --- | --: |
+| A type word of the name only ("Primary", "School", "Academy", "Junior", "High", "First School") | 157 |
+| A denomination, with or without a type word ("Church of England", "CofE", "Catholic", "RC", "Methodist"), including where the report wrote it differently from GIAS ("CE" for "Church of England") | 36 |
+| A distinctive word of a longer name: the second word of a three-word name used as two ("[the school] Hall", "[the school] House"), or the second half of a name with "&" that the report wrote with "and" | 8 |
+| **Any of these** | **201** |
+
+The achievement section was affected in 12 reports. Three related faults were found in the same pass: a school's initials followed by its type word ("[the school] School Values"; 2 reports); a trust or federation named after the school, left as "[the school] Trust" or "[the school] Federation" (20 reports); and another school written with "C.E." ("... C.E. Primary School"), which the rule for other schools did not recognise, so that school's name was left in full (2 reports). Brackets, hyphens and line breaks caused none of them: paragraphs are joined before names are removed, and bracketed parts and hyphenated names were already handled.
+
+**The fix** (`parse.py`, with synthetic tests in `test_parse.py`, invented names only):
+
+- Every form of the school's name, and its initials, takes with it any run of the type and denomination words that the school's own name contains ("Primary", "Church of England", "Academy", "Nursery", "Day", joined by "of", "and" or "&"). One spelling of a denomination stands for the others ("Church of England", "C of E", "CofE", "CE", "C.E."; "Roman Catholic", "RC", "Catholic"), and "School" and "Academy" stand for each other. A type word that is not in the school's own name is kept ("[the school] High" for a primary school stays as written).
+- The leading words of a longer name are also forms ("Quillbrook Hall" from "Quillbrook Hall Day"), and "&" in a name also matches "and".
+- "[the school] Trust" and "[the school] Federation" become "[the trust]"; a misspelt full name (the placeholder, one or two capitalised words, then the school's own type words) becomes "[the school]"; "C.E." is recognised in other schools' names.
+- Two orderings that depended on Python's hash seed are now fixed (the school's name forms, and the surnames from the report's structural lines), and a title left in front of a removed name ("His Honour ...") is removed with it. With the old ordering, a title could survive on one run and not on the next; two whole-corpus runs with different hash seeds now give identical output.
+
+**Re-check** (whole corpus, `parse.py --no-codes`, same data directory). 4,281 report cards, as before. Grades unchanged: 32,466 of 32,472 agree with the management information (the same 6 source discrepancies), categories of concern 3,608 of 3,608, and no report's grades, phase or month changed. The text changed in 362 sections of 312 reports, 706 words fewer in all. The adjacency check now finds no school-name tail: the only remaining hits are 2 where the word is ordinary prose that is also in the name ("Children at [the school]" for a nursery whose name includes "Children's Centre"), and 1 where another provision is listed beside the school with "&". The residual-name detector is unchanged (609 mid-sentence and 718 sentence-start capitalised pairs, as before). "[the school] [another school]" now occurs in 5 reports (25 before) and "[the school] Trust" or "Federation" in none (20 before). `corpus-counts.md` was regenerated and is unchanged. The analyses were re-run on the new corpus; the changes are recorded in `results.md` (deviation 16).
+
+The private bucket holds the earlier parse and needs refreshing from the new one.
