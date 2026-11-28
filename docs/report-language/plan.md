@@ -183,3 +183,50 @@ Both are grouped by the standard's grade heading. They are also shown by phase. 
 - Inspectors weigh more than published results: current pupils' work, the quality of internal assessment, and the secure-fit rules. Under the framework the text should not simply restate the data.
 - Published results lag the inspection by up to a year.
 - The Explorer's similar-schools gap is this project's open replica, not Ofsted's own measure.
+
+## Amendment 2, 28 November 2026 (after analyses 1, 2, 4, 5 and 6; before analyses 3 and 7)
+
+Approved by Mark in the live conversation on 28 November 2026. At the time of this amendment, analyses 1, 2, 4, 5 and 6 had been run (see `results.md`). Analyses 3 and 7 had not been run, and nothing had been counted by grade, deprivation, month or results with either lexicon.
+
+### Analysis 6 is not published in this release
+
+The toolkit map failed its pre-set validation: precision 0.13 and recall 0.02 on the test set, against a target of 0.8. The plan's fallback, showing the map as "the standards whose wording reports echo most", would still mislead, because the matching favours very short standards. So no figure from analysis 6 appears on the page.
+
+The full result stays in `results.md` as a reported null. Any later attempt would need a new method and a fresh validation sample, and would be labelled as designed after this failure.
+
+### Analysis 3: the next-steps lexicon, frozen as v1
+
+The v0 draft (`next-steps-lexicon-v0.md`) is frozen as v1, with three changes:
+- **SEND and disadvantage are split into two themes.**
+- **Safeguarding and record-keeping is folded into leadership oversight, evaluation and governance.** It matched 1 item in 300.
+- **Sixth form and post-16 stays a theme of its own.**
+
+All other rules are unchanged.
+
+### Analysis 7: the results and direction lexicons, frozen as v1
+
+The v0 draft (`results-lexicon-v0.md`) is frozen as v1, with these rules.
+
+**Directions.** Each results sentence is classed in one of five directions:
+- positive;
+- negative;
+- level ("in line with", "close to", "broadly similar");
+- mixed;
+- no direction (it mentions results but says nothing about them).
+
+**Section direction.** Sentences with no direction are left out when a section is read as a whole. The section reading is one of:
+- positive, if all remaining results sentences are positive;
+- negative, if all are negative;
+- level, if all are level;
+- mixed, otherwise;
+- "no results statement", if none remain.
+
+The discordance shares in analysis 7 use the wholly positive and wholly negative sections.
+
+**Net direction.** For the correlation, net direction is (positive − negative) ÷ (positive + negative + level + mixed).
+
+**Trend words.** "Improved" and "declined" count as direction. A version without them is reported as exploratory.
+
+**Results understating the school.** Sentences saying results understate the school, such as "stronger than results suggest", are scored negative about results.
+
+**Validation.** Validation proceeds as set out in the plan and Amendment 1. Mark is asked to check a random 30 of each labelled sample.
