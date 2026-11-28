@@ -262,7 +262,7 @@ Agree? yes / no. If no, my label: ____
 
 ## 28. S184: Inclusion (toolkit v1.1)
 
-> For example, some pupils follow a personalised curriculum in 'The Bridge', which meets their needs consistently well.
+> For example, some pupils follow a personalised curriculum in [a named provision], which meets their needs consistently well.
 
 **Label:** v1.1:inclusion:SS:01 (Strong standard)
 
