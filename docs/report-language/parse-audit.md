@@ -161,7 +161,10 @@ The fixes also changed, without any name having been left: in 13 of the 50 repor
 
 Every fix has a synthetic test in `test_parse.py` (invented names only). After the fixes the parser's text changed in 958 of the 4,281 reports, almost all of them a trust or school name now removed, or a placeholder made more accurate. Grades are unchanged. Section boundaries change only in the 2 reports with the mislabelled heading, and where a trust sentence's continuation is now taken back from among the tables into "About this inspection".
 
-### Kept by design, for Mark to confirm
+### Kept by design
+
+Mark confirmed both rules below on 28 November 2026, in the live conversation.
+
 
 - **Trust and school nicknames made of ordinary words.** Where a trust's name is an ordinary word or a place (as in an invented "Bloom Learning Trust"), its programme and value names are kept ("the trust's Bloom Voices event"): about 36 mentions in 27 reports. Removing every capitalised use of such a word from those reports would damage the text, and a trust's name is shared by many schools. In about 10 reports, a value or reward is named with a nickname derived from the school's name (a shortened or altered form of it); these cannot be found by rule and are kept. Recommendation: accept both; neither is personal data, and each would need local knowledge to link back to a school.
 - **Given names alone.** Rooms, cafés, rewards and pets named with a given name (a garden or a resource base called after someone's first name, a therapy dog, a duck, mascots and story characters) are kept. A given name alone does not identify a private individual.
