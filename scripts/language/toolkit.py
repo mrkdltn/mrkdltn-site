@@ -5,8 +5,9 @@ Used by analysis.py (analyses 2 and 6 of docs/report-language/plan.md). Reads th
 outside the repository (../mrkdltn-data/toolkit/), checks each against its sha256, and returns for each version:
 
   area_text(version)[area]   the toolkit's whole text for that evaluation area (every page from the area's heading
-                             to the next area's), with the three-column grading tables read column by column, so that
-                             a run of words never crosses from one column into another
+                             to the next area's), as paragraphs separated by a blank line (a heading, a bullet or a
+                             paragraph each), with the three-column grading tables read column by column, so that a
+                             run of words never crosses from one column, bullet or heading into another
   standards(version)         one row per standard: a statement under a grade heading in the area's grading table
 
 What counts as a standard (plan, Amendment 1, "Standards"). Under each of the five grade headings (Needs attention,
@@ -156,8 +157,7 @@ def _parse(version):
             p = pages[i]
             words = [w for w in p.extract_words(extra_attrs=['fontname', 'size']) if w['top'] < p.height - 45]
             if p.width < p.height:  # portrait: ordinary running text
-                t = '\n'.join(l['text'] for l in _lines(words))
-                portrait.append(t)
+                portrait.append('\n\n'.join(_paragraphs(_lines(words))))
                 continue
             words = [w for w in words if w['size'] < 15]  # drop the "Grading ..." page title
             lines = _lines(words)
@@ -206,7 +206,7 @@ def _parse(version):
         for g in GRADE_HEADS:
             grading_text.append(g)
             grading_text += [p if isinstance(p, str) else p[0] for p in carry.get(g, [])]
-        text[a] = _clean('\n'.join(portrait) + '\n' + '\n'.join(grading_text))
+        text[a] = _clean('\n\n'.join(portrait + grading_text))
         for g in GRADE_HEADS:
             pos = 0
             for para in carry.get(g, []):
@@ -235,7 +235,7 @@ def _add(carry, g, paras):
 
 def _clean(t):
     t = t.replace(' ', ' ')
-    return re.sub(r'[ \t]+', ' ', t).strip()
+    return re.sub(r'[ \t]+', ' ', t).strip()  # paragraph breaks ('\n\n') are kept
 
 
 def area_text(version):
