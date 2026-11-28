@@ -205,6 +205,42 @@ class Names(unittest.TestCase):
         for src, trust, want in cases:
             self.assertEqual(P.scrub(src, trust_names=trust, common=common), want, src)
 
+    def test_name_tails_go_with_the_name(self):
+        """A shorter use of the name takes the school's own type and denomination words with it (28 November 2026)."""
+        cases = [
+            ('Quorlbury Church of England Primary School',
+             'Quorlbury Primary is calm. Quorlbury Church of England Primary pupils. Quorlbury CofE pupils. At Quorlbury. Primary pupils read.',
+             '[the school] is calm. [the school] pupils. [the school] pupils. At [the school]. Primary pupils read.'),
+            ('Holmbury Roman Catholic Primary School', 'Holmbury RC Primary and Holmbury Catholic pupils.',
+             '[the school] and [the school] pupils.'),
+            ("Wrenmoor Nursery School and Children's Centre", 'Children at Wrenmoor Nursery thrive.', 'Children at [the school] thrive.'),
+            ('Quillbrook Hall Day Special School', 'Pupils leave Quillbrook Hall with qualifications.',
+             'Pupils leave [the school] with qualifications.'),
+            ('Fernwick Sports & Science Academy', 'Pupils at Fernwick Sports and Science Academy, including those',
+             'Pupils at [the school], including those'),
+            ('Quillbrook Meadow High School', 'The QMHS School Values programme. QMHS pupils.', 'The [the school] Values programme. [the school] pupils.'),
+            ('Tollmere Primary School and Nursery', 'Tollmere Primary and Nursery is a happy school.', '[the school] is a happy school.'),
+            # a type word that is not in the school's own name stays
+            ('Quillbrook Meadow Primary School', 'Quillbrook Meadow High is nearby. Quillbrook Meadow Academy pupils visit.',
+             '[the school] High is nearby. [the school] pupils visit.'),
+            # a misspelt full name, and a trust named after the school
+            ('Quillbrook Meadow Primary School', 'Pupils are proud to attend Quillbrook Lane Primary School.',
+             'Pupils are proud to attend [the school].'),
+            ('Quorlbury Church of England Junior School', 'It is part of Quorlbury Church of England Junior School Trust, which',
+             'It is part of [the trust], which'),
+            ('Quorlbury Church of England Primary Academy', 'Pupils are cared for at Quorlbury CE Primary School. Staff',
+             'Pupils are cared for at [the school]. Staff'),
+        ]
+        for name, src, want in cases:
+            self.assertEqual(P.scrub(src, P.school_name_forms(name)), want, src)
+        self.assertEqual(P.scrub('Brackenmoor and Tollworth C.E. Primary School share a head.', P.school_name_forms('Brackenmoor C.E. Primary School')),
+                         '[the school] and [another school] share a head.')
+
+    def test_honorific_goes_with_the_name_whatever_the_order(self):
+        for own in ({'Honour', 'Ormsby', 'Quellthorpe'}, {'Ormsby', 'Quellthorpe'}):
+            self.assertEqual(P.scrub('The board is chaired by His Honour Judge Ormsby Quellthorpe.', own_names=own),
+                             'The board is chaired by [name].')
+
     def test_names_with_accents_hyphens_and_lead_roles(self):
         self.assertEqual(P.scrub('The trust is chaired by Anaïs Penhallow. The CEO is Renée Dufrayne.'),
                          'The trust is chaired by [name]. The CEO is [name].')

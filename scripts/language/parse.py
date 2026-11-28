@@ -421,6 +421,17 @@ UNICEF STEM STEAM BAME EAL FSM AP""".split())
 SCHOOL_TYPE_WORDS = set("""Girls Boys Voluntary Preschool Pre-school Selective Specialist Nursery Infants Infant Junior Primary
 Academy School College Centre Sixth Form Unit Hub""".split()) | {'Sixth Form', 'Sixth Form College', 'Voluntary Academy',
                                                              'Nursery School', 'Pre School'}
+# type and denomination words that follow a school's distinctive name, as regex alternatives (longest first)
+NAME_TAIL_WORDS = [r"Church\s+of\s+England", r"C\s+of\s+E", r"C\.\s?E\.", r"CofE", r"CE", r"Roman\s+Catholic", r"RC",
+                   r"Catholic", r"Methodist", r"Voluntary\s+(?:Aided|Controlled)", r"VA", r"VC", r"Church", r"Primary",
+                   r"Junior", r"Infants?", r"Nursery", r"First", r"Middle", r"Secondary", r"High", r"Grammar", r"Community",
+                   r"Foundation", r"Village", r"Endowed", r"Federated", r"Free", r"Special", r"Day", r"Sixth\s+Form",
+                   r"School", r"Academy", r"College", r"Centre"]
+NAME_TAIL_SAME = [[r"Church\s+of\s+England", r"C\s+of\s+E", r"C\.\s?E\.", r"CofE", r"CE"],
+                  [r"Roman\s+Catholic", r"RC", r"Catholic"], [r"School", r"Academy"]]
+# the words of a type that only a school's own name puts before "School" or "Academy" ("Primary", "C of E")
+NAME_LEVEL_WORDS = set(NAME_TAIL_WORDS) - {r"School", r"Academy", r"College", r"Centre", r"Church", r"Day", r"Free",
+                                           r"Special", r"Foundation", r"Village", r"Community", r"Federated"}
 NUMBER_WORDS = set("One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Twenty Hundred First Second Third".split())
 
 
@@ -451,6 +462,13 @@ def school_name_forms(name, extra=(), common=frozenset(), trust_words=frozenset(
         if core and core not in ('St', 'Saint', 'The', 'Holy', 'Christ', 'Our Lady') \
                 and len(core) >= 4 and not all(w in NOT_NAME_START for w in words):
             forms.add(core)
+            # the leading words of a longer core ("Quillbrook Hall" from "Quillbrook Hall Day"), so that a shorter use
+            # of the name is removed whole rather than leaving its second word beside the placeholder
+            for k in range(2, len(words)):
+                f = ' '.join(words[:k])
+                if len(f) >= 5 and words[k - 1] not in ('of', 'and', '&', 'the', 'St', 'Saint') \
+                        and not all(w in NOT_NAME_START or w in STOP_TOKENS for w in words[:k]):
+                    forms.add(f)
             # "Quillbrook" from "Quillbrook Meadow", "Brightwater" from "Bishop Brightwater": one word of the name used alone
             # (in this school's own report only, so an ordinary word such as "Willow" is taken as the name too)
             for w in ([words[0], words[-1]] if len(words) >= 2 else []):
@@ -505,7 +523,7 @@ def school_name_forms(name, extra=(), common=frozenset(), trust_words=frozenset(
         f = re.sub(r"^(?:(?:&|and|for|of|A)\s+)+|(?:\s+(?:&|and|for|of))+$", "", f).strip(" ,-")
         if f and f not in SCHOOL_TYPE_WORDS:
             out.add(f)
-    return sorted(out, key=len, reverse=True)
+    return sorted(out, key=lambda f: (-len(f), f))   # longest first, in a fixed order
 
 
 def structural_surnames(raw):
@@ -585,14 +603,34 @@ def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_na
         if rx.endswith(TRUST_SUFFIX + r")(?![\w-])"):
             t = sub(rx, lambda m: '[the trust]' if re.sub(r"(?i)^(?:the|st\.?|saint)\s+", "", m.group(0))[:1].isupper()
                     else m.group(0), t, 'trust', fl)
+    # the type and denomination words of the school's own name ("Primary", "Church of England", "C of E", "Academy"):
+    # a use of the name that stops short of the full form ("Quillbrook Primary" for "Quillbrook Meadow Primary School")
+    # takes them with it, so that no part of the name is left beside the placeholder
+    own_tail = [w for w in NAME_TAIL_WORDS if any(re.search(r"(?<![\w-])" + w + r"(?![\w.-])", f) for f in school_forms)]
+    for group in NAME_TAIL_SAME:     # one way of writing the denomination stands for the others
+        if any(w in own_tail for w in group):
+            own_tail += [w for w in group if w not in own_tail]
+    own_tail.sort(key=NAME_TAIL_WORDS.index)
+    tail = (r"(?-i:(?:\s+(?:(?:of|and|&)\s+)?(?:" + "|".join(own_tail) + r"))*)") if own_tail else ""
     for f in school_forms:
         if re.fullmatch(r'[A-Z]{3,6}', f):      # the school's initials ("Team ABS")
-            t = sub(r"\b" + f + r"\b", '[the school]', t, 'school')
+            t = sub(r"\b" + f + r"\b" + tail, '[the school]', t, 'school')
             continue
         rx = re.escape(f).replace("'", "'?")
+        rx = re.sub(r"\\ (?:\\&|and)\\ ", r"\\s+(?:&|and)\\s+", rx)   # "Sports & Science" also matches "Sports and Science"
         rx = re.sub(r"([a-z])s\b", r"\1'?s", rx)    # "Wrens Nest" also matches "Wren's Nest"
         rx = re.sub(r"\b(?:St(?:\\\.)?|Saint)\\ ", r"(?:St\\.?|Saint)\\s+", rx)   # "St Mary's" also matches "St. Mary's"
-        t = sub(r"(?<![\w-])" + rx + r"(?:s|ers?)?(?![\w-])", '[the school]', t, 'school', re.I if len(f) > 12 else 0)
+        t = sub(r"(?<![\w-])" + rx + r"(?:s|ers?)?" + tail + r"(?![\w-])", '[the school]', t, 'school', re.I if len(f) > 12 else 0)
+    if own_tail:
+        # a trust or federation named after the school ("[the school] Federation") is the trust
+        t = sub(r"\[the school\]\s+(?:(?:Multi[- ]Academy|Academy|Learning|Schools?|Education(?:al)?)\s+)?"
+                r"(?:Trust|Federation|Partnership)\b", '[the trust]', t, 'trust')
+        # a misspelt form of the full name ("Quillbrook Meadows Primary School" for "Quillbrook Meadow Primary School"):
+        # the placeholder, one or two capitalised words, then the school's own type words
+        level = [w for w in own_tail if w in NAME_LEVEL_WORDS]
+        if level:
+            t = sub(r"\[the school\](?:\s+[A-Z][\w'-]+){1,2}(?:\s+(?:" + "|".join(level) + r"))+\s+(?:School|Academy)(?![\w-])",
+                    '[the school]', t, 'school')
     # the school's own trust (GIAS), before other schools so that "St X Church of England Multi Academy Trust" stays whole
     for rx, fl, cap in tpats:
         t = sub(rx, lambda m: '[the trust]' if (not cap or re.sub(r"(?i)^(?:the|st\.?|saint)\s+", "", m.group(0))[:1].isupper())
@@ -604,7 +642,7 @@ def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_na
             return m.group(0)
         counts['other_school'] += 1
         return '[another school]'
-    t = re.sub(r"\b((?:(?:St|Saint)\.?\s+)?(?:[A-Z][\w'-]+\s+){1,5})(?:(?:C of E|CofE|CE|RC|Catholic|Church of England|"
+    t = re.sub(r"\b((?:(?:St|Saint)\.?\s+)?(?:[A-Z][\w'-]+\s+){1,5})(?:(?:C of E|CofE|C\.\s?E\.|CE|RC|Catholic|Church of England|"
                r"Methodist)\s+)?(?:(?:Primary|Infant|Infants|Junior|Nursery|High|Secondary|Community|Grammar|Special|Free|"
                r"Middle|First)\s+)?(?:School|Academy|College|Campus)\b", other_school, t)
     # a named unit of the school ("Brightwater Boys and Brightwater Girls")
@@ -654,10 +692,12 @@ def scrub(text, school_forms=(), trust_names=(), given=None, counts=None, own_na
             '[date]', t, 'date')
     # the second of a pair: "[name] and Firstname Surname"
     t = sub(r"\[name\](\s*(?:,|and|&)\s*)(?:" + TITLES + r"\.?\s+)?" + NAME2 + r"\b", r"[name]\1[name]", t, 'pair')
-    for n in sorted(own_names, key=len, reverse=True):
+    for n in sorted(own_names, key=lambda x: (-len(x), x)):   # a fixed order, whatever the hash seed
         t = sub(r"(?:\b" + NAME_TOK + r"\s+)?\b" + re.escape(n) + r"\b", '[name]', t, 'own')
     # tidy "[name] and [name]" pairs left as "[name] [name]"
-    t = re.sub(r'\[name\](?:\s+\[name\])+', '[name]', t)
+    t = re.sub(r'\[name\](?:\s+(?:Judge\s+)?\[name\])+', '[name]', t)
+    # an honorific left in front of a removed name ("His Honour Judge ..." -> "[name]")
+    t = re.sub(r"\b(?:His|Her)\s+(?:Honour\s+)?(?:Judge\s+)?\[name\]", '[name]', t)
     return t
 
 
