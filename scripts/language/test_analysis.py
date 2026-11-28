@@ -145,5 +145,38 @@ class Helpers(unittest.TestCase):
         self.assertTrue(lo <= m <= hi)
 
 
+class Analyses3And7(unittest.TestCase):
+    def test_wilson(self):
+        lo, hi = A.wilson(50, 100)
+        self.assertAlmostEqual(lo, 0.4038, places=3)
+        self.assertAlmostEqual(hi, 0.5962, places=3)
+        self.assertEqual(A.wilson(0, 0), (None, None))
+
+    def test_small_cells_suppressed(self):
+        self.assertEqual(A.share_row(3, 8)['reports'], '<10')
+        self.assertEqual(A.share_row(3, 8)['share'], '')
+        self.assertEqual(A.share_row(4, 200)['carrying'], '<10')
+        self.assertEqual(A.share_row(4, 200)['share'], '')
+        self.assertEqual(A.share_row(0, 200)['carrying'], '0')
+        self.assertEqual(A.bounded_share(4, 200)['share'], 'under 5.0%')
+        self.assertEqual(A.bounded_share(40, 200)['k'], '40')
+
+    def test_grades(self):
+        g = {'inclusion': 'Strong standard', 'achievement': 'Needs attention', 'curriculum_teaching': 'Urgent improvement'}
+        self.assertEqual(A.lowest_grade(g), 'Urgent improvement')
+        self.assertEqual(A.below_expected(g), '2 or more')
+        self.assertEqual(A.below_expected({'inclusion': 'Expected standard'}), '0')
+
+    def test_pre_set_reading(self):
+        self.assertEqual(A.reading7(0.31), 'the words track the data')
+        self.assertEqual(A.reading7(0.30), 'weak tracking')
+        self.assertEqual(A.reading7(0.0), 'no clear tracking')
+
+    def test_spearman_bootstrap_deterministic(self):
+        x, y = list(range(40)), [v + (3 if v % 2 else -3) for v in range(40)]
+        self.assertEqual(A.boot_spearman(x, y, B=200), A.boot_spearman(x, y, B=200))
+        self.assertGreater(A.spearman(x, y), 0.9)
+
+
 if __name__ == '__main__':
     unittest.main()

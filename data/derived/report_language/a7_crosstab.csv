@@ -1,0 +1,51 @@
+bands,data_band,section_reading,n,k,share,lo,hi
+five (plan),Well above,positive,110,73,0.6636,0.5711,0.7451
+five (plan),Well above,negative,110,<10,under 9.1%,,
+five (plan),Well above,level,110,<10,under 9.1%,,
+five (plan),Well above,mixed,110,27,0.2455,0.1745,0.3336
+five (plan),Well above,no results statement,110,<10,under 9.1%,,
+five (plan),Above,positive,111,50,0.4505,0.3611,0.5431
+five (plan),Above,negative,111,0,0.0000,0.0000,0.0335
+five (plan),Above,level,111,11,0.0991,0.0562,0.1688
+five (plan),Above,mixed,111,47,0.4234,0.3356,0.5164
+five (plan),Above,no results statement,111,<10,under 9.0%,,
+five (plan),Close to,positive,338,90,0.2663,0.2220,0.3158
+five (plan),Close to,negative,338,32,0.0947,0.0679,0.1306
+five (plan),Close to,level,338,32,0.0947,0.0679,0.1306
+five (plan),Close to,mixed,338,175,0.5178,0.4646,0.5705
+five (plan),Close to,no results statement,338,<10,under 3.0%,,
+five (plan),Below,positive,144,13,0.0903,0.0535,0.1483
+five (plan),Below,negative,144,33,0.2292,0.1681,0.3043
+five (plan),Below,level,144,15,0.1042,0.0641,0.1648
+five (plan),Below,mixed,144,79,0.5486,0.4671,0.6276
+five (plan),Below,no results statement,144,<10,under 6.9%,,
+five (plan),Well below,positive,132,<10,under 7.6%,,
+five (plan),Well below,negative,132,47,0.3561,0.2795,0.4408
+five (plan),Well below,level,132,<10,under 7.6%,,
+five (plan),Well below,mixed,132,68,0.5152,0.4307,0.5988
+five (plan),Well below,no results statement,132,<10,under 7.6%,,
+five (plan),All,positive,835,229,0.2743,0.2451,0.3055
+five (plan),All,negative,835,114,0.1365,0.1149,0.1615
+five (plan),All,level,835,71,0.0850,0.0680,0.1059
+five (plan),All,mixed,835,396,0.4743,0.4406,0.5082
+five (plan),All,no results statement,835,25,0.0299,0.0204,0.0438
+three (Explorer 2024/25 reading),Above,positive,221,123,0.5566,0.4907,0.6205
+three (Explorer 2024/25 reading),Above,negative,221,<10,under 4.5%,,
+three (Explorer 2024/25 reading),Above,level,221,16,0.0724,0.0451,0.1144
+three (Explorer 2024/25 reading),Above,mixed,221,74,0.3348,0.2759,0.3994
+three (Explorer 2024/25 reading),Above,no results statement,221,<10,under 4.5%,,
+three (Explorer 2024/25 reading),Close to,positive,338,90,0.2663,0.2220,0.3158
+three (Explorer 2024/25 reading),Close to,negative,338,32,0.0947,0.0679,0.1306
+three (Explorer 2024/25 reading),Close to,level,338,32,0.0947,0.0679,0.1306
+three (Explorer 2024/25 reading),Close to,mixed,338,175,0.5178,0.4646,0.5705
+three (Explorer 2024/25 reading),Close to,no results statement,338,<10,under 3.0%,,
+three (Explorer 2024/25 reading),Below,positive,276,16,0.0580,0.0360,0.0921
+three (Explorer 2024/25 reading),Below,negative,276,80,0.2899,0.2395,0.3460
+three (Explorer 2024/25 reading),Below,level,276,23,0.0833,0.0562,0.1219
+three (Explorer 2024/25 reading),Below,mixed,276,147,0.5326,0.4737,0.5906
+three (Explorer 2024/25 reading),Below,no results statement,276,10,0.0362,0.0198,0.0654
+three (Explorer 2024/25 reading),All,positive,835,229,0.2743,0.2451,0.3055
+three (Explorer 2024/25 reading),All,negative,835,114,0.1365,0.1149,0.1615
+three (Explorer 2024/25 reading),All,level,835,71,0.0850,0.0680,0.1059
+three (Explorer 2024/25 reading),All,mixed,835,396,0.4743,0.4406,0.5082
+three (Explorer 2024/25 reading),All,no results statement,835,25,0.0299,0.0204,0.0438

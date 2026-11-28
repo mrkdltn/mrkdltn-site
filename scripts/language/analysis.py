@@ -7,11 +7,11 @@ judgement calls".
 
   Analysis 1  distinctive language by grade, within each area         run
   Analysis 2  toolkit echo                                              run
-  Analysis 3  next-steps themes                                         NOT RUN: hook only, waits for the frozen lexicon
+  Analysis 3  next-steps themes                                         run (frozen lexicon v1; validation, figures)
   Analysis 4  length, reading level and the deprivation comparison     run
   Analysis 5  phrase shares over time                                   run
   Analysis 6  the toolkit map                                           run (sample, labels, threshold, figures)
-  Analysis 7  words against data                                        NOT RUN: hook only, waits for the frozen lexicon
+  Analysis 7  words against data                                        run (frozen lexicons v1; secondaries only)
 
 Inputs, all outside the repository: the parsed, name-stripped corpus (../mrkdltn-data/report-language/parsed/), Ofsted's
 management information (../mrkdltn-data/grades-context/mi/mi_latest.csv), DfE SEN January 2026 (sen_slim_2026.csv),
@@ -25,6 +25,10 @@ separate file there.
   python3 scripts/language/analysis.py sample      # analysis 6: draw the 200 sentences to label (no scores shown)
   python3 scripts/language/analysis.py run         # analyses 1, 2, 4, 5 and 6 on the full corpus
   python3 scripts/language/analysis.py run --only 1 2
+  python3 scripts/language/analysis.py validation-sample   # analyses 3 and 7: the fresh samples (outside the repository)
+  python3 scripts/language/analysis.py validation-score    # precision and recall against the hand labels
+  python3 scripts/language/analysis.py validation-check    # the 30 + 30 items for Mark
+  python3 scripts/language/analysis.py run --only 3 7      # analyses 3 and 7 on the full corpus
 
 No language model reads, summarises or classifies any text here: every figure comes from this code.
 """
@@ -629,27 +633,222 @@ def draw_validation():
     return out
 
 
+VALID_NS = os.path.join(OUT, 'validation_ns_labels.csv')
+VALID_RS = os.path.join(OUT, 'validation_rs_labels.csv')
+DIRECTIONS = ['positive', 'negative', 'level', 'mixed', 'none']
+
+
+def _pr(tp, fp, fn):
+    return (tp / (tp + fp) if tp + fp else None), (tp / (tp + fn) if tp + fn else None)
+
+
+def validation_score():
+    """Precision and recall of the frozen v1 lexicons against the hand labels (labelling-rules.md, second part).
+    Analysis 3: per theme, over the 100 items. Analysis 7: precision of the results lexicon (the share of selected
+    sentences that are results sentences), and per direction, over the 150 sentences; a direction with precision
+    under 0.8 is merged into 'mixed' (Amendment 1), and the merged classes are scored again."""
+    lab = {r['id']: set(r['labels'].split(';')) for r in csv.DictReader(open(VALID_NS, encoding='utf-8'))}
+    lex = {r['id']: set(r['lexicon'].split(';')) for r in csv.DictReader(open(os.path.join(AUDIT, 'validation-ns-lexicon.csv'), encoding='utf-8'))}
+    assert set(lab) == set(lex) and len(lab) == NS_N
+    ns_rows = []
+    for t in LX.THEME_ORDER + ['other']:
+        tp = sum(1 for i in lab if t in lab[i] and t in lex[i])
+        fp = sum(1 for i in lab if t not in lab[i] and t in lex[i])
+        fn = sum(1 for i in lab if t in lab[i] and t not in lex[i])
+        pr, rc = _pr(tp, fp, fn)
+        ns_rows.append({'theme': t, 'label': LX.THEMES[t]['label'] if t in LX.THEMES else 'Other (no theme)',
+                        'hand': tp + fn, 'lexicon': tp + fp, 'both': tp, 'precision': fmt(pr, 3), 'recall': fmt(rc, 3),
+                        'warning': 'precision below 0.8' if pr is not None and pr < 0.8 else ''})
+    exact = sum(1 for i in lab if lab[i] == lex[i])
+    write_csv('a3_validation.csv', ns_rows, list(ns_rows[0]))
+
+    hl = {r['id']: r for r in csv.DictReader(open(VALID_RS, encoding='utf-8'))}
+    lx = {r['id']: r for r in csv.DictReader(open(os.path.join(AUDIT, 'validation-rs-lexicon.csv'), encoding='utf-8'))}
+    assert set(hl) == set(lx) and len(hl) == RS_N
+    is_res = sum(1 for r in hl.values() if r['results_sentence'] == 'yes')
+
+    def score(mapping, key='lexicon'):
+        rows = []
+        classes = sorted({mapping(d) for d in DIRECTIONS}, key=lambda d: DIRECTIONS.index(d))
+        for d in classes:
+            tp = sum(1 for i in hl if mapping(hl[i]['direction']) == d and mapping(lx[i][key]) == d)
+            fp = sum(1 for i in hl if mapping(hl[i]['direction']) != d and mapping(lx[i][key]) == d)
+            fn = sum(1 for i in hl if mapping(hl[i]['direction']) == d and mapping(lx[i][key]) != d)
+            pr, rc = _pr(tp, fp, fn)
+            rows.append({'direction': d, 'hand': tp + fn, 'lexicon': tp + fp, 'both': tp, 'precision': pr, 'recall': rc})
+        agree = sum(1 for i in hl if mapping(hl[i]['direction']) == mapping(lx[i][key]))
+        return rows, agree
+    rows, agree = score(lambda d: d)
+    merged = [r['direction'] for r in rows if r['direction'] in ('positive', 'negative', 'level')
+              and (r['precision'] is None or r['precision'] < 0.8)]
+    out = [dict(r, stage='as frozen', precision=fmt(r['precision'], 3), recall=fmt(r['recall'], 3)) for r in rows]
+    if merged:
+        m_rows, m_agree = score(lambda d: 'mixed' if d in merged else d)
+        out += [dict(r, stage='after merging ' + ', '.join(merged) + ' into mixed', precision=fmt(r['precision'], 3),
+                     recall=fmt(r['recall'], 3)) for r in m_rows]
+    else:
+        m_agree = agree
+    write_csv('a7_validation.csv', out, ['stage', 'direction', 'hand', 'lexicon', 'both', 'precision', 'recall'])
+    # exploratory: the version without trend words, against the same labels
+    nt_rows, nt_agree = score(lambda d: d, key='lexicon_no_trend')
+    # among sentences that are results sentences by hand
+    return {'a3': {'items': NS_N, 'exact_match': exact, 'themes': ns_rows,
+                   'other_share_lexicon': sum(1 for i in lex if lex[i] == {'other'}) / NS_N,
+                   'other_share_hand': sum(1 for i in lab if lab[i] == {'other'}) / NS_N},
+            'a7': {'sentences': RS_N, 'results_sentence_precision': is_res / RS_N, 'direction_agreement': agree / RS_N,
+                   'directions': [{k: (fmt(v, 3) if isinstance(v, float) else v) for k, v in r.items()} for r in rows],
+                   'merged_into_mixed': merged, 'agreement_after_merge': m_agree / RS_N,
+                   'no_trend_exploratory': {'agreement': nt_agree / RS_N,
+                                            'directions': [{k: (fmt(v, 3) if isinstance(v, float) else v) for k, v in r.items()} for r in nt_rows]}}}
+
+
+CHECK_NS = os.path.join(REPO, 'docs', 'report-language', 'check-for-mark-next-steps.md')
+CHECK_RS = os.path.join(REPO, 'docs', 'report-language', 'check-for-mark-results.md')
+
+
+def write_validation_checks(n=30):
+    """30 labelled items from each validation sample, drawn with seed 20261128, for Mark to check: the blind text and
+    the hand label only (no school, grade, phase, month, results or lexicon output)."""
+    out = {}
+    for name, path, labels in (('ns', CHECK_NS, VALID_NS), ('rs', CHECK_RS, VALID_RS)):
+        samp = list(csv.DictReader(open(os.path.join(AUDIT, f'validation-{name}-sample.csv'), encoding='utf-8')))
+        lab = {r['id']: r for r in csv.DictReader(open(labels, encoding='utf-8'))}
+        pick = sorted(int(i) for i in np.random.default_rng(SEED).choice(len(samp), n, replace=False))
+        if name == 'ns':
+            L = ['# For Mark to check: 30 labelled next-steps items', '',
+                 'These are 30 of the 100 next-steps items labelled by hand to validate the frozen theme lexicon '
+                 '(`next-steps-lexicon-v1.md`, analysis 3), drawn at random with seed 20261128. Each was labelled from its '
+                 'text alone, under the second part of `labelling-rules.md`, without its school, grades, phase, month or '
+                 'deprivation in view, and before the lexicon was run on it. The text is as parsed, with names already '
+                 'removed and grade words shown as "[grade]".', '',
+                 'For each, please mark whether you agree with the themes. Where you disagree, the themes you would add or '
+                 'remove are enough. The agreement rate goes into the results.', '',
+                 'Themes: ' + '; '.join(f'{i + 1}. {LX.THEMES[t]["label"]}' for i, t in enumerate(LX.THEME_ORDER)) + '.', '']
+        else:
+            L = ['# For Mark to check: 30 labelled results sentences', '',
+                 'These are 30 of the 150 results sentences labelled by hand to validate the frozen results and direction '
+                 'lexicons (`results-lexicon-v1.md`, analysis 7), drawn at random with seed 20261128. Each was labelled from '
+                 'the sentence alone, under the second part of `labelling-rules.md`, without its school, grades, phase, '
+                 'month or results in view, and before the lexicon was run on it. The text is as parsed, with names '
+                 'already removed and grade words shown as "[grade]" (so "the [grade]" in a key stage 2 sentence is the '
+                 'expected standard).', '',
+                 'Two labels for each: whether the sentence refers to published results, and its direction about them '
+                 '(positive, negative, level, mixed, or none). Please mark whether you agree; where you disagree, your '
+                 'label is enough. The agreement rate goes into the results.', '']
+        for k, i in enumerate(pick, 1):
+            sm = samp[i]
+            r = lab[sm['id']]
+            L += [f'## {k}. {sm["id"]}', '', f'> {sm["text"]}', '']
+            if name == 'ns':
+                th = r['labels'].split(';')
+                L.append('**Themes:** ' + ('; '.join(LX.THEMES[t]['label'] for t in th) if th != ['other'] else 'other (no theme)'))
+            else:
+                L.append(f'**Results sentence:** {r["results_sentence"]}. **Direction:** {r["direction"]}.')
+            if r['note']:
+                L += ['', f'*Note:* {r["note"]}.']
+            L += ['', 'Agree? yes / no. If no, my label: ____', '']
+        open(path, 'w', encoding='utf-8').write('\n'.join(L))
+        out[name] = [samp[i]['id'] for i in pick]
+    return out
+
+
 def random_sample(pool, n, seed):
     import random
     return random.Random(seed).sample(pool, n)
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Analysis 3: next-steps themes (NOT RUN: the lexicon must be reviewed by Mark and frozen first)
+# Analysis 3: next-steps themes (frozen lexicon v1, docs/report-language/next-steps-lexicon-v1.md)
 # ---------------------------------------------------------------------------------------------------------------
 
 NEXT_STEPS_LEXICON = os.path.join(REPO, 'docs', 'report-language', 'next-steps-lexicon-v1.md')
+Z95 = 1.959963984540054
 
 
-def analysis3(reports, classify=None):
-    """Hook. Once docs/report-language/next-steps-lexicon-v1.md is frozen, pass its classifier (text -> list of themes,
-    or ['other']) and this computes the plan's figures: the share of reports carrying each theme (a) by the report's
-    lowest area grade and (b) by the number of areas below Expected standard (0, 1, 2 or more), by phase, with Wilson
-    95% intervals and cells under 10 shown as '<10'. Validation (precision and recall on a fresh 100 hand-labelled
-    items) is a separate step."""
-    if classify is None or not os.path.exists(NEXT_STEPS_LEXICON):
-        raise NotImplementedError('analysis 3 waits for the frozen next-steps lexicon (plan, analysis 3)')
-    raise NotImplementedError('analysis 3: to be implemented against the frozen lexicon')
+def wilson(k, n, z=Z95):
+    if n <= 0:
+        return None, None
+    p = k / n
+    d = 1 + z * z / n
+    c = (p + z * z / (2 * n)) / d
+    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
+    return max(0.0, c - h), min(1.0, c + h)
+
+
+def share_row(k, n):
+    """A count and its share for publication: a group under 10, or a count from 1 to 9, is shown as '<10' and its
+    share and interval left blank (as everywhere in these results)."""
+    if n < 10:
+        return {'reports': sup(n), 'carrying': '', 'share': '', 'lo': '', 'hi': ''}
+    lo, hi = wilson(k, n)
+    if 0 < k < 10:
+        return {'reports': str(n), 'carrying': '<10', 'share': '', 'lo': '', 'hi': ''}
+    return {'reports': str(n), 'carrying': str(k), 'share': fmt(k / n), 'lo': fmt(lo), 'hi': fmt(hi)}
+
+
+def lowest_grade(grades):
+    gs = [grades[a] for a in AREAS if grades.get(a) in GRADES]
+    return max(gs, key=GRADES.index) if gs else None
+
+
+def below_expected(grades):
+    n = sum(1 for a in AREAS if grades.get(a) in ('Needs attention', 'Urgent improvement'))
+    return '2 or more' if n >= 2 else str(n)
+
+
+def analysis3(classify=None, warn=None):
+    """The plan's figures: the share of reports carrying each theme (a report carries a theme if any of its items
+    does), (a) by the report's lowest area grade and (b) by the number of areas below Expected standard (0, 1, 2 or
+    more), for all phases and each phase, with Wilson 95% intervals; cells under 10 shown as '<10'."""
+    classify = classify or LX.classify_next_step
+    if LX.LEXICON_VERSION != 'v1' or not os.path.exists(NEXT_STEPS_LEXICON):
+        raise SystemExit('analysis 3 runs only on the frozen v1 lexicon')
+    warn = warn or {}
+    reps, no_items, item_n, item_other = [], 0, 0, 0
+    item_counts = collections.Counter()
+    for u, rec in _raw_reports():
+        its = [t for t in ((rec['sections'].get('next_steps') or {}).get('items') or []) if t and t.strip()]
+        if not its:
+            no_items += 1
+            continue
+        th = set()
+        for t in its:
+            c = classify(t)
+            item_n += 1
+            item_counts.update(c)
+            item_other += c == ['other']
+            th.update(c)
+        reps.append({'phase': rec['phase'], 'lowest': lowest_grade(rec['grades']), 'below': below_expected(rec['grades']),
+                     'themes': th - {'other'} if th != {'other'} else {'other'}, 'items': len(its)})
+    themes = LX.THEME_ORDER + ['other']
+    rows = []
+    for by, levels in (('lowest area grade', GRADES), ('areas below Expected standard', ['0', '1', '2 or more'])):
+        key = 'lowest' if by.startswith('lowest') else 'below'
+        for ph in ['All phases'] + PHASES:
+            pool = [r for r in reps if ph == 'All phases' or r['phase'] == ph]
+            for lv in ['All'] + levels:
+                grp = [r for r in pool if lv == 'All' or r[key] == lv]
+                if lv == 'All' and by != 'lowest area grade':
+                    continue           # the 'All' row is written once, under the first grouping
+                for t in themes:
+                    k = sum(1 for r in grp if t in r['themes'])
+                    rows.append(dict({'grouping': by if lv != 'All' else 'all reports', 'phase': ph, 'level': lv, 'theme': t,
+                                      'theme_label': LX.THEMES[t]['label'] if t in LX.THEMES else 'Other (no theme)',
+                                      'warning': warn.get(t, '')}, **share_row(k, len(grp))))
+    write_csv('a3_themes.csv', rows, ['grouping', 'phase', 'level', 'theme', 'theme_label', 'reports', 'carrying', 'share',
+                                      'lo', 'hi', 'warning'])
+    items = [{'theme': t, 'theme_label': LX.THEMES[t]['label'] if t in LX.THEMES else 'Other (no theme)',
+              'items': sup(item_counts[t]), 'share_of_items': fmt(item_counts[t] / item_n) if item_counts[t] >= 10 else ''}
+             for t in themes]
+    write_csv('a3_items.csv', items, ['theme', 'theme_label', 'items', 'share_of_items'])
+    return {'reports_with_items': len(reps), 'reports_without_items': no_items, 'items': item_n,
+            'items_other': item_other, 'items_other_share': item_other / item_n,
+            'by_phase': dict(collections.Counter(r['phase'] for r in reps)),
+            # context for reading the shares: reports with lower grades list more next steps
+            'items_per_report_by_lowest_grade': {g: round(float(np.mean([r['items'] for r in reps if r['lowest'] == g])), 2)
+                                                 for g in GRADES if sum(1 for r in reps if r['lowest'] == g) >= 10},
+            'themes_per_report_by_lowest_grade': {g: round(float(np.mean([len(r['themes'] - {'other'}) for r in reps if r['lowest'] == g])), 2)
+                                                  for g in GRADES if sum(1 for r in reps if r['lowest'] == g) >= 10}}
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -1127,35 +1326,178 @@ def link_versions(idx):
 
 
 # ---------------------------------------------------------------------------------------------------------------
-# Analysis 7: words against data (NOT RUN: the lexicons must be reviewed by Mark and frozen first)
+# Analysis 7: words against data (frozen lexicons v1, docs/report-language/results-lexicon-v1.md)
 # ---------------------------------------------------------------------------------------------------------------
 
 RESULTS_LEXICON = os.path.join(REPO, 'docs', 'report-language', 'results-lexicon-v1.md')
+KS4_CSV = os.path.join(REPO, 'data', 'raw', 'ks4_model_v3.csv')
+BANDS5 = ['Well above', 'Above', 'Close to', 'Below', 'Well below']
+BANDS3 = ['Above', 'Close to', 'Below']
+READINGS = ['positive', 'negative', 'level', 'mixed', 'no results statement']
 
 
-def analysis7(reports, results_sentences=None, direction=None):
-    """Hook. Once the results and direction lexicons are frozen (docs/report-language/results-lexicon-v1.md), pass the
-    two functions and this computes the plan's figures for secondaries against the Explorer's 2024/25 Attainment 8 gap
-    to 50 similar schools: the band x direction cross-table with Wilson intervals, the Spearman correlation with a
-    2,000-resample bootstrap interval (overall, and within each achievement grade with 30 or more schools), and the two
-    discordance shares. National and phase aggregates only; no school is ever listed."""
-    if results_sentences is None or direction is None or not os.path.exists(RESULTS_LEXICON):
-        raise NotImplementedError('analysis 7 waits for the frozen results and direction lexicons (plan, Amendment 1)')
-    raise NotImplementedError('analysis 7: to be implemented against the frozen lexicons')
+def explorer_ks4():
+    """The Explorer's secondary rows as its build serves them (scripts/build_data.py): the raw file, with the same
+    small-group suppression applied first. The 2024/25 gap (ss_diff_25) and reading (ss_band_25) are read exactly as
+    the Explorer shows them ("On the 2024/25 results inspectors had in front of them ..."). That reading has three
+    bands (Above, Close to, Below: |gap| beyond 1.96 standard errors). For the plan's five bands, the Explorer's own
+    rule for ss_band is applied on top: Above or Below becomes Well above or Well below where the gap is also larger
+    than the spread (SD) of the 50 similar schools' 2024/25 Attainment 8, computed from the Explorer's lists."""
+    sys.path.insert(0, os.path.join(REPO, 'scripts'))
+    import data_downloads
+    rows = list(csv.DictReader(open(KS4_CSV, encoding='utf-8')))
+    data_downloads.suppress_small_groups(rows)
+    by = {r['urn']: r for r in rows}
+    f = lambda v: float(v) if v not in ('', None) else None
+    out = {}
+    for r in rows:
+        d, b3 = f(r['ss_diff_25']), r['ss_band_25']
+        if d is None or not b3:
+            continue
+        nb = [f(by[u]['a8_25']) for u in (r['nn'] or '').split() if u in by and f(by[u]['a8_25']) is not None]
+        m = sum(nb) / len(nb)
+        sd = (sum((x - m) ** 2 for x in nb) / (len(nb) - 1)) ** 0.5
+        b5 = ('Well ' + b3.lower()) if b3 in ('Above', 'Below') and abs(d) > sd else b3
+        out[r['urn']] = {'gap': d, 'band3': b3, 'band5': b5, 'ss_mean_check': abs(m - f(r['ss_mean_25'])) < 0.06}
+    return out
+
+
+def spearman(x, y):
+    from scipy.stats import spearmanr
+    return float(spearmanr(x, y).statistic)
+
+
+def boot_spearman(x, y, B=BOOT, seed=SEED):
+    x, y = np.asarray(x, float), np.asarray(y, float)
+    rng = np.random.default_rng(seed)
+    from scipy.stats import rankdata
+    vals = []
+    for _ in range(B):
+        i = rng.integers(0, len(x), len(x))
+        a, b = rankdata(x[i]), rankdata(y[i])
+        if a.std() == 0 or b.std() == 0:
+            continue
+        vals.append(np.corrcoef(a, b)[0, 1])
+    return float(np.percentile(vals, 2.5)), float(np.percentile(vals, 97.5))
+
+
+def reading7(lo):
+    return 'the words track the data' if lo > 0.3 else 'weak tracking' if lo > 0 else 'no clear tracking'
+
+
+def bounded_share(k, n):
+    """A share for publication; a count from 1 to 9 is shown only as an upper bound ('<10', 'under x%')."""
+    if n < 10:
+        return {'n': sup(n), 'k': '', 'share': '', 'lo': '', 'hi': ''}
+    if 0 < k < 10:
+        return {'n': str(n), 'k': '<10', 'share': f'under {100 * 10 / n:.1f}%', 'lo': '', 'hi': ''}
+    lo, hi = wilson(k, n)
+    return {'n': str(n), 'k': str(k), 'share': fmt(k / n), 'lo': fmt(lo), 'hi': fmt(hi)}
+
+
+def analysis7():
+    """Confirmatory secondaries: the band x section-reading cross-table with row shares and Wilson intervals; Spearman
+    between the 2024/25 Attainment 8 gap and net direction (2,000 bootstrap resamples of schools, seed 20261128),
+    overall and within each achievement grade with 30 or more schools; the two discordance shares; the pre-set
+    reading. National aggregates only: no school-level row is written anywhere."""
+    if LX.LEXICON_VERSION != 'v1' or not os.path.exists(RESULTS_LEXICON):
+        raise SystemExit('analysis 7 runs only on the frozen v1 lexicons')
+    ks4 = explorer_ks4()
+    sch, n_sec, no_data = [], 0, 0
+    for u, rec in _raw_reports():
+        if rec['phase'] != 'Secondary':
+            continue
+        n_sec += 1
+        if u not in ks4:
+            no_data += 1
+            continue
+        paras = (rec['sections'].get('achievement') or {}).get('paragraphs') or []
+        rs = LX.results_sentences(paras)
+        d = [LX.sentence_direction(x) for x in rs]
+        dn = [LX.sentence_direction(x, trend=False) for x in rs]
+        sch.append(dict(ks4[u], grade=rec['grades'].get('achievement'), n_rs=len(rs),
+                        reading=LX.section_reading(d), net=LX.net_from(d),
+                        reading_nt=LX.section_reading(dn), net_nt=LX.net_from(dn), dirs=collections.Counter(d)))
+    # 1. cross-tables
+    rows = []
+    for bands, bk in ((BANDS5, 'band5'), (BANDS3, 'band3')):
+        for b in bands + ['All']:
+            grp = [x for x in sch if b == 'All' or x[bk] == b]
+            for rd in READINGS:
+                k = sum(1 for x in grp if x['reading'] == rd)
+                rows.append(dict({'bands': 'five (plan)' if bk == 'band5' else 'three (Explorer 2024/25 reading)',
+                                  'data_band': b, 'section_reading': rd}, **bounded_share(k, len(grp))))
+    write_csv('a7_crosstab.csv', rows, ['bands', 'data_band', 'section_reading', 'n', 'k', 'share', 'lo', 'hi'])
+    # 2. Spearman
+    def corr(grp, key):
+        g = [x for x in grp if x[key] is not None]
+        if len(g) < 30:
+            return {'schools': sup(len(g)), 'rho': '', 'lo': '', 'hi': '', 'reading': 'not run (fewer than 30 schools)'}
+        r = spearman([x['gap'] for x in g], [x[key] for x in g])
+        lo, hi = boot_spearman([x['gap'] for x in g], [x[key] for x in g])
+        return {'schools': str(len(g)), 'rho': fmt(r, 3), 'lo': fmt(lo, 3), 'hi': fmt(hi, 3), 'reading': reading7(lo)}
+    crows = []
+    for key, label in (('net', 'confirmatory'), ('net_nt', 'exploratory: without trend words')):
+        crows.append(dict({'measure': label, 'group': 'All secondaries'}, **corr(sch, key)))
+        for g in GRADES:
+            c = corr([x for x in sch if x['grade'] == g], key)
+            if key == 'net':
+                c['reading'] = c['reading'] if c['reading'].startswith('not run') else 'reported beside the overall; not read as a headline'
+            else:
+                c['reading'] = c['reading'] if c['reading'].startswith('not run') else 'exploratory'
+            crows.append(dict({'measure': label, 'group': 'Achievement: ' + g}, **c))
+    crows[0]['reading'] = crows[0]['reading']
+    write_csv('a7_spearman.csv', crows, ['measure', 'group', 'schools', 'rho', 'lo', 'hi', 'reading'])
+    # 3. discordance
+    drows = []
+    for bk, lo_b, hi_b in (('band5', 'Well below', 'Well above'), ('band3', 'Below', 'Above')):
+        tag = 'five (plan)' if bk == 'band5' else 'three (Explorer 2024/25 reading; sensitivity)'
+        for b, rd, what in ((lo_b, 'positive', f'results {lo_b.lower()} similar schools, text wholly positive about results'),
+                            (hi_b, 'negative', f'results {hi_b.lower()} similar schools, text wholly negative about results')):
+            grp = [x for x in sch if x[bk] == b]
+            grp_rs = [x for x in grp if x['reading'] != 'no results statement']
+            k = sum(1 for x in grp if x['reading'] == rd)
+            for denom, g in (('all schools in the band', grp), ('schools in the band with a results statement', grp_rs)):
+                drows.append(dict({'bands': tag, 'discordance': what, 'denominator': denom}, **bounded_share(k, len(g))))
+    write_csv('a7_discordance.csv', drows, ['bands', 'discordance', 'denominator', 'n', 'k', 'share', 'lo', 'hi'])
+    # descriptives (aggregate)
+    dirs = collections.Counter()
+    for x in sch:
+        dirs.update(x['dirs'])
+    overall = crows[0]
+    return {'secondaries_in_corpus': n_sec, 'without_2024_25_gap': no_data, 'schools': len(sch),
+            'with_net_direction': sum(1 for x in sch if x['net'] is not None),
+            'results_sentences': sum(x['n_rs'] for x in sch), 'sentence_directions': dict(dirs),
+            'band5': dict(collections.Counter(x['band5'] for x in sch)), 'band3': dict(collections.Counter(x['band3'] for x in sch)),
+            'readings': dict(collections.Counter(x['reading'] for x in sch)),
+            'ss_mean_reproduced': sum(x['ss_mean_check'] for x in sch),
+            'spearman_overall': overall, 'pre_set_reading': overall['reading'],
+            'primaries': 'not run: no school-level 2024/25 key stage 2 reading, writing and mathematics expected-standard file is held'}
 
 
 # ---------------------------------------------------------------------------------------------------------------
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['sample', 'check', 'validation-sample', 'validation-score', 'run'])
-    ap.add_argument('--only', nargs='*', type=int, default=[1, 2, 4, 5, 6])
+    ap.add_argument('cmd', choices=['sample', 'check', 'validation-sample', 'validation-score', 'validation-check', 'run'])
+    ap.add_argument('--only', nargs='*', type=int, default=[1, 2, 4, 5, 6])  # 3 and 7: run --only 3 7
     a = ap.parse_args()
     if a.cmd == 'check':
         print('wrote', os.path.relpath(CHECK_MD, REPO), write_check_for_mark())
         return
+    if a.cmd == 'validation-check':
+        print(write_validation_checks())
+        return
     if a.cmd == 'validation-sample':
         print(draw_validation())
+        return
+    if a.cmd == 'validation-score':
+        v = validation_score()
+        path = os.path.join(OUT, 'summary.json')
+        summary = json.load(open(path)) if os.path.exists(path) else {}
+        summary['validation_v1'] = v
+        json.dump(summary, open(path, 'w'), indent=1, default=float)
+        print(json.dumps(v, indent=1, default=float))
         return
     reports = load_corpus()
     print(f'{len(reports)} report cards; {sum(len(r["sections"]) for r in reports)} graded area sections', flush=True)
@@ -1211,8 +1553,16 @@ def main():
                          'links': sum(1 for l in links if l.get('v1.1') and l.get('v2.0'))}
         analysis6(reports, idx, tt['threshold'])
         print('analysis 6 done', flush=True)
+    if 3 in a.only:
+        v = summary.get('validation_v1') or validation_score()
+        warn = {r['theme']: r['warning'] for r in v['a3']['themes'] if r['warning'] and r['theme'] != 'other'}
+        summary['a3'] = analysis3(warn=warn)
+        print('analysis 3 done', flush=True)
+    if 7 in a.only:
+        summary['a7'] = analysis7()
+        print('analysis 7 done', flush=True)
     json.dump(summary, open(path, 'w'), indent=1, default=float)
-    print(json.dumps({k: v for k, v in summary.items() if k in ('a2_reading', 'a4', 'a6')}, indent=1, default=float))
+    print(json.dumps({k: v for k, v in summary.items() if k in ('a2_reading', 'a4', 'a6', 'a3', 'a7')}, indent=1, default=float))
 
 
 if __name__ == '__main__':

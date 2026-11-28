@@ -250,5 +250,340 @@
   },
   "map_status": "not validated: shown only as the standards whose wording reports echo most",
   "links": 198
+ },
+ "validation_v1": {
+  "a3": {
+   "items": 100,
+   "exact_match": 62,
+   "themes": [
+    {
+     "theme": "curriculum_design",
+     "label": "Curriculum design and sequencing",
+     "hand": 10,
+     "lexicon": 11,
+     "both": 7,
+     "precision": "0.636",
+     "recall": "0.700",
+     "warning": "precision below 0.8"
+    },
+    {
+     "theme": "teaching_quality",
+     "label": "Quality and consistency of teaching",
+     "hand": 29,
+     "lexicon": 30,
+     "both": 26,
+     "precision": "0.867",
+     "recall": "0.897",
+     "warning": ""
+    },
+    {
+     "theme": "assessment",
+     "label": "Assessment, checking understanding and closing gaps",
+     "hand": 26,
+     "lexicon": 25,
+     "both": 23,
+     "precision": "0.920",
+     "recall": "0.885",
+     "warning": ""
+    },
+    {
+     "theme": "foundational",
+     "label": "Reading, writing, language and number foundations",
+     "hand": 27,
+     "lexicon": 27,
+     "both": 27,
+     "precision": "1.000",
+     "recall": "1.000",
+     "warning": ""
+    },
+    {
+     "theme": "send",
+     "label": "SEND and adaptation",
+     "hand": 15,
+     "lexicon": 18,
+     "both": 15,
+     "precision": "0.833",
+     "recall": "1.000",
+     "warning": ""
+    },
+    {
+     "theme": "disadvantage",
+     "label": "Disadvantaged pupils and the pupil premium",
+     "hand": 10,
+     "lexicon": 10,
+     "both": 10,
+     "precision": "1.000",
+     "recall": "1.000",
+     "warning": ""
+    },
+    {
+     "theme": "attendance",
+     "label": "Attendance and punctuality",
+     "hand": 10,
+     "lexicon": 11,
+     "both": 10,
+     "precision": "0.909",
+     "recall": "1.000",
+     "warning": ""
+    },
+    {
+     "theme": "behaviour",
+     "label": "Behaviour and attitudes",
+     "hand": 6,
+     "lexicon": 6,
+     "both": 6,
+     "precision": "1.000",
+     "recall": "1.000",
+     "warning": ""
+    },
+    {
+     "theme": "personal_development",
+     "label": "Personal development, wider curriculum and preparation for life",
+     "hand": 6,
+     "lexicon": 13,
+     "both": 5,
+     "precision": "0.385",
+     "recall": "0.833",
+     "warning": "precision below 0.8"
+    },
+    {
+     "theme": "early_years",
+     "label": "Early years",
+     "hand": 6,
+     "lexicon": 7,
+     "both": 6,
+     "precision": "0.857",
+     "recall": "1.000",
+     "warning": ""
+    },
+    {
+     "theme": "post16",
+     "label": "Sixth form and post-16",
+     "hand": 0,
+     "lexicon": 1,
+     "both": 0,
+     "precision": "0.000",
+     "recall": "",
+     "warning": "precision below 0.8"
+    },
+    {
+     "theme": "leadership",
+     "label": "Leadership oversight, evaluation and governance",
+     "hand": 18,
+     "lexicon": 13,
+     "both": 13,
+     "precision": "1.000",
+     "recall": "0.722",
+     "warning": ""
+    },
+    {
+     "theme": "staff_development",
+     "label": "Staff expertise, training and workload",
+     "hand": 7,
+     "lexicon": 6,
+     "both": 6,
+     "precision": "1.000",
+     "recall": "0.857",
+     "warning": ""
+    },
+    {
+     "theme": "parents_partnerships",
+     "label": "Parents, families and partnerships",
+     "hand": 3,
+     "lexicon": 3,
+     "both": 3,
+     "precision": "1.000",
+     "recall": "1.000",
+     "warning": ""
+    },
+    {
+     "theme": "outcomes",
+     "label": "Published outcomes and attainment",
+     "hand": 8,
+     "lexicon": 15,
+     "both": 8,
+     "precision": "0.533",
+     "recall": "1.000",
+     "warning": "precision below 0.8"
+    },
+    {
+     "theme": "other",
+     "label": "Other (no theme)",
+     "hand": 1,
+     "lexicon": 3,
+     "both": 0,
+     "precision": "0.000",
+     "recall": "0.000",
+     "warning": "precision below 0.8"
+    }
+   ],
+   "other_share_lexicon": 0.03,
+   "other_share_hand": 0.01
+  },
+  "a7": {
+   "sentences": 150,
+   "results_sentence_precision": 0.94,
+   "direction_agreement": 0.78,
+   "directions": [
+    {
+     "direction": "positive",
+     "hand": 66,
+     "lexicon": 53,
+     "both": 51,
+     "precision": "0.962",
+     "recall": "0.773"
+    },
+    {
+     "direction": "negative",
+     "hand": 29,
+     "lexicon": 24,
+     "both": 20,
+     "precision": "0.833",
+     "recall": "0.690"
+    },
+    {
+     "direction": "level",
+     "hand": 28,
+     "lexicon": 27,
+     "both": 26,
+     "precision": "0.963",
+     "recall": "0.929"
+    },
+    {
+     "direction": "mixed",
+     "hand": 4,
+     "lexicon": 5,
+     "both": 1,
+     "precision": "0.200",
+     "recall": "0.250"
+    },
+    {
+     "direction": "none",
+     "hand": 23,
+     "lexicon": 41,
+     "both": 19,
+     "precision": "0.463",
+     "recall": "0.826"
+    }
+   ],
+   "merged_into_mixed": [],
+   "agreement_after_merge": 0.78,
+   "no_trend_exploratory": {
+    "agreement": 0.7533333333333333,
+    "directions": [
+     {
+      "direction": "positive",
+      "hand": 66,
+      "lexicon": 47,
+      "both": 46,
+      "precision": "0.979",
+      "recall": "0.697"
+     },
+     {
+      "direction": "negative",
+      "hand": 29,
+      "lexicon": 25,
+      "both": 21,
+      "precision": "0.840",
+      "recall": "0.724"
+     },
+     {
+      "direction": "level",
+      "hand": 28,
+      "lexicon": 27,
+      "both": 26,
+      "precision": "0.963",
+      "recall": "0.929"
+     },
+     {
+      "direction": "mixed",
+      "hand": 4,
+      "lexicon": 3,
+      "both": 0,
+      "precision": "0.000",
+      "recall": "0.000"
+     },
+     {
+      "direction": "none",
+      "hand": 23,
+      "lexicon": 48,
+      "both": 20,
+      "precision": "0.417",
+      "recall": "0.870"
+     }
+    ]
+   }
+  }
+ },
+ "a3": {
+  "reports_with_items": 4257,
+  "reports_without_items": 24,
+  "items": 10051,
+  "items_other": 352,
+  "items_other_share": 0.03502139090637747,
+  "by_phase": {
+   "Primary": 3136,
+   "Secondary": 863,
+   "Nursery": 56,
+   "Special": 158,
+   "Alternative provision": 44
+  },
+  "items_per_report_by_lowest_grade": {
+   "Strong standard": 1.13,
+   "Expected standard": 2.0,
+   "Needs attention": 3.07,
+   "Urgent improvement": 5.88
+  },
+  "themes_per_report_by_lowest_grade": {
+   "Strong standard": 1.71,
+   "Expected standard": 3.56,
+   "Needs attention": 5.27,
+   "Urgent improvement": 8.41
+  }
+ },
+ "a7": {
+  "secondaries_in_corpus": 873,
+  "without_2024_25_gap": 38,
+  "schools": 835,
+  "with_net_direction": 810,
+  "results_sentences": 2269,
+  "sentence_directions": {
+   "mixed": 79,
+   "negative": 480,
+   "none": 444,
+   "positive": 870,
+   "level": 396
+  },
+  "band5": {
+   "Below": 144,
+   "Well below": 132,
+   "Above": 111,
+   "Well above": 110,
+   "Close to": 338
+  },
+  "band3": {
+   "Below": 276,
+   "Above": 221,
+   "Close to": 338
+  },
+  "readings": {
+   "mixed": 396,
+   "negative": 114,
+   "positive": 229,
+   "level": 71,
+   "no results statement": 25
+  },
+  "ss_mean_reproduced": 835,
+  "spearman_overall": {
+   "measure": "confirmatory",
+   "group": "All secondaries",
+   "schools": "810",
+   "rho": "0.567",
+   "lo": "0.516",
+   "hi": "0.611",
+   "reading": "the words track the data"
+  },
+  "pre_set_reading": "the words track the data",
+  "primaries": "not run: no school-level 2024/25 key stage 2 reading, writing and mathematics expected-standard file is held"
  }
 }

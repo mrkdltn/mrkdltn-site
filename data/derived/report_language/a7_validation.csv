@@ -1,0 +1,6 @@
+stage,direction,hand,lexicon,both,precision,recall
+as frozen,positive,66,53,51,0.962,0.773
+as frozen,negative,29,24,20,0.833,0.690
+as frozen,level,28,27,26,0.963,0.929
+as frozen,mixed,4,5,1,0.200,0.250
+as frozen,none,23,41,19,0.463,0.826

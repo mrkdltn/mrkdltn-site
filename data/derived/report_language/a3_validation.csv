@@ -1,0 +1,17 @@
+theme,label,hand,lexicon,both,precision,recall,warning
+curriculum_design,Curriculum design and sequencing,10,11,7,0.636,0.700,precision below 0.8
+teaching_quality,Quality and consistency of teaching,29,30,26,0.867,0.897,
+assessment,"Assessment, checking understanding and closing gaps",26,25,23,0.920,0.885,
+foundational,"Reading, writing, language and number foundations",27,27,27,1.000,1.000,
+send,SEND and adaptation,15,18,15,0.833,1.000,
+disadvantage,Disadvantaged pupils and the pupil premium,10,10,10,1.000,1.000,
+attendance,Attendance and punctuality,10,11,10,0.909,1.000,
+behaviour,Behaviour and attitudes,6,6,6,1.000,1.000,
+personal_development,"Personal development, wider curriculum and preparation for life",6,13,5,0.385,0.833,precision below 0.8
+early_years,Early years,6,7,6,0.857,1.000,
+post16,Sixth form and post-16,0,1,0,0.000,,precision below 0.8
+leadership,"Leadership oversight, evaluation and governance",18,13,13,1.000,0.722,
+staff_development,"Staff expertise, training and workload",7,6,6,1.000,0.857,
+parents_partnerships,"Parents, families and partnerships",3,3,3,1.000,1.000,
+outcomes,Published outcomes and attainment,8,15,8,0.533,1.000,precision below 0.8
+other,Other (no theme),1,3,0,0.000,0.000,precision below 0.8

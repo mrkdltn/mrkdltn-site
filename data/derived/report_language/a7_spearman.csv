@@ -1,0 +1,13 @@
+measure,group,schools,rho,lo,hi,reading
+confirmatory,All secondaries,810,0.567,0.516,0.611,the words track the data
+confirmatory,Achievement: Exceptional,26,,,,not run (fewer than 30 schools)
+confirmatory,Achievement: Strong standard,154,0.022,-0.144,0.186,reported beside the overall; not read as a headline
+confirmatory,Achievement: Expected standard,359,0.298,0.202,0.382,reported beside the overall; not read as a headline
+confirmatory,Achievement: Needs attention,247,0.179,0.052,0.292,reported beside the overall; not read as a headline
+confirmatory,Achievement: Urgent improvement,24,,,,not run (fewer than 30 schools)
+exploratory: without trend words,All secondaries,801,0.573,0.523,0.618,the words track the data
+exploratory: without trend words,Achievement: Exceptional,26,,,,not run (fewer than 30 schools)
+exploratory: without trend words,Achievement: Strong standard,154,-0.023,-0.186,0.128,exploratory
+exploratory: without trend words,Achievement: Expected standard,353,0.255,0.157,0.343,exploratory
+exploratory: without trend words,Achievement: Needs attention,244,0.232,0.115,0.346,exploratory
+exploratory: without trend words,Achievement: Urgent improvement,24,,,,not run (fewer than 30 schools)
