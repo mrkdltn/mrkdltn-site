@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""Report Language: the draft classification lexicons (version v0, NOT frozen).
+"""Report Language: the classification lexicons, version v1 (FROZEN on 28 November 2026).
 
 Two lexicons, both deterministic and transparent, as set out in docs/report-language/plan.md:
 
-  * Analysis 3: next-steps themes.  classify_next_step(text) -> sorted list of theme keys, or ['other'].
+  * Analysis 3: next-steps themes.  classify_next_step(text) -> list of theme keys in THEME_ORDER, or ['other'].
   * Analysis 7: results sentences and their direction.  results_sentences(paragraphs) -> list of sentences that
-    refer to published outcomes; sentence_direction(sentence) -> 'positive' | 'negative' | 'mixed' | 'level' | 'none';
-    section_direction(paragraphs) -> section-level reading.
+    refer to published outcomes; sentence_direction(sentence) -> 'positive' | 'negative' | 'level' | 'mixed' | 'none';
+    section_direction(paragraphs) -> section-level reading; net_direction(paragraphs) -> the continuous measure.
 
 The human-readable versions, with definitions, rules and invented examples, are
-docs/report-language/next-steps-lexicon-v0.md and docs/report-language/results-lexicon-v0.md. Those files and this
-module must say the same thing. Freezing is a rename: once Mark approves, LEXICON_VERSION becomes 'v1', the two
-documents are renamed to -v1.md, and nothing else changes. Until then nothing here may be used to count anything by
-grade, deprivation, month or results.
+docs/report-language/next-steps-lexicon-v1.md and docs/report-language/results-lexicon-v1.md. Those files and this
+module say the same thing. v1 is the v0 draft with exactly the changes Mark decided on 28 November 2026 (plan,
+Amendment 2): SEND and disadvantage split into two themes; safeguarding and record-keeping folded into leadership;
+sixth form kept; the "level" direction; no-direction sentences left out of the section reading; the net-direction
+denominator; trend words counted, with an exploratory version without them; "results understate the school" negative.
+The v0 drafts are kept unchanged for the record. Any change after this freeze is a new version, labelled as such.
 
 No language model is involved: every decision is a regular expression listed below.
 
@@ -29,7 +31,8 @@ Matching rules common to both lexicons
 """
 import re
 
-LEXICON_VERSION = 'v0'
+LEXICON_VERSION = 'v1'
+FROZEN = '2026-11-28'
 
 # ----------------------------------------------------------------------------------------------------------------
 # Preparation
@@ -142,18 +145,24 @@ THEMES = {
         'exclude': [r'\benglish as an additional language\b', r'\bspeak(?:ing|s)? english\b',
                     r'\bnumber of\b', r'\bwritten (?:feedback|policy|plans?)\b', r'\bready\b'],
     },
-    'inclusion_send': {
-        'label': 'SEND, disadvantage and adaptation',
+    'send': {
+        'label': 'SEND and adaptation',
         'include': [
             r'\bsend\b', r'\bspecial educational needs\b', r'\bdisabilit\w*', r'\behc\b', r'\beducation, health and care\b',
             r'\b(?:additional|complex|highest|specific|identified|emerging|individual|diverse|range of) (?:\w+ )?needs\b',
             r'\bpupils\' (?:\w+ )?needs\b', r'\bneeds of (?:all )?(?:pupils|children)\b', r'\badapt\w*', r'\badjustments?\b',
             r'\bbarriers?\b', r'\binclusi\w*', r'\balternative provision\b', r'\bspecialist (?:advice|provision|support)\b',
             r'\bresourced? provision\b', r'\benglish as an additional language\b',
+        ],
+        'exclude': [r'\bbarriers to (?:regular )?attendance\b', r'\bfamilies\' barriers\b'],
+    },
+    'disadvantage': {
+        'label': 'Disadvantaged pupils and the pupil premium',
+        'include': [
             r'\bdisadvantage\w*', r'\bpupil premium\b', r'\badditional funding\b', r'\beligible pupils\b', r'\bvulnerable\b',
             r'\bsocial care\b', r'\bfacing additional challenges\b|\bface additional challenges\b',
         ],
-        'exclude': [r'\bbarriers to (?:regular )?attendance\b', r'\bfamilies\' barriers\b'],
+        'exclude': [],
     },
     'attendance': {
         'label': 'Attendance and punctuality',
@@ -209,8 +218,12 @@ THEMES = {
             r'\b(?:middle|subject|senior) leaders\b', r'\barea of responsibility\b', r'\bthe trust\b', r'\btrust (?:board|leaders)\b',
             r'\binterim executive board\b', r'\bsystems and processes\b', r'\bimpact of (?:their|its|the school\'s) (?:work|actions|plans|strategies)\b',
             r'\bleaders\' actions\b',
+            # safeguarding and record-keeping, folded in from the v0 draft's theme 15 (Amendment 2)
+            r'\bsafeguard\w*', r'\bchild protection\b', r'\brecord-keeping\b', r'\brecords?\b(?! of attendance)',
+            r'\brecruitment\b', r'\bsingle central record\b', r'\bkeep\w*' + G2 + r'safe\b', r'\brisk assessments?\b',
+            r'\bonline safety\b', r'\bdesignated safeguarding\b', r'\bsafer recruitment\b',
         ],
-        'exclude': [r'\bbuild trust\b', r'\bpupils\' (?:progress|performance)\b(?=[^.]*monitor)'],
+        'exclude': [r'\bbuild trust\b', r'\btrack record\b', r'\bpupils\' (?:progress|performance)\b(?=[^.]*monitor)'],
     },
     'staff_development': {
         'label': 'Staff expertise, training and workload',
@@ -241,13 +254,6 @@ THEMES = {
             r'\b(?:improve\w*|raise\w*|raising)' + G3 + r'achievement\b', r'\bachievement (?:improves|is further improved|continues to improve)\b',
         ],
         'exclude': [r'\bcurriculum outcomes\b', r'\battendance' + G6 + r'national averages?\b', r'\bin line with national averages?\b(?=[^.]*attend)'],
-    },
-    'safeguarding': {
-        'label': 'Safeguarding and record-keeping',
-        'include': [r'\bsafeguard\w*', r'\bchild protection\b', r'\brecord-keeping\b', r'\brecords?\b(?! of attendance)',
-                    r'\brecruitment\b', r'\bsingle central record\b', r'\bkeep\w*' + G2 + r'safe\b', r'\brisk assessments?\b',
-                    r'\bonline safety\b', r'\bdesignated safeguarding\b', r'\bsafer recruitment\b'],
-        'exclude': [r'\btrack record\b'],
     },
 }
 
@@ -381,6 +387,12 @@ NEGATORS = r"\b(?:not|no|never|nor|neither|without|n't|cannot|yet to)\b"
 _CLAUSE = re.compile(r'[,;:()]|\b(?:but|however|although|though|while|whereas|despite)\b')
 NEGATION_WINDOW = 3   # tokens before a cue
 
+# Trend words (Amendment 2): cues that describe a change over time rather than a level. They count as direction in
+# the confirmatory measure; the exploratory version without trend words (trend=False below) ignores them.
+TREND = {r'\bimproved\b', r'\bimproving\b', r'\bimprovements?\b', r'\brose\b', r'\brisen\b', r'\brising\b', r'\bincreased\b',
+         r'\bdeclin\w*', r'\bdropped\b', r'\bfell\b', r'\bfall(?:ing|en)?\b', r'\bdip\w*'}
+assert TREND <= set(POSITIVE) | set(NEGATIVE)
+
 _D_MASK = [re.compile(p) for p in DIRECTION_MASK]
 _D_NEGP = [re.compile(p) for p in NEGATION_PHRASES]
 _D_POS = [re.compile(p) for p in POSITIVE]
@@ -397,9 +409,11 @@ def _negated(text, start):
     return any(_D_NOT.fullmatch(w) or w.endswith("n't") for w in toks)
 
 
-def direction_cues(sentence):
+def direction_cues(sentence, trend=True):
     """List of (polarity, matched text) after masking, fixed negative phrases and negation flips.
-    A negated positive becomes negative; a negated negative becomes level; a negated level becomes negative."""
+    A negated positive becomes negative; a negated negative becomes level; a negated level becomes negative.
+    With trend=False (exploratory), trend words still take their place in the text, so that nothing inside them
+    counts, but they are not returned as cues."""
     t = prepare(sentence)
     for p in _D_MASK:
         t = _blank(p, t)
@@ -415,6 +429,8 @@ def direction_cues(sentence):
                 if any(a < m.end() and m.start() < b for a, b in taken):
                     continue           # overlaps a longer cue already counted
                 taken.append((m.start(), m.end()))
+                if not trend and p.pattern in TREND:
+                    continue
                 q = pol
                 if _negated(t, m.start()):
                     q = {'positive': 'negative', 'negative': 'level', 'level': 'negative'}[pol]
@@ -422,8 +438,8 @@ def direction_cues(sentence):
     return cues
 
 
-def sentence_direction(sentence):
-    pols = {p for p, _ in direction_cues(sentence)}
+def sentence_direction(sentence, trend=True):
+    pols = {p for p, _ in direction_cues(sentence, trend)}
     if 'positive' in pols and 'negative' in pols:
         return 'mixed'
     if 'positive' in pols:
@@ -435,23 +451,27 @@ def sentence_direction(sentence):
     return 'none'
 
 
-def section_direction(paragraphs):
-    """'no results statement' if no results sentence; else positive / negative / level if every results sentence with a
-    direction has that direction; 'mixed' otherwise. Results sentences with no direction cue ('none') are left out of
-    the section reading (but counted). Draft rule: see results-lexicon-v0.md, decision 2."""
-    rs = results_sentences(paragraphs)
-    if not rs:
-        return 'no results statement'
-    ds = {sentence_direction(s) for s in rs} - {'none'}
+def section_reading(directions):
+    """Section reading from the directions of its results sentences (Amendment 2). Sentences with no direction are
+    left out. 'no results statement' if none remain; positive, negative or level if every remaining sentence has
+    that direction; 'mixed' otherwise."""
+    ds = {d for d in directions if d != 'none'}
     if not ds:
-        return 'no direction'
+        return 'no results statement'
     return ds.pop() if len(ds) == 1 else 'mixed'
 
 
-def net_direction(paragraphs):
-    """(positive - negative) / all results sentences; None if there are none. Mixed, level and none count as 0."""
-    rs = results_sentences(paragraphs)
-    if not rs:
+def net_from(directions):
+    """(positive - negative) / (positive + negative + level + mixed) (Amendment 2); None if the denominator is 0."""
+    ds = [d for d in directions if d != 'none']
+    if not ds:
         return None
-    ds = [sentence_direction(s) for s in rs]
     return (ds.count('positive') - ds.count('negative')) / len(ds)
+
+
+def section_direction(paragraphs, trend=True):
+    return section_reading([sentence_direction(s, trend) for s in results_sentences(paragraphs)])
+
+
+def net_direction(paragraphs, trend=True):
+    return net_from([sentence_direction(s, trend) for s in results_sentences(paragraphs)])

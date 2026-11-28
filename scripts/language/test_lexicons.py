@@ -26,7 +26,7 @@ class NextStepThemes(unittest.TestCase):
 
     def test_multi_label(self):
         t = 'Leaders should make sure that pupils with SEND attend school more regularly.'
-        self.assertEqual(themes(t), {'inclusion_send', 'attendance'})
+        self.assertEqual(themes(t), {'send', 'attendance'})
 
     def test_order_is_fixed(self):
         out = L.classify_next_step('Governors should check attendance and the phonics programme.')
@@ -56,16 +56,24 @@ class NextStepThemes(unittest.TestCase):
     def test_foundational_excludes_eal_and_ready(self):
         t = 'Leaders should support pupils who speak English as an additional language when they are ready.'
         self.assertNotIn('foundational', themes(t))
-        self.assertIn('inclusion_send', themes(t))
+        self.assertIn('send', themes(t))
 
-    def test_inclusion(self):
-        self.assertIn('inclusion_send', themes('Teachers should adapt work for pupils with special educational needs and/or disabilities.'))
-        self.assertIn('inclusion_send', themes('Leaders should check how the pupil premium is spent.'))
+    def test_send_and_disadvantage_are_separate(self):
+        t = 'Teachers should adapt work for pupils with special educational needs and/or disabilities.'
+        self.assertIn('send', themes(t))
+        self.assertNotIn('disadvantage', themes(t))
+        t = 'Leaders should check how the pupil premium is spent.'
+        self.assertIn('disadvantage', themes(t))
+        self.assertNotIn('send', themes(t))
+        self.assertEqual(themes('Leaders should make sure disadvantaged pupils with SEND get the right adaptations.'),
+                         {'send', 'disadvantage'})
+        self.assertIn('disadvantage', themes('Staff should act quickly when vulnerable pupils are known to social care.'))
+        self.assertIn('send', themes('Staff should remove barriers for pupils who speak English as an additional language.'))
 
     def test_barriers_to_attendance_is_attendance_not_inclusion(self):
         t = 'Leaders should reduce the barriers to attendance that some families face.'
         self.assertIn('attendance', themes(t))
-        self.assertNotIn('inclusion_send', themes(t))
+        self.assertNotIn('send', themes(t))
 
     def test_attendance_excludes_alternative_provision(self):
         t = 'Leaders should check the support for pupils who attend alternative provision.'
@@ -99,8 +107,14 @@ class NextStepThemes(unittest.TestCase):
         self.assertIn('outcomes', themes('Leaders should raise attainment at the end of key stage 4.'))
         self.assertNotIn('outcomes', themes('Leaders should raise attendance towards national averages.'))
 
-    def test_safeguarding(self):
-        self.assertIn('safeguarding', themes('Leaders should tighten record-keeping for safeguarding concerns.'))
+    def test_safeguarding_is_folded_into_leadership(self):
+        self.assertNotIn('safeguarding', L.THEMES)
+        self.assertIn('leadership', themes('Staff should tighten record-keeping for safeguarding concerns.'))
+        self.assertNotIn('leadership', themes('Pupils should have a strong track record of attendance.'))
+
+    def test_fifteen_themes(self):
+        self.assertEqual(len(L.THEMES), 15)
+        self.assertIn('post16', L.THEMES)
 
 
 class ResultsSentences(unittest.TestCase):
@@ -174,13 +188,31 @@ class Direction(unittest.TestCase):
         self.assertEqual(L.section_direction(['Results are above average. Outcomes in phonics are below average.']), 'mixed')
         # a results sentence with no direction does not turn a section mixed
         self.assertEqual(L.section_direction(['Pupils take GCSE examinations. Results are below average.']), 'negative')
-        self.assertEqual(L.section_direction(['Pupils take GCSE examinations.']), 'no direction')
+        # Amendment 2: if no results sentence has a direction, the section reads 'no results statement'
+        self.assertEqual(L.section_direction(['Pupils take GCSE examinations.']), 'no results statement')
+        self.assertEqual(L.section_direction(['Results are in line with national averages. Outcomes are close to average.']), 'level')
+        self.assertEqual(L.section_direction(['Results are in line with national averages. Outcomes rose.']), 'mixed')
 
     def test_net_direction(self):
+        # Amendment 2: (positive - negative) / (positive + negative + level + mixed); 'none' is not in the denominator
         self.assertIsNone(L.net_direction(['Pupils enjoy reading.']))
+        self.assertIsNone(L.net_direction(['Pupils take GCSE examinations.']))
         self.assertAlmostEqual(L.net_direction(['Results are above average. Phonics outcomes are below average. '
                                                 'Pupils take GCSE examinations.']), 0.0)
-        self.assertAlmostEqual(L.net_direction(['Results are above average. Pupils take GCSE examinations.']), 0.5)
+        self.assertAlmostEqual(L.net_direction(['Results are above average. Pupils take GCSE examinations.']), 1.0)
+        self.assertAlmostEqual(L.net_direction(['Results are above average. Outcomes are in line with national averages. '
+                                                'Outcomes improved, although they remain below average.']), 1 / 3)
+
+    def test_trend_words_and_the_exploratory_version(self):
+        s = 'Published outcomes have improved over three years.'
+        self.assertEqual(L.sentence_direction(s), 'positive')
+        self.assertEqual(L.sentence_direction(s, trend=False), 'none')
+        s = 'Outcomes declined, although they remain above the national average.'
+        self.assertEqual(L.sentence_direction(s), 'mixed')
+        self.assertEqual(L.sentence_direction(s, trend=False), 'positive')
+        self.assertEqual(L.sentence_direction('Results have not improved.', trend=False), 'none')
+        self.assertEqual(L.section_direction(['Outcomes rose. Results are below average.'], trend=False), 'negative')
+        self.assertAlmostEqual(L.net_direction(['Outcomes rose. Results are below average.'], trend=False), -1.0)
 
 
 class DocumentedExamples(unittest.TestCase):
@@ -213,8 +245,9 @@ class DocumentedExamples(unittest.TestCase):
 
 
 class Version(unittest.TestCase):
-    def test_not_frozen(self):
-        self.assertEqual(L.LEXICON_VERSION, 'v0')
+    def test_frozen_v1(self):
+        self.assertEqual(L.LEXICON_VERSION, 'v1')
+        self.assertEqual(L.FROZEN, '2026-11-28')
 
 
 if __name__ == '__main__':
