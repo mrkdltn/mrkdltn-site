@@ -1,0 +1,1774 @@
+{
+ "areas": {
+  "g_ach": {
+   "area": "Achievement",
+   "main": {
+    "model": "Primaries and secondaries pooled; codes with fewer than 5 report cards pooled",
+    "phases": [
+     "Primary",
+     "Secondary"
+    ],
+    "schools": 3975,
+    "events": 1125,
+    "non_events": 2850,
+    "dropped_missing_context_schools": 38,
+    "fixed_effect_parameters": 31,
+    "events_needed": 310,
+    "schools_primary": 3142,
+    "schools_secondary": 833,
+    "inspectors": {
+     "inspectors": 385,
+     "inspectors_pooled": 116,
+     "pooled_group_schools": 269,
+     "groups_in_model": 270,
+     "reports_per_inspector": {
+      "min": 1,
+      "median": 9.0,
+      "max": 29
+     }
+    },
+    "status": "fitted",
+    "convergence": {
+     "rhat_max": 1.0041,
+     "ess_min": 1739,
+     "divergences": 0,
+     "chains": 4,
+     "draws": 2000,
+     "tune": 2000,
+     "target_accept": 0.95,
+     "seed": 20261127,
+     "converged": true,
+     "refits": 1,
+     "earlier_attempts": [
+      {
+       "draws": 1000,
+       "rhat_max": 1.0081,
+       "ess_min": 339
+      }
+     ]
+    },
+    "inspector_sd": {
+     "median": 0.32,
+     "lo": 0.132,
+     "hi": 0.462
+    },
+    "median_odds_ratio": {
+     "median": 1.357,
+     "lo": 1.134,
+     "hi": 1.554
+    },
+    "mor_reading": "uncertain between little and substantial",
+    "typical_school_p25_pct": {
+     "median": 18.4,
+     "lo": 12.7,
+     "hi": 25.7
+    },
+    "typical_school_p75_pct": {
+     "median": 25.6,
+     "lo": 18.5,
+     "hi": 34.2
+    },
+    "spread_pp": {
+     "median": 7.3,
+     "lo": 3.0,
+     "hi": 11.2
+    },
+    "icc_latent": {
+     "median": 0.03,
+     "lo": 0.005,
+     "hi": 0.061
+    },
+    "seconds_bayes": 106.3,
+    "permutation": {
+     "estimator": "maximum likelihood, Gauss-Hermite quadrature (30 nodes)",
+     "shuffles": 200,
+     "strata": "region x month x phase",
+     "observed_sd_ml": 0.295,
+     "shuffled_sd_median": 0.0,
+     "shuffled_sd_2_5": 0.0,
+     "shuffled_sd_97_5": 0.2,
+     "shuffled_sd_95": 0.168,
+     "observed_percentile": 99.5,
+     "reading": "distinguishable from chance",
+     "shuffles_at_or_above_observed": 1
+    },
+    "reading": "distinguishable from chance",
+    "seconds_permutation": 78.5
+   },
+   "sensitivity": {
+    "min10": {
+     "model": "As main; codes with fewer than 10 report cards pooled",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 1125,
+     "non_events": 2850,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 206,
+      "pooled_group_schools": 911,
+      "groups_in_model": 180,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0044,
+      "ess_min": 1885,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 2000,
+      "tune": 2000,
+      "target_accept": 0.95,
+      "seed": 20261127,
+      "converged": true,
+      "refits": 1,
+      "earlier_attempts": [
+       {
+        "draws": 1000,
+        "rhat_max": 1.0125,
+        "ess_min": 256
+       }
+      ]
+     },
+     "inspector_sd": {
+      "median": 0.344,
+      "lo": 0.159,
+      "hi": 0.497
+     },
+     "median_odds_ratio": {
+      "median": 1.389,
+      "lo": 1.163,
+      "hi": 1.606
+     },
+     "mor_reading": "uncertain between little and substantial",
+     "typical_school_p25_pct": {
+      "median": 18.1,
+      "lo": 12.6,
+      "hi": 25.4
+     },
+     "typical_school_p75_pct": {
+      "median": 25.9,
+      "lo": 18.7,
+      "hi": 34.8
+     },
+     "spread_pp": {
+      "median": 7.8,
+      "lo": 3.6,
+      "hi": 12.1
+     },
+     "icc_latent": {
+      "median": 0.035,
+      "lo": 0.008,
+      "hi": 0.07
+     },
+     "seconds_bayes": 93.6
+    },
+    "all_codes": {
+     "model": "As main; every code its own inspector, no pooling",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 1125,
+     "non_events": 2850,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 0,
+      "pooled_group_schools": 0,
+      "groups_in_model": 385,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0049,
+      "ess_min": 449,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.331,
+      "lo": 0.154,
+      "hi": 0.472
+     },
+     "median_odds_ratio": {
+      "median": 1.372,
+      "lo": 1.159,
+      "hi": 1.568
+     },
+     "mor_reading": "uncertain between little and substantial",
+     "typical_school_p25_pct": {
+      "median": 18.1,
+      "lo": 12.4,
+      "hi": 25.1
+     },
+     "typical_school_p75_pct": {
+      "median": 25.6,
+      "lo": 18.6,
+      "hi": 34.3
+     },
+     "spread_pp": {
+      "median": 7.4,
+      "lo": 3.5,
+      "hi": 11.4
+     },
+     "icc_latent": {
+      "median": 0.032,
+      "lo": 0.007,
+      "hi": 0.063
+     },
+     "seconds_bayes": 24.8
+    },
+    "region_x_term": {
+     "model": "As main, with region x school term terms in place of region and month",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 1125,
+     "non_events": 2850,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 44,
+     "events_needed": 440,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 116,
+      "pooled_group_schools": 269,
+      "groups_in_model": 270,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0035,
+      "ess_min": 1120,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 2000,
+      "tune": 2000,
+      "target_accept": 0.95,
+      "seed": 20261127,
+      "converged": true,
+      "refits": 1,
+      "earlier_attempts": [
+       {
+        "draws": 1000,
+        "rhat_max": 1.0063,
+        "ess_min": 253
+       }
+      ]
+     },
+     "inspector_sd": {
+      "median": 0.319,
+      "lo": 0.116,
+      "hi": 0.459
+     },
+     "median_odds_ratio": {
+      "median": 1.356,
+      "lo": 1.117,
+      "hi": 1.55
+     },
+     "mor_reading": "uncertain between little and substantial",
+     "typical_school_p25_pct": {
+      "median": 22.5,
+      "lo": 16.5,
+      "hi": 29.6
+     },
+     "typical_school_p75_pct": {
+      "median": 30.6,
+      "lo": 23.5,
+      "hi": 38.8
+     },
+     "spread_pp": {
+      "median": 8.3,
+      "lo": 3.1,
+      "hi": 12.2
+     },
+     "icc_latent": {
+      "median": 0.03,
+      "lo": 0.004,
+      "hi": 0.06
+     },
+     "seconds_bayes": 109.0
+    },
+    "secondary_full": {
+     "model": "Secondaries only, with the full results controls",
+     "phases": [
+      "Secondary"
+     ],
+     "schools": 833,
+     "events": 275,
+     "non_events": 558,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 29,
+     "events_needed": 290,
+     "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)"
+    }
+   }
+  },
+  "g_ct": {
+   "area": "Curriculum and teaching",
+   "main": {
+    "model": "Primaries and secondaries pooled; codes with fewer than 5 report cards pooled",
+    "phases": [
+     "Primary",
+     "Secondary"
+    ],
+    "schools": 3975,
+    "events": 815,
+    "non_events": 3160,
+    "dropped_missing_context_schools": 38,
+    "fixed_effect_parameters": 31,
+    "events_needed": 310,
+    "schools_primary": 3142,
+    "schools_secondary": 833,
+    "inspectors": {
+     "inspectors": 385,
+     "inspectors_pooled": 116,
+     "pooled_group_schools": 269,
+     "groups_in_model": 270,
+     "reports_per_inspector": {
+      "min": 1,
+      "median": 9.0,
+      "max": 29
+     }
+    },
+    "status": "fitted",
+    "convergence": {
+     "rhat_max": 1.0056,
+     "ess_min": 457,
+     "divergences": 0,
+     "chains": 4,
+     "draws": 1000,
+     "tune": 1000,
+     "target_accept": 0.9,
+     "seed": 20261126,
+     "converged": true,
+     "refits": 0
+    },
+    "inspector_sd": {
+     "median": 0.445,
+     "lo": 0.278,
+     "hi": 0.608
+    },
+    "median_odds_ratio": {
+     "median": 1.529,
+     "lo": 1.303,
+     "hi": 1.786
+    },
+    "mor_reading": "uncertain between modest and substantial",
+    "typical_school_p25_pct": {
+     "median": 13.0,
+     "lo": 8.4,
+     "hi": 18.8
+    },
+    "typical_school_p75_pct": {
+     "median": 21.5,
+     "lo": 14.8,
+     "hi": 29.4
+    },
+    "spread_pp": {
+     "median": 8.3,
+     "lo": 5.0,
+     "hi": 12.4
+    },
+    "icc_latent": {
+     "median": 0.057,
+     "lo": 0.023,
+     "hi": 0.101
+    },
+    "seconds_bayes": 24.9,
+    "permutation": {
+     "estimator": "maximum likelihood, Gauss-Hermite quadrature (30 nodes)",
+     "shuffles": 200,
+     "strata": "region x month x phase",
+     "observed_sd_ml": 0.412,
+     "shuffled_sd_median": 0.0,
+     "shuffled_sd_2_5": 0.0,
+     "shuffled_sd_97_5": 0.223,
+     "shuffled_sd_95": 0.2,
+     "observed_percentile": 100.0,
+     "reading": "distinguishable from chance",
+     "shuffles_at_or_above_observed": 0
+    },
+    "reading": "distinguishable from chance",
+    "seconds_permutation": 82.4
+   },
+   "sensitivity": {
+    "min10": {
+     "model": "As main; codes with fewer than 10 report cards pooled",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 815,
+     "non_events": 3160,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 206,
+      "pooled_group_schools": 911,
+      "groups_in_model": 180,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0028,
+      "ess_min": 631,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.451,
+      "lo": 0.283,
+      "hi": 0.617
+     },
+     "median_odds_ratio": {
+      "median": 1.537,
+      "lo": 1.31,
+      "hi": 1.801
+     },
+     "mor_reading": "uncertain between modest and substantial",
+     "typical_school_p25_pct": {
+      "median": 13.3,
+      "lo": 8.8,
+      "hi": 19.2
+     },
+     "typical_school_p75_pct": {
+      "median": 22.0,
+      "lo": 15.4,
+      "hi": 29.9
+     },
+     "spread_pp": {
+      "median": 8.6,
+      "lo": 5.2,
+      "hi": 12.7
+     },
+     "icc_latent": {
+      "median": 0.058,
+      "lo": 0.024,
+      "hi": 0.104
+     },
+     "seconds_bayes": 25.8
+    },
+    "all_codes": {
+     "model": "As main; every code its own inspector, no pooling",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 815,
+     "non_events": 3160,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 0,
+      "pooled_group_schools": 0,
+      "groups_in_model": 385,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0069,
+      "ess_min": 463,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.464,
+      "lo": 0.309,
+      "hi": 0.614
+     },
+     "median_odds_ratio": {
+      "median": 1.557,
+      "lo": 1.343,
+      "hi": 1.796
+     },
+     "mor_reading": "uncertain between modest and substantial",
+     "typical_school_p25_pct": {
+      "median": 12.9,
+      "lo": 8.4,
+      "hi": 18.9
+     },
+     "typical_school_p75_pct": {
+      "median": 21.6,
+      "lo": 15.0,
+      "hi": 29.8
+     },
+     "spread_pp": {
+      "median": 8.7,
+      "lo": 5.5,
+      "hi": 12.8
+     },
+     "icc_latent": {
+      "median": 0.062,
+      "lo": 0.028,
+      "hi": 0.103
+     },
+     "seconds_bayes": 24.0
+    },
+    "region_x_term": {
+     "model": "As main, with region x school term terms in place of region and month",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 815,
+     "non_events": 3160,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 44,
+     "events_needed": 440,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 116,
+      "pooled_group_schools": 269,
+      "groups_in_model": 270,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0053,
+      "ess_min": 598,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 2000,
+      "tune": 2000,
+      "target_accept": 0.95,
+      "seed": 20261127,
+      "converged": true,
+      "refits": 1,
+      "earlier_attempts": [
+       {
+        "draws": 1000,
+        "rhat_max": 1.0128,
+        "ess_min": 283
+       }
+      ]
+     },
+     "inspector_sd": {
+      "median": 0.455,
+      "lo": 0.295,
+      "hi": 0.608
+     },
+     "median_odds_ratio": {
+      "median": 1.543,
+      "lo": 1.325,
+      "hi": 1.785
+     },
+     "mor_reading": "uncertain between modest and substantial",
+     "typical_school_p25_pct": {
+      "median": 15.5,
+      "lo": 10.7,
+      "hi": 21.6
+     },
+     "typical_school_p75_pct": {
+      "median": 25.2,
+      "lo": 18.6,
+      "hi": 33.6
+     },
+     "spread_pp": {
+      "median": 9.7,
+      "lo": 6.1,
+      "hi": 13.9
+     },
+     "icc_latent": {
+      "median": 0.059,
+      "lo": 0.026,
+      "hi": 0.101
+     },
+     "seconds_bayes": 101.0
+    },
+    "secondary_full": {
+     "model": "Secondaries only, with the full results controls",
+     "phases": [
+      "Secondary"
+     ],
+     "schools": 833,
+     "events": 184,
+     "non_events": 649,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 29,
+     "events_needed": 290,
+     "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)"
+    }
+   }
+  },
+  "g_ab": {
+   "area": "Attendance and behaviour",
+   "main": {
+    "model": "Primaries and secondaries pooled; codes with fewer than 5 report cards pooled",
+    "phases": [
+     "Primary",
+     "Secondary"
+    ],
+    "schools": 3975,
+    "events": 616,
+    "non_events": 3359,
+    "dropped_missing_context_schools": 38,
+    "fixed_effect_parameters": 31,
+    "events_needed": 310,
+    "schools_primary": 3142,
+    "schools_secondary": 833,
+    "inspectors": {
+     "inspectors": 385,
+     "inspectors_pooled": 116,
+     "pooled_group_schools": 269,
+     "groups_in_model": 270,
+     "reports_per_inspector": {
+      "min": 1,
+      "median": 9.0,
+      "max": 29
+     }
+    },
+    "status": "fitted",
+    "convergence": {
+     "rhat_max": 1.0087,
+     "ess_min": 607,
+     "divergences": 0,
+     "chains": 4,
+     "draws": 1000,
+     "tune": 1000,
+     "target_accept": 0.9,
+     "seed": 20261126,
+     "converged": true,
+     "refits": 0
+    },
+    "inspector_sd": {
+     "median": 0.49,
+     "lo": 0.301,
+     "hi": 0.659
+    },
+    "median_odds_ratio": {
+     "median": 1.596,
+     "lo": 1.333,
+     "hi": 1.875
+    },
+    "mor_reading": "uncertain between modest and substantial",
+    "typical_school_p25_pct": {
+     "median": 5.6,
+     "lo": 3.3,
+     "hi": 8.9
+    },
+    "typical_school_p75_pct": {
+     "median": 10.2,
+     "lo": 6.4,
+     "hi": 15.7
+    },
+    "spread_pp": {
+     "median": 4.6,
+     "lo": 2.6,
+     "hi": 7.5
+    },
+    "icc_latent": {
+     "median": 0.068,
+     "lo": 0.027,
+     "hi": 0.117
+    },
+    "seconds_bayes": 22.8,
+    "permutation": {
+     "estimator": "maximum likelihood, Gauss-Hermite quadrature (30 nodes)",
+     "shuffles": 200,
+     "strata": "region x month x phase",
+     "observed_sd_ml": 0.449,
+     "shuffled_sd_median": 0.0,
+     "shuffled_sd_2_5": 0.0,
+     "shuffled_sd_97_5": 0.306,
+     "shuffled_sd_95": 0.289,
+     "observed_percentile": 100.0,
+     "reading": "distinguishable from chance",
+     "shuffles_at_or_above_observed": 0
+    },
+    "reading": "distinguishable from chance",
+    "seconds_permutation": 104.9
+   },
+   "sensitivity": {
+    "min10": {
+     "model": "As main; codes with fewer than 10 report cards pooled",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 616,
+     "non_events": 3359,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 206,
+      "pooled_group_schools": 911,
+      "groups_in_model": 180,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0066,
+      "ess_min": 547,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.506,
+      "lo": 0.321,
+      "hi": 0.693
+     },
+     "median_odds_ratio": {
+      "median": 1.621,
+      "lo": 1.358,
+      "hi": 1.937
+     },
+     "mor_reading": "uncertain between modest and substantial",
+     "typical_school_p25_pct": {
+      "median": 5.5,
+      "lo": 3.3,
+      "hi": 8.8
+     },
+     "typical_school_p75_pct": {
+      "median": 10.2,
+      "lo": 6.6,
+      "hi": 15.6
+     },
+     "spread_pp": {
+      "median": 4.7,
+      "lo": 2.7,
+      "hi": 7.6
+     },
+     "icc_latent": {
+      "median": 0.072,
+      "lo": 0.03,
+      "hi": 0.127
+     },
+     "seconds_bayes": 23.1
+    },
+    "all_codes": {
+     "model": "As main; every code its own inspector, no pooling",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 616,
+     "non_events": 3359,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 0,
+      "pooled_group_schools": 0,
+      "groups_in_model": 385,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0055,
+      "ess_min": 587,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.506,
+      "lo": 0.335,
+      "hi": 0.674
+     },
+     "median_odds_ratio": {
+      "median": 1.62,
+      "lo": 1.376,
+      "hi": 1.902
+     },
+     "mor_reading": "uncertain between modest and substantial",
+     "typical_school_p25_pct": {
+      "median": 5.4,
+      "lo": 3.3,
+      "hi": 8.7
+     },
+     "typical_school_p75_pct": {
+      "median": 10.1,
+      "lo": 6.5,
+      "hi": 15.6
+     },
+     "spread_pp": {
+      "median": 4.7,
+      "lo": 2.7,
+      "hi": 7.6
+     },
+     "icc_latent": {
+      "median": 0.072,
+      "lo": 0.033,
+      "hi": 0.121
+     },
+     "seconds_bayes": 22.9
+    },
+    "region_x_term": {
+     "model": "As main, with region x school term terms in place of region and month",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 616,
+     "non_events": 3359,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 44,
+     "events_needed": 440,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 116,
+      "pooled_group_schools": 269,
+      "groups_in_model": 270,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0029,
+      "ess_min": 993,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 2000,
+      "tune": 2000,
+      "target_accept": 0.95,
+      "seed": 20261127,
+      "converged": true,
+      "refits": 1,
+      "earlier_attempts": [
+       {
+        "draws": 1000,
+        "rhat_max": 1.0083,
+        "ess_min": 290
+       }
+      ]
+     },
+     "inspector_sd": {
+      "median": 0.477,
+      "lo": 0.292,
+      "hi": 0.652
+     },
+     "median_odds_ratio": {
+      "median": 1.577,
+      "lo": 1.322,
+      "hi": 1.863
+     },
+     "mor_reading": "uncertain between modest and substantial",
+     "typical_school_p25_pct": {
+      "median": 4.7,
+      "lo": 2.9,
+      "hi": 7.5
+     },
+     "typical_school_p75_pct": {
+      "median": 8.6,
+      "lo": 5.6,
+      "hi": 13.1
+     },
+     "spread_pp": {
+      "median": 3.8,
+      "lo": 2.2,
+      "hi": 6.3
+     },
+     "icc_latent": {
+      "median": 0.065,
+      "lo": 0.025,
+      "hi": 0.114
+     },
+     "seconds_bayes": 99.4
+    },
+    "secondary_full": {
+     "model": "Secondaries only, with the full results controls",
+     "phases": [
+      "Secondary"
+     ],
+     "schools": 833,
+     "events": 185,
+     "non_events": 648,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 29,
+     "events_needed": 290,
+     "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)"
+    }
+   }
+  },
+  "g_lg": {
+   "area": "Leadership and governance",
+   "main": {
+    "model": "Primaries and secondaries pooled; codes with fewer than 5 report cards pooled",
+    "phases": [
+     "Primary",
+     "Secondary"
+    ],
+    "schools": 3975,
+    "events": 543,
+    "non_events": 3432,
+    "dropped_missing_context_schools": 38,
+    "fixed_effect_parameters": 31,
+    "events_needed": 310,
+    "schools_primary": 3142,
+    "schools_secondary": 833,
+    "inspectors": {
+     "inspectors": 385,
+     "inspectors_pooled": 116,
+     "pooled_group_schools": 269,
+     "groups_in_model": 270,
+     "reports_per_inspector": {
+      "min": 1,
+      "median": 9.0,
+      "max": 29
+     }
+    },
+    "status": "fitted",
+    "convergence": {
+     "rhat_max": 1.0054,
+     "ess_min": 614,
+     "divergences": 0,
+     "chains": 4,
+     "draws": 1000,
+     "tune": 1000,
+     "target_accept": 0.9,
+     "seed": 20261126,
+     "converged": true,
+     "refits": 0
+    },
+    "inspector_sd": {
+     "median": 0.594,
+     "lo": 0.427,
+     "hi": 0.769
+    },
+    "median_odds_ratio": {
+     "median": 1.762,
+     "lo": 1.503,
+     "hi": 2.083
+    },
+    "mor_reading": "substantial",
+    "typical_school_p25_pct": {
+     "median": 7.3,
+     "lo": 4.3,
+     "hi": 11.8
+    },
+    "typical_school_p75_pct": {
+     "median": 14.9,
+     "lo": 9.6,
+     "hi": 22.5
+    },
+    "spread_pp": {
+     "median": 7.5,
+     "lo": 4.7,
+     "hi": 11.6
+    },
+    "icc_latent": {
+     "median": 0.097,
+     "lo": 0.053,
+     "hi": 0.152
+    },
+    "seconds_bayes": 29.6,
+    "permutation": {
+     "estimator": "maximum likelihood, Gauss-Hermite quadrature (30 nodes)",
+     "shuffles": 200,
+     "strata": "region x month x phase",
+     "observed_sd_ml": 0.549,
+     "shuffled_sd_median": 0.0,
+     "shuffled_sd_2_5": 0.0,
+     "shuffled_sd_97_5": 0.313,
+     "shuffled_sd_95": 0.286,
+     "observed_percentile": 100.0,
+     "reading": "distinguishable from chance",
+     "shuffles_at_or_above_observed": 0
+    },
+    "reading": "distinguishable from chance",
+    "seconds_permutation": 120.9
+   },
+   "sensitivity": {
+    "min10": {
+     "model": "As main; codes with fewer than 10 report cards pooled",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 543,
+     "non_events": 3432,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 206,
+      "pooled_group_schools": 911,
+      "groups_in_model": 180,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0072,
+      "ess_min": 552,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.617,
+      "lo": 0.44,
+      "hi": 0.807
+     },
+     "median_odds_ratio": {
+      "median": 1.802,
+      "lo": 1.521,
+      "hi": 2.159
+     },
+     "mor_reading": "substantial",
+     "typical_school_p25_pct": {
+      "median": 7.0,
+      "lo": 4.2,
+      "hi": 11.2
+     },
+     "typical_school_p75_pct": {
+      "median": 14.8,
+      "lo": 9.5,
+      "hi": 22.0
+     },
+     "spread_pp": {
+      "median": 7.7,
+      "lo": 4.8,
+      "hi": 11.8
+     },
+     "icc_latent": {
+      "median": 0.104,
+      "lo": 0.055,
+      "hi": 0.165
+     },
+     "seconds_bayes": 27.5
+    },
+    "all_codes": {
+     "model": "As main; every code its own inspector, no pooling",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 543,
+     "non_events": 3432,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 0,
+      "pooled_group_schools": 0,
+      "groups_in_model": 385,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0045,
+      "ess_min": 1760,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 2000,
+      "tune": 2000,
+      "target_accept": 0.95,
+      "seed": 20261127,
+      "converged": true,
+      "refits": 1,
+      "earlier_attempts": [
+       {
+        "draws": 1000,
+        "rhat_max": 1.0084,
+        "ess_min": 361
+       }
+      ]
+     },
+     "inspector_sd": {
+      "median": 0.597,
+      "lo": 0.43,
+      "hi": 0.766
+     },
+     "median_odds_ratio": {
+      "median": 1.767,
+      "lo": 1.508,
+      "hi": 2.075
+     },
+     "mor_reading": "substantial",
+     "typical_school_p25_pct": {
+      "median": 7.0,
+      "lo": 4.2,
+      "hi": 11.3
+     },
+     "typical_school_p75_pct": {
+      "median": 14.5,
+      "lo": 9.3,
+      "hi": 21.9
+     },
+     "spread_pp": {
+      "median": 7.4,
+      "lo": 4.5,
+      "hi": 11.5
+     },
+     "icc_latent": {
+      "median": 0.098,
+      "lo": 0.053,
+      "hi": 0.151
+     },
+     "seconds_bayes": 90.3
+    },
+    "region_x_term": {
+     "model": "As main, with region x school term terms in place of region and month",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 543,
+     "non_events": 3432,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 44,
+     "events_needed": 440,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 116,
+      "pooled_group_schools": 269,
+      "groups_in_model": 270,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0029,
+      "ess_min": 965,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 2000,
+      "tune": 2000,
+      "target_accept": 0.95,
+      "seed": 20261127,
+      "converged": true,
+      "refits": 1,
+      "earlier_attempts": [
+       {
+        "draws": 1000,
+        "rhat_max": 1.0185,
+        "ess_min": 343
+       }
+      ]
+     },
+     "inspector_sd": {
+      "median": 0.588,
+      "lo": 0.415,
+      "hi": 0.761
+     },
+     "median_odds_ratio": {
+      "median": 1.752,
+      "lo": 1.486,
+      "hi": 2.066
+     },
+     "mor_reading": "uncertain between modest and substantial",
+     "typical_school_p25_pct": {
+      "median": 7.1,
+      "lo": 4.4,
+      "hi": 11.1
+     },
+     "typical_school_p75_pct": {
+      "median": 14.5,
+      "lo": 9.7,
+      "hi": 21.2
+     },
+     "spread_pp": {
+      "median": 7.3,
+      "lo": 4.6,
+      "hi": 11.1
+     },
+     "icc_latent": {
+      "median": 0.095,
+      "lo": 0.05,
+      "hi": 0.15
+     },
+     "seconds_bayes": 101.6
+    },
+    "secondary_full": {
+     "model": "Secondaries only, with the full results controls",
+     "phases": [
+      "Secondary"
+     ],
+     "schools": 833,
+     "events": 122,
+     "non_events": 711,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 29,
+     "events_needed": 290,
+     "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)"
+    }
+   }
+  }
+ },
+ "other_areas": {
+  "g_inc": {
+   "area": "Inclusion",
+   "main": {
+    "model": "Primaries and secondaries pooled; codes with fewer than 5 report cards pooled",
+    "phases": [
+     "Primary",
+     "Secondary"
+    ],
+    "schools": 3975,
+    "events": 384,
+    "non_events": 3591,
+    "dropped_missing_context_schools": 38,
+    "fixed_effect_parameters": 31,
+    "events_needed": 310,
+    "schools_primary": 3142,
+    "schools_secondary": 833,
+    "inspectors": {
+     "inspectors": 385,
+     "inspectors_pooled": 116,
+     "pooled_group_schools": 269,
+     "groups_in_model": 270,
+     "reports_per_inspector": {
+      "min": 1,
+      "median": 9.0,
+      "max": 29
+     }
+    },
+    "status": "fitted",
+    "convergence": {
+     "rhat_max": 1.0013,
+     "ess_min": 2715,
+     "divergences": 0,
+     "chains": 4,
+     "draws": 2000,
+     "tune": 2000,
+     "target_accept": 0.95,
+     "seed": 20261127,
+     "converged": true,
+     "refits": 1,
+     "earlier_attempts": [
+      {
+       "draws": 1000,
+       "rhat_max": 1.0104,
+       "ess_min": 398
+      }
+     ]
+    },
+    "inspector_sd": {
+     "median": 0.621,
+     "lo": 0.414,
+     "hi": 0.827
+    },
+    "median_odds_ratio": {
+     "median": 1.808,
+     "lo": 1.484,
+     "hi": 2.201
+    },
+    "mor_reading": "uncertain between modest and substantial",
+    "typical_school_p25_pct": {
+     "median": 4.7,
+     "lo": 2.6,
+     "hi": 8.2
+    },
+    "typical_school_p75_pct": {
+     "median": 10.2,
+     "lo": 6.0,
+     "hi": 16.7
+    },
+    "spread_pp": {
+     "median": 5.4,
+     "lo": 3.0,
+     "hi": 9.5
+    },
+    "icc_latent": {
+     "median": 0.105,
+     "lo": 0.049,
+     "hi": 0.172
+    },
+    "seconds_bayes": 85.9,
+    "permutation": {
+     "estimator": "maximum likelihood, Gauss-Hermite quadrature (30 nodes)",
+     "shuffles": 200,
+     "strata": "region x month x phase",
+     "observed_sd_ml": 0.569,
+     "shuffled_sd_median": 0.0,
+     "shuffled_sd_2_5": 0.0,
+     "shuffled_sd_97_5": 0.359,
+     "shuffled_sd_95": 0.326,
+     "observed_percentile": 100.0,
+     "reading": "distinguishable from chance",
+     "shuffles_at_or_above_observed": 0
+    },
+    "reading": "distinguishable from chance",
+    "seconds_permutation": 109.8
+   },
+   "sensitivity": {
+    "min10": {
+     "model": "As main; codes with fewer than 10 report cards pooled",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 384,
+     "non_events": 3591,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 206,
+      "pooled_group_schools": 911,
+      "groups_in_model": 180,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0056,
+      "ess_min": 515,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.658,
+      "lo": 0.449,
+      "hi": 0.867
+     },
+     "median_odds_ratio": {
+      "median": 1.873,
+      "lo": 1.534,
+      "hi": 2.286
+     },
+     "mor_reading": "substantial",
+     "typical_school_p25_pct": {
+      "median": 4.3,
+      "lo": 2.3,
+      "hi": 7.6
+     },
+     "typical_school_p75_pct": {
+      "median": 9.8,
+      "lo": 5.8,
+      "hi": 16.2
+     },
+     "spread_pp": {
+      "median": 5.5,
+      "lo": 3.0,
+      "hi": 9.2
+     },
+     "icc_latent": {
+      "median": 0.116,
+      "lo": 0.058,
+      "hi": 0.186
+     },
+     "seconds_bayes": 20.2
+    },
+    "all_codes": {
+     "model": "As main; every code its own inspector, no pooling",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 384,
+     "non_events": 3591,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 31,
+     "events_needed": 310,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "inspectors": {
+      "inspectors": 385,
+      "inspectors_pooled": 0,
+      "pooled_group_schools": 0,
+      "groups_in_model": 385,
+      "reports_per_inspector": {
+       "min": 1,
+       "median": 9.0,
+       "max": 29
+      }
+     },
+     "status": "fitted",
+     "convergence": {
+      "rhat_max": 1.0074,
+      "ess_min": 425,
+      "divergences": 0,
+      "chains": 4,
+      "draws": 1000,
+      "tune": 1000,
+      "target_accept": 0.9,
+      "seed": 20261126,
+      "converged": true,
+      "refits": 0
+     },
+     "inspector_sd": {
+      "median": 0.639,
+      "lo": 0.429,
+      "hi": 0.85
+     },
+     "median_odds_ratio": {
+      "median": 1.839,
+      "lo": 1.505,
+      "hi": 2.249
+     },
+     "mor_reading": "substantial",
+     "typical_school_p25_pct": {
+      "median": 4.5,
+      "lo": 2.4,
+      "hi": 7.8
+     },
+     "typical_school_p75_pct": {
+      "median": 9.9,
+      "lo": 5.8,
+      "hi": 16.4
+     },
+     "spread_pp": {
+      "median": 5.4,
+      "lo": 3.0,
+      "hi": 9.4
+     },
+     "icc_latent": {
+      "median": 0.11,
+      "lo": 0.053,
+      "hi": 0.18
+     },
+     "seconds_bayes": 21.8
+    },
+    "region_x_term": {
+     "model": "As main, with region x school term terms in place of region and month",
+     "phases": [
+      "Primary",
+      "Secondary"
+     ],
+     "schools": 3975,
+     "events": 384,
+     "non_events": 3591,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 44,
+     "events_needed": 440,
+     "schools_primary": 3142,
+     "schools_secondary": 833,
+     "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)"
+    },
+    "secondary_full": {
+     "model": "Secondaries only, with the full results controls",
+     "phases": [
+      "Secondary"
+     ],
+     "schools": 833,
+     "events": 103,
+     "non_events": 730,
+     "dropped_missing_context_schools": 38,
+     "fixed_effect_parameters": 29,
+     "events_needed": 290,
+     "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)"
+    }
+   }
+  },
+  "g_pd": {
+   "area": "Personal development and wellbeing",
+   "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)",
+   "schools": 3975,
+   "events": 170,
+   "events_needed": 310
+  },
+  "g_ey": {
+   "area": "Early years",
+   "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)",
+   "schools": 2953,
+   "events": 294,
+   "events_needed": 310
+  },
+  "g_p16": {
+   "area": "Post-16 provision",
+   "status": "not fitted: events rule (fewer than 10 schools below Expected per fixed-effect parameter)",
+   "schools": 450,
+   "events": 46,
+   "events_needed": 290
+  }
+ },
+ "sample": {
+  "schools": 4277,
+  "schools_main_phases": 4013,
+  "inspectors_main_phases": 386,
+  "reports_per_inspector_main_phases": {
+   "min": 1,
+   "median": 9.0,
+   "max": 29
+  },
+  "inspectors_with_5_or_more": 269,
+  "inspectors_with_10_or_more": 182
+ },
+ "described_only": {
+  "Special": {
+   "schools": 160,
+   "inspectors": 62,
+   "g_ach": {
+    "area": "Achievement",
+    "schools": 160,
+    "below_expected_pct": 11.2
+   },
+   "g_ct": {
+    "area": "Curriculum and teaching",
+    "schools": 160,
+    "below_expected_pct": 15.0
+   },
+   "g_ab": {
+    "area": "Attendance and behaviour",
+    "schools": 160,
+    "below_expected_pct": 8.8
+   },
+   "g_lg": {
+    "area": "Leadership and governance",
+    "schools": 160,
+    "below_expected_pct": 10.0
+   },
+   "g_inc": {
+    "area": "Inclusion",
+    "schools": 160,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_pd": {
+    "area": "Personal development and wellbeing",
+    "schools": 160,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_ey": {
+    "area": "Early years",
+    "schools": 46,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_p16": {
+    "area": "Post-16 provision",
+    "schools": 73,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   }
+  },
+  "Alternative provision": {
+   "schools": 44,
+   "inspectors": 30,
+   "g_ach": {
+    "area": "Achievement",
+    "schools": 44,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_ct": {
+    "area": "Curriculum and teaching",
+    "schools": 44,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_ab": {
+    "area": "Attendance and behaviour",
+    "schools": 44,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_lg": {
+    "area": "Leadership and governance",
+    "schools": 44,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_inc": {
+    "area": "Inclusion",
+    "schools": 44,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_pd": {
+    "area": "Personal development and wellbeing",
+    "schools": 44,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   }
+  },
+  "Nursery": {
+   "schools": 60,
+   "inspectors": 30,
+   "g_ach": {
+    "area": "Achievement",
+    "schools": 60,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_ct": {
+    "area": "Curriculum and teaching",
+    "schools": 60,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_ab": {
+    "area": "Attendance and behaviour",
+    "schools": 60,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_lg": {
+    "area": "Leadership and governance",
+    "schools": 60,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_inc": {
+    "area": "Inclusion",
+    "schools": 60,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   },
+   "g_pd": {
+    "area": "Personal development and wellbeing",
+    "schools": 60,
+    "below_expected_pct": "suppressed (a cell under 10)"
+   }
+  }
+ },
+ "corpus": {
+  "target_schools": 4295,
+  "in_corpus_schools": 4293,
+  "share": 0.9995343422584401,
+  "cutoff": "2026-11-28",
+  "corpus_schools": 4293,
+  "parsed_schools": 4281,
+  "ambiguous_code_schools": 0,
+  "grades_from_MI_schools": 3605,
+  "grades_from_daily_schools": 672,
+  "grades_from_none_schools": 0,
+  "grades_from_no_code_schools": "fewer than 10"
+ },
+ "run": {
+  "mode": "real",
+  "when": "2026-11-28T08:51:15",
+  "seconds": 1561,
+  "versions": {
+   "numpy": "2.5.3",
+   "pandas": "3.0.5",
+   "scipy": "1.18.1",
+   "statsmodels": "0.15.0",
+   "patsy": "1.0.3",
+   "pymc": "6.4.0",
+   "pytensor": "3.3.8",
+   "arviz": "1.3.0"
+  },
+  "seed": 20261126
+ },
+ "plan": {
+  "path": "docs/analysis-plans/inspection-consistency-plan.md",
+  "commit": "196d50c",
+  "amendment_1": "9ca9c0b",
+  "approved": "26 November 2026, by Mark in the live conversation"
+ }
+}
