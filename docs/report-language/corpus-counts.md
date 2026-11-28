@@ -23,17 +23,17 @@ Reports parsed: 4281.
 | Achievement | 58 | 693 | 2371 | 1077 | 82 | 0 |
 | Attendance and behaviour | 58 | 1247 | 2333 | 601 | 42 | 0 |
 | Personal development and wellbeing | 88 | 1623 | 2391 | 172 | <10 | 0 |
-| Early years | 21 | 833 | 1852 | 271 | 27 | 1277 |
+| Early years | 21 | 833 | 1851 | 272 | 27 | 1277 |
 | Post-16 provision | 23 | 147 | 307 | 48 | <10 | 3755 |
-| Leadership and governance | 67 | 935 | 2704 | 501 | 74 | 0 |
+| Leadership and governance | 67 | 935 | 2704 | 502 | 73 | 0 |
 
 ## Safeguarding and categories of concern
 
 | Outcome | Reports |
 | --- | --: |
-| Safeguarding standards met | 4263 |
-| Safeguarding standards not met | 18 |
-| Special measures | 70 |
+| Safeguarding standards met | 4264 |
+| Safeguarding standards not met | 17 |
+| Special measures | 69 |
 | Significant improvement | 45 |
 
 ## Grades by evaluation area and phase
@@ -60,9 +60,9 @@ Reports parsed: 4281.
 | Achievement | 22 | 446 | 1825 | 799 | 52 | 0 |
 | Attendance and behaviour | 14 | 877 | 1822 | 413 | 18 | 0 |
 | Personal development and wellbeing | 29 | 1195 | 1805 | 112 | <10 | 0 |
-| Early years | 20 | 787 | 1825 | 267 | 26 | 219 |
+| Early years | 20 | 787 | 1824 | 268 | 26 | 219 |
 | Post-16 provision | 0 | 0 | 0 | 0 | 0 | 3144 |
-| Leadership and governance | 20 | 624 | 2078 | 369 | 53 | 0 |
+| Leadership and governance | 20 | 624 | 2078 | 370 | 52 | 0 |
 
 ### Secondary (873 reports)
 
@@ -109,12 +109,12 @@ Reports parsed: 4281.
 | --- | --: | --: | --: | --: | --: | --: |
 | 2025-11 | 0 | 83 | 31 | <10 | <10 | 124 |
 | 2025-12 | 0 | 67 | 17 | <10 | <10 | 88 |
-| 2026-01 | 0 | 343 | 91 | 17 | <10 | 456 |
+| 2026-01 | 0 | 342 | 91 | 17 | <10 | 455 |
 | 2026-02 | <10 | 240 | 75 | <10 | 0 | 327 |
 | 2026-03 | <10 | 278 | 103 | 13 | <10 | 400 |
 | 2026-04 | 10 | 253 | 100 | 15 | <10 | 382 |
 | 2026-05 | 11 | 249 | 100 | 19 | <10 | 385 |
-| 2026-06 | 23 | 533 | 134 | 36 | <10 | 733 |
+| 2026-06 | 23 | 534 | 134 | 36 | <10 | 734 |
 | 2026-07 | <10 | 263 | 40 | 13 | <10 | 327 |
 | 2026-09 | 0 | 536 | 119 | 16 | <10 | 679 |
 | 2026-10 | 0 | 292 | 62 | 13 | <10 | 372 |

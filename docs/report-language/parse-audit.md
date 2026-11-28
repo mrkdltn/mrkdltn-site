@@ -183,3 +183,16 @@ Mark confirmed both rules below on 28 November 2026, in the live conversation.
 
 Two reports need re-fetching (the revised PDF and the earlier report card). The 12 non-report-card documents need nothing until those schools have a report card.
 
+
+### Re-fetched (28 November 2026)
+
+Both reports were fetched again from files.ofsted.gov.uk on 28 November 2026, three times each, before the analysis. Each fetch was checked before use: the three downloads had the same sha256, the URN and the inspection date printed on the PDF matched the management information, and after parsing every grade matched the management information.
+
+| Report | What was wrong | What was fetched | Check |
+| --- | --- | --- | --- |
+| The revised PDF | The corpus held an earlier version of the report, without next steps | The current file at the same address (a new sha256, the same on all three fetches) | Same URN and inspection date (June 2026); 7 of 7 area grades and the safeguarding outcome match the management information; next steps now present (3 items) |
+| The earlier report card | The corpus held the January 2026 report card; the management information's inspection is June 2026 | The June 2026 report card, which the school's page files as "Full inspection" rather than "School inspection", so the backfill's rule passed over it | URN and inspection date (June 2026) match; 7 of 7 area grades and the safeguarding outcome match the management information |
+
+The manifest now records the new address and sha256 for each, marked as re-fetched. The parser was then run on the whole corpus again (`parse.py --no-codes`, so no inspector code or key was created). Apart from the two reports, the text changed in 2 others, where a title before an already-removed name ("His [name]") is now removed with it; nothing else changed. The corpus still holds 4,281 report cards. Against the management information, 32,466 of 32,472 grades agree (the same 6 source discrepancies as above) and categories of concern 3,608 of 3,608; no report is without a grade reference; 24 reports have no next steps, all as published. `corpus-counts.md` is regenerated: the earlier report card's grades and month are replaced by the June 2026 report's, which moves one report from January to June and changes a few grade counts by one.
+
+The plan asked for each re-fetch to be "checked against its stored checksum". Neither can be: one is a revised file and the other a different document, so each has a new checksum by definition. The checks above (three matching downloads, URN, date and grades) stand in for it, and the new checksums are stored.
